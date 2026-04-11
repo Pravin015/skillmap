@@ -6,7 +6,6 @@ import Link from "next/link";
 
 const roles = [
   { key: "STUDENT", label: "Student / Aspirant", color: "from-indigo-500 to-purple-600" },
-  { key: "HR", label: "HR / Recruiter", color: "from-cyan-500 to-blue-600" },
   { key: "ORG", label: "Organisation", color: "from-emerald-500 to-teal-600" },
 ];
 
@@ -207,35 +206,17 @@ function SignupInner() {
               </>
             )}
 
-            {/* HR fields */}
+            {/* HR signup disabled — notice */}
             {activeRole === "HR" && (
+              <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(239,68,68,0.05)", borderColor: "rgba(239,68,68,0.2)" }}>
+                <strong>HR accounts cannot be created here.</strong>
+                <p className="mt-1" style={{ color: "var(--muted)" }}>HR accounts are managed by organisations. Ask your company admin to create your account from the Company Dashboard.</p>
+              </div>
+            )}
+
+            {/* HR fields — HIDDEN, kept for backwards compat */}
+            {false && (
               <>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Full name
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your full name"
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@company.com"
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-gray-700">
                     Password

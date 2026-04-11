@@ -50,6 +50,18 @@ export default function Header() {
               {item.label}
             </Link>
           ))}
+          {(userRole === "ORG" || userRole === "ADMIN") && (
+            <Link
+              href="/company-dashboard"
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                pathname.startsWith("/company-dashboard")
+                  ? "bg-emerald-50 text-emerald-700"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
+            >
+              Company
+            </Link>
+          )}
           {(userRole === "HR" || userRole === "ADMIN") && (
             <Link
               href="/hr-dashboard"
