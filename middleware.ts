@@ -11,6 +11,11 @@ export default withAuth(
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
+    // HR dashboard — only HR role (and ADMIN)
+    if (pathname.startsWith("/hr-dashboard") && token?.role !== "HR" && token?.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
     return NextResponse.next();
   },
   {
@@ -21,5 +26,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/chat/:path*", "/admin/:path*", "/onboarding/:path*"],
+  matcher: ["/dashboard/:path*", "/chat/:path*", "/admin/:path*", "/onboarding/:path*", "/hr-dashboard/:path*"],
 };
