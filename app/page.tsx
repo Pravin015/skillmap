@@ -118,21 +118,21 @@ export default function Home() {
                 </div>
                 <span className="ml-1 opacity-50 group-hover:opacity-100 transition-opacity">→</span>
               </Link>
-              <Link href="/for-companies" className={`group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline border-[1.5px] transition-all hover:border-[var(--ink)] hover:bg-[rgba(10,10,15,0.04)]`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
+              <Link href="/for-companies" className={`audience-btn group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline border-[1.5px] transition-all`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
                 <span className="text-xl">🏢</span>
                 <div className="text-left">
-                  <div>Company / HR</div>
-                  <div className="text-[0.65rem] font-normal" style={{ color: "var(--muted)" }}>Hire job-ready talent</div>
+                  <div className="audience-btn-title transition-colors">Company / HR</div>
+                  <div className="text-[0.65rem] font-normal audience-btn-sub transition-colors" style={{ color: "var(--muted)" }}>Hire job-ready talent</div>
                 </div>
-                <span className="ml-1 opacity-30 group-hover:opacity-70 transition-opacity">→</span>
+                <span className="ml-1 opacity-30 group-hover:opacity-100 transition-opacity audience-btn-arrow">→</span>
               </Link>
-              <Link href="/for-mentors" className={`group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline border-[1.5px] transition-all hover:border-[var(--ink)] hover:bg-[rgba(10,10,15,0.04)]`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
+              <Link href="/for-mentors" className={`audience-btn group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline border-[1.5px] transition-all`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
                 <span className="text-xl">🧑‍🏫</span>
                 <div className="text-left">
-                  <div>Mentor</div>
-                  <div className="text-[0.65rem] font-normal" style={{ color: "var(--muted)" }}>Guide & earn</div>
+                  <div className="audience-btn-title transition-colors">Mentor</div>
+                  <div className="text-[0.65rem] font-normal audience-btn-sub transition-colors" style={{ color: "var(--muted)" }}>Guide & earn</div>
                 </div>
-                <span className="ml-1 opacity-30 group-hover:opacity-70 transition-opacity">→</span>
+                <span className="ml-1 opacity-30 group-hover:opacity-100 transition-opacity audience-btn-arrow">→</span>
               </Link>
             </div>
           </div>

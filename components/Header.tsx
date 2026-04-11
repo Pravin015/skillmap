@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
 
+const syne = "font-[family-name:var(--font-syne)]";
+
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/dashboard", label: "Dashboard" },
@@ -23,146 +25,124 @@ export default function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [showMenu, setShowMenu] = useState(false);
+  const [mobileNav, setMobileNav] = useState(false);
 
   const userRole = (session?.user as { role?: string })?.role;
 
+  const roleLinks = [
+    ...(userRole === "ORG" || userRole === "ADMIN" ? [{ href: "/company-dashboard", label: "Company" }] : []),
+    ...(userRole === "HR" || userRole === "ADMIN" ? [{ href: "/hr-dashboard", label: "HR Panel" }] : []),
+    ...(userRole === "ADMIN" ? [{ href: "/admin", label: "Admin" }] : []),
+  ];
+
+  const allNavLinks = [...navItems, ...roleLinks];
+
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-sm font-bold text-white">
-            S
+    <header className="sticky top-0 z-50 border-b" style={{ borderColor: "var(--border)", background: "rgba(244,243,239,0.85)", backdropFilter: "blur(20px)" }}>
+      <div className="mx-auto flex h-14 md:h-16 max-w-6xl items-center justify-between px-4">
+        {/* Logo */}
+        <Link href="/" className={`flex items-center gap-2 no-underline ${syne}`}>
+          <div className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg text-xs md:text-sm font-bold text-white" style={{ background: "var(--ink)" }}>
+            <span style={{ color: "var(--accent)" }}>S</span>
           </div>
-          <span className="text-lg font-semibold text-gray-900">SkillMap</span>
+          <span className="text-base md:text-lg font-extrabold" style={{ color: "var(--ink)" }}>Skill<span style={{ color: "var(--accent)", background: "var(--ink)", padding: "0 4px", borderRadius: "4px" }}>Map</span></span>
         </Link>
 
-        <nav className="hidden items-center gap-1 sm:flex">
-          {navItems.map((item) => (
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-1">
+          {allNavLinks.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                pathname === item.href
-                  ? "bg-indigo-50 text-indigo-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors no-underline ${syne} ${
+                pathname === item.href || pathname.startsWith(item.href + "/")
+                  ? ""
+                  : ""
               }`}
+              style={{
+                background: pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "var(--ink)" : "transparent",
+                color: pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "var(--accent)" : "var(--muted)",
+              }}
             >
               {item.label}
             </Link>
           ))}
-          {(userRole === "ORG" || userRole === "ADMIN") && (
-            <Link
-              href="/company-dashboard"
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                pathname.startsWith("/company-dashboard")
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              Company
-            </Link>
-          )}
-          {(userRole === "HR" || userRole === "ADMIN") && (
-            <Link
-              href="/hr-dashboard"
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                pathname.startsWith("/hr-dashboard")
-                  ? "bg-cyan-50 text-cyan-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              HR Panel
-            </Link>
-          )}
-          {userRole === "ADMIN" && (
-            <Link
-              href="/admin"
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                pathname === "/admin"
-                  ? "bg-red-50 text-red-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              Admin
-            </Link>
-          )}
         </nav>
 
-        <div className="flex items-center gap-3">
+        {/* Right side */}
+        <div className="flex items-center gap-2">
           {session?.user ? (
             <div className="relative">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50"
+                className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-[rgba(10,10,15,0.04)]"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white ${syne}`} style={{ background: "var(--ink)" }}>
                   {session.user.name?.charAt(0).toUpperCase() || "U"}
                 </div>
-                <div className="hidden text-left sm:block">
-                  <p className="text-sm font-medium text-gray-900">
-                    {session.user.name}
-                  </p>
-                  <span
-                    className={`inline-block rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-                      roleBadgeColors[userRole || ""] || "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    {userRole}
-                  </span>
+                <div className="hidden sm:block text-left">
+                  <p className={`text-sm font-bold ${syne}`} style={{ color: "var(--ink)" }}>{session.user.name}</p>
+                  <span className={`inline-block rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${roleBadgeColors[userRole || ""]}`}>{userRole}</span>
                 </div>
-                <svg className="hidden h-4 w-4 text-gray-400 sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
               </button>
 
               {showMenu && (
                 <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setShowMenu(false)}
-                  />
-                  <div className="absolute right-0 z-50 mt-1 w-48 rounded-xl border border-gray-200 bg-white py-1 shadow-lg">
-                    <div className="border-b border-gray-100 px-4 py-2 sm:hidden">
-                      <p className="text-sm font-medium text-gray-900">
-                        {session.user.name}
-                      </p>
-                      <span
-                        className={`inline-block rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-                          roleBadgeColors[userRole || ""] || "bg-gray-100 text-gray-700"
-                        }`}
-                      >
-                        {userRole}
-                      </span>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
+                  <div className="absolute right-0 z-50 mt-1 w-48 rounded-xl border bg-white py-1 shadow-lg" style={{ borderColor: "var(--border)" }}>
+                    <div className="border-b px-4 py-2 sm:hidden" style={{ borderColor: "var(--border)" }}>
+                      <p className={`text-sm font-bold ${syne}`}>{session.user.name}</p>
+                      <span className={`inline-block rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${roleBadgeColors[userRole || ""]}`}>{userRole}</span>
                     </div>
-                    {userRole === "ADMIN" && (
-                      <Link
-                        href="/admin"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 sm:hidden"
-                        onClick={() => setShowMenu(false)}
-                      >
-                        Admin Panel
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                      className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
-                    >
-                      Sign out
-                    </button>
+                    <Link href="/profile/edit" className={`block px-4 py-2 text-sm no-underline transition-colors hover:bg-gray-50`} style={{ color: "var(--ink)" }} onClick={() => setShowMenu(false)}>My Profile</Link>
+                    {roleLinks.map((l) => (
+                      <Link key={l.href} href={l.href} className="block px-4 py-2 text-sm no-underline sm:hidden transition-colors hover:bg-gray-50" style={{ color: "var(--ink)" }} onClick={() => setShowMenu(false)}>{l.label}</Link>
+                    ))}
+                    <button onClick={() => signOut({ callbackUrl: "/" })} className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50">Sign out</button>
                   </div>
                 </>
               )}
             </div>
           ) : (
-            <Link
-              href="/auth/login"
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
-            >
-              Login
-            </Link>
+            <Link href="/auth/login" className={`rounded-lg px-4 py-2 text-sm font-bold no-underline ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Login</Link>
           )}
+
+          {/* Mobile hamburger */}
+          <button className="md:hidden flex flex-col gap-1 p-2 rounded-lg hover:bg-[rgba(10,10,15,0.04)]" onClick={() => setMobileNav(!mobileNav)}>
+            <span className={`block w-5 h-0.5 transition-all ${mobileNav ? "rotate-45 translate-y-1.5" : ""}`} style={{ background: "var(--ink)" }} />
+            <span className={`block w-5 h-0.5 transition-all ${mobileNav ? "opacity-0" : ""}`} style={{ background: "var(--ink)" }} />
+            <span className={`block w-5 h-0.5 transition-all ${mobileNav ? "-rotate-45 -translate-y-1.5" : ""}`} style={{ background: "var(--ink)" }} />
+          </button>
         </div>
       </div>
+
+      {/* Mobile nav drawer */}
+      {mobileNav && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/20" onClick={() => setMobileNav(false)} />
+          <div className="md:hidden absolute top-full left-0 right-0 z-50 border-t shadow-lg" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+            <nav className="flex flex-col py-2 px-4">
+              {allNavLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileNav(false)}
+                  className={`rounded-xl px-4 py-3 text-sm font-bold no-underline ${syne}`}
+                  style={{
+                    background: pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "var(--ink)" : "transparent",
+                    color: pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "var(--accent)" : "var(--ink)",
+                  }}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              {!session && (
+                <Link href="/auth/login" onClick={() => setMobileNav(false)} className={`rounded-xl px-4 py-3 text-sm font-bold no-underline mt-2 text-center ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Login</Link>
+              )}
+            </nav>
+          </div>
+        </>
+      )}
     </header>
   );
 }

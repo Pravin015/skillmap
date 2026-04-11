@@ -71,6 +71,21 @@ html { scroll-behavior: smooth; }
   box-shadow: 0 8px 30px rgba(232,255,71,0.3);
 }
 
+/* AUDIENCE BUTTONS — black fill on hover */
+.audience-btn {
+  transition: all 0.3s ease;
+}
+.audience-btn:hover {
+  background: var(--ink) !important;
+  border-color: var(--ink) !important;
+  color: var(--accent) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(10,10,15,0.2);
+}
+.audience-btn:hover .audience-btn-title { color: var(--accent) !important; }
+.audience-btn:hover .audience-btn-sub { color: rgba(232,255,71,0.6) !important; }
+.audience-btn:hover .audience-btn-arrow { color: var(--accent) !important; opacity: 1 !important; }
+
 /* COMPANY CARD GRADIENT OVERLAY */
 .co-card-overlay::before {
   content: '';
@@ -121,7 +136,43 @@ html { scroll-behavior: smooth; }
   -webkit-text-fill-color: transparent;
 }
 
-/* MOBILE */
+/* ══════════════════════════════════════ */
+/*  MOBILE RESPONSIVE FIXES             */
+/* ══════════════════════════════════════ */
+
+/* Global mobile padding */
 @media (max-width: 768px) {
   .nav-links-desktop { display: none !important; }
+
+  /* Hero adjustments */
+  .headline-stroked {
+    -webkit-text-stroke: 1px var(--ink);
+  }
+}
+
+/* Audience buttons stack on small screens */
+@media (max-width: 640px) {
+  .audience-btn {
+    width: 100%;
+  }
+}
+
+/* Pricing cards — ensure readable on mobile */
+@media (max-width: 480px) {
+  .price-card { padding: 1.25rem !important; }
+}
+
+/* Fix overflow on all pages */
+body {
+  overflow-x: hidden;
+}
+
+/* Table responsive scroll */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix mobile bottom tabs overlap */
+@media (max-width: 1024px) {
+  main { padding-bottom: 0; }
 }
