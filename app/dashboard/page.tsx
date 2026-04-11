@@ -2,291 +2,197 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import {
-  companies,
-  getMatchingJobs,
-  getSimilarJobs,
-  COMPANY_COLORS,
-  DOMAIN_MAP,
-} from "@/lib/data";
+import { useSession } from "next-auth/react";
+import { getMatchingJobs, getSimilarJobs } from "@/lib/data";
 import { UserProfile, Job } from "@/lib/types";
-import JobCard from "@/components/JobCard";
-import CompanyLogo from "@/components/CompanyLogo";
+import AIMentorCard from "@/components/dashboard/AIMentorCard";
+import RealMentorCard from "@/components/dashboard/RealMentorCard";
+import OpeningsSection from "@/components/dashboard/OpeningsSection";
+import ApplicationsCard from "@/components/dashboard/ApplicationsCard";
+import HRInterestCard from "@/components/dashboard/HRInterestCard";
+import ResumeCard from "@/components/dashboard/ResumeCard";
+import ProfileScoreCard from "@/components/dashboard/ProfileScoreCard";
+import CoursesCard from "@/components/dashboard/CoursesCard";
+import LabsPrepCard from "@/components/dashboard/LabsPrepCard";
+
+const syne = "font-[family-name:var(--font-syne)]";
+
+const sidebarItems = [
+  { id: "mentor", label: "AI Mentor", icon: "✦" },
+  { id: "openings", label: "Openings", icon: "💼" },
+  { id: "applied", label: "Applied", icon: "📋" },
+  { id: "hr", label: "HR Interest", icon: "👥" },
+  { id: "resume", label: "Resume", icon: "📄" },
+  { id: "score", label: "Score", icon: "📊" },
+  { id: "courses", label: "Courses", icon: "📚" },
+  { id: "labs", label: "Labs", icon: "🧪" },
+];
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [checkedSkills, setCheckedSkills] = useState<Record<string, boolean>>(
-    {}
-  );
-  const [matchedJobs, setMatchedJobs] = useState<Job[]>([]);
-  const [similarJobs, setSimilarJobs] = useState<Job[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [activeSection, setActiveSection] = useState("mentor");
 
   useEffect(() => {
-    const stored = localStorage.getItem("skillmap_profile");
-    if (!stored) {
-      router.push("/onboarding");
+    if (status === "unauthenticated") {
+      router.push("/auth/login");
       return;
     }
-    const p: UserProfile = JSON.parse(stored);
-    setProfile(p);
 
-    const matched = getMatchingJobs(p.companies, p.domainKey);
-    setMatchedJobs(matched);
-
-    if (matched.length === 0) {
-      const similar = getSimilarJobs(p.companies, p.domainKey);
-      setSimilarJobs(similar);
+    // Load profile from localStorage or create from session
+    const stored = localStorage.getItem("skillmap_profile");
+    if (stored) {
+      const p: UserProfile = JSON.parse(stored);
+      setProfile(p);
+      const matched = getMatchingJobs(p.companies, p.domainKey);
+      setJobs(matched.length > 0 ? matched : getSimilarJobs(p.companies, p.domainKey));
+    } else if (session?.user) {
+      // Create a basic profile from session data
+      const p: UserProfile = {
+        name: session.user.name || "Student",
+        degree: "",
+        graduationYear: "",
+        domain: "Cybersecurity",
+        domainKey: "cybersecurity",
+        companies: ["tcs", "kpmg", "deloitte"],
+      };
+      setProfile(p);
+      const matched = getMatchingJobs(p.companies, p.domainKey);
+      setJobs(matched.length > 0 ? matched : getSimilarJobs(p.companies, p.domainKey));
     }
+  }, [status, session, router]);
 
-    const savedSkills = localStorage.getItem("skillmap_checked");
-    if (savedSkills) {
-      setCheckedSkills(JSON.parse(savedSkills));
-    }
-  }, [router]);
-
-  function toggleSkill(key: string) {
-    setCheckedSkills((prev) => {
-      const updated = { ...prev, [key]: !prev[key] };
-      localStorage.setItem("skillmap_checked", JSON.stringify(updated));
-      return updated;
-    });
+  function scrollToSection(id: string) {
+    setActiveSection(id);
+    document.getElementById(`section-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  if (!profile) {
+  if (status === "loading" || !profile) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
       </div>
     );
   }
 
-  const selectedCompanyData = companies.filter((c) =>
-    profile.companies.includes(c.id)
-  );
-
-  const skillSections = selectedCompanyData
-    .map((c) => {
-      const domainInfo = c.domains[profile.domainKey];
-      if (!domainInfo) return null;
-      return {
-        companyId: c.id,
-        companyName: c.name,
-        logo: c.logo,
-        roles: domainInfo.roles,
-        skills: domainInfo.skills,
-        interview: domainInfo.interview,
-        avgPackage: domainInfo.avg_package,
-      };
-    })
-    .filter(Boolean);
-
-  const jobsToShow = matchedJobs.length > 0 ? matchedJobs : similarJobs;
-  const isExactMatch = matchedJobs.length > 0;
+  const greeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      {/* Greeting */}
-      <div className="mb-10">
-        <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-          Hi {profile.name}, here&apos;s your job map
-        </h1>
-        <p className="mt-2 text-gray-600">
-          {profile.domain} roles at your dream companies
-        </p>
+    <div className="flex min-h-[calc(100vh-4rem)]">
+      {/* Sidebar — desktop only */}
+      <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] py-6 px-3" style={{ borderColor: "var(--border)", background: "white" }}>
+        <div className="mb-6 px-3">
+          <div className={`${syne} font-bold text-sm`} style={{ color: "var(--muted)" }}>Dashboard</div>
+        </div>
+        <nav className="flex flex-col gap-0.5 flex-1">
+          {sidebarItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => scrollToSection(item.id)}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition-colors ${
+                activeSection === item.id ? "font-bold" : ""
+              }`}
+              style={{
+                background: activeSection === item.id ? "var(--ink)" : "transparent",
+                color: activeSection === item.id ? "var(--accent)" : "var(--muted)",
+              }}
+            >
+              <span className="text-base">{item.icon}</span>
+              <span className={syne}>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="px-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+          <div className={`${syne} font-bold text-xs truncate`}>{profile.name}</div>
+          <div className="text-[0.65rem]" style={{ color: "var(--muted)" }}>{profile.domain}</div>
+        </div>
+      </aside>
+
+      {/* Mobile tabs */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 overflow-x-auto border-t flex gap-0.5 px-2 py-2" style={{ background: "white", borderColor: "var(--border)" }}>
+        {sidebarItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => scrollToSection(item.id)}
+            className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] transition-colors ${syne}`}
+            style={{
+              background: activeSection === item.id ? "var(--ink)" : "transparent",
+              color: activeSection === item.id ? "var(--accent)" : "var(--muted)",
+            }}
+          >
+            <span className="text-sm">{item.icon}</span>
+            {item.label}
+          </button>
+        ))}
       </div>
 
-      {/* Section 1: Job Openings */}
-      <section className="mb-12">
-        <h2 className="mb-1 text-lg font-semibold text-gray-900">
-          {isExactMatch
-            ? "Openings at your dream companies right now"
-            : "No exact matches — here are similar roles"}
-        </h2>
-        {!isExactMatch && (
-          <p className="mb-4 text-sm text-gray-500">
-            No current openings match your exact profile, but these roles are
-            close.
+      {/* Main content */}
+      <div className="flex-1 px-4 md:px-8 py-8 pb-24 lg:pb-8 max-w-4xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className={`${syne} font-extrabold text-2xl md:text-3xl`}>
+            {greeting()}, <span style={{ color: "var(--accent)", background: "var(--ink)", padding: "0 6px", borderRadius: "6px" }}>{profile.name.split(" ")[0]}</span>
+          </h1>
+          <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>
+            Here&apos;s your career progress · {profile.domain} · {profile.companies.length} dream companies
           </p>
-        )}
+        </div>
 
-        {jobsToShow.length > 0 ? (
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {jobsToShow.map((job) => (
-              <JobCard key={job.id} job={job} />
-            ))}
+        {/* Sections */}
+        <div className="space-y-6">
+          {/* Row 1: AI Mentor + Profile Score */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div id="section-mentor">
+              <AIMentorCard />
+            </div>
+            <div id="section-score">
+              <ProfileScoreCard />
+            </div>
           </div>
-        ) : (
-          <div className="mt-4 rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-            <p className="text-gray-500">
-              No openings found right now. Check back soon!
-            </p>
+
+          {/* Real Mentors */}
+          <div id="section-real-mentor">
+            <RealMentorCard />
           </div>
-        )}
-      </section>
 
-      {/* Section 2: Skill checklists */}
-      <section className="mb-12">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          What you need to learn
-        </h2>
-
-        {skillSections.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {skillSections.map((section) => {
-              if (!section) return null;
-              const color = COMPANY_COLORS[section.companyId];
-              const totalSkills = section.skills.length;
-              const checkedCount = section.skills.filter(
-                (s) => checkedSkills[`${section.companyId}-${s}`]
-              ).length;
-
-              return (
-                <div
-                  key={section.companyId}
-                  className="rounded-xl border border-gray-200 bg-white"
-                  style={{ borderTopWidth: "3px", borderTopColor: color }}
-                >
-                  <div className="p-5">
-                    <div className="flex items-center gap-3">
-                      <CompanyLogo
-                        companyId={section.companyId}
-                        letter={section.logo.charAt(0)}
-                        size="sm"
-                      />
-                      <div>
-                        <h3 className="font-semibold text-gray-900">
-                          {section.companyName}
-                        </h3>
-                        <p className="text-xs text-gray-500">
-                          {section.roles.join(", ")}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Progress */}
-                    <div className="mt-4 mb-3">
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span>
-                          {checkedCount}/{totalSkills} skills covered
-                        </span>
-                        <span>
-                          {Math.round((checkedCount / totalSkills) * 100)}%
-                        </span>
-                      </div>
-                      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-gray-100">
-                        <div
-                          className="h-full rounded-full transition-all duration-300"
-                          style={{
-                            width: `${(checkedCount / totalSkills) * 100}%`,
-                            backgroundColor: color,
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Skills */}
-                    <div className="space-y-2">
-                      {section.skills.map((skill) => {
-                        const key = `${section.companyId}-${skill}`;
-                        return (
-                          <label
-                            key={key}
-                            className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-gray-50"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={!!checkedSkills[key]}
-                              onChange={() => toggleSkill(key)}
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span
-                              className={`text-sm ${
-                                checkedSkills[key]
-                                  ? "text-gray-400 line-through"
-                                  : "text-gray-700"
-                              }`}
-                            >
-                              {skill}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-
-                    {/* Meta */}
-                    <div className="mt-4 space-y-1 border-t border-gray-100 pt-3 text-xs text-gray-500">
-                      <p>
-                        <span className="font-medium text-gray-600">
-                          Interview:
-                        </span>{" "}
-                        {section.interview}
-                      </p>
-                      <p>
-                        <span className="font-medium text-gray-600">
-                          Avg package:
-                        </span>{" "}
-                        {section.avgPackage}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-gray-100 px-5 py-3">
-                    <Link
-                      href={`/chat?company=${section.companyId}`}
-                      className="text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-700"
-                    >
-                      Get AI prep plan →
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
+          {/* Current Openings */}
+          <div id="section-openings">
+            <OpeningsSection jobs={jobs} />
           </div>
-        ) : (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center">
-            <p className="text-gray-500">
-              Your selected companies don&apos;t have {profile.domain} roles
-              listed yet.
-            </p>
-            <Link
-              href="/companies"
-              className="mt-2 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700"
-            >
-              Browse all companies →
-            </Link>
-          </div>
-        )}
-      </section>
 
-      {/* Section 3: AI Advisor CTA */}
-      <section className="rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-white">
-        <h2 className="text-xl font-bold">Ask the AI advisor</h2>
-        <p className="mt-2 text-indigo-100">
-          Get a personalised week-by-week preparation plan based on your profile
-          and the jobs available right now.
-        </p>
-        <Link
-          href="/chat"
-          className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-indigo-700 transition-colors hover:bg-indigo-50"
-        >
-          Plan my preparation
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M13 7l5 5m0 0l-5 5m5-5H6"
-            />
-          </svg>
-        </Link>
-      </section>
+          {/* Row: Applications + HR Interest */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div id="section-applied">
+              <ApplicationsCard />
+            </div>
+            <div id="section-hr">
+              <HRInterestCard />
+            </div>
+          </div>
+
+          {/* Resume */}
+          <div id="section-resume">
+            <ResumeCard />
+          </div>
+
+          {/* Courses */}
+          <div id="section-courses">
+            <CoursesCard domainKey={profile.domainKey} />
+          </div>
+
+          {/* Labs */}
+          <div id="section-labs">
+            <LabsPrepCard />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
