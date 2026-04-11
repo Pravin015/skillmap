@@ -1,190 +1,132 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import AdminOverview from "@/components/admin-dashboard/AdminOverview";
+import UserManagement from "@/components/admin-dashboard/UserManagement";
+import CompaniesTab from "@/components/admin-dashboard/CompaniesTab";
+import MentorsTab from "@/components/admin-dashboard/MentorsTab";
+import StudentsTab from "@/components/admin-dashboard/StudentsTab";
+import HRsTab from "@/components/admin-dashboard/HRsTab";
+import JobPostsTab from "@/components/admin-dashboard/JobPostsTab";
+import FormsTab from "@/components/admin-dashboard/FormsTab";
+import PlatformSettings from "@/components/admin-dashboard/PlatformSettings";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  organisation: string | null;
-  phone: string | null;
-  createdAt: string;
-}
+const syne = "font-[family-name:var(--font-syne)]";
 
-interface Stats {
-  total: number;
-  students: number;
-  hr: number;
-  org: number;
-  admin: number;
-}
+const sidebarItems = [
+  { id: "overview", label: "Overview", icon: "📊" },
+  { id: "users", label: "Users", icon: "👤" },
+  { id: "companies", label: "Companies", icon: "🏢" },
+  { id: "hrs", label: "HRs", icon: "👥" },
+  { id: "mentors", label: "Mentors", icon: "🧑‍🏫" },
+  { id: "students", label: "Students", icon: "🎓" },
+  { id: "jobs", label: "Job Posts", icon: "💼" },
+  { id: "forms", label: "Forms", icon: "📋" },
+  { id: "settings", label: "Settings", icon: "⚙️" },
+];
 
-const roleBadgeColors: Record<string, string> = {
-  STUDENT: "bg-indigo-100 text-indigo-700",
-  HR: "bg-cyan-100 text-cyan-700",
-  ORG: "bg-emerald-100 text-emerald-700",
-  ADMIN: "bg-red-100 text-red-700",
-};
+interface User { id: string; name: string; email: string; role: string; organisation: string | null; createdAt: string }
+interface Stats { total: number; students: number; hr: number; org: number; admin: number }
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState("overview");
   const [users, setUsers] = useState<User[]>([]);
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [stats, setStats] = useState<Stats>({ total: 0, students: 0, hr: 0, org: 0, admin: 0 });
   const [loading, setLoading] = useState(true);
 
   const userRole = (session?.user as { role?: string })?.role;
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
-      return;
-    }
-    if (status === "authenticated" && userRole !== "ADMIN") {
-      router.push("/dashboard");
-      return;
-    }
-    if (status === "authenticated" && userRole === "ADMIN") {
-      fetchUsers();
-    }
-  }, [status, userRole, router]);
-
-  async function fetchUsers() {
-    setLoading(true);
+  const fetchUsers = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/users");
       const data = await res.json();
-      setUsers(data.users);
-      setStats(data.stats);
-    } catch (err) {
-      console.error("Failed to fetch users:", err);
-    } finally {
-      setLoading(false);
-    }
-  }
+      setUsers(data.users || []);
+      setStats(data.stats || { total: 0, students: 0, hr: 0, org: 0, admin: 0 });
+    } catch { /* ignore */ }
+    finally { setLoading(false); }
+  }, []);
 
-  async function deleteUser(userId: string) {
-    if (!confirm("Are you sure you want to delete this user?")) return;
-
-    try {
-      const res = await fetch(`/api/admin/users?id=${userId}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        fetchUsers();
-      }
-    } catch (err) {
-      console.error("Failed to delete user:", err);
-    }
-  }
+  useEffect(() => {
+    if (status === "unauthenticated") { router.push("/auth/login"); return; }
+    if (status === "authenticated" && userRole !== "ADMIN") { router.push("/dashboard"); return; }
+    if (status === "authenticated") fetchUsers();
+  }, [status, userRole, router, fetchUsers]);
 
   if (status === "loading" || loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
-      </div>
-    );
+    return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  }
+
+  function renderTab() {
+    switch (activeTab) {
+      case "overview": return <AdminOverview stats={stats} onNavigate={setActiveTab} />;
+      case "users": return <UserManagement users={users} onRefresh={fetchUsers} />;
+      case "companies": return <CompaniesTab />;
+      case "hrs": return <HRsTab users={users} />;
+      case "mentors": return <MentorsTab />;
+      case "students": return <StudentsTab users={users} />;
+      case "jobs": return <JobPostsTab />;
+      case "forms": return <FormsTab />;
+      case "settings": return <PlatformSettings />;
+      default: return <AdminOverview stats={stats} onNavigate={setActiveTab} />;
+    }
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-          Admin Panel
-        </h1>
-        <p className="mt-1 text-gray-600">Manage users and monitor platform activity.</p>
+    <div className="flex min-h-[calc(100vh-4rem)]">
+      {/* Sidebar */}
+      <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] py-6 px-3" style={{ borderColor: "var(--border)", background: "white" }}>
+        <div className="mb-6 px-3">
+          <div className={`${syne} font-bold text-sm`} style={{ color: "#ef4444" }}>Admin Panel</div>
+          <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>SkillMap Platform</div>
+        </div>
+        <nav className="flex flex-col gap-0.5 flex-1">
+          {sidebarItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition-colors"
+              style={{
+                background: activeTab === item.id ? "var(--ink)" : "transparent",
+                color: activeTab === item.id ? "var(--accent)" : "var(--muted)",
+                fontWeight: activeTab === item.id ? 700 : 400,
+              }}
+            >
+              <span className="text-base">{item.icon}</span>
+              <span className={syne}>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="px-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+          <div className={`${syne} font-bold text-xs truncate`}>{session?.user?.name}</div>
+          <div className="text-[0.65rem]" style={{ color: "#ef4444" }}>Super Admin</div>
+        </div>
+      </aside>
+
+      {/* Mobile tabs */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 overflow-x-auto border-t flex gap-0.5 px-2 py-2" style={{ background: "white", borderColor: "var(--border)" }}>
+        {sidebarItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActiveTab(item.id)}
+            className={`shrink-0 flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-lg text-[0.55rem] transition-colors ${syne}`}
+            style={{
+              background: activeTab === item.id ? "var(--ink)" : "transparent",
+              color: activeTab === item.id ? "var(--accent)" : "var(--muted)",
+            }}
+          >
+            <span className="text-sm">{item.icon}</span>
+            {item.label}
+          </button>
+        ))}
       </div>
 
-      {/* Stats cards */}
-      {stats && (
-        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-5">
-          {[
-            { label: "Total Users", value: stats.total, color: "border-gray-300" },
-            { label: "Students", value: stats.students, color: "border-indigo-400" },
-            { label: "HR", value: stats.hr, color: "border-cyan-400" },
-            { label: "Organisations", value: stats.org, color: "border-emerald-400" },
-            { label: "Admins", value: stats.admin, color: "border-red-400" },
-          ].map((s) => (
-            <div
-              key={s.label}
-              className={`rounded-xl border-2 ${s.color} bg-white p-4`}
-            >
-              <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-              <p className="text-sm text-gray-500">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Users table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-        <div className="border-b border-gray-100 px-6 py-4">
-          <h2 className="font-semibold text-gray-900">All Users</h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-100 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                <th className="px-6 py-3">Name</th>
-                <th className="px-6 py-3">Email</th>
-                <th className="px-6 py-3">Role</th>
-                <th className="px-6 py-3">Organisation</th>
-                <th className="px-6 py-3">Joined</th>
-                <th className="px-6 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    {user.name}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {user.email}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        roleBadgeColors[user.role] || "bg-gray-100 text-gray-700"
-                      }`}
-                    >
-                      {user.role}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {user.organisation || "—"}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    {user.role !== "ADMIN" && (
-                      <button
-                        onClick={() => deleteUser(user.id)}
-                        className="text-sm font-medium text-red-600 hover:text-red-700"
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {users.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-12 text-center text-sm text-gray-500"
-                  >
-                    No users found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      {/* Main content */}
+      <div className="flex-1 px-4 md:px-8 py-8 pb-24 lg:pb-8 max-w-5xl">
+        {renderTab()}
       </div>
     </div>
   );
