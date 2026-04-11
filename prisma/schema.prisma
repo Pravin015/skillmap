@@ -32,6 +32,72 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   profile      StudentProfile?
+  mentorProfile MentorProfile?
+}
+
+enum MentorStatus {
+  PENDING
+  VERIFIED
+  UNVERIFIED
+  SUSPENDED
+}
+
+enum CompensationType {
+  PAID
+  VOLUNTEER
+}
+
+model MentorProfile {
+  id                String          @id @default(cuid())
+  mentorNumber      String          @unique
+  userId            String          @unique
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Verification
+  status            MentorStatus    @default(PENDING)
+  verifiedAt        DateTime?
+
+  // Basic
+  headline          String?         // e.g. "Senior Cybersecurity Analyst at TCS"
+  bio               String?
+  currentCompany    String?
+  currentRole       String?
+  collegeName       String?
+
+  // Experience
+  yearsOfExperience Int             @default(0)
+  companiesWorked   String[]        // list of company names
+  areaOfExpertise   String[]        // e.g. ["Cybersecurity", "Cloud"]
+
+  // Mentoring
+  menteesHelped     Int             @default(0)
+  rating            Float           @default(0)
+  totalSessions     Int             @default(0)
+  compensation      CompensationType @default(PAID)
+  sessionRate       Int?            // per session rate in INR (if paid)
+  availability      String?         // "1-2 hours/week", etc.
+
+  // Links
+  linkedinUrl       String?
+  profilePhotoUrl   String?
+
+  // Achievements
+  achievements      MentorAchievement[]
+
+  // Skills they mentor on
+  mentorTopics      String[]
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model MentorAchievement {
+  id          String        @id @default(cuid())
+  profileId   String
+  profile     MentorProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  imageUrl    String?
 }
 
 model StudentProfile {
