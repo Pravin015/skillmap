@@ -1,0 +1,137 @@
+{
+  "companies": [
+    {
+      "id": "tcs",
+      "name": "TCS",
+      "logo": "TCS",
+      "domains": {
+        "cybersecurity": {
+          "roles": ["Cybersecurity Analyst L1", "SOC Analyst"],
+          "skills": ["CompTIA Security+", "Networking basics", "Python scripting", "SIEM tools", "CEH certification"],
+          "interview": "Online test → Technical round → HR round",
+          "fresher_friendly": true,
+          "avg_package": "3.5-5 LPA"
+        },
+        "cloud": {
+          "roles": ["Cloud Support Engineer", "AWS Associate"],
+          "skills": ["AWS fundamentals", "Linux basics", "Networking", "Python"],
+          "interview": "Aptitude test → Technical interview → HR",
+          "fresher_friendly": true,
+          "avg_package": "4-6 LPA"
+        },
+        "data": {
+          "roles": ["Data Analyst", "Business Analyst"],
+          "skills": ["SQL", "Excel", "Python basics", "Power BI", "Statistics"],
+          "interview": "Written test → Case study → HR",
+          "fresher_friendly": true,
+          "avg_package": "3.5-5 LPA"
+        }
+      }
+    },
+    {
+      "id": "google",
+      "name": "Google",
+      "logo": "G",
+      "domains": {
+        "software": {
+          "roles": ["Software Engineer L3", "SWE Intern"],
+          "skills": ["Data Structures & Algorithms", "System Design", "Python/Java/C++", "LeetCode 200+ problems", "OS fundamentals"],
+          "interview": "Phone screen → 4-5 coding rounds → System design → Hiring committee",
+          "fresher_friendly": false,
+          "avg_package": "25-40 LPA"
+        },
+        "cloud": {
+          "roles": ["Cloud Engineer", "Solutions Architect"],
+          "skills": ["GCP", "Kubernetes", "Terraform", "Networking", "Python"],
+          "interview": "Technical screen → 3 rounds → System design",
+          "fresher_friendly": false,
+          "avg_package": "20-35 LPA"
+        }
+      }
+    },
+    {
+      "id": "kpmg",
+      "name": "KPMG",
+      "logo": "K",
+      "domains": {
+        "cybersecurity": {
+          "roles": ["Cyber Risk Analyst", "GRC Analyst"],
+          "skills": ["ISO 27001", "Risk frameworks", "Excel", "Report writing", "CISSP basics"],
+          "interview": "Aptitude → Group Discussion → Technical → HR",
+          "fresher_friendly": true,
+          "avg_package": "5-8 LPA"
+        },
+        "data": {
+          "roles": ["Data Analyst", "Business Intelligence Analyst"],
+          "skills": ["SQL", "Tableau/Power BI", "Excel advanced", "Python", "Business communication"],
+          "interview": "Case study → Technical round → Partner interview",
+          "fresher_friendly": true,
+          "avg_package": "5-7 LPA"
+        }
+      }
+    },
+    {
+      "id": "infosys",
+      "name": "Infosys",
+      "logo": "I",
+      "domains": {
+        "software": {
+          "roles": ["Systems Engineer", "Technology Analyst"],
+          "skills": ["Java", "SQL", "OOPS concepts", "Data structures", "Agile basics"],
+          "interview": "Hackwithinfy test → HR interview",
+          "fresher_friendly": true,
+          "avg_package": "3.6-5 LPA"
+        },
+        "cloud": {
+          "roles": ["Cloud Ops Engineer", "DevOps Associate"],
+          "skills": ["AWS/Azure basics", "Linux", "Shell scripting", "Docker basics"],
+          "interview": "Online test → Technical → HR",
+          "fresher_friendly": true,
+          "avg_package": "4-6 LPA"
+        }
+      }
+    },
+    {
+      "id": "deloitte",
+      "name": "Deloitte",
+      "logo": "D",
+      "domains": {
+        "cybersecurity": {
+          "roles": ["Cyber Analyst", "Vulnerability Analyst"],
+          "skills": ["Penetration testing basics", "OWASP", "Python", "Network security", "Security certifications"],
+          "interview": "Online assessment → Technical case → HR",
+          "fresher_friendly": true,
+          "avg_package": "6-9 LPA"
+        },
+        "data": {
+          "roles": ["Analyst - Data & AI", "Consulting Analyst"],
+          "skills": ["Python", "SQL", "Machine learning basics", "Excel", "Presentation skills"],
+          "interview": "Aptitude → Case interview → Partner round",
+          "fresher_friendly": true,
+          "avg_package": "6-8 LPA"
+        }
+      }
+    },
+    {
+      "id": "wipro",
+      "name": "Wipro",
+      "logo": "W",
+      "domains": {
+        "software": {
+          "roles": ["Project Engineer", "Software Engineer"],
+          "skills": ["Java/Python", "SQL", "Data structures", "OOPS", "Communication"],
+          "interview": "NLTH test → Technical → HR",
+          "fresher_friendly": true,
+          "avg_package": "3.5-4.5 LPA"
+        },
+        "cloud": {
+          "roles": ["Cloud Practitioner", "Infrastructure Engineer"],
+          "skills": ["AWS/Azure certifications", "Linux", "Networking", "Python basics"],
+          "interview": "Online test → Technical → HR",
+          "fresher_friendly": true,
+          "avg_package": "4-5.5 LPA"
+        }
+      }
+    }
+  ]
+}
