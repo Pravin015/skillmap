@@ -106,13 +106,41 @@ export default function Home() {
             Tell us your <strong className="font-medium" style={{ color: "var(--ink)" }}>dream companies</strong> and <strong className="font-medium" style={{ color: "var(--ink)" }}>domain interest</strong>. We&apos;ll show you which ones are hiring right now, what skills you&apos;re missing, and give you a <strong className="font-medium" style={{ color: "var(--ink)" }}>week-by-week roadmap</strong> to get there.
           </p>
 
-          {/* Actions */}
-          <div className="animate-fade-up-3 flex gap-4 flex-wrap">
-            <Link href="/auth/signup?role=STUDENT" className={`btn-primary-landing inline-flex items-center gap-2.5 px-8 py-4 rounded-full text-[0.95rem] font-bold ${syne} no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
-              Find my path →
-            </Link>
-            <a href="#how" className={`inline-flex items-center gap-2.5 px-8 py-4 rounded-full text-[0.95rem] font-semibold ${syne} no-underline border-[1.5px] transition-colors hover:border-[var(--ink)] hover:bg-[rgba(10,10,15,0.04)]`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
-              See how it works
+          {/* Audience buttons */}
+          <div className="animate-fade-up-3 mb-4">
+            <p className={`${syne} text-xs font-bold tracking-[0.1em] uppercase mb-4`} style={{ color: "var(--muted)" }}>I am a</p>
+            <div className="flex gap-3 flex-wrap">
+              <Link href="/auth/signup?role=STUDENT" className={`btn-primary-landing group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                <span className="text-xl">🎓</span>
+                <div className="text-left">
+                  <div>Student / Aspirant</div>
+                  <div className="text-[0.65rem] font-normal opacity-60">Get hired at dream companies</div>
+                </div>
+                <span className="ml-1 opacity-50 group-hover:opacity-100 transition-opacity">→</span>
+              </Link>
+              <Link href="/for-companies" className={`group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline border-[1.5px] transition-all hover:border-[var(--ink)] hover:bg-[rgba(10,10,15,0.04)]`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
+                <span className="text-xl">🏢</span>
+                <div className="text-left">
+                  <div>Company / HR</div>
+                  <div className="text-[0.65rem] font-normal" style={{ color: "var(--muted)" }}>Hire job-ready talent</div>
+                </div>
+                <span className="ml-1 opacity-30 group-hover:opacity-70 transition-opacity">→</span>
+              </Link>
+              <Link href="/for-mentors" className={`group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline border-[1.5px] transition-all hover:border-[var(--ink)] hover:bg-[rgba(10,10,15,0.04)]`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
+                <span className="text-xl">🧑‍🏫</span>
+                <div className="text-left">
+                  <div>Mentor</div>
+                  <div className="text-[0.65rem] font-normal" style={{ color: "var(--muted)" }}>Guide & earn</div>
+                </div>
+                <span className="ml-1 opacity-30 group-hover:opacity-70 transition-opacity">→</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Secondary CTA */}
+          <div className="animate-fade-up-3">
+            <a href="#how" className={`inline-flex items-center gap-2 text-sm font-medium ${syne} no-underline transition-colors hover:opacity-70`} style={{ color: "var(--muted)" }}>
+              See how it works ↓
             </a>
           </div>
 
