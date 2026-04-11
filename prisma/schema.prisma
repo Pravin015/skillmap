@@ -14,6 +14,11 @@ enum Role {
   ADMIN
 }
 
+enum ExperienceLevel {
+  FRESHER
+  EXPERIENCED
+}
+
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -26,4 +31,72 @@ model User {
   gradYear     String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  profile      StudentProfile?
+}
+
+model StudentProfile {
+  id              String          @id @default(cuid())
+  profileNumber   String          @unique
+  userId          String          @unique
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Basic info
+  collegeName     String?
+  experienceLevel ExperienceLevel @default(FRESHER)
+  fieldOfInterest String?
+  bio             String?
+
+  // Academic
+  academicScore   String?
+  academicType    String?         // "CGPA", "Percentage", "GPA"
+
+  // Job preferences
+  salaryMin       Int?
+  salaryMax       Int?
+  availableToJoin Boolean         @default(true)
+  joinDate        String?         // "Immediately", "15 days", "30 days", "60 days+"
+
+  // Links
+  resumeUrl       String?
+  githubUrl       String?
+  linkedinUrl     String?
+  portfolioUrl    String?
+  otherLinks      String[]
+
+  // Experience (for experienced candidates)
+  experiences     Experience[]
+
+  // Certifications
+  certifications  Certification[]
+
+  // Profile score (computed fields stored)
+  profileScore    Int             @default(0)
+
+  // Skills
+  skills          String[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Experience {
+  id          String         @id @default(cuid())
+  profileId   String
+  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  company     String
+  role        String
+  startDate   String
+  endDate     String?        // null = currently working
+  description String?
+  current     Boolean        @default(false)
+}
+
+model Certification {
+  id          String         @id @default(cuid())
+  profileId   String
+  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  issuer      String
+  issueDate   String?
+  imageUrl    String?        // base64 or URL of certificate
 }
