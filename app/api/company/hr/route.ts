@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { createNotification } from "@/lib/notifications";
 
 // GET all HRs belonging to this org
 export async function GET() {
@@ -74,9 +75,15 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  // Notify HR
+  createNotification({ userId: hr.id, type: "HR_ACCOUNT_CREATED", title: "Your HR account is ready", message: `Your HR account at ${orgUser.organisation} has been created. Log in with the temporary password shared by your admin.`, data: { company: orgUser.organisation || "" } }).catch(() => {});
+
+  // Notify company admin
+  createNotification({ userId: userId!, type: "COMPANY_HR_ADDED", title: `HR added: ${hr.name}`, message: `${hr.name} (${hr.email}) has been added as HR under ${orgUser.organisation}.`, data: { hrName: hr.name, hrEmail: hr.email, company: orgUser.organisation || "" } }).catch(() => {});
+
   return NextResponse.json({
     hr: { id: hr.id, name: hr.name, email: hr.email },
-    tempPassword, // Show once to org admin so they can share with the HR
+    tempPassword,
   }, { status: 201 });
 }
 
@@ -102,7 +109,13 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "HR not found in your organisation" }, { status: 404 });
   }
 
+  const hrName = hrUser.name;
+  const hrEmail = hrUser.email;
   await prisma.user.delete({ where: { id: hrId } });
+
+  // Notify company
+  createNotification({ userId: userId!, type: "COMPANY_HR_REMOVED", title: `HR removed: ${hrName}`, message: `${hrName} (${hrEmail}) has been removed from ${orgUser?.organisation}.`, data: { hrName, hrEmail, company: orgUser?.organisation || "" } }).catch(() => {});
+
   return NextResponse.json({ success: true });
 }
 

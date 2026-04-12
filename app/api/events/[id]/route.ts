@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/notifications";
 
 // GET — single event with registrations
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -51,10 +52,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   // Admin approval/rejection
   if (body.action === "approve" && userRole === "ADMIN") {
-    const updated = await prisma.event.update({
-      where: { id },
-      data: { status: "APPROVED", approvedAt: new Date() },
-    });
+    const updated = await prisma.event.update({ where: { id }, data: { status: "APPROVED", approvedAt: new Date() } });
+    createNotification({ userId: updated.createdById, type: "MENTOR_EVENT_APPROVED", title: `Event approved: ${updated.title}`, message: `Your event "${updated.title}" has been approved and is now live!`, data: { eventTitle: updated.title, eventId: updated.id } }).catch(() => {});
     return NextResponse.json({ event: updated });
   }
 
@@ -63,6 +62,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       where: { id },
       data: { status: "REJECTED", rejectedReason: body.reason || null },
     });
+    createNotification({ userId: updated.createdById, type: "MENTOR_EVENT_REJECTED", title: `Event not approved: ${updated.title}`, message: `Your event "${updated.title}" was not approved.${body.reason ? ` Reason: ${body.reason}` : ""}`, data: { eventTitle: updated.title, reason: body.reason } }).catch(() => {});
     return NextResponse.json({ event: updated });
   }
 

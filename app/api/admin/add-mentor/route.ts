@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { createNotification } from "@/lib/notifications";
 import { generateProfileNumber } from "@/lib/profile-number";
 
 export async function POST(req: NextRequest) {
@@ -42,6 +43,9 @@ export async function POST(req: NextRequest) {
       linkedinUrl: linkedinUrl || null,
     },
   });
+
+  // Notify mentor
+  createNotification({ userId: user.id, type: "MENTOR_ACCOUNT_CREATED", title: "Your mentor account is ready!", message: `Welcome to SkillMap! Your mentor account has been created and verified. Log in with the temporary password shared by the admin.` }).catch(() => {});
 
   return NextResponse.json({ user: { name, email }, mentorNumber, tempPassword }, { status: 201 });
 }

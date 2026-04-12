@@ -99,6 +99,92 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
         `<p>Hi <strong>${d.name}</strong>,</p><p>The <strong>${d.role}</strong> position at <strong>${d.company}</strong> is closing soon. Don't miss out!</p><p>Deadline: <strong>${d.deadline}</strong></p>`,
         "Apply now", `${base}/jobs/${d.jobId}`) };
 
+    // ═══ HR TEMPLATES ═══
+    case "HR_NEW_APPLICATION":
+      return { subject: `New application for ${d.role}`, html: layout("New Application Received 📩",
+        `<p>Hi <strong>${d.name}</strong>,</p><p><strong>${d.candidateName}</strong> has applied for <strong>${d.role}</strong>.</p><p>Skill match: <strong>${d.score}%</strong></p><p>Review their profile and take action.</p>`,
+        "Review application", `${base}/hr-dashboard`) };
+
+    case "HR_HIGH_MATCH_CANDIDATE":
+      return { subject: `High match: ${d.candidateName} (${d.score}%) for ${d.role}`, html: layout("High Match Candidate Alert ⭐",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>A candidate with a <strong>${d.score}% skill match</strong> just applied for <strong>${d.role}</strong>.</p><p>Candidate: <strong>${d.candidateName}</strong></p><p>This is a strong match — we recommend reviewing their profile promptly.</p>`,
+        "View candidate", `${base}/hr-dashboard`) };
+
+    case "HR_JOB_EXPIRING":
+      return { subject: `Your job post "${d.role}" expires soon`, html: layout("Job Post Expiring ⏰",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your job posting for <strong>${d.role}</strong> is expiring on <strong>${d.deadline}</strong>.</p><p>You've received <strong>${d.applications}</strong> applications so far. You can extend the deadline or close the position.</p>`,
+        "Manage job post", `${base}/hr-dashboard`) };
+
+    case "HR_ACCOUNT_CREATED":
+      return { subject: "Your HR account has been created", html: layout("Welcome to SkillMap! 🎉",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your HR account at <strong>${d.company}</strong> has been created by your company admin.</p><p>You can now log in, post jobs, search candidates, and manage applications.</p><p>Your temporary password has been shared with you. Please change it on first login.</p>`,
+        "Login now", `${base}/auth/login?role=HR`) };
+
+    case "HR_PASSWORD_RESET":
+      return { subject: "Your password has been reset", html: layout("Password Reset 🔐",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your SkillMap password has been reset by your company admin. You'll receive the new temporary password from them.</p><p>Please change it after logging in.</p>`,
+        "Login", `${base}/auth/login?role=HR`) };
+
+    // ═══ COMPANY TEMPLATES ═══
+    case "COMPANY_HR_ADDED":
+      return { subject: `New HR added: ${d.hrName}`, html: layout("HR Account Created 👥",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>A new HR account has been created under <strong>${d.company}</strong>:</p><p>Name: <strong>${d.hrName}</strong><br>Email: ${d.hrEmail}</p><p>They can now log in and start managing job posts.</p>`,
+        "View HR team", `${base}/company-dashboard`) };
+
+    case "COMPANY_HR_REMOVED":
+      return { subject: `HR removed: ${d.hrName}`, html: layout("HR Account Removed",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>The HR account for <strong>${d.hrName}</strong> (${d.hrEmail}) has been removed from <strong>${d.company}</strong>.</p><p>Their job posts and data have been deleted.</p>`) };
+
+    case "COMPANY_JOB_POSTED":
+      return { subject: `New job posted: ${d.role}`, html: layout("New Job Posted by HR 💼",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>An HR from your team has posted a new job:</p><p><strong>${d.role}</strong><br>Location: ${d.location} · ${d.workMode}<br>Posted by: ${d.hrName}</p>`,
+        "View job post", `${base}/company-dashboard`) };
+
+    case "COMPANY_VERIFIED":
+      return { subject: "Your company has been verified!", html: layout("Company Verified ✅",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Great news! <strong>${d.company}</strong> has been verified on SkillMap.</p><p>You can now add HR accounts, post jobs, create hackathons, and access pre-assessed candidates.</p>`,
+        "Go to dashboard", `${base}/company-dashboard`) };
+
+    case "COMPANY_NEW_APPLICATION":
+      return { subject: `New application at ${d.company}: ${d.role}`, html: layout("New Application 📩",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>A candidate has applied for <strong>${d.role}</strong> at <strong>${d.company}</strong>.</p><p>Total applications for this role: <strong>${d.totalApps}</strong></p>`,
+        "View applications", `${base}/company-dashboard`) };
+
+    // ═══ MENTOR TEMPLATES ═══
+    case "MENTOR_VERIFIED":
+      return { subject: "You're a verified mentor! ✅", html: layout("Mentor Verified! 🎉",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Congratulations! Your mentor profile on SkillMap has been <strong>verified</strong>.</p><p>You can now:</p><ul><li>Create events (auto-approved)</li><li>Appear in mentor search results</li><li>Start booking mentorship sessions</li></ul><p>Your verified badge is now visible on your profile.</p>`,
+        "View your profile", `${base}/mentor/${d.mentorNumber}`) };
+
+    case "MENTOR_REJECTED":
+      return { subject: "Mentor verification update", html: layout("Verification Update",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Unfortunately, your mentor profile could not be verified at this time.</p>${d.reason ? `<p>Reason: <em>${d.reason}</em></p>` : ""}<p>Please ensure your official email and experience details are accurate, then contact us to re-apply.</p>`,
+        "Contact support", `${base}/forms/contact`) };
+
+    case "MENTOR_SUSPENDED":
+      return { subject: "Mentor account suspended", html: layout("Account Suspended ⚠️",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your mentor account on SkillMap has been suspended. Your profile and events are no longer visible to students.</p><p>If you believe this is an error, please contact our support team.</p>`,
+        "Contact support", `${base}/forms/contact`) };
+
+    case "MENTOR_EVENT_APPROVED":
+      return { subject: `Event approved: ${d.eventTitle}`, html: layout("Event Approved! 🎤",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your event <strong>${d.eventTitle}</strong> has been approved and is now live on SkillMap!</p><p>Students can now register for it. Share the link to get more participants.</p>`,
+        "View your event", `${base}/events/${d.eventId}`) };
+
+    case "MENTOR_EVENT_REJECTED":
+      return { subject: `Event not approved: ${d.eventTitle}`, html: layout("Event Not Approved",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your event <strong>${d.eventTitle}</strong> was not approved.</p>${d.reason ? `<p>Reason: <em>${d.reason}</em></p>` : ""}<p>You can edit and resubmit it or contact support.</p>`) };
+
+    case "MENTOR_EVENT_REGISTRATION":
+      return { subject: `New registration: ${d.eventTitle}`, html: layout("New Event Registration 🎟️",
+        `<p>Hi <strong>${d.name}</strong>,</p><p><strong>${d.participantName}</strong> has registered for your event <strong>${d.eventTitle}</strong>.</p><p>Total registrations: <strong>${d.totalRegistrations}</strong> / ${d.maxParticipants}</p>`,
+        "View registrations", `${base}/events/${d.eventId}`) };
+
+    case "MENTOR_ACCOUNT_CREATED":
+      return { subject: "Your mentor account is ready!", html: layout("Welcome, Mentor! 🧑‍🏫",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your mentor account on SkillMap has been created by the admin team. You're already <strong>verified</strong>!</p><p>Log in with the temporary password shared with you and set a new one.</p>`,
+        "Login now", `${base}/auth/login`) };
+
     default:
       return { subject: d.title as string || "Notification from SkillMap", html: layout(d.title as string || "Notification",
         `<p>${d.message || ""}</p>`) };

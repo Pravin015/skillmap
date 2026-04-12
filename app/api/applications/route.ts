@@ -101,6 +101,8 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  const studentUser = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } });
+
   // Notify student
   createNotification({
     userId: userId!,
@@ -108,6 +110,15 @@ export async function POST(req: NextRequest) {
     title: `Applied for ${job.title}`,
     message: `Your application for ${job.title} at ${job.company} has been submitted. Skill match: ${application.scoreMatch}%.`,
     data: { role: job.title, company: job.company, score: application.scoreMatch.toString() },
+  }).catch(() => {});
+
+  // Notify HR who posted the job
+  createNotification({
+    userId: job.postedById,
+    type: application.scoreMatch >= 90 ? "HR_HIGH_MATCH_CANDIDATE" : "HR_NEW_APPLICATION",
+    title: `New application for ${job.title}`,
+    message: `${studentUser?.name || "A candidate"} applied for ${job.title}. Skill match: ${application.scoreMatch}%.`,
+    data: { role: job.title, candidateName: studentUser?.name || "Candidate", score: application.scoreMatch.toString() },
   }).catch(() => {});
 
   return NextResponse.json({ application }, { status: 201 });

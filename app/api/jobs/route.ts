@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/notifications";
 
 // GET — list jobs (filtered by role)
 export async function GET(req: NextRequest) {
@@ -91,6 +92,17 @@ export async function POST(req: NextRequest) {
       openings: openings ? parseInt(openings) : 1,
     },
   });
+
+  // Notify the company admin if HR posted it
+  if (userRole === "HR") {
+    const hrUser = await prisma.user.findUnique({ where: { id: userId }, select: { organisation: true, name: true } });
+    if (hrUser?.organisation) {
+      const companyAdmin = await prisma.user.findFirst({ where: { role: "ORG", organisation: hrUser.organisation } });
+      if (companyAdmin) {
+        createNotification({ userId: companyAdmin.id, type: "COMPANY_JOB_POSTED", title: `New job posted: ${title}`, message: `${hrUser.name} posted a new job: ${title} in ${location}.`, data: { role: title, location, workMode, hrName: hrUser.name, company: companyName } }).catch(() => {});
+      }
+    }
+  }
 
   return NextResponse.json({ job }, { status: 201 });
 }
