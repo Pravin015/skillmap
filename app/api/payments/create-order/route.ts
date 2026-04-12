@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { razorpay, PLANS } from "@/lib/razorpay";
+import { getRazorpay, PLANS } from "@/lib/razorpay";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   const planDetails = PLANS.CAREER_READY;
 
   try {
-    const order = await razorpay.orders.create({
+    const order = await getRazorpay().orders.create({
       amount: planDetails.amount,
       currency: planDetails.currency,
       receipt: `receipt_${userId}_${Date.now()}`,
