@@ -3,12 +3,12 @@ import Link from "next/link";
 const syne = "font-[family-name:var(--font-syne)]";
 
 const benefits = [
-  { icon: "🎓", title: "Bulk student management", desc: "Add and manage hundreds of students from one dashboard. Track their profiles, applications, and placement status in real-time." },
-  { icon: "📊", title: "Placement analytics", desc: "See placement rates, domain distribution, top hiring companies, and student performance — all in one dashboard." },
-  { icon: "🏢", title: "Direct company connections", desc: "Browse and connect with companies hiring on SkillMap. Build relationships with HR teams for campus drives." },
-  { icon: "🤖", title: "AI-powered prep for students", desc: "Every enrolled student gets access to AI career advisor, skill gap analysis, and personalised roadmaps." },
-  { icon: "💰", title: "Earning opportunities", desc: "Earn revenue when your students get placed through SkillMap. Details of the referral program will be shared during onboarding." },
-  { icon: "🛡️", title: "Verified institution status", desc: "Official email verification ensures trust. Companies see your institution as a verified talent source." },
+  { icon: "🎓", title: "Bulk student management", desc: "Add students with auto-generated passwords. Their profiles are linked to your institution automatically. Search, view profiles, and remove students from one dashboard." },
+  { icon: "📊", title: "Placement tracking", desc: "See your students' profile scores, application counts, and domain interests. Track who's applying where and monitor placement pipeline stages." },
+  { icon: "🏢", title: "Browse all companies", desc: "See every company on SkillMap with their HR count and active job postings. Connect directly with hiring teams for campus partnerships." },
+  { icon: "🤖", title: "AI + mentor access for students", desc: "Every enrolled student gets access to AI career advisor, verified mentor sessions, and domain-specific course recommendations." },
+  { icon: "🧪", title: "Lab assessments", desc: "Students can practice with timed MCQ lab assessments. When they apply for jobs with lab requirements, they're already prepared." },
+  { icon: "🛡️", title: "Verified & secure", desc: "Official email verification. Manual admin approval. Students scoped to your institution only — you never see another institution's data." },
 ];
 
 const steps = [
@@ -46,7 +46,7 @@ export default function ForInstitutionsPage() {
 
       <section id="benefits" className="py-24 px-6 md:px-12" style={{ background: "var(--surface)" }}>
         <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-[0.7rem] font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>Why partner with SkillMap</span>
+          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>Why partner with SkillMap</span>
           <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>Everything your placement cell needs.<br />In one platform.</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {benefits.map((b) => (
@@ -62,7 +62,7 @@ export default function ForInstitutionsPage() {
 
       <section className="py-24 px-6 md:px-12 bg-white">
         <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-[0.7rem] font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>How it works</span>
+          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>How it works</span>
           <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>From onboarding to placements.<br />In 4 steps.</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((s) => (

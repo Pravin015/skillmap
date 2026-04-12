@@ -5,12 +5,12 @@ import Link from "next/link";
 const syne = "font-[family-name:var(--font-syne)]";
 
 const benefits = [
-  { icon: "🎯", title: "Pre-assessed talent pool", desc: "Every candidate on SkillMap has a profile score, skill map, and verified certifications. You see who's ready — not just who applied." },
-  { icon: "⚡", title: "Faster time to hire", desc: "No more sifting through 500 generic resumes. Our AI matches candidates to your exact requirements. See skill-match percentages instantly." },
-  { icon: "🏆", title: "Hackathon-based hiring", desc: "Create custom coding challenges, quizzes, and hackathons. Let candidates prove their skills, not just talk about them. Hire from the leaderboard." },
-  { icon: "📊", title: "Hiring analytics dashboard", desc: "Track your entire hiring funnel — applications, screening, interviews, offers. See which sources bring the best candidates and optimise." },
-  { icon: "👥", title: "Multi-HR team management", desc: "Add unlimited HR team members. Track each HR's activity, job posts, and hiring performance. Reset passwords, manage access — all from one dashboard." },
-  { icon: "🔒", title: "Verified company profiles", desc: "Only official company emails accepted. Every company is manually verified by our team. Candidates trust you because we've vetted you." },
+  { icon: "🤖", title: "AI-powered JD matching", desc: "Paste your job description — our Claude AI instantly finds the top 10 matching candidates from our database with match percentages and reasons. Bulk-invite with one click." },
+  { icon: "🧪", title: "Lab assessments for hiring", desc: "Attach timed MCQ lab tests to your job posts. Candidates complete assessments when applying. Auto-graded scores visible in your dashboard." },
+  { icon: "📊", title: "Real-time hiring pipeline", desc: "Track every application through 7 stages — Applied to Hired. Live stats, CSV exports, application scoring with skill-match percentages." },
+  { icon: "👥", title: "Multi-HR team management", desc: "Add HR accounts with auto-generated passwords. Track each HR's job posts and applications. Reset passwords, remove access — all from your dashboard." },
+  { icon: "🔔", title: "Automated notifications", desc: "HR gets notified instantly when candidates apply. High-match alerts (90%+) for top talent. Company admin notified when HR posts jobs." },
+  { icon: "🔒", title: "Verified & secure", desc: "Official email verification. Role-based access control. Rate-limited APIs. Razorpay-secured payments. HTTPS everywhere." },
 ];
 
 const howItWorks = [
@@ -76,7 +76,7 @@ export default function ForCompaniesPage() {
       {/* Benefits */}
       <section className="py-24 px-6 md:px-12" style={{ background: "var(--surface)" }}>
         <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-[0.7rem] font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>Why SkillMap</span>
+          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>Why SkillMap</span>
           <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
             Hiring shouldn&apos;t feel<br />like finding a needle in a haystack.
           </h2>
@@ -95,7 +95,7 @@ export default function ForCompaniesPage() {
       {/* How it works */}
       <section className="py-24 px-6 md:px-12 bg-white">
         <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-[0.7rem] font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>How it works</span>
+          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>How it works</span>
           <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
             Live in 4 steps.<br />Hiring in days.
           </h2>
@@ -114,7 +114,7 @@ export default function ForCompaniesPage() {
       {/* Pricing */}
       <section className="py-24 px-6 md:px-12" style={{ background: "var(--ink)", color: "white" }}>
         <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-[0.7rem] font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--accent)" }}>Pricing</span>
+          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--accent)" }}>Pricing</span>
           <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
             Plans that scale<br />with your hiring.
           </h2>

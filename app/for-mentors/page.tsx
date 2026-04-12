@@ -5,12 +5,12 @@ import Link from "next/link";
 const syne = "font-[family-name:var(--font-syne)]";
 
 const benefits = [
-  { icon: "💰", title: "Earn on your terms", desc: "Get paid per session at competitive rates. You set your availability — we send you students who match your expertise. Mentor when it suits you." },
-  { icon: "🤝", title: "Or volunteer and give back", desc: "Choose to mentor for free and build your personal brand. Get recognition badges, a verified mentor profile, and featured placement on the platform." },
-  { icon: "📈", title: "Build your personal brand", desc: "Your mentor profile showcases your achievements, expertise, and reviews. Students discover you through our matching engine — you build a reputation." },
-  { icon: "🎯", title: "Impact real careers", desc: "Every session you do changes a student's trajectory. You're not just giving advice — you're helping the next generation crack their dream companies." },
-  { icon: "⭐", title: "Verified mentor status", desc: "We verify every mentor through their official company email. Your verified badge tells students you're the real deal — not a random YouTube coach." },
-  { icon: "📊", title: "Track your impact", desc: "See how many mentees you've helped, your rating, session count, and success stories. Watch your impact grow session by session." },
+  { icon: "💰", title: "Set your own rates", desc: "Configure separate rates for 1-on-1 and group sessions. Students pay via Razorpay before booking — you get paid reliably. Set ₹300–₹2,000+ per session." },
+  { icon: "🤝", title: "Or volunteer for free", desc: "Choose volunteer mode — students book without payment. Build your reputation, get featured on the platform, and earn a verified mentor badge." },
+  { icon: "🎤", title: "Host events & workshops", desc: "Create free or paid events with cover images, agendas, and Zoom links. Manage attendees, remove participants, and track registrations from your dashboard." },
+  { icon: "📝", title: "Write blog posts", desc: "Share your expertise through blog articles. Add cover images, YouTube embeds, and tags. Published after admin approval — builds your authority." },
+  { icon: "⭐", title: "Ratings & verified status", desc: "Students rate sessions 1-5 stars with reviews. Your average rating shows on your profile. Verified badge from official email — builds trust instantly." },
+  { icon: "📊", title: "Full mentor dashboard", desc: "See pending requests, upcoming sessions, completed count. Accept with Zoom link, decline with reason, mark complete. All in one place." },
 ];
 
 const earningBreakdown = [
@@ -72,7 +72,7 @@ export default function ForMentorsPage() {
       {/* Benefits */}
       <section className="py-24 px-6 md:px-12" style={{ background: "var(--surface)" }}>
         <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-[0.7rem] font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>Why mentor on SkillMap</span>
+          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>Why mentor on SkillMap</span>
           <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
             More than just mentoring.<br />A platform built for you.
           </h2>
@@ -91,7 +91,7 @@ export default function ForMentorsPage() {
       {/* Earning breakdown */}
       <section id="earning" className="py-24 px-6 md:px-12 bg-white">
         <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-[0.7rem] font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>Earning potential</span>
+          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>Earning potential</span>
           <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-4`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
             Your knowledge has value.<br />We make sure you&apos;re compensated.
           </h2>
@@ -133,7 +133,7 @@ export default function ForMentorsPage() {
       {/* How it works */}
       <section className="py-24 px-6 md:px-12" style={{ background: "var(--surface)" }}>
         <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-[0.7rem] font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>How it works</span>
+          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>How it works</span>
           <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
             Start mentoring<br />in 4 simple steps.
           </h2>
@@ -152,7 +152,7 @@ export default function ForMentorsPage() {
       {/* Testimonials */}
       <section className="py-24 px-6 md:px-12 bg-white">
         <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-[0.7rem] font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>From our mentors</span>
+          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>From our mentors</span>
           <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
             They mentor. They earn.<br />They make a difference.
           </h2>
