@@ -26,7 +26,7 @@ export async function GET(
     mentor: {
       ...profile,
       userId: undefined,
-      user: { name: profile.user.name },
+      user: { name: profile.user.name, profileImage: profile.user.profileImage },
     },
   });
 }

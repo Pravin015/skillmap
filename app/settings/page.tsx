@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
+import PhotoCropper from "@/components/PhotoCropper";
 
 const syne = "font-[family-name:var(--font-syne)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--ink)]";
@@ -19,6 +20,7 @@ export default function SettingsPage() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [pwdMessage, setPwdMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [saving, setSaving] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -54,20 +56,24 @@ export default function SettingsPage() {
     finally { setSaving(false); }
   }
 
-  async function handlePhotoUpload(file: File) {
-    if (file.size > 500 * 1024) { alert("Image must be under 500KB"); return; }
+  function handleFileSelect(file: File) {
+    if (file.size > 5 * 1024 * 1024) { alert("Image must be under 5MB"); return; }
     const reader = new FileReader();
-    reader.onload = async () => {
-      const base64 = reader.result as string;
-      await fetch("/api/profile/image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image: base64 }) });
-      setProfileImage(base64);
-    };
+    reader.onload = () => setCropSrc(reader.result as string);
     reader.readAsDataURL(file);
+  }
+
+  async function handleCroppedPhoto(base64: string) {
+    setCropSrc(null);
+    await fetch("/api/profile/image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image: base64 }) });
+    setProfileImage(base64);
   }
 
   if (loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
 
   return (
+    <>
+    {cropSrc && <PhotoCropper imageSrc={cropSrc} onCropped={handleCroppedPhoto} onCancel={() => setCropSrc(null)} />}
     <div className="min-h-[calc(100vh-4rem)] py-8 px-4 md:px-8" style={{ background: "var(--surface)" }}>
       <div className="max-w-2xl mx-auto space-y-6">
         <div><h1 className={`${syne} font-extrabold text-2xl`}>Account Settings</h1><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Manage your profile, contact info, and password</p></div>
@@ -89,7 +95,7 @@ export default function SettingsPage() {
               </button>
               <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Max 500KB · JPG, PNG</p>
             </div>
-            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
+            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }} />
           </div>
         </div>
 
@@ -127,5 +133,6 @@ export default function SettingsPage() {
         </form>
       </div>
     </div>
+    </>
   );
 }

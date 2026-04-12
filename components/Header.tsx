@@ -115,22 +115,9 @@ export default function Header() {
                     </div>
                     <Link href="/profile/edit" className={`block px-4 py-2 text-sm no-underline transition-colors hover:bg-gray-50`} style={{ color: "var(--ink)" }} onClick={() => setShowMenu(false)}>My Profile</Link>
                     <Link href="/settings" className={`block px-4 py-2 text-sm no-underline transition-colors hover:bg-gray-50`} style={{ color: "var(--ink)" }} onClick={() => setShowMenu(false)}>Account Settings</Link>
-                    <label className="block px-4 py-2 text-sm cursor-pointer transition-colors hover:bg-gray-50" style={{ color: "var(--ink)" }}>
+                    <Link href="/settings" className="block px-4 py-2 text-sm no-underline transition-colors hover:bg-gray-50" style={{ color: "var(--ink)" }} onClick={() => setShowMenu(false)}>
                       Upload Photo
-                      <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        if (file.size > 500 * 1024) { alert("Image must be under 500KB"); return; }
-                        const reader = new FileReader();
-                        reader.onload = async () => {
-                          const base64 = reader.result as string;
-                          await fetch("/api/profile/image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image: base64 }) });
-                          setProfileImg(base64);
-                          setShowMenu(false);
-                        };
-                        reader.readAsDataURL(file);
-                      }} />
-                    </label>
+                    </Link>
                     {roleLinks.map((l) => (
                       <Link key={l.href} href={l.href} className="block px-4 py-2 text-sm no-underline sm:hidden transition-colors hover:bg-gray-50" style={{ color: "var(--ink)" }} onClick={() => setShowMenu(false)}>{l.label}</Link>
                     ))}
