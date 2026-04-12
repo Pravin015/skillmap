@@ -2,26 +2,22 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
+const syne = "font-[family-name:var(--font-syne)]";
+const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--ink)]";
+
 const roles = [
-  { key: "STUDENT", label: "Student / Aspirant", color: "from-indigo-500 to-purple-600" },
-  { key: "ORG", label: "Organisation", color: "from-emerald-500 to-teal-600" },
+  { key: "STUDENT", label: "Student / Aspirant" },
+  { key: "ORG", label: "Organisation" },
 ];
 
-const degrees = [
-  "B.Tech/BE", "BCA", "B.Sc", "BBA", "B.Com", "BA", "MBA", "MCA", "Other",
-];
+const degrees = ["B.Tech/BE", "BCA", "B.Sc", "BBA", "B.Com", "BA", "MBA", "MCA", "Other"];
 
 export default function SignupPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-[60vh] items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
-        </div>
-      }
-    >
+    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>}>
       <SignupInner />
     </Suspense>
   );
@@ -32,18 +28,30 @@ function SignupInner() {
   const searchParams = useSearchParams();
   const initialRole = searchParams.get("role") || "STUDENT";
 
-  const [activeRole, setActiveRole] = useState(initialRole);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [organisation, setOrganisation] = useState("");
-  const [phone, setPhone] = useState("");
-  const [degree, setDegree] = useState("");
-  const [gradYear, setGradYear] = useState("");
+  const [step, setStep] = useState(1); // 1 = signup, 2 = profile creation
+  const [activeRole, setActiveRole] = useState(initialRole === "ORG" ? "ORG" : "STUDENT");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  // Step 1 fields
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [organisation, setOrganisation] = useState("");
+
+  // Step 2 fields (student profile)
+  const [collegeName, setCollegeName] = useState("");
+  const [degree, setDegree] = useState("");
+  const [gradYear, setGradYear] = useState("");
+  const [fieldOfInterest, setFieldOfInterest] = useState("");
+  const [experienceLevel, setExperienceLevel] = useState("FRESHER");
+  const [skills, setSkills] = useState("");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [githubUrl, setGithubUrl] = useState("");
+  const [bio, setBio] = useState("");
+
+  async function handleStep1(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -57,285 +65,199 @@ function SignupInner() {
           email,
           password,
           role: activeRole,
-          organisation: activeRole !== "STUDENT" ? organisation : undefined,
-          phone: phone || undefined,
-          degree: activeRole === "STUDENT" ? degree : undefined,
-          gradYear: activeRole === "STUDENT" ? gradYear : undefined,
+          organisation: activeRole === "ORG" ? organisation : undefined,
+          phone,
         }),
       });
 
       const data = await res.json();
+      if (!res.ok) { setError(data.error || "Something went wrong"); setLoading(false); return; }
 
-      if (!res.ok) {
-        setError(data.error || "Something went wrong");
-        return;
+      // Auto-login
+      const loginRes = await signIn("credentials", { redirect: false, email, password, role: activeRole });
+      if (loginRes?.error) { setError("Account created but login failed. Please login manually."); setLoading(false); return; }
+
+      if (activeRole === "STUDENT") {
+        setStep(2); // Go to profile creation
+        setLoading(false);
+      } else {
+        window.location.href = "/company-dashboard";
       }
-
-      router.push(`/auth/login?role=${activeRole}`);
     } catch {
       setError("Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
     }
   }
 
-  const activeRoleData = roles.find((r) => r.key === activeRole) || roles[0];
+  async function handleStep2(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          collegeName,
+          experienceLevel,
+          fieldOfInterest,
+          bio,
+          skills: skills.split(",").map((s) => s.trim()).filter(Boolean),
+          githubUrl: githubUrl || undefined,
+          linkedinUrl: linkedinUrl || undefined,
+          academicScore: undefined,
+          academicType: undefined,
+        }),
+      });
+
+      if (!res.ok) { setError("Failed to save profile"); setLoading(false); return; }
+
+      // Also update user degree/gradYear
+      // Profile saved — redirect to dashboard
+      window.location.href = "/dashboard";
+    } catch {
+      setError("Something went wrong.");
+      setLoading(false);
+    }
+  }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-md">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12" style={{ background: "var(--surface)" }}>
+      <div className="w-full max-w-lg">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Join SkillMap and start your journey
+          <h1 className={`${syne} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>
+            {step === 1 ? "Create your account" : "Complete your profile"}
+          </h1>
+          <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>
+            {step === 1 ? "Join SkillMap and start your journey" : "Help us match you with the right opportunities"}
           </p>
-        </div>
-
-        {/* Role tabs */}
-        <div className="mb-6 flex rounded-xl border border-gray-200 bg-white p-1">
-          {roles.map((role) => (
-            <button
-              key={role.key}
-              onClick={() => {
-                setActiveRole(role.key);
-                setError("");
-              }}
-              className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-semibold transition-all sm:text-sm ${
-                activeRole === role.key
-                  ? `bg-gradient-to-r ${role.color} text-white shadow-sm`
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {role.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Form */}
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
-        >
-          <div
-            className={`-mx-6 -mt-6 mb-6 h-1 rounded-t-2xl bg-gradient-to-r ${activeRoleData.color}`}
-          />
-
-          {error && (
-            <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
+          {step === 2 && (
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <div className="w-8 h-1 rounded-full" style={{ background: "var(--accent)" }} />
+              <div className="w-8 h-1 rounded-full" style={{ background: "var(--accent)" }} />
+              <span className="text-xs ml-2" style={{ color: "var(--muted)" }}>Step 2 of 2</span>
             </div>
           )}
+        </div>
 
-          <div className="space-y-4">
-            {/* Student fields */}
-            {activeRole === "STUDENT" && (
-              <>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Full name
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your full name"
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Min. 6 characters"
-                    required
-                    minLength={6}
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                      Degree
-                    </label>
-                    <select
-                      value={degree}
-                      onChange={(e) => setDegree(e.target.value)}
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                    >
-                      <option value="">Select</option>
-                      {degrees.map((d) => (
-                        <option key={d} value={d}>{d}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                      Graduation year
-                    </label>
-                    <select
-                      value={gradYear}
-                      onChange={(e) => setGradYear(e.target.value)}
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                    >
-                      <option value="">Select</option>
-                      <option value="2024">2024</option>
-                      <option value="2025">2025</option>
-                      <option value="2026">2026</option>
-                    </select>
-                  </div>
-                </div>
-              </>
-            )}
+        {step === 1 && (
+          <>
+            {/* Role tabs */}
+            <div className="mb-6 flex rounded-xl border p-1" style={{ borderColor: "var(--border)", background: "white" }}>
+              {roles.map((role) => (
+                <button key={role.key} onClick={() => { setActiveRole(role.key); setError(""); }}
+                  className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-bold transition-all sm:text-sm ${syne}`}
+                  style={{ background: activeRole === role.key ? "var(--ink)" : "transparent", color: activeRole === role.key ? "var(--accent)" : "var(--muted)" }}>
+                  {role.label}
+                </button>
+              ))}
+            </div>
 
-            {/* HR signup disabled — notice */}
-            {activeRole === "HR" && (
-              <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(239,68,68,0.05)", borderColor: "rgba(239,68,68,0.2)" }}>
-                <strong>HR accounts cannot be created here.</strong>
-                <p className="mt-1" style={{ color: "var(--muted)" }}>HR accounts are managed by organisations. Ask your company admin to create your account from the Company Dashboard.</p>
+            {/* HR notice */}
+            {initialRole === "HR" && (
+              <div className="rounded-xl p-4 text-sm border mb-6" style={{ background: "rgba(239,68,68,0.05)", borderColor: "rgba(239,68,68,0.2)" }}>
+                <strong className={syne}>HR accounts are managed by organisations.</strong>
+                <p className="mt-1" style={{ color: "var(--muted)" }}>Ask your company admin to create your account from the Company Dashboard.</p>
               </div>
             )}
 
-            {/* HR fields — HIDDEN, kept for backwards compat */}
-            {false && (
-              <>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Min. 6 characters"
-                    required
-                    minLength={6}
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Organisation
-                  </label>
-                  <input
-                    type="text"
-                    value={organisation}
-                    onChange={(e) => setOrganisation(e.target.value)}
-                    placeholder="Company name"
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 9876543210"
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-              </>
-            )}
+            <form onSubmit={handleStep1} className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+              <div className="h-1 -mx-6 -mt-6 mb-6 rounded-t-2xl" style={{ background: "var(--ink)" }} />
 
-            {/* Organisation fields */}
-            {activeRole === "ORG" && (
-              <>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Organisation name
-                  </label>
-                  <input
-                    type="text"
-                    value={organisation}
-                    onChange={(e) => setOrganisation(e.target.value)}
-                    placeholder="Company / Institute name"
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Admin email
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@company.com"
-                    required
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Min. 6 characters"
-                    required
-                    minLength={6}
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 9876543210"
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-              </>
-            )}
-          </div>
+              {error && <div className="rounded-xl p-3 text-sm mb-4" style={{ background: "rgba(239,68,68,0.05)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.2)" }}>{error}</div>}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className={`mt-6 w-full rounded-xl bg-gradient-to-r ${activeRoleData.color} px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50`}
-          >
-            {loading ? "Creating account..." : "Create account"}
-          </button>
+              <div className="space-y-4">
+                {activeRole === "STUDENT" && (
+                  <>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Full name *</label>
+                      <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Your full name" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Email *</label>
+                      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@example.com" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Phone *</label>
+                      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="+91 9876543210" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Password *</label>
+                      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} placeholder="Min. 6 characters" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  </>
+                )}
+                {activeRole === "ORG" && (
+                  <>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Organisation name *</label>
+                      <input type="text" value={organisation} onChange={(e) => setOrganisation(e.target.value)} required placeholder="Company / Institute name" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Admin email *</label>
+                      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="admin@company.com" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Phone *</label>
+                      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="+91 9876543210" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Password *</label>
+                      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} placeholder="Min. 6 characters" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  </>
+                )}
+              </div>
 
-          <p className="mt-4 text-center text-sm text-gray-500">
-            Already have an account?{" "}
-            <Link
-              href={`/auth/login?role=${activeRole}`}
-              className="font-medium text-indigo-600 hover:text-indigo-700"
-            >
-              Sign in
-            </Link>
-          </p>
-        </form>
+              <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                {loading ? "Creating account..." : activeRole === "STUDENT" ? "Continue →" : "Create account"}
+              </button>
+
+              <p className="mt-4 text-center text-sm" style={{ color: "var(--muted)" }}>
+                Already have an account?{" "}
+                <Link href={`/auth/login?role=${activeRole}`} className={`font-bold no-underline ${syne}`} style={{ color: "var(--ink)" }}>Sign in</Link>
+              </p>
+            </form>
+          </>
+        )}
+
+        {step === 2 && activeRole === "STUDENT" && (
+          <form onSubmit={handleStep2} className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+            <div className="h-1 -mx-6 -mt-6 mb-6 rounded-t-2xl" style={{ background: "var(--accent)" }} />
+
+            {error && <div className="rounded-xl p-3 text-sm mb-4" style={{ background: "rgba(239,68,68,0.05)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.2)" }}>{error}</div>}
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>College / University *</label>
+                  <input type="text" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} required placeholder="e.g. IIT Bombay" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Degree *</label>
+                  <select value={degree} onChange={(e) => setDegree(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }}>
+                    <option value="">Select</option>{degrees.map((d) => <option key={d} value={d}>{d}</option>)}
+                  </select></div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Graduation Year *</label>
+                  <select value={gradYear} onChange={(e) => setGradYear(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }}>
+                    <option value="">Select</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option>
+                  </select></div>
+                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Experience Level *</label>
+                  <select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}>
+                    <option value="FRESHER">Fresher</option><option value="EXPERIENCED">Experienced</option>
+                  </select></div>
+              </div>
+              <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Field of Interest *</label>
+                <select value={fieldOfInterest} onChange={(e) => setFieldOfInterest(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }}>
+                  <option value="">Select your domain</option>
+                  <option>Software Development</option><option>Cybersecurity</option><option>Cloud & DevOps</option><option>Data & Analytics</option><option>Consulting & Finance</option><option>Product Management</option><option>Other</option>
+                </select></div>
+              <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Skills *</label>
+                <input type="text" value={skills} onChange={(e) => setSkills(e.target.value)} required placeholder="Python, SQL, AWS (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+              <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Short Bio</label>
+                <textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell recruiters about yourself in 2-3 sentences..." rows={2} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>LinkedIn</label>
+                  <input type="url" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} placeholder="linkedin.com/in/..." className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>GitHub</label>
+                  <input type="url" value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} placeholder="github.com/..." className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+              </div>
+            </div>
+
+            <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+              {loading ? "Saving..." : "Complete & Go to Dashboard →"}
+            </button>
+
+            <button type="button" onClick={() => { window.location.href = "/dashboard"; }} className={`mt-2 w-full py-2.5 rounded-xl text-sm ${syne} font-medium`} style={{ color: "var(--muted)" }}>
+              Skip for now
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

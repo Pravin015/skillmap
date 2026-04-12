@@ -2,31 +2,27 @@
 
 import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
+const syne = "font-[family-name:var(--font-syne)]";
+const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--ink)]";
+
 const roles = [
-  { key: "STUDENT", label: "Student / Aspirant", color: "from-indigo-500 to-purple-600" },
-  { key: "HR", label: "HR / Recruiter", color: "from-cyan-500 to-blue-600" },
-  { key: "ORG", label: "Organisation", color: "from-emerald-500 to-teal-600" },
+  { key: "STUDENT", label: "Student" },
+  { key: "HR", label: "HR" },
+  { key: "ORG", label: "Organisation" },
 ];
 
 export default function LoginPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-[60vh] items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
-        </div>
-      }
-    >
+    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>}>
       <LoginInner />
     </Suspense>
   );
 }
 
 function LoginInner() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const initialRole = searchParams.get("role") || "STUDENT";
 
@@ -53,7 +49,6 @@ function LoginInner() {
         setError(res.error);
         setLoading(false);
       } else {
-        // Use window.location for instant redirect instead of router.push
         const redirectMap: Record<string, string> = {
           ADMIN: "/admin",
           HR: "/hr-dashboard",
@@ -68,33 +63,26 @@ function LoginInner() {
     }
   }
 
-  const activeRoleData = roles.find((r) => r.key === activeRole) || roles[0];
-
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gray-50 px-4 py-12">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12" style={{ background: "var(--surface)" }}>
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to your SkillMap account
-          </p>
+          <h1 className={`${syne} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>Welcome back</h1>
+          <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>Sign in to your SkillMap account</p>
         </div>
 
         {/* Role tabs */}
-        <div className="mb-6 flex rounded-xl border border-gray-200 bg-white p-1">
+        <div className="mb-6 flex rounded-xl border p-1" style={{ borderColor: "var(--border)", background: "white" }}>
           {roles.map((role) => (
             <button
               key={role.key}
-              onClick={() => {
-                setActiveRole(role.key);
-                setError("");
+              onClick={() => { setActiveRole(role.key); setError(""); }}
+              className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-bold transition-all sm:text-sm ${syne}`}
+              style={{
+                background: activeRole === role.key ? "var(--ink)" : "transparent",
+                color: activeRole === role.key ? "var(--accent)" : "var(--muted)",
               }}
-              className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-semibold transition-all sm:text-sm ${
-                activeRole === role.key
-                  ? `bg-gradient-to-r ${role.color} text-white shadow-sm`
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
             >
               {role.label}
             </button>
@@ -102,47 +90,38 @@ function LoginInner() {
         </div>
 
         {/* Form */}
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
-        >
-          {/* Gradient top */}
-          <div
-            className={`-mx-6 -mt-6 mb-6 h-1 rounded-t-2xl bg-gradient-to-r ${activeRoleData.color}`}
-          />
+        <form onSubmit={handleSubmit} className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+          <div className="h-1 -mx-6 -mt-6 mb-6 rounded-t-2xl" style={{ background: "var(--ink)" }} />
 
           {error && (
-            <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="rounded-xl p-3 text-sm mb-4" style={{ background: "rgba(239,68,68,0.05)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.2)" }}>
               {error}
             </div>
           )}
 
           <div className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                Email
-              </label>
+              <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className={inputClass}
+                style={{ borderColor: "var(--border)" }}
               />
             </div>
-
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                Password
-              </label>
+              <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className={inputClass}
+                style={{ borderColor: "var(--border)" }}
               />
             </div>
           </div>
@@ -150,17 +129,15 @@ function LoginInner() {
           <button
             type="submit"
             disabled={loading}
-            className={`mt-6 w-full rounded-xl bg-gradient-to-r ${activeRoleData.color} px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50`}
+            className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`}
+            style={{ background: "var(--ink)", color: "var(--accent)" }}
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
 
-          <p className="mt-4 text-center text-sm text-gray-500">
+          <p className="mt-4 text-center text-sm" style={{ color: "var(--muted)" }}>
             Don&apos;t have an account?{" "}
-            <Link
-              href={`/auth/signup?role=${activeRole}`}
-              className="font-medium text-indigo-600 hover:text-indigo-700"
-            >
+            <Link href={`/auth/signup?role=${activeRole}`} className={`font-bold no-underline ${syne}`} style={{ color: "var(--ink)" }}>
               Sign up
             </Link>
           </p>
