@@ -5,31 +5,68 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import AdminOverview from "@/components/admin-dashboard/AdminOverview";
 import UserManagement from "@/components/admin-dashboard/UserManagement";
+import AddUserTab from "@/components/admin-dashboard/AddUserTab";
 import CompaniesTab from "@/components/admin-dashboard/CompaniesTab";
 import MentorsTab from "@/components/admin-dashboard/MentorsTab";
 import StudentsTab from "@/components/admin-dashboard/StudentsTab";
 import HRsTab from "@/components/admin-dashboard/HRsTab";
+import InstitutionsTab from "@/components/admin-dashboard/InstitutionsTab";
 import JobPostsTab from "@/components/admin-dashboard/JobPostsTab";
+import EventsTab from "@/components/admin-dashboard/EventsTab";
 import FormsTab from "@/components/admin-dashboard/FormsTab";
 import PlatformSettings from "@/components/admin-dashboard/PlatformSettings";
-import InstitutionsTab from "@/components/admin-dashboard/InstitutionsTab";
-import EventsTab from "@/components/admin-dashboard/EventsTab";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
-const sidebarItems = [
-  { id: "overview", label: "Overview", icon: "📊" },
-  { id: "users", label: "Users", icon: "👤" },
-  { id: "companies", label: "Companies", icon: "🏢" },
-  { id: "hrs", label: "HRs", icon: "👥" },
-  { id: "mentors", label: "Mentors", icon: "🧑‍🏫" },
-  { id: "students", label: "Students", icon: "🎓" },
-  { id: "institutions", label: "Institutions", icon: "🏫" },
-  { id: "jobs", label: "Job Posts", icon: "💼" },
-  { id: "events", label: "Events", icon: "🎤" },
-  { id: "forms", label: "Forms", icon: "📋" },
-  { id: "settings", label: "Settings", icon: "⚙️" },
+interface SidebarCategory {
+  label: string;
+  items: { id: string; label: string; icon: string }[];
+}
+
+const sidebarCategories: SidebarCategory[] = [
+  {
+    label: "Dashboard",
+    items: [{ id: "overview", label: "Overview", icon: "📊" }],
+  },
+  {
+    label: "User Management",
+    items: [
+      { id: "users", label: "All Users", icon: "👤" },
+      { id: "add-user", label: "Add User", icon: "➕" },
+      { id: "students", label: "Students", icon: "🎓" },
+      { id: "hrs", label: "HR Accounts", icon: "👥" },
+      { id: "mentors", label: "Mentors", icon: "🧑‍🏫" },
+    ],
+  },
+  {
+    label: "Organisations",
+    items: [
+      { id: "companies", label: "Companies", icon: "🏢" },
+      { id: "institutions", label: "Institutions", icon: "🏫" },
+    ],
+  },
+  {
+    label: "Content & Listings",
+    items: [
+      { id: "jobs", label: "Job Posts", icon: "💼" },
+      { id: "events", label: "Events", icon: "🎤" },
+    ],
+  },
+  {
+    label: "Approvals & Requests",
+    items: [
+      { id: "forms", label: "Form Submissions", icon: "📋" },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      { id: "settings", label: "Platform Settings", icon: "⚙️" },
+    ],
+  },
 ];
+
+const allItems = sidebarCategories.flatMap((c) => c.items);
 
 interface User { id: string; name: string; email: string; role: string; organisation: string | null; createdAt: string }
 interface Stats { total: number; students: number; hr: number; org: number; admin: number }
@@ -68,6 +105,7 @@ export default function AdminPage() {
     switch (activeTab) {
       case "overview": return <AdminOverview stats={stats} onNavigate={setActiveTab} />;
       case "users": return <UserManagement users={users} onRefresh={fetchUsers} />;
+      case "add-user": return <AddUserTab onRefresh={fetchUsers} />;
       case "companies": return <CompaniesTab />;
       case "hrs": return <HRsTab users={users} />;
       case "mentors": return <MentorsTab />;
@@ -83,42 +121,55 @@ export default function AdminPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
-      {/* Sidebar */}
-      <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] py-6 px-3" style={{ borderColor: "var(--border)", background: "white" }}>
-        <div className="mb-6 px-3">
-          <div className={`${syne} font-bold text-sm`} style={{ color: "#ef4444" }}>Admin Panel</div>
-          <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>SkillMap Platform</div>
+      {/* Sidebar — categorized */}
+      <aside className="hidden lg:flex w-60 shrink-0 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] py-4 px-3 overflow-y-auto" style={{ borderColor: "var(--border)", background: "white" }}>
+        <div className="mb-4 px-3">
+          <div className={`${syne} font-bold text-sm flex items-center gap-2`} style={{ color: "#ef4444" }}>
+            <span className="w-6 h-6 rounded-lg flex items-center justify-center text-[0.6rem] font-bold text-white" style={{ background: "#ef4444" }}>A</span>
+            Admin Panel
+          </div>
         </div>
-        <nav className="flex flex-col gap-0.5 flex-1">
-          {sidebarItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition-colors"
-              style={{
-                background: activeTab === item.id ? "var(--ink)" : "transparent",
-                color: activeTab === item.id ? "var(--accent)" : "var(--muted)",
-                fontWeight: activeTab === item.id ? 700 : 400,
-              }}
-            >
-              <span className="text-base">{item.icon}</span>
-              <span className={syne}>{item.label}</span>
-            </button>
+
+        <nav className="flex flex-col flex-1">
+          {sidebarCategories.map((category) => (
+            <div key={category.label} className="mb-3">
+              <div className={`px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] ${syne}`} style={{ color: "var(--border)" }}>
+                {category.label}
+              </div>
+              <div className="flex flex-col gap-0.5 mt-0.5">
+                {category.items.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-[0.8rem] transition-colors"
+                    style={{
+                      background: activeTab === item.id ? "var(--ink)" : "transparent",
+                      color: activeTab === item.id ? "var(--accent)" : "var(--muted)",
+                      fontWeight: activeTab === item.id ? 700 : 400,
+                    }}
+                  >
+                    <span className="text-sm">{item.icon}</span>
+                    <span className={syne}>{item.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
-        <div className="px-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+
+        <div className="px-3 pt-3 border-t" style={{ borderColor: "var(--border)" }}>
           <div className={`${syne} font-bold text-xs truncate`}>{session?.user?.name}</div>
-          <div className="text-[0.65rem]" style={{ color: "#ef4444" }}>Super Admin</div>
+          <div className="text-[0.6rem]" style={{ color: "#ef4444" }}>Super Admin</div>
         </div>
       </aside>
 
-      {/* Mobile tabs */}
+      {/* Mobile — scrollable tabs */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 overflow-x-auto border-t flex gap-0.5 px-2 py-2" style={{ background: "white", borderColor: "var(--border)" }}>
-        {sidebarItems.map((item) => (
+        {allItems.map((item) => (
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`shrink-0 flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-lg text-[0.55rem] transition-colors ${syne}`}
+            className={`shrink-0 flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-lg text-[0.5rem] transition-colors ${syne}`}
             style={{
               background: activeTab === item.id ? "var(--ink)" : "transparent",
               color: activeTab === item.id ? "var(--accent)" : "var(--muted)",
