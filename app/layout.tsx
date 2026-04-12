@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Syne, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
+import Script from "next/script";
 
 const syne = Syne({
   variable: "--font-syne",
@@ -20,7 +21,32 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "SkillMap — Know what it takes to get hired",
   description:
-    "Tell us your dream companies. We show you open roles, skill gaps, and a personalised AI prep plan.",
+    "India's first job-readiness engine. Tell us your dream companies. We show you open roles, skill gaps, and a personalised AI prep plan.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "SkillMap",
+  },
+  icons: {
+    icon: "/icons/icon.svg",
+    apple: "/icons/icon.svg",
+  },
+  openGraph: {
+    title: "SkillMap — Know what it takes to get hired",
+    description: "India's first job-readiness engine for fresh graduates.",
+    url: "https://ashpranix.in",
+    siteName: "SkillMap",
+    type: "website",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0f",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -30,12 +56,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${syne.variable} ${dmSans.variable} h-full antialiased`}>
+      <head>
+        <link rel="apple-touch-icon" href="/icons/icon.svg" />
+        <meta name="mobile-web-app-capable" content="yes" />
+      </head>
       <body className="flex min-h-full flex-col font-[family-name:var(--font-dm-sans)] text-[var(--ink)]" style={{ background: "var(--surface)" }}>
         <Providers>
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
         </Providers>
+        <Script id="sw-register" strategy="afterInteractive">{`
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+          }
+        `}</Script>
       </body>
     </html>
   );
