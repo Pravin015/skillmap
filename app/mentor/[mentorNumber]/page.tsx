@@ -37,6 +37,13 @@ export default function MentorProfilePage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [showSchedule, setShowSchedule] = useState(false);
+
+  // Load Razorpay script eagerly
+  useEffect(() => {
+    if (!document.getElementById("rzp-mentor")) {
+      const s = document.createElement("script"); s.id = "rzp-mentor"; s.src = "https://checkout.razorpay.com/v1/checkout.js"; document.body.appendChild(s);
+    }
+  }, []);
   const [sessionType, setSessionType] = useState("ONE_ON_ONE");
   const [prefDate, setPrefDate] = useState("");
   const [sessionMsg, setSessionMsg] = useState("");
@@ -162,9 +169,9 @@ export default function MentorProfilePage() {
           <div className="p-6">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
-                <h3 className={`${syne} font-bold text-base text-white`}>Book a 1-on-1 Mentorship Call</h3>
+                <h3 className={`${syne} font-bold text-base text-white`}>Book a Mentorship Session</h3>
                 <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>
-                  {m.availability ? `Available ${m.availability}` : "Check availability"} · {m.compensation === "VOLUNTEER" ? "Free session" : m.sessionRate ? `₹${m.sessionRate} per session` : "Paid"}
+                  {m.availability ? `Available ${m.availability}` : "Check availability"} · {m.compensation === "VOLUNTEER" ? "Free session" : m.sessionRate ? `1-on-1: ₹${m.sessionRate}${m.groupSessionRate ? ` · Group: ₹${m.groupSessionRate}` : ""}` : "Pricing not set"}
                 </p>
               </div>
               <button
@@ -227,7 +234,7 @@ export default function MentorProfilePage() {
                     }
                   } catch { setBookingStatus({ type: "error", text: "Failed to book" }); }
                   finally { setBooking(false); }
-                }} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--accent)", color: "var(--ink)" }}>{booking ? "Processing..." : m.compensation === "PAID" ? `Pay & Request (₹${sessionType === "GROUP" ? (m.groupSessionRate || m.sessionRate || 0) : (m.sessionRate || 0)})` : "Request Session"}</button>
+                }} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--accent)", color: "var(--ink)" }}>{booking ? "Processing..." : (() => { const rate = sessionType === "GROUP" ? (m.groupSessionRate || m.sessionRate || 0) : (m.sessionRate || 0); return m.compensation === "PAID" && rate > 0 ? `Pay ₹${rate} & Request` : "Request Session (Free)"; })()}</button>
               </div>
             )}
           </div>

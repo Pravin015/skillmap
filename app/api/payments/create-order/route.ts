@@ -13,22 +13,33 @@ export async function POST(req: NextRequest) {
   const userId = (session.user as { id?: string })?.id;
   if (!userId) return NextResponse.json({ error: "No user ID" }, { status: 400 });
 
-  const { plan } = await req.json();
+  const { plan, customAmount, customDesc } = await req.json();
 
-  if (plan !== "CAREER_READY") {
-    return NextResponse.json({ error: "Invalid plan. Contact us for Institution pricing." }, { status: 400 });
+  let amount: number;
+  let currency = "INR";
+  let description: string;
+
+  if (customAmount && customAmount > 0) {
+    // Custom amount for events, sessions, etc.
+    amount = customAmount;
+    description = customDesc || "SkillMap Payment";
+  } else if (plan === "CAREER_READY") {
+    const planDetails = PLANS.CAREER_READY;
+    amount = planDetails.amount;
+    currency = planDetails.currency;
+    description = planDetails.description;
+  } else {
+    return NextResponse.json({ error: "Invalid payment request" }, { status: 400 });
   }
-
-  const planDetails = PLANS.CAREER_READY;
 
   try {
     const order = await getRazorpay().orders.create({
-      amount: planDetails.amount,
-      currency: planDetails.currency,
+      amount,
+      currency,
       receipt: `receipt_${userId}_${Date.now()}`,
       notes: {
         userId,
-        plan,
+        plan: plan || "CUSTOM",
         email: session.user.email || "",
       },
     });
@@ -38,11 +49,11 @@ export async function POST(req: NextRequest) {
       data: {
         userId,
         razorpayOrderId: order.id,
-        amount: planDetails.amount,
-        currency: planDetails.currency,
+        amount,
+        currency,
         status: "CREATED",
-        plan: "CAREER_READY",
-        description: planDetails.description,
+        plan: plan === "CAREER_READY" ? "CAREER_READY" : "FREE",
+        description,
         receipt: order.receipt as string || null,
       },
     });

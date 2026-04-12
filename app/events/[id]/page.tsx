@@ -49,7 +49,14 @@ export default function EventDetailPage() {
       if (data.requiresPayment) {
         // Trigger Razorpay payment
         try {
-          const orderRes = await fetch("/api/payments/create-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: "CAREER_READY", customAmount: data.amount, customDesc: `Event: ${data.eventTitle}` }) });
+          // Ensure Razorpay script is loaded
+          if (typeof window !== "undefined" && !window.Razorpay) {
+            await new Promise<void>((resolve) => {
+              const check = setInterval(() => { if (window.Razorpay) { clearInterval(check); resolve(); } }, 200);
+              setTimeout(() => { clearInterval(check); resolve(); }, 5000);
+            });
+          }
+          const orderRes = await fetch("/api/payments/create-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customAmount: data.amount, customDesc: `Event: ${data.eventTitle}` }) });
           const orderData = await orderRes.json();
           if (orderRes.ok && typeof window !== "undefined" && window.Razorpay) {
             const rzp = new window.Razorpay({ key: orderData.keyId, amount: orderData.amount, currency: orderData.currency, name: "SkillMap", description: `Event: ${data.eventTitle}`, order_id: orderData.orderId,

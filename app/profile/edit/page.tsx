@@ -120,7 +120,9 @@ export default function ProfileEditPage() {
         body: JSON.stringify({ headline, bio: mentorBio, currentCompany, currentRole, collegeName: mentorCollege, yearsOfExperience: yearsExp, areaOfExpertise: areaOfExpertise.split(",").map((s) => s.trim()).filter(Boolean), mentorTopics: mentorTopics.split(",").map((s) => s.trim()).filter(Boolean), compensation, sessionRate, groupSessionRate, availability, linkedinUrl: mentorLinkedin }),
       });
     }
-    setSaved(true); setSaving(false); setTimeout(() => setSaved(false), 3000);
+    setSaved(true); setSaving(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => setSaved(false), 5000);
   }
 
   function addExp() { setExperiences([...experiences, { company: "", role: "", startDate: "", endDate: "", description: "", current: false }]); }
