@@ -16,11 +16,25 @@ interface Event {
 
 export default function EventsTab() {
   const [events, setEvents] = useState<Event[]>([]); const [loading, setLoading] = useState(true); const [filter, setFilter] = useState("ALL");
+  const [attendeesPopup, setAttendeesPopup] = useState<string | null>(null);
+  const [attendees, setAttendees] = useState<{ registrationId: string; name: string; college: string; domain: string; level: string; paid: boolean }[]>([]);
 
   useEffect(() => { fetchEvents(); }, []);
   async function fetchEvents() {
     const res = await fetch("/api/events?status="); const data = await res.json();
     setEvents(data.events || []); setLoading(false);
+  }
+
+  async function showAttendees(eventId: string) {
+    setAttendeesPopup(eventId);
+    const res = await fetch(`/api/events/${eventId}/attendees`); const data = await res.json();
+    setAttendees(data.attendees || []);
+  }
+
+  async function removeAttendee(eventId: string, registrationId: string) {
+    if (!confirm("Remove this participant?")) return;
+    await fetch(`/api/events/${eventId}/attendees`, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ registrationId }) });
+    showAttendees(eventId); fetchEvents();
   }
 
   async function handleAction(id: string, action: string, reason?: string) {
@@ -63,12 +77,48 @@ export default function EventsTab() {
                     <button onClick={() => handleAction(e.id, "reject", "Does not meet guidelines")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Reject</button></>
                   )}
                   {e.status === "APPROVED" && <button onClick={() => handleAction(e.id, "cancel")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Cancel</button>}
+                  <button onClick={() => showAttendees(e.id)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Attendees</button>
                   <Link href={`/events/${e.id}`} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border no-underline hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>View</Link>
                 </div>
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      {/* Attendees Popup */}
+      {attendeesPopup && (
+        <>
+          <div className="fixed inset-0 z-50 bg-black/30" onClick={() => setAttendeesPopup(null)} />
+          <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-50 max-w-2xl mx-auto rounded-2xl border bg-white shadow-xl overflow-hidden" style={{ borderColor: "var(--border)" }}>
+            <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "var(--border)" }}>
+              <div><h3 className={`${syne} font-bold text-base`}>Event Attendees</h3><p className="text-xs" style={{ color: "var(--muted)" }}>{attendees.length} registered</p></div>
+              <button onClick={() => setAttendeesPopup(null)} className="text-xl" style={{ color: "var(--muted)" }}>✕</button>
+            </div>
+            <div className="max-h-96 overflow-y-auto">
+              {attendees.length === 0 ? (
+                <div className="p-8 text-center text-sm" style={{ color: "var(--muted)" }}>No attendees yet</div>
+              ) : (
+                <table className="w-full">
+                  <thead><tr className="border-b text-left text-xs font-medium" style={{ borderColor: "var(--border)", color: "var(--muted)" }}><th className="px-6 py-2">#</th><th className="px-3 py-2">Name</th><th className="px-3 py-2">Background</th><th className="px-3 py-2">Domain</th><th className="px-3 py-2">Paid</th><th className="px-3 py-2">Action</th></tr></thead>
+                  <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
+                    {attendees.map((a, i) => (
+                      <tr key={a.registrationId} className="text-sm hover:bg-gray-50">
+                        <td className="px-6 py-2.5" style={{ color: "var(--muted)" }}>{i + 1}</td>
+                        <td className={`px-3 py-2.5 ${syne} font-bold`}>{a.name}</td>
+                        <td className="px-3 py-2.5" style={{ color: "var(--muted)" }}>{a.college} · {a.level}</td>
+                        <td className="px-3 py-2.5" style={{ color: "var(--muted)" }}>{a.domain}</td>
+                        <td className="px-3 py-2.5"><span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${a.paid ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>{a.paid ? "Paid" : "Unpaid"}</span></td>
+                        <td className="px-3 py-2.5"><button onClick={() => removeAttendee(attendeesPopup, a.registrationId)} className="text-[0.65rem] font-medium text-red-500 hover:text-red-700">Remove</button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+            <div className="px-6 py-3 border-t text-xs" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Contact information hidden for privacy</div>
+          </div>
+        </>
       )}
     </div>
   );

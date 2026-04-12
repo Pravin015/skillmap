@@ -29,6 +29,26 @@ export default function MentorDashboardPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [acceptLink, setAcceptLink] = useState<{ id: string; link: string; notes: string }>({ id: "", link: "", notes: "" });
+  const [attendeesPopup, setAttendeesPopup] = useState<string | null>(null);
+  const [attendees, setAttendees] = useState<{ registrationId: string; userId: string; name: string; college: string; domain: string; level: string; paid: boolean; joinedAt: string }[]>([]);
+  const [loadingAttendees, setLoadingAttendees] = useState(false);
+
+  async function showAttendees(eventId: string) {
+    setAttendeesPopup(eventId); setLoadingAttendees(true);
+    try {
+      const res = await fetch(`/api/events/${eventId}/attendees`);
+      const data = await res.json();
+      setAttendees(data.attendees || []);
+    } catch { setAttendees([]); }
+    finally { setLoadingAttendees(false); }
+  }
+
+  async function removeAttendee(eventId: string, registrationId: string) {
+    if (!confirm("Remove this participant?")) return;
+    await fetch(`/api/events/${eventId}/attendees`, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ registrationId }) });
+    showAttendees(eventId); // refresh
+    fetchData(); // refresh counts
+  }
 
   const userRole = (session?.user as { role?: string })?.role;
 
@@ -157,13 +177,53 @@ export default function MentorDashboardPage() {
               <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}><div className="text-4xl mb-3">🎤</div><p className={`${syne} font-bold text-base`}>No events</p><Link href="/events/create" className={`inline-block mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Create your first event</Link></div>
             ) : (
               <div className="space-y-3">{events.map((e) => (
-                <div key={e.id} className="rounded-2xl border bg-white p-5 flex items-center gap-4" style={{ borderColor: "var(--border)" }}>
-                  <div className="flex-1"><div className={`${syne} font-bold`}>{e.title}</div><div className="text-xs" style={{ color: "var(--muted)" }}>{new Date(e.date).toLocaleDateString()} · {e.pricing === "FREE" ? "Free" : `₹${(e.price || 0) / 100}`} · {e._count.registrations} registered</div></div>
-                  <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${e.status === "APPROVED" ? "bg-green-100 text-green-700" : e.status === "PENDING_APPROVAL" ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-700"}`}>{e.status.replace("_", " ")}</span>
-                  <Link href={`/events/${e.id}`} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border no-underline hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>View</Link>
+                <div key={e.id} className="rounded-2xl border bg-white p-5 flex items-center gap-4 flex-wrap" style={{ borderColor: "var(--border)" }}>
+                  <div className="flex-1 min-w-0"><div className={`${syne} font-bold`}>{e.title}</div><div className="text-xs" style={{ color: "var(--muted)" }}>{new Date(e.date).toLocaleDateString()} · {e.pricing === "FREE" ? "Free" : `₹${(e.price || 0) / 100}`} · {e._count.registrations} registered</div></div>
+                  <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full shrink-0 ${e.status === "APPROVED" ? "bg-green-100 text-green-700" : e.status === "PENDING_APPROVAL" ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-700"}`}>{e.status.replace("_", " ")}</span>
+                  <div className="flex gap-2 shrink-0">
+                    <button onClick={() => showAttendees(e.id)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Attendees ({e._count.registrations})</button>
+                    <Link href={`/events/${e.id}`} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border no-underline hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>View</Link>
+                  </div>
                 </div>
               ))}</div>
             )}
+
+            {/* Attendees Popup */}
+            {attendeesPopup && (
+                <>
+                  <div className="fixed inset-0 z-50 bg-black/30" onClick={() => setAttendeesPopup(null)} />
+                  <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-50 max-w-2xl mx-auto rounded-2xl border bg-white shadow-xl overflow-hidden" style={{ borderColor: "var(--border)" }}>
+                    <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "var(--border)" }}>
+                      <div><h3 className={`${syne} font-bold text-base`}>Event Attendees</h3><p className="text-xs" style={{ color: "var(--muted)" }}>{attendees.length} registered</p></div>
+                      <button onClick={() => setAttendeesPopup(null)} className="text-xl" style={{ color: "var(--muted)" }}>✕</button>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                      {loadingAttendees ? (
+                        <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>
+                      ) : attendees.length === 0 ? (
+                        <div className="p-8 text-center text-sm" style={{ color: "var(--muted)" }}>No attendees yet</div>
+                      ) : (
+                        <table className="w-full">
+                          <thead><tr className="border-b text-left text-xs font-medium" style={{ borderColor: "var(--border)", color: "var(--muted)" }}><th className="px-6 py-2">#</th><th className="px-3 py-2">Name</th><th className="px-3 py-2">Background</th><th className="px-3 py-2">Domain</th><th className="px-3 py-2">Paid</th><th className="px-3 py-2">Action</th></tr></thead>
+                          <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
+                            {attendees.map((a, i) => (
+                              <tr key={a.registrationId} className="text-sm hover:bg-gray-50">
+                                <td className="px-6 py-2.5" style={{ color: "var(--muted)" }}>{i + 1}</td>
+                                <td className={`px-3 py-2.5 ${syne} font-bold`}>{a.name}</td>
+                                <td className="px-3 py-2.5" style={{ color: "var(--muted)" }}>{a.college} · {a.level}</td>
+                                <td className="px-3 py-2.5" style={{ color: "var(--muted)" }}>{a.domain}</td>
+                                <td className="px-3 py-2.5"><span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${a.paid ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>{a.paid ? "Paid" : "Unpaid"}</span></td>
+                                <td className="px-3 py-2.5"><button onClick={() => removeAttendee(attendeesPopup, a.registrationId)} className="text-[0.65rem] font-medium text-red-500 hover:text-red-700">Remove</button></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+                    <div className="px-6 py-3 border-t text-xs" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Contact information hidden for privacy</div>
+                  </div>
+                </>
+              )}
           </div>
         )}
 
