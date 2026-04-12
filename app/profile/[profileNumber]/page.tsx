@@ -26,7 +26,7 @@ interface ProfileData {
   profileScore: number;
   experiences: { company: string; role: string; startDate: string; endDate: string | null; description: string | null; current: boolean }[];
   certifications: { title: string; issuer: string; issueDate: string | null; imageUrl: string | null }[];
-  user: { name: string; degree: string | null; gradYear: string | null; email?: string; phone?: string };
+  user: { name: string; degree: string | null; gradYear: string | null; email?: string; phone?: string; profileImage?: string | null };
 }
 
 export default function PublicProfilePage() {
@@ -82,9 +82,13 @@ export default function PublicProfilePage() {
           <div className="h-2" style={{ background: "var(--ink)" }} />
           <div className="p-6">
             <div className="flex items-start gap-4">
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-xl text-white shrink-0`} style={{ background: "var(--ink)" }}>
-                {p.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
-              </div>
+              {p.user.profileImage ? (
+                <img src={p.user.profileImage} alt="" className="w-16 h-16 rounded-2xl object-cover shrink-0" />
+              ) : (
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-xl text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                  {p.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                </div>
+              )}
               <div className="flex-1">
                 <h1 className={`${syne} font-extrabold text-xl`}>{p.user.name}</h1>
                 <p className="text-sm" style={{ color: "var(--muted)" }}>

@@ -107,9 +107,9 @@ export default function ReceivedApplications() {
                     {["APPLIED", "SCREENING", "INTERVIEW", "ASSESSMENT", "OFFER", "HIRED", "REJECTED"].map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
-                {app.user.profile?.profileNumber && (
-                  <Link href={`/profile/${app.user.profile.profileNumber}`} className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Profile</Link>
-                )}
+                <Link href={app.user.profile?.profileNumber ? `/profile/${app.user.profile.profileNumber}` : "#"} className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                  View Profile
+                </Link>
               </div>
               <div className="text-[0.65rem] mt-2" style={{ color: "var(--muted)" }}>Applied {new Date(app.appliedAt).toLocaleDateString()}</div>
             </div>

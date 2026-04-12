@@ -49,6 +49,7 @@ function SignupInner() {
   const [skills, setSkills] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [bio, setBio] = useState("");
 
   async function handleStep1(e: React.FormEvent) {
@@ -113,8 +114,11 @@ function SignupInner() {
 
       if (!res.ok) { setError("Failed to save profile"); setLoading(false); return; }
 
-      // Also update user degree/gradYear
-      // Profile saved — redirect to dashboard
+      // Upload photo if selected
+      if (profilePhoto) {
+        await fetch("/api/profile/image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image: profilePhoto }) }).catch(() => {});
+      }
+
       window.location.href = "/dashboard";
     } catch {
       setError("Something went wrong.");
@@ -214,6 +218,28 @@ function SignupInner() {
             {error && <div className="rounded-xl p-3 text-sm mb-4" style={{ background: "rgba(239,68,68,0.05)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.2)" }}>{error}</div>}
 
             <div className="space-y-4">
+              {/* Photo upload */}
+              <div>
+                <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Profile Photo *</label>
+                <div className="flex items-center gap-4">
+                  {profilePhoto ? (
+                    <img src={profilePhoto} alt="" className="w-16 h-16 rounded-2xl object-cover" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>📷</div>
+                  )}
+                  <label className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs cursor-pointer`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                    {profilePhoto ? "Change photo" : "Upload photo"}
+                    <input type="file" accept="image/*" className="hidden" required={!profilePhoto} onChange={(e) => {
+                      const f = e.target.files?.[0]; if (!f) return;
+                      if (f.size > 500 * 1024) { alert("Max 500KB"); return; }
+                      const reader = new FileReader();
+                      reader.onload = () => setProfilePhoto(reader.result as string);
+                      reader.readAsDataURL(f);
+                    }} />
+                  </label>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>College / University *</label>
                   <input type="text" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} required placeholder="e.g. IIT Bombay" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>

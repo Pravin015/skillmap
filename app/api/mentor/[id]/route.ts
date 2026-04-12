@@ -13,7 +13,7 @@ export async function GET(
     include: {
       achievements: true,
       user: {
-        select: { name: true },
+        select: { name: true, profileImage: true },
       },
     },
   });

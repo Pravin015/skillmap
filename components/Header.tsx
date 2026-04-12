@@ -111,6 +111,7 @@ export default function Header() {
                       <span className={`inline-block rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${roleBadgeColors[userRole || ""]}`}>{userRole}</span>
                     </div>
                     <Link href="/profile/edit" className={`block px-4 py-2 text-sm no-underline transition-colors hover:bg-gray-50`} style={{ color: "var(--ink)" }} onClick={() => setShowMenu(false)}>My Profile</Link>
+                    <Link href="/settings" className={`block px-4 py-2 text-sm no-underline transition-colors hover:bg-gray-50`} style={{ color: "var(--ink)" }} onClick={() => setShowMenu(false)}>Account Settings</Link>
                     <label className="block px-4 py-2 text-sm cursor-pointer transition-colors hover:bg-gray-50" style={{ color: "var(--ink)" }}>
                       Upload Photo
                       <input type="file" accept="image/*" className="hidden" onChange={async (e) => {

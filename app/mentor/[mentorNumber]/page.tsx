@@ -25,7 +25,7 @@ interface MentorData {
   linkedinUrl: string | null;
   mentorTopics: string[];
   achievements: { title: string; description: string | null; imageUrl: string | null }[];
-  user: { name: string };
+  user: { name: string; profileImage?: string | null };
 }
 
 export default function MentorProfilePage() {
@@ -79,9 +79,13 @@ export default function MentorProfilePage() {
           <div className="p-6">
             <div className="flex items-start gap-4">
               {/* Avatar */}
-              <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-2xl shrink-0`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
-                {m.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
-              </div>
+              {m.user.profileImage ? (
+                <img src={m.user.profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover shrink-0" />
+              ) : (
+                <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-2xl shrink-0`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                  {m.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className={`${syne} font-extrabold text-xl`}>{m.user.name}</h1>

@@ -24,7 +24,7 @@ export async function GET(
       experiences: true,
       certifications: true,
       user: {
-        select: { name: true, email: true, degree: true, gradYear: true, phone: true },
+        select: { name: true, email: true, degree: true, gradYear: true, phone: true, profileImage: true },
       },
     },
   });
@@ -62,7 +62,7 @@ export async function GET(
         name: profile.user.name,
         degree: profile.user.degree,
         gradYear: profile.user.gradYear,
-        // Show contact details to HR/ORG/ADMIN and owner
+        profileImage: profile.user.profileImage || null,
         email: (isOwner || userRole === "HR" || userRole === "ORG" || userRole === "ADMIN") ? profile.user.email : undefined,
         phone: (isOwner || userRole === "HR" || userRole === "ORG" || userRole === "ADMIN") ? profile.user.phone : undefined,
       },
