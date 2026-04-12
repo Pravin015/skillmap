@@ -45,6 +45,17 @@ export default function JobsPage() {
   const [experience, setExperience] = useState("All");
   const [salary, setSalary] = useState("All");
   const [location, setLocation] = useState("");
+  const [userDomain, setUserDomain] = useState<string | null>(null);
+
+  // Load user's domain preference
+  useEffect(() => {
+    fetch("/api/profile").then((r) => r.json()).then((d) => {
+      if (d.profile?.fieldOfInterest) {
+        setUserDomain(d.profile.fieldOfInterest);
+        setDomain(d.profile.fieldOfInterest); // auto-set filter
+      }
+    }).catch(() => {});
+  }, []);
 
   const fetchJobs = useCallback(async () => {
     setLoading(true);
@@ -149,7 +160,7 @@ export default function JobsPage() {
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm" style={{ color: "var(--muted)" }}>
-              Showing {filtered.length} of {jobs.length} jobs
+              Showing {filtered.length} of {jobs.length} jobs{userDomain && domain === userDomain && <span> · filtered by your interest: <strong>{userDomain}</strong></span>}
             </p>
           </div>
 

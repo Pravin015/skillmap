@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
         : {}),
     },
     include: {
-      user: { select: { name: true, email: true, degree: true, gradYear: true, phone: true } },
+      user: { select: { id: true, name: true, email: true, degree: true, gradYear: true, phone: true } },
       experiences: { select: { company: true, role: true } },
     },
     orderBy: { profileScore: "desc" },

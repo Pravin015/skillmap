@@ -600,3 +600,25 @@ model MentorSession {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 }
+
+enum InviteStatus {
+  SENT
+  VIEWED
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+model CandidateInvite {
+  id          String       @id @default(cuid())
+  hrId        String
+  candidateId String
+  jobId       String?
+  message     String?
+  status      InviteStatus @default(SENT)
+  viewedAt    DateTime?
+  respondedAt DateTime?
+  createdAt   DateTime     @default(now())
+
+  @@unique([hrId, candidateId, jobId])
+}

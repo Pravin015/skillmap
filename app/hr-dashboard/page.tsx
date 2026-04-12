@@ -12,6 +12,7 @@ import InviteCandidates from "@/components/hr-dashboard/InviteCandidates";
 import CreateHackathon from "@/components/hr-dashboard/CreateHackathon";
 import Leaderboard from "@/components/hr-dashboard/Leaderboard";
 import MyJobPosts from "@/components/hr-dashboard/MyJobPosts";
+import JDMatcher from "@/components/hr-dashboard/JDMatcher";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -21,6 +22,7 @@ const sidebarItems = [
   { id: "create-job", label: "Create Job", icon: "➕" },
   { id: "my-posts", label: "My Job Posts", icon: "📝" },
   { id: "search", label: "Search", icon: "🔍" },
+  { id: "jd-match", label: "AI JD Match", icon: "🤖" },
   { id: "invite", label: "Invite", icon: "✉️" },
   { id: "hackathon", label: "Hackathon", icon: "🏆" },
   { id: "leaderboard", label: "Leaderboard", icon: "🏅" },
@@ -55,6 +57,7 @@ export default function HRDashboardPage() {
       case "create-job": return <CreateJobOpening companyName={companyName} />;
       case "my-posts": return <MyJobPosts onNavigate={setActiveTab} />;
       case "search": return <SearchCandidates />;
+      case "jd-match": return <JDMatcher />;
       case "invite": return <InviteCandidates />;
       case "hackathon": return <CreateHackathon />;
       case "leaderboard": return <Leaderboard />;
