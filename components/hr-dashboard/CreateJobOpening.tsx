@@ -1,13 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const syne = "font-[family-name:var(--font-syne)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
 const labelClass = `block text-sm font-medium mb-1.5 ${syne}`;
 const experienceLevels = ["Fresher", ...Array.from({ length: 30 }, (_, i) => `${i + 1} year${i + 1 > 1 ? "s" : ""}`)];
 
+interface LabOption { id: string; title: string; domain: string; difficulty: string; timeLimit: number; _count: { problems: number } }
+
 export default function CreateJobOpening({ companyName }: { companyName: string }) {
   const [saving, setSaving] = useState(false);
+  const [labs, setLabs] = useState<LabOption[]>([]);
+
+  useEffect(() => { fetch("/api/labs?status=PUBLISHED").then((r) => r.json()).then((d) => setLabs(d.labs || [])).catch(() => {}); }, []);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -39,6 +44,7 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
           perks: data.get("perks"),
           deadline: data.get("deadline"),
           openings: data.get("openings"),
+          labTemplateId: data.get("labTemplateId") || undefined,
         }),
       });
       const result = await res.json();
@@ -124,6 +130,17 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
             <input name="openings" type="number" placeholder="e.g. 5" min="1" defaultValue="1" className={inputClass} style={{ borderColor: "var(--border)" }} />
           </div>
         </div>
+        {/* Lab Assessment */}
+        {labs.length > 0 && (
+          <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(232,255,71,0.3)", background: "rgba(232,255,71,0.05)" }}>
+            <label className={labelClass}>Attach Assessment Lab</label>
+            <select name="labTemplateId" className={inputClass} style={{ borderColor: "var(--border)" }}>
+              <option value="">No lab (optional)</option>
+              {labs.map((l) => <option key={l.id} value={l.id}>{l.title} — {l.domain} · {l.difficulty} · {l._count.problems} Qs · {l.timeLimit}min</option>)}
+            </select>
+            <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Candidates must complete this lab when applying. Only passing candidates proceed.</p>
+          </div>
+        )}
         <div>
           <label className={labelClass}>Required Skills</label>
           <input name="skills" type="text" placeholder="Python, SQL, AWS (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} />

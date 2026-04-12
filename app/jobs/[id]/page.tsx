@@ -20,6 +20,8 @@ interface JobDetail {
   jobType: string;
   domain: string | null;
   department: string | null;
+  labTemplateId: string | null;
+  labTemplate: { id: string; title: string; timeLimit: number; passingScore: number; difficulty: string } | null;
   description: string;
   skills: string[];
   perks: string | null;
@@ -322,10 +324,22 @@ export default function JobDetailPage() {
                 </>
               ) : (
                 <>
-                  <button onClick={() => setShowApplyForm(true)} className={`w-full py-3.5 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
-                    Apply Now →
-                  </button>
-                  <p className="text-center text-[0.65rem] mt-2" style={{ color: "var(--muted)" }}>Your profile score will be matched automatically</p>
+                  {job.labTemplate ? (
+                    <>
+                      <div className="rounded-xl p-3 mb-3 text-xs border" style={{ background: "rgba(232,255,71,0.05)", borderColor: "rgba(232,255,71,0.2)" }}>
+                        <div className={`${syne} font-bold text-sm mb-1`}>🧪 Lab Assessment Required</div>
+                        <p style={{ color: "var(--muted)" }}>{job.labTemplate.title} · {job.labTemplate.timeLimit} min · {job.labTemplate.difficulty} · Pass: {job.labTemplate.passingScore}%</p>
+                      </div>
+                      <a href={`/labs/${job.labTemplate.id}?jobId=${job.id}`} className={`block w-full text-center py-3.5 rounded-xl ${syne} font-bold text-sm no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
+                        Start Lab & Apply →
+                      </a>
+                    </>
+                  ) : (
+                    <button onClick={() => setShowApplyForm(true)} className={`w-full py-3.5 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
+                      Apply Now →
+                    </button>
+                  )}
+                  <p className="text-center text-[0.65rem] mt-2" style={{ color: "var(--muted)" }}>{job.labTemplate ? "Complete the lab to submit your application" : "Your profile score will be matched automatically"}</p>
                 </>
               )}
 

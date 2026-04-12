@@ -14,6 +14,7 @@ export async function GET(
     where: { id },
     include: {
       postedBy: { select: { name: true, email: true, organisation: true } },
+      labTemplate: { select: { id: true, title: true, timeLimit: true, passingScore: true, difficulty: true } },
       applications: {
         include: {
           user: { select: { name: true, email: true, profile: { select: { profileNumber: true, profileScore: true, fieldOfInterest: true, collegeName: true, skills: true } } } },

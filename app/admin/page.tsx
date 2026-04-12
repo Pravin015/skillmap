@@ -13,6 +13,7 @@ import HRsTab from "@/components/admin-dashboard/HRsTab";
 import InstitutionsTab from "@/components/admin-dashboard/InstitutionsTab";
 import JobPostsTab from "@/components/admin-dashboard/JobPostsTab";
 import EventsTab from "@/components/admin-dashboard/EventsTab";
+import LabsTab from "@/components/admin-dashboard/LabsTab";
 import FormsTab from "@/components/admin-dashboard/FormsTab";
 import PlatformSettings from "@/components/admin-dashboard/PlatformSettings";
 
@@ -50,6 +51,7 @@ const sidebarCategories: SidebarCategory[] = [
     items: [
       { id: "jobs", label: "Job Posts", icon: "💼" },
       { id: "events", label: "Events", icon: "🎤" },
+      { id: "labs", label: "Labs", icon: "🧪" },
     ],
   },
   {
@@ -113,6 +115,7 @@ export default function AdminPage() {
       case "institutions": return <InstitutionsTab users={users} />;
       case "jobs": return <JobPostsTab />;
       case "events": return <EventsTab />;
+      case "labs": return <LabsTab />;
       case "forms": return <FormsTab />;
       case "settings": return <PlatformSettings />;
       default: return <AdminOverview stats={stats} onNavigate={setActiveTab} />;
