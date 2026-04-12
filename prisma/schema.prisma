@@ -35,6 +35,8 @@ model User {
   mentorProfile MentorProfile?
   jobPostings   JobPosting[]
   applications  Application[]
+  payments      Payment[]
+  subscription  Subscription?
 }
 
 enum MentorStatus {
@@ -230,4 +232,52 @@ model Application {
   updatedAt     DateTime          @updatedAt
 
   @@unique([jobId, userId])       // one application per job per user
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+enum PlanType {
+  FREE
+  CAREER_READY
+  INSTITUTION
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  razorpayOrderId   String        @unique
+  razorpayPaymentId String?       @unique
+  razorpaySignature String?
+
+  amount            Int           // in paise (29900 = ₹299)
+  currency          String        @default("INR")
+  status            PaymentStatus @default(CREATED)
+  plan              PlanType      @default(CAREER_READY)
+
+  description       String?
+  receipt           String?
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan        PlanType @default(FREE)
+  active      Boolean  @default(true)
+  expiresAt   DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
