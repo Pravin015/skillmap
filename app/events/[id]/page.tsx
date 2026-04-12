@@ -50,16 +50,17 @@ export default function EventDetailPage() {
         // Trigger Razorpay payment
         try {
           // Ensure Razorpay script is loaded
-          if (typeof window !== "undefined" && !window.Razorpay) {
+          if (typeof window !== "undefined" && !(window as unknown as Record<string, unknown>).Razorpay) {
             await new Promise<void>((resolve) => {
-              const check = setInterval(() => { if (window.Razorpay) { clearInterval(check); resolve(); } }, 200);
+              const check = setInterval(() => { if ((window as unknown as Record<string, unknown>).Razorpay) { clearInterval(check); resolve(); } }, 200);
               setTimeout(() => { clearInterval(check); resolve(); }, 5000);
             });
           }
           const orderRes = await fetch("/api/payments/create-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customAmount: data.amount, customDesc: `Event: ${data.eventTitle}` }) });
           const orderData = await orderRes.json();
-          if (orderRes.ok && typeof window !== "undefined" && window.Razorpay) {
-            const rzp = new window.Razorpay({ key: orderData.keyId, amount: orderData.amount, currency: orderData.currency, name: "SkillMap", description: `Event: ${data.eventTitle}`, order_id: orderData.orderId,
+          if (orderRes.ok && typeof window !== "undefined" && (window as unknown as Record<string, unknown>).Razorpay) {
+            const RazorpayClass = (window as unknown as Record<string, new (o: Record<string, unknown>) => { open: () => void }>).Razorpay;
+            const rzp = new RazorpayClass({ key: orderData.keyId, amount: orderData.amount, currency: orderData.currency, name: "SkillMap", description: `Event: ${data.eventTitle}`, order_id: orderData.orderId,
               handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
                 await fetch("/api/payments/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(response) });
                 setMessage({ type: "success", text: "Payment successful! You're registered." }); setHasPaid(true);
@@ -133,31 +134,7 @@ export default function EventDetailPage() {
             {event.benefits && <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}><h2 className={`${syne} font-bold text-base mb-3`}>What you&apos;ll gain</h2><div className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--muted)" }}>{event.benefits}</div></div>}
             {event.location && event.eventType !== "VIRTUAL" && <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}><h2 className={`${syne} font-bold text-base mb-3`}>Location</h2><p className="text-sm" style={{ color: "var(--muted)" }}>{event.location}</p></div>}
 
-            {/* Attendees — visible to admin and event creator */}
-            {event.registrations.length > 0 && (session?.user as { id?: string })?.id && (
-              ((session?.user as { role?: string })?.role === "ADMIN") ||
-              (event.createdBy && true) // creator check - event.createdById matches
-            ) && (
-              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${syne} font-bold text-base mb-3`}>Attendees ({event.registrations.length})</h2>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead><tr className="border-b text-left text-xs font-medium" style={{ borderColor: "var(--border)", color: "var(--muted)" }}><th className="pb-2 pr-4">#</th><th className="pb-2 pr-4">Name</th><th className="pb-2 pr-4">Background</th><th className="pb-2">Domain</th></tr></thead>
-                    <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
-                      {event.registrations.map((r, i) => (
-                        <tr key={r.userId} className="text-sm">
-                          <td className="py-2 pr-4" style={{ color: "var(--muted)" }}>{i + 1}</td>
-                          <td className={`py-2 pr-4 ${syne} font-bold`}>{r.user.name}</td>
-                          <td className="py-2 pr-4" style={{ color: "var(--muted)" }}>{r.user.profile?.collegeName || "—"} · {r.user.profile?.experienceLevel === "FRESHER" ? "Fresher" : "Experienced"}</td>
-                          <td className="py-2" style={{ color: "var(--muted)" }}>{r.user.profile?.fieldOfInterest || "—"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <p className="text-[0.6rem] mt-3" style={{ color: "var(--muted)" }}>Contact information is hidden for privacy</p>
-              </div>
-            )}
+            {/* Attendees table removed — attendees are managed via popup in mentor/admin dashboards */}
 
             {/* Join link — only for registered + paid users */}
             {isRegistered && event.joinLink && (event.pricing === "FREE" || hasPaid) && (
