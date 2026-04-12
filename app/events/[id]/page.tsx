@@ -24,6 +24,13 @@ export default function EventDetailPage() {
   const [isRegistered, setIsRegistered] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Load Razorpay script
+  useEffect(() => {
+    if (!document.getElementById("rzp-script")) {
+      const s = document.createElement("script"); s.id = "rzp-script"; s.src = "https://checkout.razorpay.com/v1/checkout.js"; document.body.appendChild(s);
+    }
+  }, []);
   const [joining, setJoining] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -40,7 +47,24 @@ export default function EventDetailPage() {
       const data = await res.json();
       if (!res.ok) { setMessage({ type: "error", text: data.error }); return; }
       if (data.requiresPayment) {
-        setMessage({ type: "error", text: `This is a paid event (₹${(data.amount || 0) / 100}). Payment integration for events coming soon.` });
+        // Trigger Razorpay payment
+        try {
+          const orderRes = await fetch("/api/payments/create-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: "CAREER_READY", customAmount: data.amount, customDesc: `Event: ${data.eventTitle}` }) });
+          const orderData = await orderRes.json();
+          if (orderRes.ok && typeof window !== "undefined" && window.Razorpay) {
+            const rzp = new window.Razorpay({ key: orderData.keyId, amount: orderData.amount, currency: orderData.currency, name: "SkillMap", description: `Event: ${data.eventTitle}`, order_id: orderData.orderId,
+              handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
+                await fetch("/api/payments/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(response) });
+                setMessage({ type: "success", text: "Payment successful! You're registered." }); setHasPaid(true);
+                const refresh = await fetch(`/api/events/${eventId}`).then((r) => r.json()); if (refresh.event) setEvent(refresh.event);
+              },
+              prefill: { name: session?.user?.name || "", email: session?.user?.email || "" }, theme: { color: "#0a0a0f" }, modal: { ondismiss: () => {} },
+            });
+            rzp.open();
+          } else {
+            setMessage({ type: "error", text: `Payment required: ₹${(data.amount || 0) / 100}. Please ensure Razorpay is loaded.` });
+          }
+        } catch { setMessage({ type: "error", text: "Payment failed. Try again." }); }
         setIsRegistered(true);
       } else {
         setMessage({ type: "success", text: "Successfully registered! See joining details below." });

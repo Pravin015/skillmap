@@ -19,6 +19,7 @@ export async function GET() {
   });
 
   const mentorCount = await prisma.mentorProfile.count();
+  const totalProfileViews = await prisma.profileView.count();
 
   const stats = {
     total: users.length,
@@ -27,6 +28,8 @@ export async function GET() {
     org: users.filter((u) => u.role === "ORG").length,
     admin: users.filter((u) => u.role === "ADMIN").length,
     institutions: users.filter((u) => u.role === "INSTITUTION").length,
+    mentorRole: users.filter((u) => u.role === "MENTOR").length,
+    totalProfileViews,
     mentors: mentorCount,
   };
 

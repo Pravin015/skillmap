@@ -16,31 +16,30 @@ export async function GET(req: NextRequest) {
   const query = searchParams.get("q") || "";
   const domain = searchParams.get("domain") || "";
   const experience = searchParams.get("experience") || "";
-  const location = searchParams.get("location") || "";
 
-  const where: Record<string, unknown> = {};
   const profileWhere: Record<string, unknown> = {};
-
   if (domain) profileWhere.fieldOfInterest = { contains: domain, mode: "insensitive" };
   if (experience) profileWhere.experienceLevel = experience;
 
-  // Build the query conditions
   const profiles = await prisma.studentProfile.findMany({
     where: {
       ...profileWhere,
       ...(query
         ? {
             OR: [
-              { user: { name: { contains: query, mode: "insensitive" } } },
-              { collegeName: { contains: query, mode: "insensitive" } },
+              { user: { is: { name: { contains: query, mode: "insensitive" as const } } } },
+              { user: { is: { email: { contains: query, mode: "insensitive" as const } } } },
+              { collegeName: { contains: query, mode: "insensitive" as const } },
+              { fieldOfInterest: { contains: query, mode: "insensitive" as const } },
+              { bio: { contains: query, mode: "insensitive" as const } },
               { skills: { has: query } },
-              { fieldOfInterest: { contains: query, mode: "insensitive" } },
             ],
           }
         : {}),
     },
     include: {
-      user: { select: { name: true, email: true, degree: true, gradYear: true } },
+      user: { select: { name: true, email: true, degree: true, gradYear: true, phone: true } },
+      experiences: { select: { company: true, role: true } },
     },
     orderBy: { profileScore: "desc" },
     take: 50,

@@ -49,7 +49,7 @@ export default function SearchCandidates() {
 
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
         <div className="flex gap-3">
-          <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Search by name, skills, college..." className="flex-1 rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)]" style={{ borderColor: "var(--border)" }} />
+          <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Search by name, email, skills, college, company..." className="flex-1 rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)]" style={{ borderColor: "var(--border)" }} />
           <button onClick={handleSearch} disabled={loading} className={`px-5 py-3 rounded-xl ${syne} font-bold text-sm shrink-0 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
             {loading ? "Searching..." : "Search"}
           </button>

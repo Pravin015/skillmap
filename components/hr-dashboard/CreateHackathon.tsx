@@ -1,10 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
+interface LabOption { id: string; title: string; domain: string; difficulty: string; timeLimit: number; _count: { problems: number } }
+
 export default function CreateHackathon() {
   const [type, setType] = useState<"hackathon" | "quiz">("hackathon");
+  const [labs, setLabs] = useState<LabOption[]>([]);
+
+  useEffect(() => { fetch("/api/labs?status=PUBLISHED").then((r) => r.json()).then((d) => setLabs(d.labs || [])).catch(() => {}); }, []);
 
   return (
     <div className="space-y-6">
@@ -76,6 +81,18 @@ export default function CreateHackathon() {
             <input type="text" placeholder={type === "hackathon" ? "e.g. 48 hours" : "e.g. 60 minutes"} className="w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors" style={{ borderColor: "var(--border)" }} />
           </div>
         </div>
+
+        {/* Lab/MCQ Assessment */}
+        {labs.length > 0 && (
+          <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(232,255,71,0.3)", background: "rgba(232,255,71,0.05)" }}>
+            <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Attach Lab Assessment</label>
+            <select className="w-full rounded-xl border px-4 py-3 text-sm outline-none" style={{ borderColor: "var(--border)" }}>
+              <option value="">No lab (optional)</option>
+              {labs.map((l) => <option key={l.id} value={l.id}>{l.title} — {l.domain} · {l.difficulty} · {l._count.problems} MCQs · {l.timeLimit}min</option>)}
+            </select>
+            <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Participants will need to complete this MCQ assessment during the {type}</p>
+          </div>
+        )}
 
         <div>
           <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Description *</label>

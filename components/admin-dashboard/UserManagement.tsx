@@ -59,7 +59,7 @@ export default function UserManagement({ users, onRefresh }: { users: User[]; on
       {/* Search + filters */}
       <div className="flex gap-3 flex-wrap">
         <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or email..." className="flex-1 min-w-[200px] rounded-xl border px-4 py-2.5 text-sm outline-none" style={{ borderColor: "var(--border)" }} />
-        {["ALL", "STUDENT", "HR", "ORG", "ADMIN"].map((r) => (
+        {["ALL", "STUDENT", "MENTOR", "HR", "ORG", "INSTITUTION", "ADMIN"].map((r) => (
           <button key={r} onClick={() => setFilter(r)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === r ? "var(--ink)" : "white", color: filter === r ? "var(--accent)" : "var(--muted)", border: filter === r ? "none" : "1px solid var(--border)" }}>
             {r === "ALL" ? "All" : r} {r !== "ALL" && `(${users.filter((u) => u.role === r).length})`}
           </button>
@@ -96,7 +96,7 @@ export default function UserManagement({ users, onRefresh }: { users: User[]; on
                   </td>
                   <td className="px-4 py-3">
                     <select value={u.role} onChange={(e) => handleChangeRole(u.id, e.target.value)} className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full border-none cursor-pointer ${roleBadge[u.role] || ""}`}>
-                      {["STUDENT", "HR", "ORG", "ADMIN"].map((r) => <option key={r} value={r}>{r}</option>)}
+                      {["STUDENT", "MENTOR", "HR", "ORG", "INSTITUTION", "ADMIN"].map((r) => <option key={r} value={r}>{r}</option>)}
                     </select>
                   </td>
                   <td className="px-4 py-3 text-xs hidden md:table-cell" style={{ color: "var(--muted)" }}>{u.organisation || "—"}</td>

@@ -216,8 +216,10 @@ export default function PublicProfilePage() {
               <span className="text-2xl">📄</span>
               <div className="flex-1">
                 <div className={`${syne} font-bold text-sm`}>Resume uploaded</div>
-                <div className="text-xs" style={{ color: "var(--muted)" }}>View only</div>
+                <div className="text-xs" style={{ color: "var(--muted)" }}>PDF Document</div>
               </div>
+              <button onClick={() => { const w = window.open(); if (w) w.document.write(`<iframe src="${p.resumeUrl}" style="width:100%;height:100%;border:none;position:fixed;inset:0"></iframe>`); }} className={`shrink-0 px-4 py-2 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>View Resume</button>
+              <a href={p.resumeUrl} download="resume.pdf" className={`shrink-0 px-4 py-2 rounded-lg text-xs font-medium border no-underline`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Download</a>
             </div>
           </div>
         )}
