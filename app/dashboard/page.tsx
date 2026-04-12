@@ -24,6 +24,7 @@ const sidebarItems = [
   { id: "hr", label: "HR Interest", icon: "👥" },
   { id: "resume", label: "Resume", icon: "📄" },
   { id: "score", label: "Score", icon: "📊" },
+  { id: "events", label: "Events", icon: "🎤" },
   { id: "courses", label: "Courses", icon: "📚" },
   { id: "labs", label: "Labs", icon: "🧪" },
 ];
@@ -180,6 +181,22 @@ export default function DashboardPage() {
           {/* Resume */}
           <div id="section-resume">
             <ResumeCard />
+          </div>
+
+          {/* Events */}
+          <div id="section-events">
+            <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className={`${syne} font-bold text-base`}>Upcoming Events</h3>
+                <a href="/events" className={`text-xs ${syne} font-bold no-underline px-2.5 py-1 rounded-lg`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Browse all</a>
+              </div>
+              <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Career guidance sessions and workshops by industry mentors</p>
+              <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
+                <div className="text-3xl mb-3">🎤</div>
+                <p className={`${syne} font-bold text-sm mb-1`}>No upcoming events</p>
+                <p className="text-xs" style={{ color: "var(--muted)" }}>Events will appear here when mentors schedule them</p>
+              </div>
+            </div>
           </div>
 
           {/* Courses */}

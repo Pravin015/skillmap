@@ -13,6 +13,7 @@ import JobPostsTab from "@/components/admin-dashboard/JobPostsTab";
 import FormsTab from "@/components/admin-dashboard/FormsTab";
 import PlatformSettings from "@/components/admin-dashboard/PlatformSettings";
 import InstitutionsTab from "@/components/admin-dashboard/InstitutionsTab";
+import EventsTab from "@/components/admin-dashboard/EventsTab";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -25,6 +26,7 @@ const sidebarItems = [
   { id: "students", label: "Students", icon: "🎓" },
   { id: "institutions", label: "Institutions", icon: "🏫" },
   { id: "jobs", label: "Job Posts", icon: "💼" },
+  { id: "events", label: "Events", icon: "🎤" },
   { id: "forms", label: "Forms", icon: "📋" },
   { id: "settings", label: "Settings", icon: "⚙️" },
 ];
@@ -72,6 +74,7 @@ export default function AdminPage() {
       case "students": return <StudentsTab users={users} />;
       case "institutions": return <InstitutionsTab users={users} />;
       case "jobs": return <JobPostsTab />;
+      case "events": return <EventsTab />;
       case "forms": return <FormsTab />;
       case "settings": return <PlatformSettings />;
       default: return <AdminOverview stats={stats} onNavigate={setActiveTab} />;

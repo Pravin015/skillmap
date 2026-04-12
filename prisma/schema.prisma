@@ -38,6 +38,8 @@ model User {
   applications  Application[]
   payments      Payment[]
   subscription  Subscription?
+  createdEvents Event[]              @relation("EventCreator")
+  eventRegs     EventRegistration[]  @relation("EventRegistrations")
 }
 
 enum MentorStatus {
@@ -284,4 +286,80 @@ model Subscription {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+enum EventStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
+enum EventType {
+  VIRTUAL
+  PHYSICAL
+  HYBRID
+}
+
+enum EventPricing {
+  FREE
+  PAID
+}
+
+model Event {
+  id              String          @id @default(cuid())
+  createdById     String
+  createdBy       User            @relation("EventCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  title           String
+  description     String
+  agenda          String?
+  benefits        String?
+  date            DateTime
+  endDate         DateTime?
+  duration        String?         // "1 hour", "2 hours", etc.
+  eventType       EventType       @default(VIRTUAL)
+  location        String?         // physical address or city
+
+  // Pricing
+  pricing         EventPricing    @default(FREE)
+  price           Int?            // in paise (e.g. 49900 = ₹499)
+
+  // Capacity
+  minParticipants Int             @default(1)
+  maxParticipants Int             @default(100)
+
+  // Join link — hidden for paid events until payment
+  joinLink        String?         // Zoom/Meet link
+  joinInstructions String?
+
+  // Status
+  status          EventStatus     @default(PENDING_APPROVAL)
+  approvedAt      DateTime?
+  rejectedReason  String?
+
+  // Meta
+  category        String?         // "Career Guidance", "Resume Review", etc.
+  tags            String[]
+  coverImageUrl   String?
+
+  registrations   EventRegistration[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model EventRegistration {
+  id          String   @id @default(cuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation("EventRegistrations", fields: [userId], references: [id], onDelete: Cascade)
+
+  paid        Boolean  @default(false)
+  paymentId   String?  // razorpay payment ID if paid
+  joinedAt    DateTime @default(now())
+
+  @@unique([eventId, userId])
 }
