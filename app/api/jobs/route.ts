@@ -105,5 +105,27 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Notify matching students (async, non-blocking)
+  if (domain) {
+    (async () => {
+      try {
+        const matchingProfiles = await prisma.studentProfile.findMany({
+          where: { fieldOfInterest: { contains: domain, mode: "insensitive" } },
+          select: { userId: true },
+          take: 50,
+        });
+        for (const p of matchingProfiles) {
+          createNotification({
+            userId: p.userId,
+            type: "NEW_JOB_MATCH",
+            title: `New job: ${title} at ${companyName}`,
+            message: `A new ${domain} job matching your interest was just posted: ${title} at ${companyName} (${location}, ${workMode}).`,
+            data: { role: title, company: companyName, location, workMode, jobId: job.id },
+          }).catch(() => {});
+        }
+      } catch { /* ignore */ }
+    })();
+  }
+
   return NextResponse.json({ job }, { status: 201 });
 }

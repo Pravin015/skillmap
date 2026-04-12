@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { createNotification } from "@/lib/notifications";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+  const { allowed } = rateLimit(`signup:${getClientIP(req)}`, 5, 60 * 1000);
+  if (!allowed) return NextResponse.json({ error: "Too many requests. Wait a minute." }, { status: 429 });
   try {
     const body = await req.json();
     const { name, email, password, role, organisation, phone, degree, gradYear } = body;

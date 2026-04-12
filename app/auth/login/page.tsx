@@ -133,6 +133,7 @@ function LoginInner() {
                 style={{ borderColor: "var(--border)" }}
               />
             </div>
+            <div className="text-right"><Link href="/auth/forgot-password" className="text-xs no-underline" style={{ color: "var(--muted)" }}>Forgot password?</Link></div>
           </div>
 
           <button
