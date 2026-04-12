@@ -13,6 +13,7 @@ enum Role {
   ORG
   ADMIN
   INSTITUTION
+  MENTOR
 }
 
 enum ExperienceLevel {
@@ -125,7 +126,8 @@ model MentorProfile {
   rating            Float           @default(0)
   totalSessions     Int             @default(0)
   compensation      CompensationType @default(PAID)
-  sessionRate       Int?            // per session rate in INR (if paid)
+  sessionRate       Int?            // per 1-on-1 session rate in INR (if paid)
+  groupSessionRate  Int?            // per group session rate in INR
   availability      String?         // "1-2 hours/week", etc.
 
   // Links
@@ -465,4 +467,51 @@ model Notification {
   read      Boolean          @default(false)
   emailSent Boolean          @default(false)
   createdAt DateTime         @default(now())
+}
+
+enum SessionStatus {
+  REQUESTED
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+enum SessionType {
+  ONE_ON_ONE
+  GROUP
+}
+
+model MentorSession {
+  id              String        @id @default(cuid())
+  mentorId        String        // MentorProfile ID
+  studentId       String        // User ID of student
+  mentorUserId    String        // User ID of mentor
+
+  sessionType     SessionType   @default(ONE_ON_ONE)
+  status          SessionStatus @default(REQUESTED)
+
+  // Request details
+  preferredDate   DateTime
+  message         String?       // student's message to mentor
+  duration        String?       // "30 min", "60 min"
+
+  // Pricing
+  isPaid          Boolean       @default(false)
+  price           Int?          // in paise
+  paymentId       String?
+
+  // Meeting
+  meetingLink     String?       // set by mentor on accept
+  mentorNotes     String?       // mentor's notes to student
+
+  // Rating
+  rating          Int?          // 1-5 after session
+  review          String?
+
+  // Rejection
+  rejectedReason  String?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }

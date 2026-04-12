@@ -66,7 +66,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   if (action === "changeRole") {
-    const validRoles = ["STUDENT", "HR", "ORG", "ADMIN", "INSTITUTION"];
+    const validRoles = ["STUDENT", "HR", "ORG", "ADMIN", "INSTITUTION", "MENTOR"];
     if (!validRoles.includes(newRole)) return NextResponse.json({ error: "Invalid role" }, { status: 400 });
 
     await prisma.user.update({ where: { id: userId }, data: { role: newRole } });

@@ -19,8 +19,10 @@ const navItems = [
 
 const roleBadgeColors: Record<string, string> = {
   STUDENT: "bg-indigo-100 text-indigo-700",
+  MENTOR: "bg-amber-100 text-amber-700",
   HR: "bg-cyan-100 text-cyan-700",
   ORG: "bg-emerald-100 text-emerald-700",
+  INSTITUTION: "bg-purple-100 text-purple-700",
   ADMIN: "bg-red-100 text-red-700",
 };
 
@@ -40,6 +42,7 @@ export default function Header() {
   const userRole = (session?.user as { role?: string })?.role;
 
   const roleLinks = [
+    ...(userRole === "MENTOR" || userRole === "ADMIN" ? [{ href: "/mentor-dashboard", label: "Mentor Panel" }] : []),
     ...(userRole === "INSTITUTION" || userRole === "ADMIN" ? [{ href: "/institution-dashboard", label: "Institution" }] : []),
     ...(userRole === "ORG" || userRole === "ADMIN" ? [{ href: "/company-dashboard", label: "Company" }] : []),
     ...(userRole === "HR" || userRole === "ADMIN" ? [{ href: "/hr-dashboard", label: "HR Panel" }] : []),

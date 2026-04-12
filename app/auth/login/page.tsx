@@ -10,6 +10,7 @@ const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none tran
 
 const roles = [
   { key: "STUDENT", label: "Student" },
+  { key: "MENTOR", label: "Mentor" },
   { key: "HR", label: "HR" },
   { key: "ORG", label: "Organisation" },
   { key: "INSTITUTION", label: "Institution" },
@@ -58,6 +59,7 @@ function LoginInner() {
         }
         const redirectMap: Record<string, string> = {
           ADMIN: "/admin",
+          MENTOR: "/mentor-dashboard",
           HR: "/hr-dashboard",
           ORG: "/company-dashboard",
           INSTITUTION: "/institution-dashboard",

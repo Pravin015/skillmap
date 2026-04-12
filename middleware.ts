@@ -26,6 +26,11 @@ export default withAuth(
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
+    // Mentor dashboard — only MENTOR role (and ADMIN)
+    if (pathname.startsWith("/mentor-dashboard") && token?.role !== "MENTOR" && token?.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
     return NextResponse.next();
   },
   {
@@ -36,5 +41,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/chat/:path*", "/admin/:path*", "/onboarding/:path*", "/hr-dashboard/:path*", "/company-dashboard/:path*", "/institution-dashboard/:path*", "/profile/:path*", "/settings/:path*", "/notifications/:path*"],
+  matcher: ["/dashboard/:path*", "/chat/:path*", "/admin/:path*", "/onboarding/:path*", "/hr-dashboard/:path*", "/company-dashboard/:path*", "/institution-dashboard/:path*", "/mentor-dashboard/:path*", "/profile/:path*", "/settings/:path*", "/notifications/:path*"],
 };

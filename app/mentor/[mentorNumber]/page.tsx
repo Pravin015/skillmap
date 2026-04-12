@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 const syne = "font-[family-name:var(--font-syne)]";
 
 interface MentorData {
+  id: string;
   mentorNumber: string;
   status: string;
   headline: string | null;
@@ -21,6 +22,7 @@ interface MentorData {
   totalSessions: number;
   compensation: string;
   sessionRate: number | null;
+  groupSessionRate: number | null;
   availability: string | null;
   linkedinUrl: string | null;
   mentorTopics: string[];
@@ -35,6 +37,11 @@ export default function MentorProfilePage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [showSchedule, setShowSchedule] = useState(false);
+  const [sessionType, setSessionType] = useState("ONE_ON_ONE");
+  const [prefDate, setPrefDate] = useState("");
+  const [sessionMsg, setSessionMsg] = useState("");
+  const [bookingStatus, setBookingStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [booking, setBooking] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -169,8 +176,28 @@ export default function MentorProfilePage() {
               </button>
             </div>
             {showSchedule && (
-              <div className="mt-4 rounded-xl p-4 border text-sm" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(232,255,71,0.2)", color: "rgba(255,255,255,0.7)" }}>
-                Scheduling feature coming soon. You&apos;ll be able to book slots directly from mentor profiles.
+              <div className="mt-4 rounded-xl p-5 border" style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)" }}>
+                {bookingStatus && <div className={`rounded-lg p-3 text-sm mb-3 ${bookingStatus.type === "success" ? "bg-green-900/30 text-green-300 border border-green-800" : "bg-red-900/30 text-red-300 border border-red-800"}`}>{bookingStatus.text}</div>}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                  <div><label className="block text-xs mb-1 text-white/50">Session Type</label>
+                    <select value={sessionType} onChange={(e) => setSessionType(e.target.value)} className="w-full rounded-lg px-3 py-2 text-sm" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.15)" }}>
+                      <option value="ONE_ON_ONE">1-on-1 {m.sessionRate ? `(₹${m.sessionRate})` : "(Free)"}</option>
+                      <option value="GROUP">Group {m.compensation === "PAID" ? `(₹${m.groupSessionRate || m.sessionRate || 0})` : "(Free)"}</option>
+                    </select></div>
+                  <div><label className="block text-xs mb-1 text-white/50">Preferred Date & Time *</label>
+                    <input type="datetime-local" value={prefDate} onChange={(e) => setPrefDate(e.target.value)} required className="w-full rounded-lg px-3 py-2 text-sm" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.15)" }} /></div>
+                </div>
+                <div className="mb-3"><label className="block text-xs mb-1 text-white/50">Message to mentor (optional)</label>
+                  <textarea value={sessionMsg} onChange={(e) => setSessionMsg(e.target.value)} placeholder="What do you want to discuss?" rows={2} className="w-full rounded-lg px-3 py-2 text-sm resize-none" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.15)" }} /></div>
+                <button disabled={booking || !prefDate} onClick={async () => {
+                  setBooking(true); setBookingStatus(null);
+                  try {
+                    const res = await fetch("/api/sessions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mentorProfileId: m.id, preferredDate: prefDate, message: sessionMsg, sessionType, duration: "30 min" }) });
+                    const data = await res.json();
+                    if (!res.ok) { setBookingStatus({ type: "error", text: data.error }); } else { setBookingStatus({ type: "success", text: "Session requested! The mentor will review and accept/decline. You'll be notified." }); setPrefDate(""); setSessionMsg(""); }
+                  } catch { setBookingStatus({ type: "error", text: "Failed to book" }); }
+                  finally { setBooking(false); }
+                }} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--accent)", color: "var(--ink)" }}>{booking ? "Requesting..." : "Request Session"}</button>
               </div>
             )}
           </div>
