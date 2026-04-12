@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
+import NotificationBell from "./NotificationBell";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -81,6 +82,7 @@ export default function Header() {
 
         {/* Right side */}
         <div className="flex items-center gap-2">
+          {session?.user && <NotificationBell />}
           {session?.user ? (
             <div className="relative">
               <button

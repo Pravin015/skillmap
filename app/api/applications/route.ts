@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/notifications";
 
 // GET — list applications (student sees own, HR sees their job's apps)
 export async function GET() {
@@ -99,6 +100,15 @@ export async function POST(req: NextRequest) {
       scoreMatch: Math.min(scoreMatch, 100),
     },
   });
+
+  // Notify student
+  createNotification({
+    userId: userId!,
+    type: "APPLICATION_SUBMITTED",
+    title: `Applied for ${job.title}`,
+    message: `Your application for ${job.title} at ${job.company} has been submitted. Skill match: ${application.scoreMatch}%.`,
+    data: { role: job.title, company: job.company, score: application.scoreMatch.toString() },
+  }).catch(() => {});
 
   return NextResponse.json({ application }, { status: 201 });
 }

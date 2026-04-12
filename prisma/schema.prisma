@@ -43,6 +43,7 @@ model User {
   createdEvents Event[]              @relation("EventCreator")
   eventRegs     EventRegistration[]  @relation("EventRegistrations")
   profileViews  ProfileView[]       @relation("ProfileViewer")
+  notifications Notification[]
 }
 
 enum FormType {
@@ -405,4 +406,42 @@ model EventRegistration {
   joinedAt    DateTime @default(now())
 
   @@unique([eventId, userId])
+}
+
+enum NotificationType {
+  APPLICATION_SUBMITTED
+  APPLICATION_VIEWED
+  APPLICATION_STATUS_CHANGED
+  SHORTLISTED
+  REJECTED
+  INTERVIEW_SCHEDULED
+  OFFER_RECEIVED
+  POSITION_FILLED
+  APPLICATION_CLOSED
+  NEW_JOB_MATCH
+  HIGH_MATCH_JOB
+  URGENT_HIRING
+  JOB_CLOSING_SOON
+  LAST_DAY_TO_APPLY
+  INVITE_RECEIVED
+  NEW_EVENT
+  PROFILE_INCOMPLETE
+  ADD_RESUME
+  ADD_SKILLS
+  PASSWORD_CHANGED
+  ACCOUNT_CREATED
+  GENERAL
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  data      String?          // JSON metadata (jobId, companyName, etc.)
+  read      Boolean          @default(false)
+  emailSent Boolean          @default(false)
+  createdAt DateTime         @default(now())
 }

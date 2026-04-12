@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(req: NextRequest) {
   try {
@@ -44,6 +45,9 @@ export async function POST(req: NextRequest) {
         gradYear: gradYear || null,
       },
     });
+
+    // Welcome notification
+    createNotification({ userId: user.id, type: "ACCOUNT_CREATED", title: "Welcome to SkillMap!", message: `Hi ${user.name}, welcome to SkillMap! Complete your profile to start getting matched with jobs.` }).catch(() => {});
 
     return NextResponse.json(
       {
