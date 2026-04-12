@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -28,6 +28,13 @@ export default function Header() {
   const { data: session } = useSession();
   const [showMenu, setShowMenu] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
+  const [profileImg, setProfileImg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (session?.user) {
+      fetch("/api/profile/image").then((r) => r.json()).then((d) => { if (d.image) setProfileImg(d.image); }).catch(() => {});
+    }
+  }, [session]);
 
   const userRole = (session?.user as { role?: string })?.role;
 
@@ -80,9 +87,13 @@ export default function Header() {
                 onClick={() => setShowMenu(!showMenu)}
                 className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-[rgba(10,10,15,0.04)]"
               >
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white ${syne}`} style={{ background: "var(--ink)" }}>
-                  {session.user.name?.charAt(0).toUpperCase() || "U"}
-                </div>
+                {profileImg ? (
+                  <img src={profileImg} alt="" className="h-8 w-8 rounded-full object-cover shrink-0" />
+                ) : (
+                  <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white ${syne}`} style={{ background: "var(--ink)" }}>
+                    {session.user.name?.charAt(0).toUpperCase() || "U"}
+                  </div>
+                )}
                 <div className="hidden sm:block text-left">
                   <p className={`text-sm font-bold ${syne}`} style={{ color: "var(--ink)" }}>{session.user.name}</p>
                   <span className={`inline-block rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${roleBadgeColors[userRole || ""]}`}>{userRole}</span>
@@ -98,6 +109,22 @@ export default function Header() {
                       <span className={`inline-block rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${roleBadgeColors[userRole || ""]}`}>{userRole}</span>
                     </div>
                     <Link href="/profile/edit" className={`block px-4 py-2 text-sm no-underline transition-colors hover:bg-gray-50`} style={{ color: "var(--ink)" }} onClick={() => setShowMenu(false)}>My Profile</Link>
+                    <label className="block px-4 py-2 text-sm cursor-pointer transition-colors hover:bg-gray-50" style={{ color: "var(--ink)" }}>
+                      Upload Photo
+                      <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (file.size > 500 * 1024) { alert("Image must be under 500KB"); return; }
+                        const reader = new FileReader();
+                        reader.onload = async () => {
+                          const base64 = reader.result as string;
+                          await fetch("/api/profile/image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image: base64 }) });
+                          setProfileImg(base64);
+                          setShowMenu(false);
+                        };
+                        reader.readAsDataURL(file);
+                      }} />
+                    </label>
                     {roleLinks.map((l) => (
                       <Link key={l.href} href={l.href} className="block px-4 py-2 text-sm no-underline sm:hidden transition-colors hover:bg-gray-50" style={{ color: "var(--ink)" }} onClick={() => setShowMenu(false)}>{l.label}</Link>
                     ))}

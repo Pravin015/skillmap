@@ -51,13 +51,19 @@ function LoginInner() {
 
       if (res?.error) {
         setError(res.error);
+        setLoading(false);
       } else {
-        router.push(activeRole === "ADMIN" ? "/admin" : "/dashboard");
-        router.refresh();
+        // Use window.location for instant redirect instead of router.push
+        const redirectMap: Record<string, string> = {
+          ADMIN: "/admin",
+          HR: "/hr-dashboard",
+          ORG: "/company-dashboard",
+          INSTITUTION: "/institution-dashboard",
+        };
+        window.location.href = redirectMap[activeRole] || "/dashboard";
       }
     } catch {
       setError("Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
     }
   }
