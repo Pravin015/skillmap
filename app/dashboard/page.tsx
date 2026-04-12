@@ -15,6 +15,7 @@ import ProfileScoreCard from "@/components/dashboard/ProfileScoreCard";
 import CoursesCard from "@/components/dashboard/CoursesCard";
 import LabsPrepCard from "@/components/dashboard/LabsPrepCard";
 import MyMentorshipCard from "@/components/dashboard/MyMentorshipCard";
+import Link from "next/link";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -192,18 +193,7 @@ export default function DashboardPage() {
           </div>
 
           <div id="section-events">
-            <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className={`${syne} font-bold text-base`}>Upcoming Events</h3>
-                <a href="/events" className={`text-xs ${syne} font-bold no-underline px-2.5 py-1 rounded-lg`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Browse all</a>
-              </div>
-              <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Career guidance sessions and workshops by industry mentors</p>
-              <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
-                <div className="text-3xl mb-3">🎤</div>
-                <p className={`${syne} font-bold text-sm mb-1`}>No upcoming events</p>
-                <p className="text-xs" style={{ color: "var(--muted)" }}>Events will appear here when mentors schedule them</p>
-              </div>
-            </div>
+            <EventsWidget />
           </div>
 
           {/* Courses */}
@@ -217,6 +207,41 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function EventsWidget() {
+  const s = "font-[family-name:var(--font-syne)]";
+  const [events, setEvents] = useState<{ id: string; title: string; date: string; pricing: string; price: number | null; createdBy: { name: string }; _count: { registrations: number } }[]>([]);
+  useEffect(() => { fetch("/api/events").then((r) => r.json()).then((d) => setEvents((d.events || []).filter((e: { date: string }) => new Date(e.date) >= new Date()).slice(0, 3))).catch(() => {}); }, []);
+
+  return (
+    <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className={`${s} font-bold text-base`}>Upcoming Events</h3>
+        <Link href="/events" className={`text-xs ${s} font-bold no-underline px-2.5 py-1 rounded-lg`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Browse all</Link>
+      </div>
+      <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Career guidance sessions by mentors</p>
+      {events.length === 0 ? (
+        <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
+          <div className="text-3xl mb-3">🎤</div>
+          <p className={`${s} font-bold text-sm mb-1`}>No upcoming events</p>
+          <p className="text-xs" style={{ color: "var(--muted)" }}>Events will appear here when mentors schedule them</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {events.map((e) => (
+            <Link key={e.id} href={`/events/${e.id}`} className="flex items-center gap-3 p-3 rounded-xl border no-underline transition-colors hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
+              <div className="flex-1 min-w-0">
+                <div className={`${s} font-bold text-sm`}>{e.title}</div>
+                <div className="text-xs" style={{ color: "var(--muted)" }}>by {e.createdBy.name} · {new Date(e.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })} · {e._count.registrations} joined</div>
+              </div>
+              <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${e.pricing === "FREE" ? "bg-green-100 text-green-700" : "bg-purple-100 text-purple-700"}`}>{e.pricing === "FREE" ? "Free" : `₹${(e.price || 0) / 100}`}</span>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

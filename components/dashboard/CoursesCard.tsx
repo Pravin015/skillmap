@@ -1,27 +1,49 @@
 "use client";
+import { coursesMap, Course } from "@/lib/mock-dashboard";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
+const platformColors: Record<string, string> = {
+  YouTube: "bg-red-100 text-red-700", Coursera: "bg-blue-100 text-blue-700", Udemy: "bg-purple-100 text-purple-700",
+  "Khan Academy": "bg-green-100 text-green-700", "AWS Training": "bg-orange-100 text-orange-700",
+  "HashiCorp Learn": "bg-cyan-100 text-cyan-700", NeetCode: "bg-emerald-100 text-emerald-700",
+};
+
 export default function CoursesCard({ domainKey }: { domainKey: string }) {
+  const courses: Course[] = coursesMap[domainKey] || [];
+
   return (
     <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between mb-2">
         <h3 className={`${syne} font-bold text-base`}>Recommended Courses</h3>
       </div>
-      <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Courses tailored to your skill gaps in {domainKey || "your domain"}</p>
+      <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Based on your interest in {domainKey || "your domain"}</p>
 
-      <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
-        <div className="text-3xl mb-3">📚</div>
-        <p className={`${syne} font-bold text-sm mb-1`}>No courses assigned yet</p>
-        <p className="text-xs" style={{ color: "var(--muted)" }}>Once your skill gap is analysed, personalised course recommendations will appear here</p>
-      </div>
-
-      {/* Platform badges preview */}
-      <div className="flex flex-wrap gap-2 mt-4">
-        {["YouTube", "Coursera", "Udemy", "Official docs"].map((p) => (
-          <span key={p} className="text-[0.6rem] font-medium px-2.5 py-1 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>{p}</span>
-        ))}
-      </div>
+      {courses.length === 0 ? (
+        <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
+          <div className="text-3xl mb-3">📚</div>
+          <p className={`${syne} font-bold text-sm mb-1`}>No courses for this domain yet</p>
+          <p className="text-xs" style={{ color: "var(--muted)" }}>Complete your profile to get recommendations</p>
+        </div>
+      ) : (
+        <div className="space-y-2.5">
+          {courses.map((c) => (
+            <div key={c.id} className="flex items-center gap-3 p-3 rounded-xl border transition-colors hover:bg-gray-50" style={{ borderColor: "var(--border)" }}>
+              <div className="flex-1 min-w-0">
+                <div className={`${syne} font-bold text-sm`}>{c.name}</div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full ${platformColors[c.platform] || "bg-gray-100 text-gray-700"}`}>{c.platform}</span>
+                  <span className="text-[0.65rem]" style={{ color: "var(--muted)" }}>{c.duration} · {c.skill}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {c.free && <span className={`${syne} text-[0.6rem] font-bold px-1.5 py-0.5 rounded`} style={{ background: "var(--accent)", color: "var(--ink)" }}>FREE</span>}
+                <a href={c.url} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Start</a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
