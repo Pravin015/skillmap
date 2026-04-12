@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import FormWrapper from "@/components/FormWrapper";
+import { submitForm } from "@/lib/submit-form";
 
 const syne = "font-[family-name:var(--font-syne)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
@@ -8,6 +9,7 @@ const labelClass = `block text-sm font-medium mb-1.5 ${syne}`;
 
 export default function PartnerForm() {
   const [submitted, setSubmitted] = useState(false);
+  async function handleSubmit(e: React.FormEvent) { e.preventDefault(); const f = e.target as HTMLFormElement; const d = new FormData(f); const r = await submitForm("PARTNER", Object.fromEntries(d)); if (r.success) setSubmitted(true); }
 
   return (
     <FormWrapper
@@ -16,7 +18,7 @@ export default function PartnerForm() {
       submitted={submitted}
       successMessage="Thank you for your interest in partnering with SkillMap. Our partnerships team will contact you within 48 hours."
     >
-      <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
             <label className={labelClass}>Organisation Name *</label>

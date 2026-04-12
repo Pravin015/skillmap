@@ -2,6 +2,7 @@
 import { useState } from "react";
 import FormWrapper from "@/components/FormWrapper";
 import { getOfficialEmailError } from "@/lib/email-validation";
+import { submitForm } from "@/lib/submit-form";
 
 const syne = "font-[family-name:var(--font-syne)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
@@ -22,14 +23,23 @@ export default function MentorOnboardingForm() {
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const error = getOfficialEmailError(email);
     if (error) {
       setEmailError(error);
       return;
     }
-    setSubmitted(true);
+    const form = e.target as HTMLFormElement;
+    const d = new FormData(form);
+    const result = await submitForm("MENTOR_ONBOARDING", {
+      name: d.get("name"), officialEmail: email, currentCompany: d.get("currentCompany"),
+      currentDesignation: d.get("currentDesignation"), experience: d.get("experience"),
+      domain: d.get("domain"), linkedin: d.get("linkedin"), phone: d.get("phone"),
+      compensation, availability: d.get("availability"), topics: d.get("topics"),
+      motivation: d.get("motivation"), email,
+    });
+    if (result.success) setSubmitted(true);
   }
 
   return (

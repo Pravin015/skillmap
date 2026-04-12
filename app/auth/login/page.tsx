@@ -12,6 +12,7 @@ const roles = [
   { key: "STUDENT", label: "Student" },
   { key: "HR", label: "HR" },
   { key: "ORG", label: "Organisation" },
+  { key: "INSTITUTION", label: "Institution" },
 ];
 
 export default function LoginPage() {
@@ -49,6 +50,12 @@ function LoginInner() {
         setError(res.error);
         setLoading(false);
       } else {
+        // Check if must change password
+        const sess = await fetch("/api/auth/session").then((r) => r.json()).catch(() => null);
+        if (sess?.user?.mustChangePassword) {
+          window.location.href = "/auth/change-password";
+          return;
+        }
         const redirectMap: Record<string, string> = {
           ADMIN: "/admin",
           HR: "/hr-dashboard",

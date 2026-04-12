@@ -14,6 +14,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const validRoles = ["STUDENT", "HR", "ORG", "ADMIN", "INSTITUTION"];
+    if (!validRoles.includes(role)) {
+      return NextResponse.json({ error: "Invalid role" }, { status: 400 });
+    }
+
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });

@@ -70,6 +70,7 @@ export async function POST(req: NextRequest) {
       role: "HR",
       organisation: orgUser.organisation,
       phone: phone || null,
+      mustChangePassword: true,
     },
   });
 

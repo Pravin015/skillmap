@@ -2,6 +2,7 @@
 import { useState } from "react";
 import FormWrapper from "@/components/FormWrapper";
 import { getOfficialEmailError, getEmailDomain } from "@/lib/email-validation";
+import { submitForm } from "@/lib/submit-form";
 
 const syne = "font-[family-name:var(--font-syne)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
@@ -21,14 +22,14 @@ export default function CompanyOnboardingForm() {
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const error = getOfficialEmailError(email);
-    if (error) {
-      setEmailError(error);
-      return;
-    }
-    setSubmitted(true);
+    if (error) { setEmailError(error); return; }
+    const form = e.target as HTMLFormElement;
+    const d = new FormData(form);
+    const r = await submitForm("COMPANY_ONBOARDING", { ...Object.fromEntries(d), email });
+    if (r.success) setSubmitted(true);
   }
 
   const domain = getEmailDomain(email);

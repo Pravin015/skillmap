@@ -2,6 +2,7 @@
 import { useState } from "react";
 import FormWrapper from "@/components/FormWrapper";
 import { getOfficialEmailError } from "@/lib/email-validation";
+import { submitForm } from "@/lib/submit-form";
 
 const syne = "font-[family-name:var(--font-syne)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
@@ -13,7 +14,7 @@ export default function InstitutionOnboardingForm() {
   const [emailError, setEmailError] = useState<string | null>(null);
 
   function handleEmailChange(v: string) { setEmail(v); if (v.includes("@")) setEmailError(getOfficialEmailError(v)); else setEmailError(null); }
-  function handleSubmit(e: React.FormEvent) { e.preventDefault(); const err = getOfficialEmailError(email); if (err) { setEmailError(err); return; } setSubmitted(true); }
+  async function handleSubmit(e: React.FormEvent) { e.preventDefault(); const err = getOfficialEmailError(email); if (err) { setEmailError(err); return; } const form = e.target as HTMLFormElement; const d = new FormData(form); const r = await submitForm("INSTITUTION_ONBOARDING", { ...Object.fromEntries(d), email }); if (r.success) setSubmitted(true); }
 
   return (
     <FormWrapper title="Institution Onboarding" subtitle="Register your college, university, or training institute on SkillMap. No public signup — our team will verify and activate your account." submitted={submitted} successMessage="Your institution registration is under review. We will verify through your official email domain and activate your account within 2-3 business days. You'll receive a confirmation email once approved.">

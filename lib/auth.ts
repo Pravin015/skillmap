@@ -50,6 +50,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           role: user.role,
+          mustChangePassword: user.mustChangePassword,
         };
       },
     }),
@@ -59,6 +60,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = (user as unknown as { role: string }).role;
         token.id = user.id;
+        token.mustChangePassword = (user as unknown as { mustChangePassword?: boolean }).mustChangePassword;
       }
       return token;
     },
@@ -66,6 +68,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         (session.user as { role?: string }).role = token.role as string;
         (session.user as { id?: string }).id = token.id as string;
+        (session.user as { mustChangePassword?: boolean }).mustChangePassword = token.mustChangePassword as boolean;
       }
       return session;
     },

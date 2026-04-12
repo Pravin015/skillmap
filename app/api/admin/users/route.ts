@@ -18,12 +18,16 @@ export async function GET() {
     orderBy: { createdAt: "desc" },
   });
 
+  const mentorCount = await prisma.mentorProfile.count();
+
   const stats = {
     total: users.length,
     students: users.filter((u) => u.role === "STUDENT").length,
     hr: users.filter((u) => u.role === "HR").length,
     org: users.filter((u) => u.role === "ORG").length,
     admin: users.filter((u) => u.role === "ADMIN").length,
+    institutions: users.filter((u) => u.role === "INSTITUTION").length,
+    mentors: mentorCount,
   };
 
   return NextResponse.json({ users, stats });
@@ -62,7 +66,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   if (action === "changeRole") {
-    const validRoles = ["STUDENT", "HR", "ORG", "ADMIN"];
+    const validRoles = ["STUDENT", "HR", "ORG", "ADMIN", "INSTITUTION"];
     if (!validRoles.includes(newRole)) return NextResponse.json({ error: "Invalid role" }, { status: 400 });
 
     await prisma.user.update({ where: { id: userId }, data: { role: newRole } });

@@ -2,7 +2,7 @@
 
 const syne = "font-[family-name:var(--font-syne)]";
 
-interface Stats { total: number; students: number; hr: number; org: number; admin: number }
+interface Stats { total: number; students: number; hr: number; org: number; admin: number; institutions?: number; mentors?: number }
 
 export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onNavigate: (tab: string) => void }) {
   const cards = [
@@ -10,8 +10,8 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
     { label: "Students", value: stats.students, icon: "🎓", color: "#8b5cf6", tab: "students" },
     { label: "HR Accounts", value: stats.hr, icon: "👥", color: "#06b6d4", tab: "hrs" },
     { label: "Organisations", value: stats.org, icon: "🏢", color: "#22c55e", tab: "companies" },
-    { label: "Mentors", value: 0, icon: "🧑‍🏫", color: "#f59e0b", tab: "mentors" },
-    { label: "Admins", value: stats.admin, icon: "🛡️", color: "#ef4444", tab: "users" },
+    { label: "Mentors", value: stats.mentors || 0, icon: "🧑‍🏫", color: "#f59e0b", tab: "mentors" },
+    { label: "Institutions", value: stats.institutions || 0, icon: "🏫", color: "#a855f7", tab: "institutions" },
   ];
 
   return (

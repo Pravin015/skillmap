@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import FormWrapper from "@/components/FormWrapper";
+import { submitForm } from "@/lib/submit-form";
 
 const syne = "font-[family-name:var(--font-syne)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
@@ -8,6 +9,13 @@ const labelClass = `block text-sm font-medium mb-1.5 ${syne}`;
 
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const d = new FormData(form);
+    const result = await submitForm("CONTACT", { name: d.get("name"), email: d.get("email"), phone: d.get("phone"), subject: d.get("subject"), message: d.get("message") });
+    if (result.success) setSubmitted(true);
+  }
 
   return (
     <FormWrapper
@@ -16,7 +24,7 @@ export default function ContactForm() {
       submitted={submitted}
       successMessage="Thank you for reaching out. Our team will respond to your message within 24 hours."
     >
-      <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
             <label className={labelClass}>Full Name *</label>

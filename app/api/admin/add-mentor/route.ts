@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
   // Create user
   const user = await prisma.user.create({
-    data: { name, email, password: hashed, role: "STUDENT", phone: phone || null },
+    data: { name, email, password: hashed, role: "STUDENT", phone: phone || null, mustChangePassword: true },
   });
 
   // Create mentor profile — auto-verified by admin
