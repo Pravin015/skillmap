@@ -9,6 +9,7 @@ const syne = "font-[family-name:var(--font-syne)]";
 
 const navItems = [
   { href: "/", label: "Home" },
+  { href: "/jobs", label: "Jobs" },
   { href: "/dashboard", label: "Dashboard" },
   { href: "/companies", label: "Companies" },
   { href: "/chat", label: "AI Advisor" },
