@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -18,8 +18,16 @@ export default function ProfileEditPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [profileNumber, setProfileNumber] = useState("");
+  const userRole = (session?.user as { role?: string })?.role;
 
-  // Form state
+  // Account
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [organisation, setOrganisation] = useState("");
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // Student
   const [collegeName, setCollegeName] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("FRESHER");
   const [fieldOfInterest, setFieldOfInterest] = useState("");
@@ -33,283 +41,182 @@ export default function ProfileEditPage() {
   const [githubUrl, setGithubUrl] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [portfolioUrl, setPortfolioUrl] = useState("");
-  const [otherLinks, setOtherLinks] = useState("");
   const [skills, setSkills] = useState("");
   const [experiences, setExperiences] = useState<Exp[]>([]);
   const [certifications, setCertifications] = useState<Cert[]>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") { router.push("/auth/login"); return; }
-    if (status === "authenticated") fetchProfile();
-  }, [status, router]);
+    if (status === "authenticated") {
+      fetch("/api/account").then((r) => r.json()).then((d) => {
+        if (d.user) { setName(d.user.name); setPhone(d.user.phone || ""); setOrganisation(d.user.organisation || ""); setProfileImage(d.user.profileImage); }
+      });
+      if (userRole === "STUDENT") {
+        fetch("/api/profile").then((r) => r.json()).then((d) => {
+          if (d.profile) {
+            const p = d.profile;
+            setProfileNumber(p.profileNumber || "");
+            setCollegeName(p.collegeName || ""); setExperienceLevel(p.experienceLevel || "FRESHER");
+            setFieldOfInterest(p.fieldOfInterest || ""); setBio(p.bio || "");
+            setAcademicScore(p.academicScore || ""); setAcademicType(p.academicType || "CGPA");
+            setSalaryMin(p.salaryMin?.toString() || ""); setSalaryMax(p.salaryMax?.toString() || "");
+            setAvailableToJoin(p.availableToJoin ?? true); setJoinDate(p.joinDate || "Immediately");
+            setGithubUrl(p.githubUrl || ""); setLinkedinUrl(p.linkedinUrl || ""); setPortfolioUrl(p.portfolioUrl || "");
+            setSkills((p.skills || []).join(", ")); setExperiences(p.experiences || []); setCertifications(p.certifications || []);
+          }
+        }).finally(() => setLoading(false));
+      } else { setLoading(false); }
+    }
+  }, [status, userRole, router]);
 
-  async function fetchProfile() {
-    try {
-      const res = await fetch("/api/profile");
-      const data = await res.json();
-      if (data.profile) {
-        const p = data.profile;
-        setProfileNumber(p.profileNumber);
-        setCollegeName(p.collegeName || "");
-        setExperienceLevel(p.experienceLevel || "FRESHER");
-        setFieldOfInterest(p.fieldOfInterest || "");
-        setBio(p.bio || "");
-        setAcademicScore(p.academicScore || "");
-        setAcademicType(p.academicType || "CGPA");
-        setSalaryMin(p.salaryMin?.toString() || "");
-        setSalaryMax(p.salaryMax?.toString() || "");
-        setAvailableToJoin(p.availableToJoin ?? true);
-        setJoinDate(p.joinDate || "Immediately");
-        setGithubUrl(p.githubUrl || "");
-        setLinkedinUrl(p.linkedinUrl || "");
-        setPortfolioUrl(p.portfolioUrl || "");
-        setOtherLinks((p.otherLinks || []).join(", "));
-        setSkills((p.skills || []).join(", "));
-        setExperiences(p.experiences || []);
-        setCertifications(p.certifications || []);
-      }
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+  async function handlePhotoUpload(file: File) {
+    if (file.size > 500 * 1024) { alert("Max 500KB"); return; }
+    const reader = new FileReader();
+    reader.onload = async () => { const b = reader.result as string; await fetch("/api/profile/image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image: b }) }); setProfileImage(b); };
+    reader.readAsDataURL(file);
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    setSaved(false);
-
-    try {
-      const res = await fetch("/api/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          collegeName, experienceLevel, fieldOfInterest, bio,
-          academicScore, academicType,
-          salaryMin, salaryMax, availableToJoin, joinDate,
-          githubUrl, linkedinUrl, portfolioUrl,
-          otherLinks: otherLinks.split(",").map((s) => s.trim()).filter(Boolean),
-          skills: skills.split(",").map((s) => s.trim()).filter(Boolean),
-          experiences, certifications,
-        }),
-      });
-      const data = await res.json();
-      if (data.profile) {
-        setProfileNumber(data.profile.profileNumber);
-        setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
-      }
-    } catch (err) { console.error(err); }
-    finally { setSaving(false); }
+    e.preventDefault(); setSaving(true); setSaved(false);
+    await fetch("/api/account", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, phone }) });
+    if (userRole === "STUDENT") {
+      const r = await fetch("/api/profile", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ collegeName, experienceLevel, fieldOfInterest, bio, academicScore, academicType, salaryMin, salaryMax, availableToJoin, joinDate, githubUrl, linkedinUrl, portfolioUrl, otherLinks: [], skills: skills.split(",").map((s) => s.trim()).filter(Boolean), experiences, certifications }),
+      }).then((r) => r.json());
+      if (r.profile) setProfileNumber(r.profile.profileNumber);
+    }
+    setSaved(true); setSaving(false); setTimeout(() => setSaved(false), 3000);
   }
 
-  function addExperience() {
-    setExperiences([...experiences, { company: "", role: "", startDate: "", endDate: "", description: "", current: false }]);
-  }
-  function updateExperience(i: number, field: string, value: string | boolean) {
-    const updated = [...experiences];
-    (updated[i] as unknown as Record<string, string | boolean>)[field] = value;
-    setExperiences(updated);
-  }
-  function removeExperience(i: number) {
-    setExperiences(experiences.filter((_, idx) => idx !== i));
-  }
+  function addExp() { setExperiences([...experiences, { company: "", role: "", startDate: "", endDate: "", description: "", current: false }]); }
+  function updExp(i: number, f: string, v: string | boolean) { const u = [...experiences]; (u[i] as unknown as Record<string, string | boolean>)[f] = v; setExperiences(u); }
+  function rmExp(i: number) { setExperiences(experiences.filter((_, idx) => idx !== i)); }
+  function addCert() { setCertifications([...certifications, { title: "", issuer: "", issueDate: "", imageUrl: "" }]); }
+  function updCert(i: number, f: string, v: string) { const u = [...certifications]; (u[i] as unknown as Record<string, string>)[f] = v; setCertifications(u); }
+  function rmCert(i: number) { setCertifications(certifications.filter((_, idx) => idx !== i)); }
 
-  function addCertification() {
-    setCertifications([...certifications, { title: "", issuer: "", issueDate: "", imageUrl: "" }]);
-  }
-  function updateCertification(i: number, field: string, value: string) {
-    const updated = [...certifications];
-    (updated[i] as unknown as Record<string, string>)[field] = value;
-    setCertifications(updated);
-  }
-  function removeCertification(i: number) {
-    setCertifications(certifications.filter((_, idx) => idx !== i));
-  }
+  if (loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
 
-  if (loading) {
-    return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
-  }
+  const roleLabel = userRole === "HR" ? "HR" : userRole === "ORG" ? "Company" : userRole === "INSTITUTION" ? "Institution" : userRole === "ADMIN" ? "Admin" : "Student";
 
   return (
     <div className="min-h-[calc(100vh-4rem)] py-8 px-4 md:px-8" style={{ background: "var(--surface)" }}>
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className={`${syne} font-extrabold text-2xl`}>Edit Profile</h1>
-            {profileNumber && (
-              <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Profile ID: <span className={`${syne} font-bold`}>{profileNumber}</span></p>
-            )}
+          <div><h1 className={`${syne} font-extrabold text-2xl`}>Edit {roleLabel} Profile</h1>
+            {profileNumber && <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>ID: <span className={`${syne} font-bold`}>{profileNumber}</span></p>}</div>
+          <div className="flex gap-2">
+            {profileNumber && <button onClick={() => router.push(`/profile/${profileNumber}`)} className={`px-3 py-2 rounded-xl ${syne} font-bold text-xs border hover:bg-gray-50`} style={{ borderColor: "var(--border)" }}>View profile</button>}
+            <a href="/settings" className={`px-3 py-2 rounded-xl ${syne} font-bold text-xs border no-underline hover:bg-gray-50`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Settings</a>
           </div>
-          {profileNumber && (
-            <button onClick={() => router.push(`/profile/${profileNumber}`)} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs border transition-colors hover:bg-gray-50`} style={{ borderColor: "var(--border)" }}>View public profile</button>
-          )}
         </div>
 
-        {saved && (
-          <div className="rounded-xl p-4 text-sm font-medium mb-6" style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a", border: "1px solid rgba(34,197,94,0.3)" }}>
-            Profile saved successfully!
-          </div>
-        )}
+        {saved && <div className="rounded-xl p-4 text-sm font-medium mb-6" style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a", border: "1px solid rgba(34,197,94,0.3)" }}>Profile saved!</div>}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Info */}
+          {/* Photo */}
+          <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+            <h2 className={`${syne} font-bold text-base mb-4`}>Profile Photo</h2>
+            <div className="flex items-center gap-4">
+              {profileImage ? <img src={profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover" /> : <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-2xl text-white`} style={{ background: "var(--ink)" }}>{name.charAt(0)?.toUpperCase()}</div>}
+              <div><button type="button" onClick={() => fileRef.current?.click()} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{profileImage ? "Change" : "Upload"}</button><p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Max 500KB</p></div>
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
+            </div>
+          </div>
+
+          {/* Basic — all roles */}
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
             <h2 className={`${syne} font-bold text-base mb-4`}>Basic Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className={labelClass}>College / University *</label>
-                <input type="text" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} placeholder="e.g. IIT Bombay" className={inputClass} style={{ borderColor: "var(--border)" }} />
-              </div>
-              <div>
-                <label className={labelClass}>Experience Level *</label>
-                <select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}>
-                  <option value="FRESHER">Fresher</option>
-                  <option value="EXPERIENCED">Experienced</option>
-                </select>
-              </div>
-              <div>
-                <label className={labelClass}>Field of Interest *</label>
-                <select value={fieldOfInterest} onChange={(e) => setFieldOfInterest(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}>
-                  <option value="">Select</option>
-                  <option>Software Development</option><option>Cybersecurity</option><option>Cloud & DevOps</option><option>Data & Analytics</option><option>Consulting & Finance</option><option>Product Management</option><option>Other</option>
-                </select>
-              </div>
-              <div>
-                <label className={labelClass}>Skills</label>
-                <input type="text" value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="Python, SQL, AWS (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} />
-              </div>
-            </div>
-            <div className="mt-4">
-              <label className={labelClass}>Bio</label>
-              <textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell recruiters about yourself in 2-3 sentences..." rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} />
+              <div><label className={labelClass}>Full Name *</label><input type="text" value={name} onChange={(e) => setName(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+              <div><label className={labelClass}>Phone</label><input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+              {(userRole === "HR" || userRole === "ORG" || userRole === "INSTITUTION") && <div><label className={labelClass}>Organisation</label><input value={organisation} readOnly className={`${inputClass} bg-gray-50`} style={{ borderColor: "var(--border)", color: "var(--muted)" }} /></div>}
             </div>
           </div>
 
-          {/* Academic */}
-          <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-4`}>Academic Score</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className={labelClass}>Score Type</label>
-                <select value={academicType} onChange={(e) => setAcademicType(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}>
-                  <option>CGPA</option><option>Percentage</option><option>GPA</option>
-                </select>
+          {/* ═══ STUDENT ONLY ═══ */}
+          {userRole === "STUDENT" && (
+            <>
+              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+                <h2 className={`${syne} font-bold text-base mb-4`}>Education & Domain</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div><label className={labelClass}>College</label><input value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>Level</label><select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}><option value="FRESHER">Fresher</option><option value="EXPERIENCED">Experienced</option></select></div>
+                  <div><label className={labelClass}>Domain</label><select value={fieldOfInterest} onChange={(e) => setFieldOfInterest(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}><option value="">Select</option><option>Software Development</option><option>Cybersecurity</option><option>Cloud & DevOps</option><option>Data & Analytics</option><option>Consulting & Finance</option><option>Other</option></select></div>
+                  <div><label className={labelClass}>Skills</label><input value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="comma separated" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                </div>
+                <div className="mt-4"><label className={labelClass}>Bio</label><textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={2} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
               </div>
-              <div>
-                <label className={labelClass}>Score</label>
-                <input type="text" value={academicScore} onChange={(e) => setAcademicScore(e.target.value)} placeholder="e.g. 8.5 or 85%" className={inputClass} style={{ borderColor: "var(--border)" }} />
+              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+                <h2 className={`${syne} font-bold text-base mb-4`}>Academic</h2>
+                <div className="grid grid-cols-2 gap-5">
+                  <div><label className={labelClass}>Type</label><select value={academicType} onChange={(e) => setAcademicType(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}><option>CGPA</option><option>Percentage</option><option>GPA</option></select></div>
+                  <div><label className={labelClass}>Score</label><input value={academicScore} onChange={(e) => setAcademicScore(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Salary & Availability */}
-          <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-4`}>Preferences</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className={labelClass}>Expected Salary Min (LPA)</label>
-                <input type="number" value={salaryMin} onChange={(e) => setSalaryMin(e.target.value)} placeholder="e.g. 3" min="0" className={inputClass} style={{ borderColor: "var(--border)" }} />
+              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+                <h2 className={`${syne} font-bold text-base mb-4`}>Preferences</h2>
+                <div className="grid grid-cols-2 gap-5">
+                  <div><label className={labelClass}>Salary Min (LPA)</label><input type="number" value={salaryMin} onChange={(e) => setSalaryMin(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>Salary Max (LPA)</label><input type="number" value={salaryMax} onChange={(e) => setSalaryMax(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>Available</label><select value={availableToJoin ? "yes" : "no"} onChange={(e) => setAvailableToJoin(e.target.value === "yes")} className={inputClass} style={{ borderColor: "var(--border)" }}><option value="yes">Yes</option><option value="no">No</option></select></div>
+                  <div><label className={labelClass}>Notice</label><select value={joinDate} onChange={(e) => setJoinDate(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}><option>Immediately</option><option>15 days</option><option>30 days</option><option>60 days+</option></select></div>
+                </div>
               </div>
-              <div>
-                <label className={labelClass}>Expected Salary Max (LPA)</label>
-                <input type="number" value={salaryMax} onChange={(e) => setSalaryMax(e.target.value)} placeholder="e.g. 8" min="0" className={inputClass} style={{ borderColor: "var(--border)" }} />
+              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+                <h2 className={`${syne} font-bold text-base mb-4`}>Links</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <div><label className={labelClass}>GitHub</label><input type="url" value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>LinkedIn</label><input type="url" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>Portfolio</label><input type="url" value={portfolioUrl} onChange={(e) => setPortfolioUrl(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                </div>
               </div>
-              <div>
-                <label className={labelClass}>Available to Join</label>
-                <select value={availableToJoin ? "yes" : "no"} onChange={(e) => setAvailableToJoin(e.target.value === "yes")} className={inputClass} style={{ borderColor: "var(--border)" }}>
-                  <option value="yes">Yes</option><option value="no">No</option>
-                </select>
-              </div>
-              <div>
-                <label className={labelClass}>Notice Period</label>
-                <select value={joinDate} onChange={(e) => setJoinDate(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}>
-                  <option>Immediately</option><option>15 days</option><option>30 days</option><option>60 days+</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Links */}
-          <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-4`}>Links & Projects</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className={labelClass}>GitHub</label>
-                <input type="url" value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} placeholder="https://github.com/username" className={inputClass} style={{ borderColor: "var(--border)" }} />
-              </div>
-              <div>
-                <label className={labelClass}>LinkedIn</label>
-                <input type="url" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} placeholder="https://linkedin.com/in/username" className={inputClass} style={{ borderColor: "var(--border)" }} />
-              </div>
-              <div>
-                <label className={labelClass}>Portfolio / Website</label>
-                <input type="url" value={portfolioUrl} onChange={(e) => setPortfolioUrl(e.target.value)} placeholder="https://yoursite.com" className={inputClass} style={{ borderColor: "var(--border)" }} />
-              </div>
-              <div>
-                <label className={labelClass}>Other Links</label>
-                <input type="text" value={otherLinks} onChange={(e) => setOtherLinks(e.target.value)} placeholder="Kaggle, Behance, etc. (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Experience */}
-          {experienceLevel === "EXPERIENCED" && (
-            <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className={`${syne} font-bold text-base`}>Work Experience</h2>
-                <button type="button" onClick={addExperience} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Add</button>
-              </div>
-              {experiences.length === 0 ? (
-                <p className="text-sm text-center py-4" style={{ color: "var(--muted)" }}>No experience added yet</p>
-              ) : (
-                <div className="space-y-4">
-                  {experiences.map((exp, i) => (
+              {experienceLevel === "EXPERIENCED" && (
+                <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+                  <div className="flex items-center justify-between mb-4"><h2 className={`${syne} font-bold text-base`}>Experience</h2><button type="button" onClick={addExp} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Add</button></div>
+                  {experiences.length === 0 ? <p className="text-sm text-center py-4" style={{ color: "var(--muted)" }}>None added</p> : <div className="space-y-3">{experiences.map((x, i) => (
                     <div key={i} className="rounded-xl border p-4 relative" style={{ borderColor: "var(--border)" }}>
-                      <button type="button" onClick={() => removeExperience(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-sm">✕</button>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <input type="text" value={exp.company} onChange={(e) => updateExperience(i, "company", e.target.value)} placeholder="Company" className={inputClass} style={{ borderColor: "var(--border)" }} />
-                        <input type="text" value={exp.role} onChange={(e) => updateExperience(i, "role", e.target.value)} placeholder="Role / Title" className={inputClass} style={{ borderColor: "var(--border)" }} />
-                        <input type="text" value={exp.startDate} onChange={(e) => updateExperience(i, "startDate", e.target.value)} placeholder="Start (e.g. Jan 2024)" className={inputClass} style={{ borderColor: "var(--border)" }} />
-                        <input type="text" value={exp.endDate} onChange={(e) => updateExperience(i, "endDate", e.target.value)} placeholder="End (or leave blank if current)" className={inputClass} style={{ borderColor: "var(--border)" }} disabled={exp.current} />
-                      </div>
-                      <label className="flex items-center gap-2 text-xs mt-2 cursor-pointer" style={{ color: "var(--muted)" }}>
-                        <input type="checkbox" checked={exp.current} onChange={(e) => updateExperience(i, "current", e.target.checked)} className="accent-[var(--ink)]" /> Currently working here
-                      </label>
-                      <textarea value={exp.description} onChange={(e) => updateExperience(i, "description", e.target.value)} placeholder="Brief description..." rows={2} className={`${inputClass} resize-none mt-2`} style={{ borderColor: "var(--border)" }} />
+                      <button type="button" onClick={() => rmExp(i)} className="absolute top-2 right-2 text-red-400 text-sm">✕</button>
+                      <div className="grid grid-cols-2 gap-3"><input value={x.company} onChange={(e) => updExp(i, "company", e.target.value)} placeholder="Company" className={inputClass} style={{ borderColor: "var(--border)" }} /><input value={x.role} onChange={(e) => updExp(i, "role", e.target.value)} placeholder="Role" className={inputClass} style={{ borderColor: "var(--border)" }} /><input value={x.startDate} onChange={(e) => updExp(i, "startDate", e.target.value)} placeholder="Start" className={inputClass} style={{ borderColor: "var(--border)" }} /><input value={x.endDate} onChange={(e) => updExp(i, "endDate", e.target.value)} placeholder="End" disabled={x.current} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                      <label className="flex items-center gap-2 text-xs mt-2 cursor-pointer" style={{ color: "var(--muted)" }}><input type="checkbox" checked={x.current} onChange={(e) => updExp(i, "current", e.target.checked)} /> Current</label>
                     </div>
-                  ))}
+                  ))}</div>}
                 </div>
               )}
+              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+                <div className="flex items-center justify-between mb-4"><h2 className={`${syne} font-bold text-base`}>Certifications</h2><button type="button" onClick={addCert} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Add</button></div>
+                {certifications.length === 0 ? <p className="text-sm text-center py-4" style={{ color: "var(--muted)" }}>None added</p> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{certifications.map((c, i) => (
+                  <div key={i} className="rounded-xl border p-4 relative" style={{ borderColor: "var(--border)" }}>
+                    <button type="button" onClick={() => rmCert(i)} className="absolute top-2 right-2 text-red-400 text-sm">✕</button>
+                    <input value={c.title} onChange={(e) => updCert(i, "title", e.target.value)} placeholder="Title" className={`${inputClass} mb-2`} style={{ borderColor: "var(--border)" }} />
+                    <input value={c.issuer} onChange={(e) => updCert(i, "issuer", e.target.value)} placeholder="Issuer" className={`${inputClass} mb-2`} style={{ borderColor: "var(--border)" }} />
+                    <input value={c.issueDate} onChange={(e) => updCert(i, "issueDate", e.target.value)} placeholder="Date" className={inputClass} style={{ borderColor: "var(--border)" }} />
+                  </div>
+                ))}</div>}
+              </div>
+            </>
+          )}
+
+          {/* Non-student role info */}
+          {userRole && userRole !== "STUDENT" && (
+            <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+              <h2 className={`${syne} font-bold text-base mb-3`}>Your Role: {roleLabel}</h2>
+              <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>
+                {userRole === "HR" && "Manage job posts and candidates from the HR Panel."}
+                {userRole === "ORG" && "Manage HR accounts and hiring from the Company Dashboard."}
+                {userRole === "INSTITUTION" && "Manage students and placements from the Institution Dashboard."}
+                {userRole === "ADMIN" && "Full platform control from the Admin Panel."}
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                {userRole === "HR" && <a href="/hr-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>HR Panel</a>}
+                {userRole === "ORG" && <a href="/company-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Company Dashboard</a>}
+                {userRole === "INSTITUTION" && <a href="/institution-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Institution Dashboard</a>}
+                {userRole === "ADMIN" && <a href="/admin" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Admin Panel</a>}
+              </div>
             </div>
           )}
 
-          {/* Certifications */}
-          <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className={`${syne} font-bold text-base`}>Certifications & Achievements</h2>
-              <button type="button" onClick={addCertification} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Add</button>
-            </div>
-            {certifications.length === 0 ? (
-              <p className="text-sm text-center py-4" style={{ color: "var(--muted)" }}>No certifications added yet</p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {certifications.map((cert, i) => (
-                  <div key={i} className="rounded-xl border p-4 relative" style={{ borderColor: "var(--border)" }}>
-                    <button type="button" onClick={() => removeCertification(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-sm">✕</button>
-                    <input type="text" value={cert.title} onChange={(e) => updateCertification(i, "title", e.target.value)} placeholder="Certificate title" className={`${inputClass} mb-2`} style={{ borderColor: "var(--border)" }} />
-                    <input type="text" value={cert.issuer} onChange={(e) => updateCertification(i, "issuer", e.target.value)} placeholder="Issuing organisation" className={`${inputClass} mb-2`} style={{ borderColor: "var(--border)" }} />
-                    <input type="text" value={cert.issueDate} onChange={(e) => updateCertification(i, "issueDate", e.target.value)} placeholder="Issue date (e.g. Mar 2025)" className={inputClass} style={{ borderColor: "var(--border)" }} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Submit */}
-          <div className="flex gap-3">
-            <button type="submit" disabled={saving} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
-              {saving ? "Saving..." : "Save Profile"}
-            </button>
-          </div>
+          <button type="submit" disabled={saving} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{saving ? "Saving..." : "Save Profile"}</button>
         </form>
       </div>
     </div>

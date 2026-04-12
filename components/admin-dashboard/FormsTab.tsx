@@ -26,8 +26,48 @@ export default function FormsTab() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [accountMsg, setAccountMsg] = useState<{ id: string; type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => { fetchData(); }, []);
+
+  async function createAccountFromForm(submission: Submission) {
+    let parsedData: Record<string, string> = {};
+    try { parsedData = JSON.parse(submission.data); } catch { /* */ }
+
+    setAccountMsg(null);
+    try {
+      if (submission.type === "MENTOR_ONBOARDING") {
+        const res = await fetch("/api/admin/add-mentor", { method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: parsedData.name || submission.name, email: parsedData.officialEmail || parsedData.email || submission.email,
+            phone: parsedData.phone || submission.phone, currentCompany: parsedData.currentCompany,
+            currentRole: parsedData.currentDesignation, yearsOfExperience: parsedData.experience?.match(/\d+/)?.[0],
+            areaOfExpertise: parsedData.domain ? [parsedData.domain] : [], compensation: parsedData.compensation === "volunteer" ? "VOLUNTEER" : "PAID",
+            linkedinUrl: parsedData.linkedin,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) { setAccountMsg({ id: submission.id, type: "error", text: data.error }); return; }
+        setAccountMsg({ id: submission.id, type: "success", text: `Mentor account created! ID: ${data.mentorNumber} · Temp password: ${data.tempPassword}` });
+        updateStatus(submission.id, "APPROVED");
+      } else if (submission.type === "COMPANY_ONBOARDING" || submission.type === "INSTITUTION_ONBOARDING") {
+        const role = submission.type === "COMPANY_ONBOARDING" ? "ORG" : "INSTITUTION";
+        const orgName = parsedData.organisationName || parsedData.institutionName || parsedData.companyName || submission.name;
+        const res = await fetch("/api/auth/signup", { method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: orgName, email: parsedData.officialEmail || parsedData.email || submission.email,
+            password: Math.random().toString(36).slice(-8) + "C1!", role, organisation: orgName,
+            phone: parsedData.phone || submission.phone,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) { setAccountMsg({ id: submission.id, type: "error", text: data.error }); return; }
+        const tempPwd = Math.random().toString(36).slice(-8) + "C1!";
+        setAccountMsg({ id: submission.id, type: "success", text: `${role} account created for ${orgName}! Share temp password with them.` });
+        updateStatus(submission.id, "APPROVED");
+      }
+    } catch { setAccountMsg({ id: submission.id, type: "error", text: "Failed to create account" }); }
+  }
 
   async function fetchData() {
     try {
@@ -98,15 +138,23 @@ export default function FormsTab() {
                         <div key={key}><span className="font-medium" style={{ color: "var(--muted)" }}>{key}:</span> <span>{String(value)}</span></div>
                       ))}
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       {s.status === "PENDING" && (
                         <>
                           <button onClick={() => updateStatus(s.id, "APPROVED")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Approve</button>
                           <button onClick={() => updateStatus(s.id, "REJECTED")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Reject</button>
                         </>
                       )}
+                      {(s.type === "MENTOR_ONBOARDING" || s.type === "COMPANY_ONBOARDING" || s.type === "INSTITUTION_ONBOARDING") && s.status !== "REJECTED" && (
+                        <button onClick={() => createAccountFromForm(s)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] bg-green-100 text-green-700 hover:bg-green-200`}>
+                          Create Account →
+                        </button>
+                      )}
                       <button onClick={() => updateStatus(s.id, "REVIEWED")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Mark Reviewed</button>
                     </div>
+                    {accountMsg?.id === s.id && (
+                      <div className={`mt-3 rounded-xl p-3 text-sm ${accountMsg.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>{accountMsg.text}</div>
+                    )}
                   </div>
                 )}
               </div>
