@@ -32,6 +32,7 @@ export default function Footer() {
                 <Link href="/companies" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Companies</Link>
                 <Link href="/pricing" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Pricing</Link>
                 <Link href="/chat" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>AI Advisor</Link>
+                <Link href="/blog" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Blog</Link>
               </div>
             </div>
             <div>

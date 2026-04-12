@@ -622,3 +622,31 @@ model CandidateInvite {
 
   @@unique([hrId, candidateId, jobId])
 }
+
+enum BlogStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  REJECTED
+}
+
+model BlogPost {
+  id            String     @id @default(cuid())
+  slug          String     @unique
+  title         String
+  content       String     // HTML/markdown content
+  excerpt       String?    // Short summary
+  coverImageUrl String?
+  authorId      String
+  authorName    String
+  authorRole    String     // "ADMIN", "MENTOR", "HR"
+  status        BlogStatus @default(DRAFT)
+  tags          String[]
+  category      String?
+  videoUrl      String?    // YouTube/Vimeo embed URL
+  readTime      Int?       // estimated minutes
+  views         Int        @default(0)
+  publishedAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
