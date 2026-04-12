@@ -40,6 +40,17 @@ model User {
   subscription  Subscription?
   createdEvents Event[]              @relation("EventCreator")
   eventRegs     EventRegistration[]  @relation("EventRegistrations")
+  profileViews  ProfileView[]       @relation("ProfileViewer")
+}
+
+model ProfileView {
+  id          String   @id @default(cuid())
+  viewerId    String
+  viewer      User     @relation("ProfileViewer", fields: [viewerId], references: [id], onDelete: Cascade)
+  profileId   String
+  viewedAt    DateTime @default(now())
+
+  @@unique([viewerId, profileId])
 }
 
 enum MentorStatus {

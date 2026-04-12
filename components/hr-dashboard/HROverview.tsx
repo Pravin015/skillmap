@@ -1,49 +1,65 @@
 "use client";
+import { useEffect, useState } from "react";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
-const statCards = [
-  { label: "Applications Received", value: "—", icon: "📩", color: "#4285f4" },
-  { label: "Active Job Posts", value: "0", icon: "💼", color: "#22c55e" },
-  { label: "Candidates Shortlisted", value: "—", icon: "⭐", color: "#f59e0b" },
-  { label: "Interviews Scheduled", value: "—", icon: "📅", color: "#8b5cf6" },
-];
-
-const quickActions = [
-  { label: "Post a new job", icon: "➕", tab: "create-job" },
-  { label: "Search candidates", icon: "🔍", tab: "search" },
-  { label: "Create hackathon", icon: "🏆", tab: "hackathon" },
-  { label: "View leaderboard", icon: "📊", tab: "leaderboard" },
-];
+interface Stats { totalApps: number; activeJobs: number; interviewCount: number; shortlisted: number; pipeline: Record<string, number> }
 
 export default function HROverview({ onNavigate }: { onNavigate: (tab: string) => void }) {
+  const [stats, setStats] = useState<Stats>({ totalApps: 0, activeJobs: 0, interviewCount: 0, shortlisted: 0, pipeline: {} });
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const [appsRes, jobsRes] = await Promise.all([
+          fetch("/api/applications").then((r) => r.json()),
+          fetch("/api/jobs").then((r) => r.json()),
+        ]);
+        const apps = appsRes.applications || [];
+        const jobs = jobsRes.jobs || [];
+        const pipeline: Record<string, number> = {};
+        apps.forEach((a: { status: string }) => { pipeline[a.status] = (pipeline[a.status] || 0) + 1; });
+        setStats({
+          totalApps: apps.length,
+          activeJobs: jobs.filter((j: { status: string }) => j.status === "ACTIVE").length,
+          interviewCount: pipeline["INTERVIEW"] || 0,
+          shortlisted: (pipeline["SCREENING"] || 0) + (pipeline["INTERVIEW"] || 0) + (pipeline["ASSESSMENT"] || 0) + (pipeline["OFFER"] || 0),
+          pipeline,
+        });
+      } catch { /* ignore */ }
+    }
+    load();
+  }, []);
+
+  const statCards = [
+    { label: "Applications Received", value: stats.totalApps.toString(), icon: "📩", color: "#4285f4" },
+    { label: "Active Job Posts", value: stats.activeJobs.toString(), icon: "💼", color: "#22c55e" },
+    { label: "Candidates Shortlisted", value: stats.shortlisted.toString(), icon: "⭐", color: "#f59e0b" },
+    { label: "In Interview", value: stats.interviewCount.toString(), icon: "📅", color: "#8b5cf6" },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((s) => (
-          <div key={s.label} className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-2xl">{s.icon}</span>
-              <div className="w-8 h-1 rounded-full" style={{ background: s.color }} />
-            </div>
+          <button key={s.label} onClick={() => onNavigate(s.label.includes("Application") ? "applications" : s.label.includes("Job") ? "my-posts" : "applications")} className="rounded-2xl border bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ borderColor: "var(--border)" }}>
+            <div className="flex items-center justify-between mb-3"><span className="text-2xl">{s.icon}</span><div className="w-8 h-1 rounded-full" style={{ background: s.color }} /></div>
             <div className={`${syne} text-2xl font-extrabold`}>{s.value}</div>
             <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{s.label}</div>
-          </div>
+          </button>
         ))}
       </div>
 
-      {/* Quick actions */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
         <h3 className={`${syne} font-bold text-base mb-4`}>Quick Actions</h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {quickActions.map((a) => (
-            <button
-              key={a.label}
-              onClick={() => onNavigate(a.tab)}
-              className="rounded-xl border p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ borderColor: "var(--border)" }}
-            >
+          {[
+            { label: "Post a new job", icon: "➕", tab: "create-job" },
+            { label: "Search candidates", icon: "🔍", tab: "search" },
+            { label: "Create hackathon", icon: "🏆", tab: "hackathon" },
+            { label: "View applications", icon: "📩", tab: "applications" },
+          ].map((a) => (
+            <button key={a.label} onClick={() => onNavigate(a.tab)} className="rounded-xl border p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ borderColor: "var(--border)" }}>
               <div className="text-2xl mb-2">{a.icon}</div>
               <div className={`${syne} font-bold text-sm`}>{a.label}</div>
             </button>
@@ -51,41 +67,16 @@ export default function HROverview({ onNavigate }: { onNavigate: (tab: string) =
         </div>
       </div>
 
-      {/* Hiring pipeline */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
         <h3 className={`${syne} font-bold text-base mb-2`}>Hiring Pipeline</h3>
-        <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Track candidates through your hiring stages</p>
-        <div className="grid grid-cols-5 gap-2">
-          {["Applied", "Screening", "Interview", "Assessment", "Offer"].map((stage) => (
-            <div key={stage} className="rounded-xl border-2 border-dashed p-4 text-center" style={{ borderColor: "var(--border)" }}>
-              <div className={`${syne} text-xl font-extrabold mb-1`} style={{ color: "var(--border)" }}>0</div>
-              <div className="text-[0.65rem] font-medium" style={{ color: "var(--muted)" }}>{stage}</div>
+        <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Live candidate status across your job posts</p>
+        <div className="grid grid-cols-3 md:grid-cols-7 gap-2">
+          {["APPLIED", "SCREENING", "INTERVIEW", "ASSESSMENT", "OFFER", "HIRED", "REJECTED"].map((stage) => (
+            <div key={stage} className="rounded-xl border p-3 text-center" style={{ borderColor: stats.pipeline[stage] ? "var(--ink)" : "var(--border)", background: stats.pipeline[stage] ? "rgba(10,10,15,0.02)" : "transparent" }}>
+              <div className={`${syne} text-lg font-extrabold`} style={{ color: stats.pipeline[stage] ? "var(--ink)" : "var(--border)" }}>{stats.pipeline[stage] || 0}</div>
+              <div className="text-[0.55rem] font-medium mt-0.5" style={{ color: "var(--muted)" }}>{stage.charAt(0) + stage.slice(1).toLowerCase()}</div>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* Hackathon toppers */}
-      <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <div className="flex items-center justify-between mb-2">
-          <h3 className={`${syne} font-bold text-base`}>Hackathon Toppers</h3>
-          <button onClick={() => onNavigate("leaderboard")} className={`text-xs ${syne} font-bold no-underline px-2.5 py-1 rounded-lg`} style={{ background: "var(--ink)", color: "var(--accent)" }}>View all</button>
-        </div>
-        <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Top performers from your hiring challenges</p>
-        <div className="rounded-xl border-2 border-dashed p-8 text-center" style={{ borderColor: "var(--border)" }}>
-          <div className="text-3xl mb-3">🏆</div>
-          <p className={`${syne} font-bold text-sm mb-1`}>No hackathons created yet</p>
-          <p className="text-xs" style={{ color: "var(--muted)" }}>Create a hackathon or quiz to find top talent</p>
-          <button onClick={() => onNavigate("hackathon")} className={`mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Create hackathon</button>
-        </div>
-      </div>
-
-      {/* Recent activity */}
-      <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-2`}>Recent Activity</h3>
-        <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Your latest hiring activities will appear here</p>
-        <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
-          <p className="text-sm" style={{ color: "var(--muted)" }}>No activity yet — start by posting a job or creating a hackathon</p>
         </div>
       </div>
     </div>

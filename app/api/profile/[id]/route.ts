@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// GET public profile by profileNumber — visible to HR, ADMIN, mentors
+// GET public profile by profileNumber
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -12,8 +12,8 @@ export async function GET(
 
   const session = await getServerSession(authOptions);
   const userRole = (session?.user as { role?: string })?.role;
+  const viewerId = (session?.user as { id?: string })?.id;
 
-  // Only HR, ORG, ADMIN, and the student themselves can view
   if (!session?.user) {
     return NextResponse.json({ error: "Please login to view profiles" }, { status: 401 });
   }
@@ -24,7 +24,7 @@ export async function GET(
       experiences: true,
       certifications: true,
       user: {
-        select: { name: true, email: true, degree: true, gradYear: true },
+        select: { name: true, email: true, degree: true, gradYear: true, phone: true },
       },
     },
   });
@@ -34,25 +34,41 @@ export async function GET(
   }
 
   // Students can only view their own profile
-  if (userRole === "STUDENT" && profile.userId !== (session.user as { id?: string })?.id) {
+  if (userRole === "STUDENT" && profile.userId !== viewerId) {
     return NextResponse.json({ error: "You can only view your own profile" }, { status: 403 });
   }
 
-  // Strip sensitive data for non-owners
-  const isOwner = profile.userId === (session.user as { id?: string })?.id;
+  const isOwner = profile.userId === viewerId;
+
+  // Track profile view for HR/ORG/ADMIN (not own views)
+  if (!isOwner && viewerId && (userRole === "HR" || userRole === "ORG" || userRole === "ADMIN")) {
+    try {
+      await prisma.profileView.upsert({
+        where: { viewerId_profileId: { viewerId, profileId: profile.id } },
+        update: { viewedAt: new Date() },
+        create: { viewerId, profileId: profile.id },
+      });
+    } catch { /* ignore duplicates */ }
+  }
+
+  // Get total view count
+  const viewCount = await prisma.profileView.count({ where: { profileId: profile.id } });
 
   return NextResponse.json({
     profile: {
       ...profile,
-      userId: undefined, // hide internal ID
+      userId: undefined,
       user: {
         name: profile.user.name,
         degree: profile.user.degree,
         gradYear: profile.user.gradYear,
-        email: isOwner ? profile.user.email : undefined, // hide email from non-owners
+        // Show contact details to HR/ORG/ADMIN and owner
+        email: (isOwner || userRole === "HR" || userRole === "ORG" || userRole === "ADMIN") ? profile.user.email : undefined,
+        phone: (isOwner || userRole === "HR" || userRole === "ORG" || userRole === "ADMIN") ? profile.user.phone : undefined,
       },
     },
     isOwner,
     viewerRole: userRole,
+    viewCount,
   });
 }

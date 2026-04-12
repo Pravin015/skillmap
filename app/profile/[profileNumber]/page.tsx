@@ -26,7 +26,7 @@ interface ProfileData {
   profileScore: number;
   experiences: { company: string; role: string; startDate: string; endDate: string | null; description: string | null; current: boolean }[];
   certifications: { title: string; issuer: string; issueDate: string | null; imageUrl: string | null }[];
-  user: { name: string; degree: string | null; gradYear: string | null; email?: string };
+  user: { name: string; degree: string | null; gradYear: string | null; email?: string; phone?: string };
 }
 
 export default function PublicProfilePage() {
@@ -34,8 +34,10 @@ export default function PublicProfilePage() {
   const profileNumber = params.profileNumber as string;
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [viewerRole, setViewerRole] = useState<string | null>(null);
+  const [viewCount, setViewCount] = useState(0);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showConnect, setShowConnect] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -44,6 +46,7 @@ export default function PublicProfilePage() {
         const data = await res.json();
         if (!res.ok) { setError(data.error); return; }
         setProfile(data.profile);
+        setViewCount(data.viewCount || 0);
         setViewerRole(data.viewerRole);
       } catch { setError("Failed to load profile"); }
       finally { setLoading(false); }
@@ -106,9 +109,56 @@ export default function PublicProfilePage() {
                 </div>
               )}
             </div>
-            <div className="text-xs mt-3 px-1" style={{ color: "var(--muted)" }}>ID: {p.profileNumber}</div>
+            <div className="flex items-center gap-3 mt-3 px-1">
+              <span className="text-xs" style={{ color: "var(--muted)" }}>ID: {p.profileNumber}</span>
+              {showScore && <span className="text-xs" style={{ color: "var(--muted)" }}>· {viewCount} profile views</span>}
+            </div>
           </div>
         </div>
+
+        {/* Connect — HR/Admin only */}
+        {(viewerRole === "HR" || viewerRole === "ORG" || viewerRole === "ADMIN") && (
+          <div className="rounded-2xl overflow-hidden" style={{ background: "var(--ink)" }}>
+            <div className="p-6">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <h3 className={`${syne} font-bold text-base text-white`}>Connect with {p.user.name.split(" ")[0]}</h3>
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>Reach out to this candidate directly</p>
+                </div>
+                <button onClick={() => setShowConnect(!showConnect)} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
+                  {showConnect ? "Hide details" : "Connect now →"}
+                </button>
+              </div>
+              {showConnect && (
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {p.user.email && (
+                    <a href={`mailto:${p.user.email}`} className="flex items-center gap-3 p-3 rounded-xl no-underline transition-colors hover:bg-[rgba(255,255,255,0.08)]" style={{ border: "1px solid rgba(255,255,255,0.1)", color: "white" }}>
+                      <span className="text-lg">✉️</span>
+                      <div>
+                        <div className="text-xs font-medium">Email</div>
+                        <div className="text-sm">{p.user.email}</div>
+                      </div>
+                    </a>
+                  )}
+                  {p.user.phone && (
+                    <a href={`tel:${p.user.phone}`} className="flex items-center gap-3 p-3 rounded-xl no-underline transition-colors hover:bg-[rgba(255,255,255,0.08)]" style={{ border: "1px solid rgba(255,255,255,0.1)", color: "white" }}>
+                      <span className="text-lg">📞</span>
+                      <div>
+                        <div className="text-xs font-medium">Phone</div>
+                        <div className="text-sm">{p.user.phone}</div>
+                      </div>
+                    </a>
+                  )}
+                  {!p.user.email && !p.user.phone && (
+                    <div className="col-span-2 text-center p-4 rounded-xl" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
+                      <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>No contact details available. The candidate hasn&apos;t added their email or phone.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Bio */}
         {p.bio && (
