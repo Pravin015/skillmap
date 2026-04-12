@@ -9,7 +9,7 @@ interface EventDetail {
   id: string; title: string; description: string; agenda: string | null; benefits: string | null;
   date: string; endDate: string | null; duration: string | null; eventType: string; location: string | null;
   pricing: string; price: number | null; minParticipants: number; maxParticipants: number;
-  joinLink: string | null; joinInstructions: string | null; status: string; category: string | null;
+  joinLink: string | null; joinInstructions: string | null; status: string; category: string | null; coverImageUrl: string | null;
   tags: string[]; createdAt: string;
   createdBy: { name: string; role: string; mentorProfile: { mentorNumber: string; currentCompany: string | null; status: string } | null };
   registrations: { user: { name: string } }[];
@@ -67,6 +67,11 @@ export default function EventDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main */}
           <div className="lg:col-span-2 space-y-6">
+            {event.coverImageUrl && (
+              <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "var(--border)" }}>
+                <img src={event.coverImageUrl} alt={event.title} className="w-full h-48 md:h-64 object-cover" />
+              </div>
+            )}
             <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: "var(--border)" }}>
               <div className="h-2" style={{ background: event.status === "APPROVED" ? "var(--accent)" : "var(--border)" }} />
               <div className="p-6">

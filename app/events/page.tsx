@@ -7,6 +7,7 @@ interface Event {
   id: string; title: string; description: string; date: string; duration: string | null;
   eventType: string; pricing: string; price: number | null; maxParticipants: number;
   category: string | null; tags: string[]; status: string; location: string | null;
+  coverImageUrl: string | null;
   createdBy: { name: string }; _count: { registrations: number };
 }
 
@@ -83,7 +84,13 @@ function EventCard({ event }: { event: Event }) {
   const spotsLeft = event.maxParticipants - event._count.registrations;
 
   return (
-    <Link href={`/events/${event.id}`} className="block rounded-2xl border bg-white p-5 transition-all hover:-translate-y-0.5 hover:shadow-lg no-underline group" style={{ borderColor: "var(--border)" }}>
+    <Link href={`/events/${event.id}`} className="block rounded-2xl border bg-white overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg no-underline group" style={{ borderColor: "var(--border)" }}>
+      {event.coverImageUrl && (
+        <div className="h-40 overflow-hidden">
+          <img src={event.coverImageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        </div>
+      )}
+      <div className="p-5">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
           <h3 className={`${syne} font-bold text-base group-hover:text-[var(--accent)] transition-colors`} style={{ color: "var(--ink)" }}>{event.title}</h3>
@@ -108,6 +115,7 @@ function EventCard({ event }: { event: Event }) {
         <span>{event._count.registrations} registered</span>
         {!isPast && <span className={spotsLeft <= 10 ? "text-red-500 font-bold" : ""}>{spotsLeft} spots left</span>}
         {isPast && <span>Event ended</span>}
+      </div>
       </div>
     </Link>
   );

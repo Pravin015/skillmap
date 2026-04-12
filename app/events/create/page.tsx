@@ -11,6 +11,7 @@ export default function CreateEventPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [pricing, setPricing] = useState("FREE");
+  const [coverImage, setCoverImage] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -27,6 +28,7 @@ export default function CreateEventPage() {
           minParticipants: d.get("minParticipants"), maxParticipants: d.get("maxParticipants"),
           joinLink: d.get("joinLink"), joinInstructions: d.get("joinInstructions"),
           category: d.get("category"), tags: (d.get("tags") as string)?.split(",").map((t) => t.trim()).filter(Boolean) || [],
+          coverImageUrl: coverImage,
         }),
       });
       const data = await res.json();
@@ -46,6 +48,31 @@ export default function CreateEventPage() {
           {message && <div className={`rounded-xl p-4 text-sm font-medium ${message.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>{message.text}</div>}
 
           {/* Basic */}
+          {/* Cover Image */}
+          <div>
+            <h2 className={`${syne} font-bold text-base mb-4`}>Cover Image</h2>
+            <div className="flex items-center gap-4">
+              {coverImage ? (
+                <img src={coverImage} alt="" className="w-32 h-20 rounded-xl object-cover" />
+              ) : (
+                <div className="w-32 h-20 rounded-xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>🖼️</div>
+              )}
+              <div>
+                <label className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs cursor-pointer`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                  {coverImage ? "Change image" : "Upload thumbnail"}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                    const f = e.target.files?.[0]; if (!f) return;
+                    if (f.size > 1024 * 1024) { alert("Max 1MB"); return; }
+                    const reader = new FileReader();
+                    reader.onload = () => setCoverImage(reader.result as string);
+                    reader.readAsDataURL(f);
+                  }} />
+                </label>
+                <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Recommended: 1200x630px · Max 1MB</p>
+              </div>
+            </div>
+          </div>
+
           <div><h2 className={`${syne} font-bold text-base mb-4`}>Event Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="md:col-span-2"><label className={labelClass}>Event Title *</label><input name="title" required placeholder="e.g. Cybersecurity Career Roadmap 2026" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>

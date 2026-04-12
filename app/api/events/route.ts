@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { title, description, agenda, benefits, date, endDate, duration, eventType, location, pricing, price, minParticipants, maxParticipants, joinLink, joinInstructions, category, tags } = body;
+  const { title, description, agenda, benefits, date, endDate, duration, eventType, location, pricing, price, minParticipants, maxParticipants, joinLink, joinInstructions, category, tags, coverImageUrl } = body;
 
   if (!title || !description || !date) {
     return NextResponse.json({ error: "Title, description, and date are required" }, { status: 400 });
@@ -97,6 +97,7 @@ export async function POST(req: NextRequest) {
       joinInstructions: joinInstructions || null,
       category: category || null,
       tags: tags || [],
+      coverImageUrl: coverImageUrl || null,
       status,
       approvedAt: status === "APPROVED" ? new Date() : null,
     },
