@@ -8,4 +8,5 @@ export function getResend(): Resend | null {
   return _resend;
 }
 
-export const FROM_EMAIL = "SkillMap <notifications@ashpranix.in>";
+// Use custom domain if verified, fallback to Resend's test domain
+export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "SkillMap <onboarding@resend.dev>";
