@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { uploadToGCS, isGCSConfigured } from "@/lib/gcs";
+import { resolveImage } from "@/lib/resolve-image";
 
 // GET — list events
 export async function GET(req: NextRequest) {
@@ -37,7 +39,9 @@ export async function GET(req: NextRequest) {
     orderBy: { date: "asc" },
   });
 
-  return NextResponse.json({ events });
+  // Resolve cover images
+  const resolved = await Promise.all(events.map(async (e) => ({ ...e, coverImageUrl: await resolveImage(e.coverImageUrl) })));
+  return NextResponse.json({ events: resolved });
 }
 
 // POST — create event (Mentor or Admin)
@@ -97,7 +101,17 @@ export async function POST(req: NextRequest) {
       joinInstructions: joinInstructions || null,
       category: category || null,
       tags: tags || [],
-      coverImageUrl: coverImageUrl || null,
+      coverImageUrl: await (async () => {
+        if (!coverImageUrl) return null;
+        if (isGCSConfigured() && coverImageUrl.startsWith("data:image/")) {
+          try {
+            const ext = coverImageUrl.startsWith("data:image/png") ? "png" : "jpg";
+            const path = await uploadToGCS(coverImageUrl, "event-covers", `event-${Date.now()}.${ext}`);
+            return `gcs:${path}`;
+          } catch { return coverImageUrl; }
+        }
+        return coverImageUrl;
+      })(),
       status,
       approvedAt: status === "APPROVED" ? new Date() : null,
     },

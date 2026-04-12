@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { resolveImage } from "@/lib/resolve-image";
 
 // GET public profile by profileNumber
 export async function GET(
@@ -62,7 +63,7 @@ export async function GET(
         name: profile.user.name,
         degree: profile.user.degree,
         gradYear: profile.user.gradYear,
-        profileImage: profile.user.profileImage || null,
+        profileImage: await resolveImage(profile.user.profileImage),
         email: (isOwner || userRole === "HR" || userRole === "ORG" || userRole === "ADMIN") ? profile.user.email : undefined,
         phone: (isOwner || userRole === "HR" || userRole === "ORG" || userRole === "ADMIN") ? profile.user.phone : undefined,
       },

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { resolveImage } from "@/lib/resolve-image";
 
 // GET public mentor profile by mentorNumber — viewable by anyone logged in
 export async function GET(
@@ -26,7 +27,7 @@ export async function GET(
     mentor: {
       ...profile,
       userId: undefined,
-      user: { name: profile.user.name, profileImage: profile.user.profileImage },
+      user: { name: profile.user.name, profileImage: await resolveImage(profile.user.profileImage) },
     },
   });
 }
