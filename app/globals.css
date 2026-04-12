@@ -176,3 +176,37 @@ body {
 @media (max-width: 1024px) {
   main { padding-bottom: 0; }
 }
+
+/* Legal pages content styling */
+.legal-content h2 {
+  font-family: var(--font-syne);
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--ink);
+}
+.legal-content h3 {
+  font-family: var(--font-syne);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+}
+.legal-content p {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+.legal-content ul, .legal-content ol {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: var(--muted);
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+.legal-content li { margin-bottom: 0.35rem; }
+.legal-content strong { color: var(--ink); font-weight: 600; }
+.legal-content a { color: var(--ink); text-decoration: underline; }
