@@ -192,12 +192,42 @@ export default function MentorProfilePage() {
                 <button disabled={booking || !prefDate} onClick={async () => {
                   setBooking(true); setBookingStatus(null);
                   try {
-                    const res = await fetch("/api/sessions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mentorProfileId: m.id, preferredDate: prefDate, message: sessionMsg, sessionType, duration: "30 min" }) });
+                    // First try without payment to check if payment is needed
+                    const res = await fetch("/api/sessions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mentorProfileId: m.id, preferredDate: prefDate, message: sessionMsg, sessionType, duration: "60 min" }) });
                     const data = await res.json();
-                    if (!res.ok) { setBookingStatus({ type: "error", text: data.error }); } else { setBookingStatus({ type: "success", text: "Session requested! The mentor will review and accept/decline. You'll be notified." }); setPrefDate(""); setSessionMsg(""); }
+
+                    if (data.requiresPayment) {
+                      // Trigger Razorpay payment
+                      if (typeof window !== "undefined") {
+                        if (!document.getElementById("rzp-s")) { const s = document.createElement("script"); s.id = "rzp-s"; s.src = "https://checkout.razorpay.com/v1/checkout.js"; document.body.appendChild(s); }
+                        await new Promise((r) => setTimeout(r, 500)); // wait for script
+                        if (window.Razorpay) {
+                          const orderRes = await fetch("/api/payments/create-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: "CAREER_READY", customAmount: data.price, customDesc: `Session with ${data.mentorName}` }) });
+                          const orderData = await orderRes.json();
+                          if (orderRes.ok) {
+                            const rzp = new (window as unknown as { Razorpay: new (o: Record<string, unknown>) => { open: () => void } }).Razorpay({ key: orderData.keyId, amount: orderData.amount, currency: orderData.currency, name: "SkillMap", description: `${data.sessionType === "GROUP" ? "Group" : "1-on-1"} session with ${data.mentorName}`, order_id: orderData.orderId,
+                              handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
+                                await fetch("/api/payments/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(response) });
+                                // Now create session with payment ID
+                                const sRes = await fetch("/api/sessions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mentorProfileId: m.id, preferredDate: prefDate, message: sessionMsg, sessionType, duration: "60 min", paymentId: response.razorpay_payment_id }) });
+                                const sData = await sRes.json();
+                                if (sRes.ok) { setBookingStatus({ type: "success", text: "Payment successful! Session requested. Mentor will confirm." }); setPrefDate(""); setSessionMsg(""); }
+                                else setBookingStatus({ type: "error", text: sData.error });
+                              },
+                              prefill: {}, theme: { color: "#0a0a0f" }, modal: { ondismiss: () => { setBookingStatus({ type: "error", text: "Payment cancelled" }); } },
+                            } as Record<string, unknown>);
+                            rzp.open();
+                          }
+                        } else { setBookingStatus({ type: "error", text: "Payment system loading. Try again." }); }
+                      }
+                    } else if (!res.ok) {
+                      setBookingStatus({ type: "error", text: data.error });
+                    } else {
+                      setBookingStatus({ type: "success", text: "Session requested! Mentor will review and respond." }); setPrefDate(""); setSessionMsg("");
+                    }
                   } catch { setBookingStatus({ type: "error", text: "Failed to book" }); }
                   finally { setBooking(false); }
-                }} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--accent)", color: "var(--ink)" }}>{booking ? "Requesting..." : "Request Session"}</button>
+                }} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--accent)", color: "var(--ink)" }}>{booking ? "Processing..." : m.compensation === "PAID" ? `Pay & Request (₹${sessionType === "GROUP" ? (m.groupSessionRate || m.sessionRate || 0) : (m.sessionRate || 0)})` : "Request Session"}</button>
               </div>
             )}
           </div>

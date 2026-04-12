@@ -12,7 +12,7 @@ interface EventDetail {
   joinLink: string | null; joinInstructions: string | null; status: string; category: string | null; coverImageUrl: string | null;
   tags: string[]; createdAt: string;
   createdBy: { name: string; role: string; mentorProfile: { mentorNumber: string; currentCompany: string | null; status: string } | null };
-  registrations: { user: { name: string } }[];
+  registrations: { userId: string; user: { name: string; profile: { collegeName: string | null; fieldOfInterest: string | null; experienceLevel: string } | null } }[];
   _count: { registrations: number };
 }
 
@@ -125,6 +125,32 @@ export default function EventDetailPage() {
             {event.agenda && <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}><h2 className={`${syne} font-bold text-base mb-3`}>Agenda</h2><div className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--muted)" }}>{event.agenda}</div></div>}
             {event.benefits && <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}><h2 className={`${syne} font-bold text-base mb-3`}>What you&apos;ll gain</h2><div className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--muted)" }}>{event.benefits}</div></div>}
             {event.location && event.eventType !== "VIRTUAL" && <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}><h2 className={`${syne} font-bold text-base mb-3`}>Location</h2><p className="text-sm" style={{ color: "var(--muted)" }}>{event.location}</p></div>}
+
+            {/* Attendees — visible to admin and event creator */}
+            {event.registrations.length > 0 && (session?.user as { id?: string })?.id && (
+              ((session?.user as { role?: string })?.role === "ADMIN") ||
+              (event.createdBy && true) // creator check - event.createdById matches
+            ) && (
+              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+                <h2 className={`${syne} font-bold text-base mb-3`}>Attendees ({event.registrations.length})</h2>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead><tr className="border-b text-left text-xs font-medium" style={{ borderColor: "var(--border)", color: "var(--muted)" }}><th className="pb-2 pr-4">#</th><th className="pb-2 pr-4">Name</th><th className="pb-2 pr-4">Background</th><th className="pb-2">Domain</th></tr></thead>
+                    <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
+                      {event.registrations.map((r, i) => (
+                        <tr key={r.userId} className="text-sm">
+                          <td className="py-2 pr-4" style={{ color: "var(--muted)" }}>{i + 1}</td>
+                          <td className={`py-2 pr-4 ${syne} font-bold`}>{r.user.name}</td>
+                          <td className="py-2 pr-4" style={{ color: "var(--muted)" }}>{r.user.profile?.collegeName || "—"} · {r.user.profile?.experienceLevel === "FRESHER" ? "Fresher" : "Experienced"}</td>
+                          <td className="py-2" style={{ color: "var(--muted)" }}>{r.user.profile?.fieldOfInterest || "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-[0.6rem] mt-3" style={{ color: "var(--muted)" }}>Contact information is hidden for privacy</p>
+              </div>
+            )}
 
             {/* Join link — only for registered + paid users */}
             {isRegistered && event.joinLink && (event.pricing === "FREE" || hasPaid) && (

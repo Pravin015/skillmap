@@ -15,7 +15,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     include: {
       createdBy: { select: { name: true, role: true, mentorProfile: { select: { mentorNumber: true, currentCompany: true, status: true } } } },
       registrations: {
-        include: { user: { select: { name: true, email: true } } },
+        include: { user: { select: { name: true, profile: { select: { collegeName: true, fieldOfInterest: true, experienceLevel: true } } } } },
       },
       _count: { select: { registrations: true } },
     },

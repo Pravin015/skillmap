@@ -14,6 +14,7 @@ import ResumeCard from "@/components/dashboard/ResumeCard";
 import ProfileScoreCard from "@/components/dashboard/ProfileScoreCard";
 import CoursesCard from "@/components/dashboard/CoursesCard";
 import LabsPrepCard from "@/components/dashboard/LabsPrepCard";
+import MyMentorshipCard from "@/components/dashboard/MyMentorshipCard";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -24,6 +25,7 @@ const sidebarItems = [
   { id: "hr", label: "HR Interest", icon: "👥" },
   { id: "resume", label: "Resume", icon: "📄" },
   { id: "score", label: "Score", icon: "📊" },
+  { id: "mentorship", label: "Mentorship", icon: "🧑‍🏫" },
   { id: "events", label: "Events", icon: "🎤" },
   { id: "courses", label: "Courses", icon: "📚" },
   { id: "labs", label: "Labs", icon: "🧪" },
@@ -184,6 +186,11 @@ export default function DashboardPage() {
           </div>
 
           {/* Events */}
+          {/* Mentorship */}
+          <div id="section-mentorship">
+            <MyMentorshipCard />
+          </div>
+
           <div id="section-events">
             <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
               <div className="flex items-center justify-between mb-2">
