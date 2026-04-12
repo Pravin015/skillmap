@@ -28,7 +28,7 @@ function SignupInner() {
   const searchParams = useSearchParams();
   const initialRole = searchParams.get("role") || "STUDENT";
 
-  const [step, setStep] = useState(1); // 1 = signup, 2 = profile creation
+  const [step, setStep] = useState(1); // 1 = signup, 1.5 = OTP verify, 2 = profile creation
   const [activeRole, setActiveRole] = useState(initialRole === "ORG" ? "ORG" : "STUDENT");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,6 +39,11 @@ function SignupInner() {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [organisation, setOrganisation] = useState("");
+
+  // OTP
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpVerified, setOtpVerified] = useState(false);
 
   // Step 2 fields (student profile)
   const [collegeName, setCollegeName] = useState("");
@@ -52,34 +57,56 @@ function SignupInner() {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [bio, setBio] = useState("");
 
+  async function handleSendOTP() {
+    setError(""); setLoading(true);
+    try {
+      const res = await fetch("/api/auth/send-otp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error); setLoading(false); return; }
+      setOtpSent(true); setLoading(false);
+    } catch { setError("Failed to send OTP"); setLoading(false); }
+  }
+
+  async function handleVerifyOTP() {
+    setError(""); setLoading(true);
+    try {
+      const res = await fetch("/api/auth/verify-otp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, otp }) });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error); setLoading(false); return; }
+      setOtpVerified(true); setLoading(false);
+    } catch { setError("Verification failed"); setLoading(false); }
+  }
+
   async function handleStep1(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    setLoading(true);
 
+    // Step 1a: Send OTP if not sent yet
+    if (!otpSent) { handleSendOTP(); return; }
+    // Step 1b: Verify OTP if not verified yet
+    if (!otpVerified) { handleVerifyOTP(); return; }
+
+    // Step 1c: OTP verified — create account
+    setLoading(true);
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: activeRole === "ORG" ? organisation : name,
-          email,
-          password,
-          role: activeRole,
-          organisation: activeRole === "ORG" ? organisation : undefined,
-          phone,
+          email, password, role: activeRole,
+          organisation: activeRole === "ORG" ? organisation : undefined, phone,
         }),
       });
 
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Something went wrong"); setLoading(false); return; }
 
-      // Auto-login
       const loginRes = await signIn("credentials", { redirect: false, email, password, role: activeRole });
       if (loginRes?.error) { setError("Account created but login failed. Please login manually."); setLoading(false); return; }
 
       if (activeRole === "STUDENT") {
-        setStep(2); // Go to profile creation
+        setStep(2);
         setLoading(false);
       } else {
         window.location.href = "/company-dashboard";
@@ -199,8 +226,23 @@ function SignupInner() {
                 )}
               </div>
 
-              <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
-                {loading ? "Creating account..." : activeRole === "STUDENT" ? "Continue →" : "Create account"}
+              {/* OTP Section */}
+              {otpSent && !otpVerified && (
+                <div className="mt-4 rounded-xl p-4 border" style={{ background: "rgba(232,255,71,0.05)", borderColor: "rgba(232,255,71,0.2)" }}>
+                  <p className={`${syne} font-bold text-sm mb-2`}>Enter verification code</p>
+                  <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>We sent a 6-digit code to <strong>{email}</strong></p>
+                  <input type="text" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="Enter 6-digit code" maxLength={6} className={`${inputClass} text-center text-lg tracking-[0.3em] font-bold`} style={{ borderColor: "var(--border)" }} />
+                  <button type="button" onClick={handleSendOTP} className="text-xs mt-2 block" style={{ color: "var(--muted)" }}>Didn&apos;t receive? Resend</button>
+                </div>
+              )}
+              {otpVerified && (
+                <div className="mt-4 rounded-xl p-3 text-sm" style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a", border: "1px solid rgba(34,197,94,0.2)" }}>
+                  ✓ Email verified
+                </div>
+              )}
+
+              <button type="submit" disabled={loading} className={`mt-4 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                {loading ? "Please wait..." : !otpSent ? "Send verification code" : !otpVerified ? "Verify & continue" : activeRole === "STUDENT" ? "Create account →" : "Create account"}
               </button>
 
               <p className="mt-4 text-center text-sm" style={{ color: "var(--muted)" }}>

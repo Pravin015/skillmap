@@ -469,6 +469,17 @@ model Notification {
   createdAt DateTime         @default(now())
 }
 
+model EmailOTP {
+  id        String   @id @default(cuid())
+  email     String
+  otp       String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
 enum SessionStatus {
   REQUESTED
   ACCEPTED

@@ -27,6 +27,22 @@ export default function ProfileEditPage() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Mentor
+  const [headline, setHeadline] = useState("");
+  const [currentCompany, setCurrentCompany] = useState("");
+  const [currentRole, setCurrentRole] = useState("");
+  const [yearsExp, setYearsExp] = useState("");
+  const [areaOfExpertise, setAreaOfExpertise] = useState("");
+  const [mentorTopics, setMentorTopics] = useState("");
+  const [compensation, setCompensation] = useState("PAID");
+  const [sessionRate, setSessionRate] = useState("");
+  const [groupSessionRate, setGroupSessionRate] = useState("");
+  const [availability, setAvailability] = useState("");
+  const [mentorNumber, setMentorNumber] = useState("");
+  const [mentorBio, setMentorBio] = useState("");
+  const [mentorLinkedin, setMentorLinkedin] = useState("");
+  const [mentorCollege, setMentorCollege] = useState("");
+
   // Student
   const [collegeName, setCollegeName] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("FRESHER");
@@ -65,6 +81,20 @@ export default function ProfileEditPage() {
             setSkills((p.skills || []).join(", ")); setExperiences(p.experiences || []); setCertifications(p.certifications || []);
           }
         }).finally(() => setLoading(false));
+      } else if (userRole === "MENTOR") {
+        fetch("/api/mentor/profile").then((r) => r.json()).then((d) => {
+          if (d.profile) {
+            const p = d.profile;
+            setMentorNumber(p.mentorNumber || ""); setHeadline(p.headline || ""); setMentorBio(p.bio || "");
+            setCurrentCompany(p.currentCompany || ""); setCurrentRole(p.currentRole || "");
+            setYearsExp(p.yearsOfExperience?.toString() || ""); setMentorCollege(p.collegeName || "");
+            setAreaOfExpertise((p.areaOfExpertise || []).join(", "));
+            setMentorTopics((p.mentorTopics || []).join(", "));
+            setCompensation(p.compensation || "PAID");
+            setSessionRate(p.sessionRate?.toString() || ""); setGroupSessionRate(p.groupSessionRate?.toString() || "");
+            setAvailability(p.availability || ""); setMentorLinkedin(p.linkedinUrl || "");
+          }
+        }).finally(() => setLoading(false));
       } else { setLoading(false); }
     }
   }, [status, userRole, router]);
@@ -84,6 +114,11 @@ export default function ProfileEditPage() {
         body: JSON.stringify({ collegeName, experienceLevel, fieldOfInterest, bio, academicScore, academicType, salaryMin, salaryMax, availableToJoin, joinDate, githubUrl, linkedinUrl, portfolioUrl, otherLinks: [], skills: skills.split(",").map((s) => s.trim()).filter(Boolean), experiences, certifications }),
       }).then((r) => r.json());
       if (r.profile) setProfileNumber(r.profile.profileNumber);
+    }
+    if (userRole === "MENTOR") {
+      await fetch("/api/mentor/profile", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ headline, bio: mentorBio, currentCompany, currentRole, collegeName: mentorCollege, yearsOfExperience: yearsExp, areaOfExpertise: areaOfExpertise.split(",").map((s) => s.trim()).filter(Boolean), mentorTopics: mentorTopics.split(",").map((s) => s.trim()).filter(Boolean), compensation, sessionRate, groupSessionRate, availability, linkedinUrl: mentorLinkedin }),
+      });
     }
     setSaved(true); setSaving(false); setTimeout(() => setSaved(false), 3000);
   }
@@ -193,6 +228,45 @@ export default function ProfileEditPage() {
                     <input value={c.issueDate} onChange={(e) => updCert(i, "issueDate", e.target.value)} placeholder="Date" className={inputClass} style={{ borderColor: "var(--border)" }} />
                   </div>
                 ))}</div>}
+              </div>
+            </>
+          )}
+
+          {/* ═══ MENTOR ONLY ═══ */}
+          {userRole === "MENTOR" && (
+            <>
+              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+                <h2 className={`${syne} font-bold text-base mb-4`}>Mentor Profile</h2>
+                {mentorNumber && <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Mentor ID: <span className={`${syne} font-bold`}>{mentorNumber}</span></p>}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="md:col-span-2"><label className={labelClass}>Headline</label><input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. Senior Cybersecurity Analyst at TCS" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>Current Company *</label><input value={currentCompany} onChange={(e) => setCurrentCompany(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>Current Role *</label><input value={currentRole} onChange={(e) => setCurrentRole(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>Years of Experience</label><input type="number" value={yearsExp} onChange={(e) => setYearsExp(e.target.value)} min="0" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>College / University</label><input value={mentorCollege} onChange={(e) => setMentorCollege(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                </div>
+                <div className="mt-4"><label className={labelClass}>Bio</label><textarea value={mentorBio} onChange={(e) => setMentorBio(e.target.value)} placeholder="Tell students about your experience..." rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
+              </div>
+              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+                <h2 className={`${syne} font-bold text-base mb-4`}>Expertise & Topics</h2>
+                <div className="space-y-4">
+                  <div><label className={labelClass}>Areas of Expertise</label><input value={areaOfExpertise} onChange={(e) => setAreaOfExpertise(e.target.value)} placeholder="Cybersecurity, Cloud, Data (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>Topics I Can Help With</label><input value={mentorTopics} onChange={(e) => setMentorTopics(e.target.value)} placeholder="Interview prep, Resume review, Career switch (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  <div><label className={labelClass}>LinkedIn</label><input type="url" value={mentorLinkedin} onChange={(e) => setMentorLinkedin(e.target.value)} placeholder="linkedin.com/in/..." className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                </div>
+              </div>
+              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+                <h2 className={`${syne} font-bold text-base mb-4`}>Session Pricing</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div><label className={labelClass}>Compensation Type</label><select value={compensation} onChange={(e) => setCompensation(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}><option value="PAID">Paid</option><option value="VOLUNTEER">Volunteer (Free)</option></select></div>
+                  <div><label className={labelClass}>Availability</label><input value={availability} onChange={(e) => setAvailability(e.target.value)} placeholder="e.g. 5 hours/week" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                  {compensation === "PAID" && (
+                    <>
+                      <div><label className={labelClass}>1-on-1 Rate (₹ per session)</label><input type="number" value={sessionRate} onChange={(e) => setSessionRate(e.target.value)} placeholder="e.g. 500" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                      <div><label className={labelClass}>Group Rate (₹ per session)</label><input type="number" value={groupSessionRate} onChange={(e) => setGroupSessionRate(e.target.value)} placeholder="e.g. 300" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
+                    </>
+                  )}
+                </div>
               </div>
             </>
           )}
