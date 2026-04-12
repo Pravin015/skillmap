@@ -12,6 +12,7 @@ import HRsTab from "@/components/admin-dashboard/HRsTab";
 import JobPostsTab from "@/components/admin-dashboard/JobPostsTab";
 import FormsTab from "@/components/admin-dashboard/FormsTab";
 import PlatformSettings from "@/components/admin-dashboard/PlatformSettings";
+import InstitutionsTab from "@/components/admin-dashboard/InstitutionsTab";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -22,6 +23,7 @@ const sidebarItems = [
   { id: "hrs", label: "HRs", icon: "👥" },
   { id: "mentors", label: "Mentors", icon: "🧑‍🏫" },
   { id: "students", label: "Students", icon: "🎓" },
+  { id: "institutions", label: "Institutions", icon: "🏫" },
   { id: "jobs", label: "Job Posts", icon: "💼" },
   { id: "forms", label: "Forms", icon: "📋" },
   { id: "settings", label: "Settings", icon: "⚙️" },
@@ -68,6 +70,7 @@ export default function AdminPage() {
       case "hrs": return <HRsTab users={users} />;
       case "mentors": return <MentorsTab />;
       case "students": return <StudentsTab users={users} />;
+      case "institutions": return <InstitutionsTab users={users} />;
       case "jobs": return <JobPostsTab />;
       case "forms": return <FormsTab />;
       case "settings": return <PlatformSettings />;

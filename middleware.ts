@@ -21,6 +21,11 @@ export default withAuth(
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
+    // Institution dashboard — only INSTITUTION role (and ADMIN)
+    if (pathname.startsWith("/institution-dashboard") && token?.role !== "INSTITUTION" && token?.role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
     return NextResponse.next();
   },
   {
@@ -31,5 +36,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/chat/:path*", "/admin/:path*", "/onboarding/:path*", "/hr-dashboard/:path*", "/company-dashboard/:path*", "/profile/:path*"],
+  matcher: ["/dashboard/:path*", "/chat/:path*", "/admin/:path*", "/onboarding/:path*", "/hr-dashboard/:path*", "/company-dashboard/:path*", "/institution-dashboard/:path*", "/profile/:path*"],
 };

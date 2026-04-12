@@ -12,6 +12,7 @@ enum Role {
   HR
   ORG
   ADMIN
+  INSTITUTION
 }
 
 enum ExperienceLevel {
@@ -109,6 +110,9 @@ model StudentProfile {
   profileNumber   String          @unique
   userId          String          @unique
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Institution link (if enrolled through a college)
+  institutionId   String?
 
   // Basic info
   collegeName     String?

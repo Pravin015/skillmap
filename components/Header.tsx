@@ -31,6 +31,7 @@ export default function Header() {
   const userRole = (session?.user as { role?: string })?.role;
 
   const roleLinks = [
+    ...(userRole === "INSTITUTION" || userRole === "ADMIN" ? [{ href: "/institution-dashboard", label: "Institution" }] : []),
     ...(userRole === "ORG" || userRole === "ADMIN" ? [{ href: "/company-dashboard", label: "Company" }] : []),
     ...(userRole === "HR" || userRole === "ADMIN" ? [{ href: "/hr-dashboard", label: "HR Panel" }] : []),
     ...(userRole === "ADMIN" ? [{ href: "/admin", label: "Admin" }] : []),

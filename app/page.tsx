@@ -134,6 +134,14 @@ export default function Home() {
                 </div>
                 <span className="ml-1 opacity-30 group-hover:opacity-100 transition-opacity audience-btn-arrow">→</span>
               </Link>
+              <Link href="/for-institutions" className={`audience-btn group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline border-[1.5px] transition-all`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
+                <span className="text-xl">🏫</span>
+                <div className="text-left">
+                  <div className="audience-btn-title transition-colors">Institution</div>
+                  <div className="text-[0.65rem] font-normal audience-btn-sub transition-colors" style={{ color: "var(--muted)" }}>Manage placements</div>
+                </div>
+                <span className="ml-1 opacity-30 group-hover:opacity-100 transition-opacity audience-btn-arrow">→</span>
+              </Link>
             </div>
           </div>
 
@@ -431,6 +439,7 @@ export default function Home() {
                   <Link href="/pricing" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Pricing</Link>
                   <Link href="/for-companies" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>For Companies</Link>
                   <Link href="/for-mentors" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>For Mentors</Link>
+                  <Link href="/for-institutions" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>For Institutions</Link>
                 </div>
               </div>
               <div>
