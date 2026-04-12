@@ -68,7 +68,27 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
         </div>
       </div>
 
-      {/* Recent signups */}
+      {/* CSV Exports */}
+      <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+        <h3 className={`${syne} font-bold text-base mb-2`}>Export Data (CSV)</h3>
+        <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Download platform data as CSV files</p>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: "All Users", type: "users" },
+            { label: "All Jobs", type: "jobs" },
+            { label: "All Applications", type: "applications" },
+            { label: "All Mentors", type: "mentors" },
+            { label: "All Events", type: "events" },
+            { label: "Form Submissions", type: "forms" },
+          ].map((e) => (
+            <a key={e.type} href={`/api/export?type=${e.type}`} download className={`px-3 py-2 rounded-xl ${syne} font-bold text-xs no-underline border transition-colors hover:bg-gray-50`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
+              📥 {e.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* System Status */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
         <h3 className={`${syne} font-bold text-base mb-2`}>System Status</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">

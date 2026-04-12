@@ -67,6 +67,22 @@ export default function HROverview({ onNavigate }: { onNavigate: (tab: string) =
         </div>
       </div>
 
+      {/* CSV Exports */}
+      <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
+        <h3 className={`${syne} font-bold text-base mb-2`}>Export Data</h3>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: "My Applications", type: "my-applications" },
+            { label: "My Job Posts", type: "my-jobs" },
+            { label: "All Candidates", type: "candidates" },
+          ].map((e) => (
+            <a key={e.type} href={`/api/export?type=${e.type}`} download className={`px-3 py-2 rounded-xl ${syne} font-bold text-xs no-underline border transition-colors hover:bg-gray-50`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
+              📥 {e.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
         <h3 className={`${syne} font-bold text-base mb-2`}>Hiring Pipeline</h3>
         <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Live candidate status across your job posts</p>
