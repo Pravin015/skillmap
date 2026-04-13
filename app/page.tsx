@@ -1,426 +1,323 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-/* ─── DATA ─── */
-const tickerCompanies = ["Google", "TCS", "KPMG", "Deloitte", "Infosys", "Wipro", "Microsoft", "Amazon", "Accenture", "EY", "PwC", "Cognizant"];
+const syne = "font-[family-name:var(--font-syne)]";
 
-const problemCards = [
-  { num: "40%", title: "Graduate unemployment", desc: "Under-25 graduates in India. Not from lack of talent — from lack of direction. (Azim Premji University, 2026)" },
-  { num: "55%", title: "Skill mismatch", desc: "Of fresh graduates are considered unemployable by industry — not because they failed, but because no one told them what to learn." },
-  { num: "0", title: "Clear roadmaps", desc: "Job boards show you openings. Nobody tells you what you're missing, how long it takes to fix it, or where to start." },
-  { num: "10M+", title: "New graduates yearly", desc: "Every year, millions of smart young Indians enter the job market confused, unprepared, and without guidance." },
+const logoCompanies = ["Google", "Amazon", "TCS", "Infosys", "Wipro", "Deloitte", "KPMG", "Flipkart", "Microsoft", "Accenture"];
+
+const features = [
+  { icon: "🤖", title: "AI Career Advisor", desc: "Get personalised career guidance powered by AI", href: "/chat" },
+  { icon: "🎤", title: "Mock Interviews", desc: "Practice with AI interviewers for 15+ companies", href: "/mock-interview" },
+  { icon: "💼", title: "Job Matching", desc: "Domain-filtered jobs with skill-match scoring", href: "/jobs" },
+  { icon: "🧑‍🏫", title: "Mentor Sessions", desc: "1-on-1 sessions with verified industry mentors", href: "/companies" },
+  { icon: "🧪", title: "Lab Assessments", desc: "Timed MCQ labs for technical screening", href: "/jobs" },
+  { icon: "📅", title: "Events", desc: "Workshops, webinars, and career events", href: "/events" },
+  { icon: "📝", title: "Blog", desc: "Career tips from mentors, HR, and experts", href: "/blog" },
+  { icon: "📊", title: "Skill Tracking", desc: "Track your progress across all activities", href: "/dashboard" },
 ];
 
-const steps = [
-  { num: "01", icon: "🎯", title: "Sign up & build your profile", desc: "Create your account with email OTP verification. Upload your photo, add skills, education, certifications, and set your career preferences.", tag: "3 minutes" },
-  { num: "02", icon: "🔍", title: "Browse jobs filtered for you", desc: "Jobs auto-filter to your domain interest. Apply with one click — complete timed lab assessments if required. Track every application in real-time.", tag: "Instant matching" },
-  { num: "03", icon: "🧑‍🏫", title: "Connect with verified mentors", desc: "Book 1-on-1 or group sessions with industry professionals. Free or paid — with Razorpay. Get career guidance from people who work at your dream companies.", tag: "Live sessions" },
-  { num: "04", icon: "🤖", title: "Get your AI roadmap", desc: "Our AI advisor knows your profile, skills, and target companies. It builds personalised week-by-week prep plans with free resources. Ask anything, anytime.", tag: "AI-powered" },
+const howItWorks = [
+  { step: "01", icon: "✍️", title: "Sign Up in 3 Minutes", desc: "Create your account, verify email, add your skills and career preferences." },
+  { step: "02", icon: "🎯", title: "Tell Us Your Dream Company", desc: "Type which company and role you want — our AI builds your roadmap instantly." },
+  { step: "03", icon: "📋", title: "Follow Your AI Roadmap", desc: "Week-by-week prep plan with free resources, mock interviews, and skill tracking." },
+  { step: "04", icon: "🏆", title: "Get Hired", desc: "Apply to matched jobs, ace the interview, and land your offer." },
 ];
 
-const companyCards = [
-  { logo: "G", bg: "#4285f4", name: "Google", type: "Big Tech · Software / Cloud", skills: ["DSA & Algorithms", "System Design", "Python / Java", "LeetCode 200+"], badge: "25–40 LPA" },
-  { logo: "TC", bg: "#00b9f2", name: "TCS", type: "IT Services · Fresher-friendly", skills: ["Java / Python", "SQL", "Agile basics", "CEH (Cyber)"], badge: "3.5–5 LPA" },
-  { logo: "K", bg: "#00338d", name: "KPMG", type: "Consulting · Cyber / Data", skills: ["ISO 27001", "Risk frameworks", "Excel advanced", "Power BI"], badge: "5–8 LPA" },
-  { logo: "D", bg: "#86bc25", name: "Deloitte", type: "Consulting · Cyber / Data / AI", skills: ["Penetration testing", "OWASP", "Python", "Case interviews"], badge: "6–9 LPA" },
-  { logo: "I", bg: "#007cc3", name: "Infosys", type: "IT Services · Fresher-friendly", skills: ["Java", "OOPS concepts", "AWS basics", "HackWithInfy prep"], badge: "3.6–5 LPA" },
-  { logo: "W", bg: "#9b59b6", name: "Wipro", type: "IT Services · Fresher-friendly", skills: ["Python / Java", "Data structures", "NLTH test prep", "Communication"], badge: "3.5–4.5 LPA" },
-];
-
-const solutionFeatures = [
-  { title: "Domain-filtered job matching", desc: "Jobs auto-filter to your interest area. Apply with skill-match scoring. Complete timed lab assessments for technical roles." },
-  { title: "AI career advisor + JD matching", desc: "Claude-powered chat that knows your profile. HR can paste a JD and AI finds the best matching candidates from our database." },
-  { title: "Mentor sessions with payment", desc: "Book 1-on-1 or group calls with verified mentors. Pay via Razorpay. Rate and review after sessions. No-conflict scheduling." },
-  { title: "Full notification system", desc: "30+ email templates. Real-time bell notifications. Application status changes, job matches, event alerts — all automated." },
+const differentiators = [
+  { icon: "🎤", title: "AI-Powered Interview Prep", desc: "Practice mock interviews for TCS, Google, Amazon, and 12 more companies. Get real-time feedback and scores on every answer." },
+  { icon: "🗺️", title: "Company-Specific Skill Maps", desc: "Know exactly what skills TCS, KPMG, or Deloitte require. No guessing — we've decoded the hiring patterns." },
+  { icon: "👨‍🏫", title: "Real Mentor Sessions", desc: "Book paid or free 1-on-1 sessions with verified industry professionals. Get insider guidance." },
+  { icon: "🧪", title: "Lab Assessments & Scoring", desc: "Take timed assessments attached to job applications. HR sees your score — show your skills, not just your resume." },
 ];
 
 const reviews = [
-  { company: "TCS", quote: "I had been applying randomly for 4 months and got nothing. SkillMap told me I was missing CEH certification for TCS Cybersecurity. I got it in 5 weeks. Got the call in week 6. I'm joining TCS next month.", name: "Rahul Kumar", role: "B.Tech CSE, 2025 · Pune", initials: "RK", color: "#00b9f2" },
-  { company: "KPMG", quote: "Nobody told me KPMG looks for ISO 27001 knowledge and Excel skills, not just a degree. SkillMap's roadmap was so specific — I knew exactly what to do every single week. Placed at KPMG at 6 LPA.", name: "Priya Sharma", role: "MBA Finance, 2025 · Mumbai", initials: "PS", color: "#00338d" },
-  { company: "Deloitte", quote: "I was about to give up and settle for a random BPO job. SkillMap showed me Deloitte had a Data & AI analyst opening. 7 weeks of focused prep later — I cleared all 3 rounds. Still can't believe it.", name: "Arjun Mehta", role: "B.Sc Statistics, 2024 · Bangalore", initials: "AM", color: "#86bc25" },
-  { company: "Infosys", quote: "The AI advisor felt like talking to a senior who actually knew what they were talking about. It told me to focus on HackWithInfy prep and Java fundamentals. Cracked Infosys in my first attempt.", name: "Sneha Joshi", role: "B.Tech IT, 2025 · Hyderabad", initials: "SJ", color: "#007cc3" },
-  { company: "Wipro", quote: "My college placement cell gave us nothing useful. SkillMap gave me a complete 8-week plan for Wipro's NLTH test. I knew exactly what to expect. Got placed in 2 months of using this platform.", name: "Vikram Rao", role: "B.E Mechanical, 2024 · Chennai", initials: "VR", color: "#9b59b6" },
-  { company: "Google", quote: "I always thought Google was impossible for someone from a tier-2 college. SkillMap showed me the exact DSA topics and LeetCode patterns Google tests. 6 months of honest prep. I got the offer. Dreams do come true.", name: "Nisha Kulkarni", role: "B.Tech CSE, 2024 · Nagpur", initials: "NK", color: "#4285f4" },
+  { quote: "SkillMap told me I was missing CEH certification for TCS Cybersecurity. Got it in 5 weeks. Got the call in week 6.", name: "Rahul Kumar", role: "B.Tech CSE, 2025", company: "TCS", color: "#00b9f2" },
+  { quote: "Nobody told me KPMG looks for ISO 27001 knowledge. SkillMap's roadmap was so specific — I knew exactly what to do every week.", name: "Priya Sharma", role: "MBA Finance, 2025", company: "KPMG", color: "#00338d" },
+  { quote: "The AI advisor felt like talking to a senior who actually knew what they were talking about. Cracked Infosys in my first attempt.", name: "Sneha Joshi", role: "B.Tech IT, 2025", company: "Infosys", color: "#007cc3" },
 ];
 
 const faqItems = [
-  { q: "Is SkillMap only for engineering graduates?", a: "Not at all. We cover paths for B.Com, BBA, B.Sc, BA, MBA, MCA and more. KPMG, Deloitte, EY and many others actively hire from non-engineering backgrounds for consulting, data, and finance roles. We have skill maps for all of them." },
-  { q: "How current are the job listings?", a: "We refresh job listings weekly from official company career pages and trusted job APIs. Each listing shows when it was posted and the application deadline so you always know how fresh it is." },
-  { q: "How does the AI know what skills I need?", a: "We've built a detailed database of skill requirements for each company and role — sourced from job descriptions, interview reports, and hiring pattern research. The AI cross-references this with your background to identify the exact gap." },
-  { q: "How long does it realistically take to get hired?", a: "It depends on your current skill level and the target role. For fresher-friendly companies like TCS and Wipro, a focused 4–8 week prep is often enough. For Google or Deloitte, expect 3–6 months of serious preparation. We give you an honest timeline — not false promises." },
-  { q: "Are the courses and resources free?", a: "We prioritise free resources — YouTube channels, official documentation, free Coursera audits, and open-source practice platforms. We only recommend paid certifications (like CEH or AWS) when they're genuinely required by the company you're targeting." },
-  { q: "What if none of my dream companies are hiring?", a: "We'll show you the closest alternatives — companies with similar culture, pay, and skill requirements that are actively hiring. You still get the prep plan so you're ready the moment your dream company opens up. We also send you alerts when they do." },
+  { q: "Is SkillMap only for engineering graduates?", a: "Not at all. We cover paths for B.Com, BBA, B.Sc, BA, MBA, MCA and more. KPMG, Deloitte, EY and many others actively hire from non-engineering backgrounds." },
+  { q: "How does the AI know what skills I need?", a: "We've built a detailed database of skill requirements for each company and role — sourced from job descriptions, interview reports, and hiring pattern research. The AI cross-references this with your background." },
+  { q: "How long does it take to get hired?", a: "For fresher-friendly companies like TCS and Wipro, 4-8 weeks of focused prep. For Google or Deloitte, 3-6 months. We give you an honest timeline." },
+  { q: "Is it free?", a: "Yes, the core platform is free — jobs, AI advisor, mock interviews, and events. Premium features like unlimited AI sessions and priority support are available with Career Ready plan at Rs.299/mo." },
+  { q: "What if my dream company isn't hiring right now?", a: "We'll show you similar companies with matching culture and skill requirements. You still get the prep plan so you're ready the moment they open up. We also send alerts." },
 ];
 
-/* ─── COMPONENT ─── */
 export default function Home() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [query, setQuery] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const revealRefs = useRef<HTMLElement[]>([]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) e.target.classList.add("visible");
-        });
-      },
-      { threshold: 0.1 }
-    );
-    revealRefs.current.forEach((el) => el && observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
+  function handleChatSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!query.trim()) return;
 
-  function addRevealRef(el: HTMLElement | null) {
-    if (el && !revealRefs.current.includes(el)) revealRefs.current.push(el);
+    if (session) {
+      // Logged in — go straight to AI advisor
+      sessionStorage.setItem("skillmap_query", query.trim());
+      router.push("/chat");
+    } else {
+      // Not logged in — save query and go to signup
+      sessionStorage.setItem("skillmap_query", query.trim());
+      router.push("/auth/signup?role=STUDENT");
+    }
   }
 
-  const syne = "font-[family-name:var(--font-syne)]";
-
   return (
-    <div className="flex flex-col">
-      {/* ═══ HERO ═══ */}
-      <section className="min-h-screen flex flex-col justify-center px-6 md:px-12 pt-32 pb-20 relative overflow-hidden" style={{ background: "var(--surface)" }}>
-        <div className="hero-grid-bg absolute inset-0" />
-        <div className="absolute rounded-full blur-[80px] opacity-25 animate-blob-float w-[500px] h-[500px] -top-[100px] -right-[100px]" style={{ background: "var(--accent)" }} />
-        <div className="absolute rounded-full blur-[80px] opacity-25 animate-blob-float [animation-delay:3s] w-[400px] h-[400px] -bottom-[50px] -left-[100px]" style={{ background: "var(--accent2)" }} />
-        <div className="absolute rounded-full blur-[80px] opacity-25 animate-blob-float [animation-delay:6s] w-[300px] h-[300px] top-[40%] left-[40%]" style={{ background: "var(--accent3)" }} />
+    <div className="flex flex-col" style={{ background: "var(--surface)" }}>
 
-        <div className="relative max-w-[1100px] mx-auto w-full">
-          {/* Eyebrow */}
-          <div className={`animate-fade-up inline-flex items-center gap-2.5 px-4 py-2 rounded-full mb-8 text-xs font-bold tracking-[0.1em] uppercase ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse-dot" style={{ background: "var(--accent)" }} />
-            India&apos;s first job-readiness engine
+      {/* ═══ HERO ═══ */}
+      <section className="px-4 md:px-8 pt-28 pb-16 md:pt-36 md:pb-24">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-[11px] font-semibold tracking-wide uppercase ${syne}`} style={{ background: "rgba(232,255,71,0.2)", color: "var(--ink)" }}>
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--accent)" }} />
+            India&apos;s job-readiness platform
           </div>
 
-          {/* Headline */}
-          <h1 className={`animate-fade-up-1 ${syne} font-extrabold leading-[0.95] tracking-[-0.03em] mb-6`} style={{ fontSize: "clamp(3rem, 7vw, 6.5rem)" }}>
-            Know exactly<br />
-            <span className="bg-gradient-to-br from-[#e8ff47] to-[#b8ff00] bg-clip-text" style={{ WebkitTextFillColor: "transparent" }}>what it takes</span><br />
-            <span className="headline-stroked block">to get hired.</span>
+          <h1 className={`${syne} font-extrabold leading-[1.1] tracking-tight mb-4`} style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", color: "var(--ink)" }}>
+            Your Career Starts Here.
           </h1>
 
-          {/* Sub */}
-          <p className="animate-fade-up-2 text-lg font-light max-w-[560px] leading-[1.7] mb-12" style={{ color: "var(--muted)" }}>
-            Tell us your <strong className="font-medium" style={{ color: "var(--ink)" }}>dream companies</strong> and <strong className="font-medium" style={{ color: "var(--ink)" }}>domain interest</strong>. We&apos;ll show you which ones are hiring right now, what skills you&apos;re missing, and give you a <strong className="font-medium" style={{ color: "var(--ink)" }}>week-by-week roadmap</strong> to get there.
+          <p className="text-base md:text-lg max-w-xl mx-auto mb-8 leading-relaxed" style={{ color: "var(--muted)" }}>
+            Tell us your dream company and role — we&apos;ll show you the path to get hired with AI-powered guidance.
           </p>
 
-          {/* Audience buttons */}
-          <div className="animate-fade-up-3 mb-4">
-            <p className={`${syne} text-xs font-bold tracking-[0.1em] uppercase mb-4`} style={{ color: "var(--muted)" }}>I am a</p>
-            <div className="flex gap-3 flex-wrap">
-              <Link href="/auth/signup?role=STUDENT" className={`btn-primary-landing group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
-                <span className="text-xl">🎓</span>
-                <div className="text-left">
-                  <div>Student / Aspirant</div>
-                  <div className="text-xs font-normal opacity-80">Get hired at dream companies</div>
-                </div>
-                <span className="ml-1 opacity-50 group-hover:opacity-100 transition-opacity">→</span>
-              </Link>
-              <Link href="/for-companies" className={`audience-btn group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline border-[1.5px] transition-all`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
-                <span className="text-xl">🏢</span>
-                <div className="text-left">
-                  <div className="audience-btn-title transition-colors">Company / HR</div>
-                  <div className="text-xs font-normal audience-btn-sub transition-colors" style={{ color: "var(--muted)" }}>Hire job-ready talent</div>
-                </div>
-                <span className="ml-1 opacity-30 group-hover:opacity-100 transition-opacity audience-btn-arrow">→</span>
-              </Link>
-              <Link href="/for-mentors" className={`audience-btn group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline border-[1.5px] transition-all`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
-                <span className="text-xl">🧑‍🏫</span>
-                <div className="text-left">
-                  <div className="audience-btn-title transition-colors">Mentor</div>
-                  <div className="text-xs font-normal audience-btn-sub transition-colors" style={{ color: "var(--muted)" }}>Guide & earn</div>
-                </div>
-                <span className="ml-1 opacity-30 group-hover:opacity-100 transition-opacity audience-btn-arrow">→</span>
-              </Link>
-              <Link href="/for-institutions" className={`audience-btn group inline-flex items-center gap-3 px-7 py-4 rounded-2xl text-[0.95rem] font-bold ${syne} no-underline border-[1.5px] transition-all`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
-                <span className="text-xl">🏫</span>
-                <div className="text-left">
-                  <div className="audience-btn-title transition-colors">Institution</div>
-                  <div className="text-xs font-normal audience-btn-sub transition-colors" style={{ color: "var(--muted)" }}>Manage placements</div>
-                </div>
-                <span className="ml-1 opacity-30 group-hover:opacity-100 transition-opacity audience-btn-arrow">→</span>
-              </Link>
+          {/* Chat Bar */}
+          <form onSubmit={handleChatSubmit} className="max-w-xl mx-auto mb-4">
+            <div className="flex items-center gap-2 rounded-2xl border bg-white p-2 shadow-lg shadow-black/5 transition-shadow focus-within:shadow-xl focus-within:shadow-black/10" style={{ borderColor: "var(--border)" }}>
+              <span className="pl-3 text-lg">🔍</span>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="I want to join Google as a Software Engineer..."
+                className="flex-1 py-3 px-2 text-sm outline-none bg-transparent"
+                style={{ color: "var(--ink)" }}
+              />
+              <button
+                type="submit"
+                className={`${syne} shrink-0 rounded-xl px-5 py-3 text-sm font-bold transition-all hover:opacity-90`}
+                style={{ background: "var(--ink)", color: "var(--accent)" }}
+              >
+                Get My Roadmap →
+              </button>
             </div>
-          </div>
+          </form>
 
-          {/* Secondary CTA */}
-          <div className="animate-fade-up-3">
-            <a href="#how" className={`inline-flex items-center gap-2 text-sm font-medium ${syne} no-underline transition-colors hover:opacity-70`} style={{ color: "var(--muted)" }}>
-              See how it works ↓
-            </a>
+          <div className="text-xs" style={{ color: "var(--muted)" }}>
+            {session ? (
+              <span>Powered by AI · Personalised for you</span>
+            ) : (
+              <span>Free to start · No credit card · <Link href="/auth/login" className="underline" style={{ color: "var(--ink)" }}>Already have an account?</Link></span>
+            )}
           </div>
+        </div>
+      </section>
 
-          {/* Stats */}
-          <div className="animate-fade-up-4 flex gap-12 mt-16 pt-12 flex-wrap" style={{ borderTop: "1px solid var(--border)" }}>
-            {[
-              ["96", "Platform features"],
-              ["6", "Role-based dashboards"],
-              ["30+", "AI email templates"],
-              ["Free", "To get started today"],
-            ].map(([num, label]) => (
-              <div key={label}>
-                <div className={`${syne} text-4xl font-extrabold leading-none`}>{num}</div>
-                <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{label}</div>
-              </div>
+      {/* ═══ COMPANY LOGOS ═══ */}
+      <section className="px-4 pb-12">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-center text-[11px] font-medium mb-4 tracking-wide uppercase" style={{ color: "var(--muted)" }}>
+            Trusted by students targeting
+          </p>
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
+            {logoCompanies.map((name) => (
+              <span key={name} className={`${syne} text-sm font-bold opacity-30 hover:opacity-60 transition-opacity`} style={{ color: "var(--ink)" }}>
+                {name}
+              </span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══ TICKER ═══ */}
-      <div className="overflow-hidden whitespace-nowrap py-2.5" style={{ background: "var(--accent)" }}>
-        <div className="inline-flex gap-12 animate-ticker">
-          {[...tickerCompanies, ...tickerCompanies].map((c, i) => (
-            <span key={i} className={`${syne} font-bold text-xs tracking-[0.05em] uppercase flex items-center gap-3`} style={{ color: "var(--ink)" }}>
-              {c} <span className="opacity-40">✦</span>
-            </span>
+      {/* ═══ STATS ═══ */}
+      <section className="px-4 pb-16">
+        <div className="max-w-4xl mx-auto grid grid-cols-3 gap-3">
+          {[
+            { num: "15+", label: "Companies Mapped", sub: "With interview questions & skill maps" },
+            { num: "100+", label: "Interview Questions", sub: "Curated by industry & difficulty" },
+            { num: "6", label: "Role Dashboards", sub: "Student, HR, Mentor, Admin & more" },
+          ].map((s) => (
+            <div key={s.label} className="rounded-2xl border bg-white p-5 md:p-6 text-center" style={{ borderColor: "var(--border)" }}>
+              <div className={`${syne} text-2xl md:text-3xl font-extrabold mb-1`} style={{ color: "var(--ink)" }}>{s.num}</div>
+              <div className="text-xs font-medium mb-0.5" style={{ color: "var(--ink)" }}>{s.label}</div>
+              <div className="text-[10px] hidden md:block" style={{ color: "var(--muted)" }}>{s.sub}</div>
+            </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* ═══ PROBLEM ═══ */}
-      <section className="py-28 px-6 md:px-12 relative overflow-hidden" style={{ background: "var(--ink)", color: "white" }}>
-        <div className="problem-noise absolute inset-0 opacity-[0.04]" />
-        <div className="relative max-w-[1100px] mx-auto">
-          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-6`} style={{ color: "var(--accent)" }}>The problem we&apos;re solving</span>
-          <h2 className={`${syne} font-extrabold leading-[1.05] tracking-[-0.02em] max-w-[700px] mb-8`} style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}>
-            40% of Indian graduates are unemployed.<br />
-            Not because they&apos;re <em className="not-italic" style={{ color: "var(--accent)" }}>untalented</em>.<br />
-            Because no one showed them <em className="not-italic" style={{ color: "var(--accent)" }}>the path</em>.
-          </h2>
-          <p className="text-lg font-light max-w-[560px] leading-[1.8] mb-16" style={{ color: "rgba(255,255,255,0.65)" }}>
-            Every year, 10 million graduates leave college with degrees but no direction. They don&apos;t know what skills companies actually want, which companies are hiring, or how to bridge the gap. They send hundreds of applications into the void and hear nothing back.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {problemCards.map((card) => (
-              <div key={card.title} ref={addRevealRef} className="scroll-reveal rounded-2xl p-7 border transition-colors hover:bg-[rgba(255,255,255,0.08)] hover:border-[rgba(232,255,71,0.3)]" style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)" }}>
-                <div className={`${syne} text-[2.5rem] font-extrabold leading-none mb-3`} style={{ color: "var(--accent)" }}>{card.num}</div>
-                <div className={`${syne} font-bold text-base mb-2`}>{card.title}</div>
-                <div className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>{card.desc}</div>
-              </div>
+      {/* ═══ FEATURES GRID ═══ */}
+      <section className="px-4 py-16" style={{ background: "white" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className={`${syne} font-extrabold text-xl md:text-2xl mb-2`} style={{ color: "var(--ink)" }}>
+              Everything You Need to Get Hired
+            </h2>
+            <p className="text-sm" style={{ color: "var(--muted)" }}>Full-stack career readiness platform for Indian graduates</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {features.map((f) => (
+              <Link
+                key={f.title}
+                href={f.href}
+                className="rounded-2xl border p-5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md no-underline group"
+                style={{ borderColor: "var(--border)", background: "var(--surface)" }}
+              >
+                <div className="text-2xl mb-2">{f.icon}</div>
+                <div className={`${syne} text-xs font-bold mb-1 group-hover:underline`} style={{ color: "var(--ink)" }}>{f.title}</div>
+                <div className="text-[10px] leading-relaxed" style={{ color: "var(--muted)" }}>{f.desc}</div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
       {/* ═══ HOW IT WORKS ═══ */}
-      <section id="how" className="py-28 px-6 md:px-12" style={{ background: "var(--surface)" }}>
-        <div className="max-w-[1100px] mx-auto">
-          <div className="mb-16">
-            <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-6 opacity-50`} style={{ color: "var(--ink)" }}>How SkillMap works</span>
-            <h2 className={`${syne} font-extrabold tracking-[-0.02em] leading-[1.1]`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>From lost to hired.<br />In four steps.</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[2px]" style={{ background: "var(--border)" }}>
-            {steps.map((step) => (
-              <div key={step.num} ref={addRevealRef} className="scroll-reveal p-10 transition-colors hover:bg-white" style={{ background: "var(--surface)" }}>
-                <div className={`${syne} text-6xl font-extrabold leading-none mb-6 opacity-[0.06]`}>{step.num}</div>
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 text-xl" style={{ background: "var(--ink)" }}>{step.icon}</div>
-                <h3 className={`${syne} font-bold text-[1.05rem] mb-2.5`}>{step.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{step.desc}</p>
-                <span className={`${syne} inline-block mt-4 text-[0.65rem] font-extrabold tracking-[0.08em] uppercase px-2 py-0.5 rounded`} style={{ background: "var(--accent)", color: "var(--ink)" }}>{step.tag}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ COMPANIES ═══ */}
-      <section id="companies" className="py-28 px-6 md:px-12" style={{ background: "var(--ink2)", color: "white" }}>
-        <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-6`} style={{ color: "var(--accent)" }}>Companies we&apos;ve mapped</span>
-          <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-4`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>Every top company.<br />Every skill. Decoded.</h2>
-          <p className="text-base max-w-[500px] leading-[1.7] mb-12" style={{ color: "rgba(255,255,255,0.5)" }}>We&apos;ve done the research so you don&apos;t have to. Here&apos;s what it takes to get hired at India&apos;s most sought-after companies.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {companyCards.map((co) => (
-              <div key={co.name} ref={addRevealRef} className="scroll-reveal co-card-overlay relative rounded-2xl p-6 cursor-pointer transition-all hover:-translate-y-1 hover:border-[rgba(232,255,71,0.4)] overflow-hidden" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                <div className="relative flex items-center gap-4 mb-5">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${syne} font-extrabold text-lg shrink-0`} style={{ background: co.bg, color: "white" }}>{co.logo}</div>
-                  <div>
-                    <div className={`${syne} font-bold text-[1.05rem]`}>{co.name}</div>
-                    <div className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{co.type}</div>
-                  </div>
-                </div>
-                <div className="relative flex flex-wrap gap-1.5">
-                  {co.skills.map((s) => (
-                    <span key={s} className="text-xs px-2.5 py-0.5 rounded-full border" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)", borderColor: "rgba(255,255,255,0.1)" }}>{s}</span>
-                  ))}
-                </div>
-                <div className={`relative inline-block mt-4 ${syne} text-[0.65rem] font-bold tracking-[0.05em] uppercase px-2 py-0.5 rounded`} style={{ background: "var(--accent)", color: "var(--ink)" }}>{co.badge}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ SOLUTION ═══ */}
-      <section className="py-28 px-6 md:px-12 overflow-hidden bg-white">
-        <div className="max-w-[1100px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <div>
-            <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4 opacity-40`}>The SkillMap difference</span>
-            <h2 className={`${syne} font-extrabold tracking-[-0.02em] leading-[1.1] mb-5`} style={{ fontSize: "clamp(2rem, 3.5vw, 2.8rem)" }}>
-              Not a job board.<br />A <span className="rounded-md px-1.5" style={{ color: "var(--accent)", background: "var(--ink)" }}>readiness</span> engine.
+      <section className="px-4 py-16" style={{ background: "var(--surface)" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className={`${syne} font-extrabold text-xl md:text-2xl mb-2`} style={{ color: "var(--ink)" }}>
+              How SkillMap Works
             </h2>
-            <p className="text-base leading-[1.8] mb-8" style={{ color: "var(--muted)" }}>
-              Naukri shows you 500 jobs. You don&apos;t know which to apply for or if you&apos;re even ready. SkillMap shows you 5 perfect-fit roles, tells you exactly what&apos;s missing, and builds your plan to get there.
-            </p>
-            <div className="flex flex-col gap-4">
-              {solutionFeatures.map((f) => (
-                <div key={f.title} className="flex gap-4 items-start">
-                  <div className="w-2 h-2 rounded-full shrink-0 mt-1.5" style={{ background: "var(--ink)" }} />
-                  <div>
-                    <div className={`${syne} font-bold text-[0.95rem] mb-0.5`}>{f.title}</div>
-                    <div className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{f.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <p className="text-sm" style={{ color: "var(--muted)" }}>From confused to hired — in four simple steps</p>
           </div>
-          {/* Chat visual */}
-          <div className="rounded-3xl p-8" style={{ background: "var(--ink)" }}>
-            <div className="rounded-2xl p-5 text-sm" style={{ background: "#111" }}>
-              <div className={`${syne} text-xs tracking-[0.05em] uppercase mb-4`} style={{ color: "rgba(255,255,255,0.3)" }}>AI Advisor — SkillMap</div>
-              <div className="flex gap-2.5 mb-3 flex-row-reverse">
-                <div className="w-6 h-6 rounded-full shrink-0 mt-0.5 flex items-center justify-center text-[0.6rem] font-bold" style={{ background: "rgba(255,255,255,0.15)", color: "white" }}>R</div>
-                <div className="rounded-[12px_4px_12px_12px] px-3.5 py-2.5 leading-relaxed max-w-[75%] font-medium text-xs" style={{ background: "var(--accent)", color: "var(--ink)" }}>I&apos;m a CS grad interested in cybersecurity. Dream companies: TCS, KPMG, Deloitte.</div>
-              </div>
-              <div className="flex gap-2.5 mb-3">
-                <div className={`w-6 h-6 rounded-full shrink-0 mt-0.5 flex items-center justify-center text-[0.6rem] font-bold ${syne}`} style={{ background: "var(--accent)", color: "var(--ink)" }}>S</div>
-                <div className="rounded-[4px_12px_12px_12px] px-3.5 py-2.5 leading-relaxed max-w-[85%] text-xs" style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.8)" }}>Found 3 live openings matching your profile. Here&apos;s your situation:</div>
-              </div>
-              <div className="mt-4 rounded-xl p-4 border" style={{ background: "rgba(232,255,71,0.1)", borderColor: "rgba(232,255,71,0.3)" }}>
-                <div className={`${syne} font-bold text-xs mb-2.5`} style={{ color: "var(--accent)" }}>✦ Top match right now</div>
-                <div className="flex justify-between text-[0.75rem] mb-1" style={{ color: "rgba(255,255,255,0.6)" }}>
-                  <span>TCS — Cybersecurity Analyst L1</span>
-                  <span className={`${syne} text-[0.65rem] font-bold px-2 py-0.5 rounded`} style={{ background: "var(--accent)", color: "var(--ink)" }}>Apply by 30 Apr</span>
-                </div>
-                <div className="flex justify-between text-[0.75rem]" style={{ color: "rgba(255,255,255,0.6)" }}>
-                  <span>Gap: CEH cert + Python scripting</span>
-                  <span style={{ color: "var(--accent)" }}>6 weeks to ready</span>
-                </div>
-              </div>
-              <div className="flex gap-2.5 mt-3">
-                <div className={`w-6 h-6 rounded-full shrink-0 mt-0.5 flex items-center justify-center text-[0.6rem] font-bold ${syne}`} style={{ background: "var(--accent)", color: "var(--ink)" }}>S</div>
-                <div className="rounded-[4px_12px_12px_12px] px-3.5 py-2.5 leading-relaxed max-w-[85%] text-xs" style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.8)" }}>Week 1–2: CompTIA Sec+ (free on YouTube). Week 3–4: Python for Security on Coursera. Week 5–6: Mock interviews. Apply by Apr 25th. You&apos;ve got this. 🎯</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ═══ REVIEWS ═══ */}
-      <section id="reviews" className="py-28 px-6 md:px-12" style={{ background: "var(--surface)" }}>
-        <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4 opacity-40`}>What students are saying</span>
-          <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-3`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>Real results.<br />Real people.</h2>
-          <p className="max-w-[500px] leading-[1.7] mb-12" style={{ color: "var(--muted)" }}>Fresh graduates across India who went from confused to hired — using SkillMap.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reviews.map((r) => (
-              <div key={r.name} ref={addRevealRef} className="scroll-reveal relative bg-white border rounded-[20px] p-8 transition-all hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(10,10,15,0.08)]" style={{ borderColor: "var(--border)" }}>
-                <div className={`absolute top-6 right-6 ${syne} text-xs font-bold tracking-[0.05em]`} style={{ color: "var(--muted)" }}>{r.company}</div>
-                <div className="text-base mb-4 tracking-wider" style={{ color: "#f59e0b" }}>★★★★★</div>
-                <p className="text-base leading-[1.7] mb-6 italic">{r.quote}</p>
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${syne} font-extrabold text-sm text-white shrink-0`} style={{ background: r.color }}>{r.initials}</div>
-                  <div>
-                    <div className={`${syne} font-bold text-[0.9rem]`}>{r.name}</div>
-                    <div className="text-sm" style={{ color: "var(--muted)" }}>{r.role}</div>
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {howItWorks.map((s) => (
+              <div key={s.step} className="rounded-2xl border bg-white p-6 relative" style={{ borderColor: "var(--border)" }}>
+                <div className={`${syne} text-4xl font-extrabold absolute top-4 right-4 opacity-[0.06]`}>{s.step}</div>
+                <div className="text-2xl mb-3">{s.icon}</div>
+                <h3 className={`${syne} text-sm font-bold mb-1.5`} style={{ color: "var(--ink)" }}>{s.title}</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══ PRICING ═══ */}
-      <section id="pricing" className="py-28 px-6 md:px-12" style={{ background: "var(--ink)", color: "white" }}>
-        <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-6`} style={{ color: "var(--accent)" }}>Simple pricing</span>
-          <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-3`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>Start free.<br />Upgrade when ready.</h2>
-          <p className="max-w-[500px] leading-[1.7] mb-14" style={{ color: "rgba(255,255,255,0.5)" }}>No hidden fees. No confusing tiers. Just the tools you need to get hired.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[900px]">
-            {/* Free */}
-            <div ref={addRevealRef} className="scroll-reveal rounded-[20px] p-8 border transition-colors" style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)" }}>
-              <span className={`${syne} text-xs font-extrabold tracking-[0.1em] uppercase block mb-6`} style={{ color: "rgba(255,255,255,0.4)" }}>Free forever</span>
-              <div className={`${syne} text-5xl font-extrabold leading-none mb-1`}>₹0<span className="text-sm font-light opacity-50">/mo</span></div>
-              <div className={`${syne} font-bold text-lg mt-5 mb-4`}>Explorer</div>
-              <ul className="flex flex-col gap-2.5 mb-8 text-sm" style={{ color: "rgba(255,255,255,0.8)" }}>
-                {["Browse 50+ company skill maps", "See live job openings", "1 domain + 3 company matches", "Basic AI chat (10 messages/day)", "Interview process overview"].map((f) => (
-                  <li key={f} className="flex gap-2 items-start"><span className="opacity-50 shrink-0 mt-px">→</span>{f}</li>
-                ))}
-              </ul>
-              <Link href="/auth/signup?role=STUDENT" className={`block w-full text-center py-3.5 rounded-full ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "rgba(255,255,255,0.1)", color: "white" }}>Get started free</Link>
-            </div>
-            {/* Featured */}
-            <div ref={addRevealRef} className="scroll-reveal rounded-[20px] p-8 border" style={{ background: "var(--accent)", borderColor: "var(--accent)", color: "var(--ink)" }}>
-              <span className={`${syne} text-xs font-extrabold tracking-[0.1em] uppercase block mb-6 opacity-50`}>Most popular</span>
-              <div className={`${syne} text-5xl font-extrabold leading-none mb-1`}>₹299<span className="text-sm font-light opacity-50">/mo</span></div>
-              <div className={`${syne} font-bold text-lg mt-5 mb-4`}>Career Ready</div>
-              <ul className="flex flex-col gap-2.5 mb-8 text-sm opacity-80">
-                {["Everything in Explorer", "Unlimited AI mentor conversations", "Full skill gap analysis", "Week-by-week prep roadmap", "Job alerts for your matches", "Progress tracking dashboard", "Priority support"].map((f) => (
-                  <li key={f} className="flex gap-2 items-start"><span className="opacity-50 shrink-0 mt-px">→</span>{f}</li>
-                ))}
-              </ul>
-              <Link href="/auth/signup?role=STUDENT" className={`block w-full text-center py-3.5 rounded-full ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Start 7-day free trial</Link>
-            </div>
-            {/* Institutions */}
-            <div ref={addRevealRef} className="scroll-reveal rounded-[20px] p-8 border transition-colors" style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)" }}>
-              <span className={`${syne} text-xs font-extrabold tracking-[0.1em] uppercase block mb-6`} style={{ color: "rgba(255,255,255,0.4)" }}>Institutions</span>
-              <div className={`${syne} text-5xl font-extrabold leading-none mb-1`}>Custom</div>
-              <div className={`${syne} font-bold text-lg mt-5 mb-4`}>College / Bootcamp</div>
-              <ul className="flex flex-col gap-2.5 mb-8 text-sm" style={{ color: "rgba(255,255,255,0.8)" }}>
-                {["Bulk student access", "Placement cell dashboard", "Batch progress analytics", "Custom company targeting", "Dedicated account manager", "White-label option"].map((f) => (
-                  <li key={f} className="flex gap-2 items-start"><span className="opacity-50 shrink-0 mt-px">→</span>{f}</li>
-                ))}
-              </ul>
-              <Link href="/auth/login?role=ORG" className={`block w-full text-center py-3.5 rounded-full ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "rgba(255,255,255,0.1)", color: "white" }}>Contact us</Link>
-            </div>
+      {/* ═══ DIFFERENTIATORS ═══ */}
+      <section className="px-4 py-16" style={{ background: "white" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className={`${syne} font-extrabold text-xl md:text-2xl mb-2`} style={{ color: "var(--ink)" }}>
+              What Makes SkillMap Different
+            </h2>
+            <p className="text-sm" style={{ color: "var(--muted)" }}>Not a job board. A complete career readiness engine.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {differentiators.map((d) => (
+              <div key={d.title} className="rounded-2xl border p-6 transition-all hover:shadow-md" style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
+                <div className="text-2xl mb-3">{d.icon}</div>
+                <h3 className={`${syne} text-sm font-bold mb-1.5`} style={{ color: "var(--ink)" }}>{d.title}</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{d.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ TESTIMONIALS ═══ */}
+      <section className="px-4 py-16" style={{ background: "var(--surface)" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className={`${syne} font-extrabold text-xl md:text-2xl mb-2`} style={{ color: "var(--ink)" }}>
+              Real Results. Real People.
+            </h2>
+            <p className="text-sm" style={{ color: "var(--muted)" }}>Fresh graduates who went from confused to hired using SkillMap</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {reviews.map((r) => (
+              <div key={r.name} className="rounded-2xl border bg-white p-6 transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ borderColor: "var(--border)" }}>
+                <div className="text-sm mb-1 tracking-wider" style={{ color: "#f59e0b" }}>★★★★★</div>
+                <p className="text-sm leading-relaxed mb-4 italic" style={{ color: "var(--ink)" }}>&ldquo;{r.quote}&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center ${syne} font-bold text-xs text-white shrink-0`} style={{ background: r.color }}>
+                    {r.name.split(" ").map((w) => w[0]).join("")}
+                  </div>
+                  <div>
+                    <div className={`${syne} text-xs font-bold`} style={{ color: "var(--ink)" }}>{r.name}</div>
+                    <div className="text-[10px]" style={{ color: "var(--muted)" }}>{r.role} · {r.company}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ═══ FAQ ═══ */}
-      <section className="py-28 px-6 md:px-12" style={{ background: "var(--surface)" }}>
-        <div className="max-w-[1100px] mx-auto">
-          <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>Questions we<br />hear a lot.</h2>
-          <div className="max-w-[720px] flex flex-col">
+      <section className="px-4 py-16" style={{ background: "white" }}>
+        <div className="max-w-2xl mx-auto">
+          <h2 className={`${syne} font-extrabold text-xl md:text-2xl text-center mb-8`} style={{ color: "var(--ink)" }}>
+            Frequently Asked Questions
+          </h2>
+
+          <div className="space-y-2">
             {faqItems.map((item, i) => (
-              <div key={i} className={`border-b ${openFaq === i ? "faq-open" : ""}`} style={{ borderColor: "var(--border)" }}>
+              <div key={i} className="rounded-xl border overflow-hidden" style={{ borderColor: "var(--border)" }}>
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className={`w-full text-left flex justify-between items-center py-6 gap-4 ${syne} font-bold text-base cursor-pointer bg-transparent border-none`}
-                  style={{ color: "var(--ink)" }}
+                  className="w-full flex justify-between items-center p-4 text-left bg-transparent border-none cursor-pointer"
                 >
-                  {item.q}
-                  <span className="text-xl shrink-0 transition-transform duration-300 faq-icon-rotate" style={{ color: "var(--muted)" }}>+</span>
+                  <span className={`${syne} text-sm font-bold pr-4`} style={{ color: "var(--ink)" }}>{item.q}</span>
+                  <span className="text-lg shrink-0 transition-transform duration-300" style={{ color: "var(--muted)", transform: openFaq === i ? "rotate(45deg)" : "none" }}>+</span>
                 </button>
-                <div className="faq-answer text-[0.9rem] leading-[1.7]" style={{ color: "var(--muted)" }}>
-                  {item.a}
-                </div>
+                {openFaq === i && (
+                  <div className="px-4 pb-4 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
+                    {item.a}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══ CTA ═══ */}
-      <section id="cta" className="py-32 px-6 md:px-12 text-center relative overflow-hidden" style={{ background: "var(--ink2)" }}>
-        <div className="absolute w-[600px] h-[600px] rounded-full blur-[100px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ background: "var(--accent)", opacity: 0.07 }} />
-        <h2 className={`relative ${syne} font-extrabold tracking-[-0.03em] text-white leading-none mb-6`} style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}>
-          Your dream company<br />is <span style={{ color: "var(--accent)" }}>hiring right now.</span>
-        </h2>
-        <p className="relative text-lg mb-12" style={{ color: "rgba(255,255,255,0.5)" }}>Find out exactly what it takes — in under 3 minutes.</p>
-        <div className="relative flex gap-4 justify-center flex-wrap">
-          <Link href="/auth/signup?role=STUDENT" className={`cta-btn-main inline-flex items-center gap-2.5 px-10 py-4.5 rounded-full ${syne} font-extrabold text-base no-underline`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
-            Find my path →
-          </Link>
-        </div>
-        <p className="relative mt-6 text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>Free to start · No credit card · Takes 3 minutes</p>
-      </section>
+      {/* ═══ FINAL CTA ═══ */}
+      <section className="px-4 py-20" style={{ background: "var(--ink)" }}>
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className={`${syne} font-extrabold text-xl md:text-2xl text-white mb-3`}>
+            Your Dream Company is Hiring Right Now.
+          </h2>
+          <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.5)" }}>
+            Tell us where you want to be — we&apos;ll show you how to get there.
+          </p>
 
-      {/* Footer is rendered globally from layout.tsx */}
+          <form onSubmit={handleChatSubmit} className="max-w-lg mx-auto mb-4">
+            <div className="flex items-center gap-2 rounded-2xl p-2" style={{ background: "rgba(255,255,255,0.1)" }}>
+              <span className="pl-3 text-lg">🔍</span>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="I want to join Amazon as a Data Analyst..."
+                className="flex-1 py-3 px-2 text-sm outline-none bg-transparent text-white placeholder:text-white/40"
+              />
+              <button
+                type="submit"
+                className={`${syne} shrink-0 rounded-xl px-5 py-3 text-sm font-bold transition-all hover:opacity-90`}
+                style={{ background: "var(--accent)", color: "var(--ink)" }}
+              >
+                Start Free →
+              </button>
+            </div>
+          </form>
+
+          <p className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>
+            Free to start · No credit card · Takes 3 minutes
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

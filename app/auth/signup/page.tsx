@@ -146,7 +146,9 @@ function SignupInner() {
         await fetch("/api/profile/image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image: profilePhoto }) }).catch(() => {});
       }
 
-      window.location.href = "/dashboard";
+      // If user came from landing page chat bar, redirect to AI advisor
+      const pendingQuery = sessionStorage.getItem("skillmap_query");
+      window.location.href = pendingQuery ? "/chat" : "/dashboard";
     } catch {
       setError("Something went wrong.");
       setLoading(false);

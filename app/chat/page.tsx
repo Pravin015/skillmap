@@ -40,6 +40,17 @@ function ChatInner() {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
 
+  // Auto-send query from landing page chat bar
+  useEffect(() => {
+    if (messages.length > 0) return;
+    const pendingQuery = sessionStorage.getItem("skillmap_query");
+    if (pendingQuery) {
+      sessionStorage.removeItem("skillmap_query");
+      sendMessage(pendingQuery);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (!profile || messages.length > 0) return;
     const jobId = searchParams.get("job");
