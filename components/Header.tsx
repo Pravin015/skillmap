@@ -45,11 +45,11 @@ const directLinks = [
 ];
 
 const roleBadgeColors: Record<string, string> = {
-  STUDENT: "bg-indigo-100 text-indigo-700",
+  STUDENT: "bg-[#E0F7F7] text-[#0ABFBC]",
   MENTOR: "bg-amber-100 text-amber-700",
   HR: "bg-cyan-100 text-cyan-700",
   ORG: "bg-emerald-100 text-emerald-700",
-  INSTITUTION: "bg-purple-100 text-purple-700",
+  INSTITUTION: "bg-[#E0F7F7] text-[#0ABFBC]",
   ADMIN: "bg-red-100 text-red-700",
 };
 
@@ -112,7 +112,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 no-underline shrink-0" onClick={() => setMobileNav(false)}>
           <div className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white" style={{ background: "var(--primary)" }}>S</div>
-          <span className={`${heading} text-lg font-extrabold text-white`}>
+          <span className={`${heading} text-lg font-bold text-white`}>
             Skill<span className="px-1 py-0.5 rounded" style={{ background: "var(--primary)", color: "#fff" }}>Map</span>
           </span>
         </Link>

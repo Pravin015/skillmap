@@ -98,7 +98,7 @@ export default function MentorDashboardPage() {
         {/* OVERVIEW */}
         {activeTab === "overview" && (
           <div className="space-y-6">
-            <div><h2 className={`${heading} font-extrabold text-xl`}>Welcome, {session?.user?.name}</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Your mentorship overview</p></div>
+            <div><h2 className={`${heading} font-bold text-xl`}>Welcome, {session?.user?.name}</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Your mentorship overview</p></div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { label: "Pending Requests", value: pending.length, icon: "⏳", color: "#f59e0b" },
@@ -108,7 +108,7 @@ export default function MentorDashboardPage() {
               ].map((s) => (
                 <div key={s.label} className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
                   <div className="flex items-center justify-between mb-3"><span className="text-2xl">{s.icon}</span><div className="w-8 h-1 rounded-full" style={{ background: s.color }} /></div>
-                  <div className={`${heading} text-2xl font-extrabold`}>{s.value}</div>
+                  <div className={`${heading} text-2xl font-bold`}>{s.value}</div>
                   <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{s.label}</div>
                 </div>
               ))}
@@ -140,7 +140,7 @@ export default function MentorDashboardPage() {
                   <div key={s.id} className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
                     <div className="flex items-start gap-4 flex-wrap">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2"><span className={`${heading} font-bold`}>{s.student?.name || "Student"}</span><span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${statusBadge[s.status]}`}>{s.status}</span><span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${s.sessionType === "GROUP" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"}`}>{s.sessionType === "GROUP" ? "Group" : "1-on-1"}</span></div>
+                        <div className="flex items-center gap-2"><span className={`${heading} font-bold`}>{s.student?.name || "Student"}</span><span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${statusBadge[s.status]}`}>{s.status}</span><span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${s.sessionType === "GROUP" ? "bg-[#E0F7F7] text-[#0ABFBC]" : "bg-blue-100 text-blue-700"}`}>{s.sessionType === "GROUP" ? "Group" : "1-on-1"}</span></div>
                         <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{new Date(s.preferredDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })} · {s.duration}{s.isPaid ? ` · ₹${(s.price || 0) / 100}` : " · Free"}</div>
                         {s.message && <div className="text-xs mt-1 italic" style={{ color: "var(--muted)" }}>&quot;{s.message}&quot;</div>}
                         {s.rating && <div className="text-xs mt-1" style={{ color: "#f59e0b" }}>★ {s.rating}/5{s.review ? ` — "${s.review}"` : ""}</div>}

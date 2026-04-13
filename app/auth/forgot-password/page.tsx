@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="text-4xl mb-4">🔐</div>
-          <h1 className={`${heading} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>
+          <h1 className={`${heading} font-bold text-2xl`} style={{ color: "var(--ink)" }}>
             {step === 3 ? "Password Reset!" : "Forgot Password"}
           </h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>

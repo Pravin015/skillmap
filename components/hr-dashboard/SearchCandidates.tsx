@@ -99,7 +99,7 @@ export default function SearchCandidates() {
                     )}
                   </div>
                   <div className="text-center shrink-0">
-                    <div className={`${heading} text-lg font-extrabold`} style={{ color: scoreColor(c.profileScore) }}>{c.profileScore}</div>
+                    <div className={`${heading} text-lg font-bold`} style={{ color: scoreColor(c.profileScore) }}>{c.profileScore}</div>
                     <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Score</div>
                   </div>
                   <div className="flex gap-2 shrink-0">

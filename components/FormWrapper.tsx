@@ -15,7 +15,7 @@ export default function FormWrapper({ title, subtitle, children, submitted, succ
     <div className="min-h-[calc(100vh-4rem)] py-12 px-4 md:px-8" style={{ background: "var(--surface)" }}>
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <h1 className={`${heading} font-extrabold text-2xl md:text-3xl`}>{title}</h1>
+          <h1 className={`${heading} font-bold text-2xl md:text-3xl`}>{title}</h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>{subtitle}</p>
         </div>
 

@@ -160,7 +160,7 @@ function SignupInner() {
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className={`${heading} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>
+          <h1 className={`${heading} font-bold text-2xl`} style={{ color: "var(--ink)" }}>
             {step === 1 ? "Create your account" : "Complete your profile"}
           </h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>

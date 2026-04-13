@@ -51,7 +51,7 @@ export default function InstitutionsTab({ users, onRefresh }: { users: User[]; o
         <div className="space-y-3">
           {filtered.map((inst) => (
             <div key={inst.id} className="rounded-2xl border bg-white p-5 flex items-center gap-4" style={{ borderColor: "var(--border)" }}>
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${heading} font-extrabold text-lg text-white shrink-0`} style={{ background: "var(--ink)" }}>{(inst.organisation || inst.name).charAt(0)}</div>
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${heading} font-bold text-lg text-white shrink-0`} style={{ background: "var(--ink)" }}>{(inst.organisation || inst.name).charAt(0)}</div>
               <div className="flex-1 min-w-0">
                 <div className={`${heading} font-bold`}>{inst.organisation || inst.name}</div>
                 <div className="text-xs" style={{ color: "var(--muted)" }}>{inst.email}</div>

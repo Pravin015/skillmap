@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const heading = "font-[family-name:var(--font-heading)]";
 const roleBadge: Record<string, string> = {
-  STUDENT: "bg-indigo-100 text-indigo-700",
+  STUDENT: "bg-[#E0F7F7] text-[#0ABFBC]",
   HR: "bg-cyan-100 text-cyan-700",
   ORG: "bg-emerald-100 text-emerald-700",
   ADMIN: "bg-red-100 text-red-700",

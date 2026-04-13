@@ -26,7 +26,7 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${heading} font-extrabold text-xl`}>{orgName} Dashboard</h2>
+        <h2 className={`${heading} font-bold text-xl`}>{orgName} Dashboard</h2>
         <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Overview of your organisation&apos;s hiring activity on SkillMap</p>
       </div>
 
@@ -38,7 +38,7 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
               <span className="text-2xl">{s.icon}</span>
               <div className="w-8 h-1 rounded-full" style={{ background: s.color }} />
             </div>
-            <div className={`${heading} text-2xl font-extrabold`}>{stats[s.key]}</div>
+            <div className={`${heading} text-2xl font-bold`}>{stats[s.key]}</div>
             <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{s.label}</div>
           </div>
         ))}
@@ -70,7 +70,7 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
           {["Applied", "Screened", "Interview", "Assessment", "Offer", "Hired"].map((stage, i) => (
             <div key={stage} className="text-center">
               <div className="rounded-xl border-2 border-dashed p-3 mb-1" style={{ borderColor: "var(--border)" }}>
-                <div className={`${heading} text-xl font-extrabold`} style={{ color: "var(--border)" }}>0</div>
+                <div className={`${heading} text-xl font-bold`} style={{ color: "var(--border)" }}>0</div>
               </div>
               <div className="text-[0.6rem] font-medium" style={{ color: "var(--muted)" }}>{stage}</div>
               {i < 5 && <div className="text-xs mt-1" style={{ color: "var(--border)" }}>→</div>}

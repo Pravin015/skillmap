@@ -44,7 +44,7 @@ export default function WriteBlogPage() {
     <div className="min-h-[calc(100vh-4rem)] py-8 px-4 md:px-8" style={{ background: "var(--surface)" }}>
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <h1 className={`${heading} font-extrabold text-2xl`}>Write a Blog Post</h1>
+          <h1 className={`${heading} font-bold text-2xl`}>Write a Blog Post</h1>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{userRole === "ADMIN" ? "Your posts are published immediately" : "Your post will be submitted for admin approval"}</p>
         </div>
 

@@ -35,7 +35,7 @@ export default function CompaniesPage() {
               key={company.id}
               className={`rounded-2xl border bg-white transition-all ${
                 isExpanded
-                  ? "border-indigo-200 shadow-lg sm:col-span-2 lg:col-span-3"
+                  ? "border-[#D4E8E8] shadow-lg sm:col-span-2 lg:col-span-3"
                   : "border-gray-200 hover:shadow-md"
               }`}
             >

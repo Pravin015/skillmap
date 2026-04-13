@@ -163,11 +163,11 @@ export default function JobDetailPage() {
               <div className="h-2" style={{ background: job.status === "ACTIVE" ? "var(--primary)" : "var(--border)" }} />
               <div className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${heading} font-extrabold text-xl text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${heading} font-bold text-xl text-white shrink-0`} style={{ background: "var(--ink)" }}>
                     {job.company.charAt(0)}
                   </div>
                   <div className="flex-1">
-                    <h1 className={`${heading} font-extrabold text-xl md:text-2xl`}>{job.title}</h1>
+                    <h1 className={`${heading} font-bold text-xl md:text-2xl`}>{job.title}</h1>
                     <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{job.company}{job.department ? ` · ${job.department}` : ""}</p>
                     <div className="flex flex-wrap gap-2 mt-3">
                       <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${heading}`} style={{ background: job.workMode === "Remote" ? "rgba(34,197,94,0.1)" : job.workMode === "Hybrid" ? "rgba(139,92,246,0.1)" : "rgba(59,130,246,0.1)", color: job.workMode === "Remote" ? "#16a34a" : job.workMode === "Hybrid" ? "#7c3aed" : "#2563eb" }}>

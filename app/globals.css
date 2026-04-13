@@ -260,3 +260,17 @@ p { font-size: 1rem; line-height: 1.75; font-weight: 400; }
   background-image: linear-gradient(rgba(10,191,188,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(10,191,188,0.03) 1px, transparent 1px);
   background-size: 50px 50px;
 }
+
+/* ═══ GLOBAL POLISH ═══ */
+input:focus, select:focus, textarea:focus {
+  border-color: #0ABFBC !important;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(10,191,188,0.15);
+}
+input[type="checkbox"], input[type="radio"] { accent-color: #0ABFBC; }
+a { transition: color 0.2s; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0C1A1A; }
+::-webkit-scrollbar-thumb { background: rgba(10,191,188,0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #0ABFBC; }

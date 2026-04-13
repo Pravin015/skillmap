@@ -20,7 +20,7 @@ export default function HiringAnalytics({ hrCount }: { hrCount: number }) {
         ].map((m) => (
           <div key={m.label} className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
             <div className="text-2xl mb-2">{m.icon}</div>
-            <div className={`${heading} text-2xl font-extrabold`}>{m.value}<span className="text-xs font-normal ml-1" style={{ color: "var(--muted)" }}>{m.sub}</span></div>
+            <div className={`${heading} text-2xl font-bold`}>{m.value}<span className="text-xs font-normal ml-1" style={{ color: "var(--muted)" }}>{m.sub}</span></div>
             <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{m.label}</div>
           </div>
         ))}
@@ -57,7 +57,7 @@ export default function HiringAnalytics({ hrCount }: { hrCount: number }) {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {["Software", "Cybersecurity", "Cloud", "Data", "Consulting"].map((d) => (
             <div key={d} className="rounded-xl border p-4 text-center" style={{ borderColor: "var(--border)" }}>
-              <div className={`${heading} text-lg font-extrabold`} style={{ color: "var(--border)" }}>0</div>
+              <div className={`${heading} text-lg font-bold`} style={{ color: "var(--border)" }}>0</div>
               <div className="text-[0.65rem] mt-0.5" style={{ color: "var(--muted)" }}>{d}</div>
             </div>
           ))}
@@ -70,11 +70,11 @@ export default function HiringAnalytics({ hrCount }: { hrCount: number }) {
         <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Average profile score of candidates who applied vs. hired</p>
         <div className="grid grid-cols-2 gap-4">
           <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
-            <div className={`${heading} text-3xl font-extrabold`} style={{ color: "var(--border)" }}>—</div>
+            <div className={`${heading} text-3xl font-bold`} style={{ color: "var(--border)" }}>—</div>
             <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>Avg. Applicant Score</div>
           </div>
           <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
-            <div className={`${heading} text-3xl font-extrabold`} style={{ color: "var(--border)" }}>—</div>
+            <div className={`${heading} text-3xl font-bold`} style={{ color: "var(--border)" }}>—</div>
             <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>Avg. Hired Score</div>
           </div>
         </div>

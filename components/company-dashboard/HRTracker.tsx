@@ -42,7 +42,7 @@ export default function HRTracker({ hrs }: { hrs: HR[] }) {
                   { label: "Hired", value: "—" },
                 ].map((m) => (
                   <div key={m.label} className="rounded-xl border p-3 text-center" style={{ borderColor: "var(--border)" }}>
-                    <div className={`${heading} text-lg font-extrabold`}>{m.value}</div>
+                    <div className={`${heading} text-lg font-bold`}>{m.value}</div>
                     <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>{m.label}</div>
                   </div>
                 ))}

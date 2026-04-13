@@ -42,7 +42,7 @@ export default function CreateEventPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)] py-8 px-4 md:px-8" style={{ background: "var(--surface)" }}>
       <div className="max-w-3xl mx-auto">
-        <div className="mb-8"><h1 className={`${heading} font-extrabold text-2xl`}>Create Event</h1><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Host a career guidance session, workshop, or webinar</p></div>
+        <div className="mb-8"><h1 className={`${heading} font-bold text-2xl`}>Create Event</h1><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Host a career guidance session, workshop, or webinar</p></div>
 
         <form onSubmit={handleSubmit} className="rounded-2xl border bg-white p-6 md:p-8 space-y-6" style={{ borderColor: "var(--border)" }}>
           {message && <div className={`rounded-xl p-4 text-sm font-medium ${message.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>{message.text}</div>}

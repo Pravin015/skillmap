@@ -141,7 +141,7 @@ export default function DashboardPage() {
       <div className="flex-1 px-4 md:px-8 py-8 pb-24 lg:pb-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className={`${heading} font-extrabold text-2xl md:text-3xl`}>
+          <h1 className={`${heading} font-bold text-2xl md:text-3xl`}>
             {greeting()}, <span style={{ color: "var(--primary)", background: "var(--ink)", padding: "0 6px", borderRadius: "6px" }}>{profile.name.split(" ")[0]}</span>
           </h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>
@@ -237,7 +237,7 @@ function EventsWidget() {
                 <div className={`${s} font-bold text-sm`}>{e.title}</div>
                 <div className="text-xs" style={{ color: "var(--muted)" }}>by {e.createdBy.name} · {new Date(e.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })} · {e._count.registrations} joined</div>
               </div>
-              <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${e.pricing === "FREE" ? "bg-green-100 text-green-700" : "bg-purple-100 text-purple-700"}`}>{e.pricing === "FREE" ? "Free" : `₹${(e.price || 0) / 100}`}</span>
+              <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${e.pricing === "FREE" ? "bg-green-100 text-green-700" : "bg-[#E0F7F7] text-[#0ABFBC]"}`}>{e.pricing === "FREE" ? "Free" : `₹${(e.price || 0) / 100}`}</span>
             </Link>
           ))}
         </div>

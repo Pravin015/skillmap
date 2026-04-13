@@ -50,7 +50,7 @@ export default function MyStudents({ students, onRefresh, onNavigate }: { studen
                   <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{s.fieldOfInterest || "No domain set"} · {s.applicationCount} applications</div>
                 </div>
                 <div className="text-center shrink-0 hidden sm:block">
-                  <div className={`${heading} text-lg font-extrabold`} style={{ color: scoreColor(s.profileScore) }}>{s.profileScore}</div>
+                  <div className={`${heading} text-lg font-bold`} style={{ color: scoreColor(s.profileScore) }}>{s.profileScore}</div>
                   <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Score</div>
                 </div>
                 <div className="flex gap-2 shrink-0">

@@ -101,7 +101,7 @@ export default function JDMatcher() {
                     {c.skills.length > 0 && <div className="flex gap-1 mt-1 flex-wrap">{c.skills.slice(0, 5).map((s) => <span key={s} className="text-[0.6rem] px-2 py-0.5 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>{s}</span>)}</div>}
                   </div>
                   <div className="text-center shrink-0">
-                    <div className={`${heading} text-xl font-extrabold`} style={{ color: scoreColor(c.aiMatchPercent) }}>{c.aiMatchPercent}%</div>
+                    <div className={`${heading} text-xl font-bold`} style={{ color: scoreColor(c.aiMatchPercent) }}>{c.aiMatchPercent}%</div>
                     <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>AI Match</div>
                   </div>
                   <Link href={`/profile/${c.profileNumber}`} target="_blank" className={`shrink-0 px-3 py-1.5 rounded-lg ${heading} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--primary)", color: "white" }}>View ↗</Link>

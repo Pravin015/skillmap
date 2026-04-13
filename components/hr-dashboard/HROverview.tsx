@@ -44,7 +44,7 @@ export default function HROverview({ onNavigate }: { onNavigate: (tab: string) =
         {statCards.map((s) => (
           <button key={s.label} onClick={() => onNavigate(s.label.includes("Application") ? "applications" : s.label.includes("Job") ? "my-posts" : "applications")} className="rounded-2xl border bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ borderColor: "var(--border)" }}>
             <div className="flex items-center justify-between mb-3"><span className="text-2xl">{s.icon}</span><div className="w-8 h-1 rounded-full" style={{ background: s.color }} /></div>
-            <div className={`${heading} text-2xl font-extrabold`}>{s.value}</div>
+            <div className={`${heading} text-2xl font-bold`}>{s.value}</div>
             <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{s.label}</div>
           </button>
         ))}
@@ -89,7 +89,7 @@ export default function HROverview({ onNavigate }: { onNavigate: (tab: string) =
         <div className="grid grid-cols-3 md:grid-cols-7 gap-2">
           {["APPLIED", "SCREENING", "INTERVIEW", "ASSESSMENT", "OFFER", "HIRED", "REJECTED"].map((stage) => (
             <div key={stage} className="rounded-xl border p-3 text-center" style={{ borderColor: stats.pipeline[stage] ? "var(--ink)" : "var(--border)", background: stats.pipeline[stage] ? "rgba(10,10,15,0.02)" : "transparent" }}>
-              <div className={`${heading} text-lg font-extrabold`} style={{ color: stats.pipeline[stage] ? "var(--ink)" : "var(--border)" }}>{stats.pipeline[stage] || 0}</div>
+              <div className={`${heading} text-lg font-bold`} style={{ color: stats.pipeline[stage] ? "var(--ink)" : "var(--border)" }}>{stats.pipeline[stage] || 0}</div>
               <div className="text-[0.55rem] font-medium mt-0.5" style={{ color: "var(--muted)" }}>{stage.charAt(0) + stage.slice(1).toLowerCase()}</div>
             </div>
           ))}

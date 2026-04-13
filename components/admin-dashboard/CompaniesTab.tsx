@@ -63,7 +63,7 @@ export default function CompaniesTab() {
         <div className="grid gap-3">
           {filtered.map((c) => (
             <div key={c.id} className="rounded-2xl border bg-white p-5 flex items-center gap-4" style={{ borderColor: "var(--border)" }}>
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${heading} font-extrabold text-lg text-white shrink-0`} style={{ background: "var(--ink)" }}>
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${heading} font-bold text-lg text-white shrink-0`} style={{ background: "var(--ink)" }}>
                 {(c.organisation || c.name).charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
@@ -71,7 +71,7 @@ export default function CompaniesTab() {
                 <div className="text-xs" style={{ color: "var(--muted)" }}>{c.email}</div>
               </div>
               <div className="text-center shrink-0 hidden sm:block">
-                <div className={`${heading} text-lg font-extrabold`}>{c.hrCount}</div>
+                <div className={`${heading} text-lg font-bold`}>{c.hrCount}</div>
                 <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>HRs</div>
               </div>
               <div className="text-xs shrink-0 hidden md:block" style={{ color: "var(--muted)" }}>

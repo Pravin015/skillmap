@@ -45,7 +45,7 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${heading} font-extrabold text-xl`}>Platform Overview</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Platform Overview</h2>
         <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>SkillMap admin control panel</p>
       </div>
 
@@ -59,7 +59,7 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
                 <span className="text-2xl">{c.icon}</span>
                 <div className="w-8 h-1 rounded-full" style={{ background: c.color }} />
               </div>
-              <div className={`${heading} text-2xl font-extrabold`}>{c.value}</div>
+              <div className={`${heading} text-2xl font-bold`}>{c.value}</div>
               <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{c.label}</div>
             </button>
           ))}

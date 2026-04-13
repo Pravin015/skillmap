@@ -25,7 +25,7 @@ export default function ForInstitutionsPage() {
       <section className="px-4 pt-24 pb-16 md:pt-32 md:pb-20 text-center" style={{ background: "var(--ink)" }}>
         <div className="max-w-3xl mx-auto">
           <div className="section-eyebrow justify-center" style={{ color: "var(--primary)" }}>For Colleges & Institutions</div>
-          <h1 className={`${heading} font-extrabold text-2xl md:text-4xl text-white mb-4 leading-tight`}>
+          <h1 className={`${heading} font-bold text-2xl md:text-4xl text-white mb-4 leading-tight`}>
             Empower Your Students.<br />Track Their Journey.
           </h1>
           <p className="text-sm md:text-base mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
@@ -40,7 +40,7 @@ export default function ForInstitutionsPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <div className="section-eyebrow justify-center">What You Get</div>
-            <h2 className={`${heading} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>Complete Placement Management</h2>
+            <h2 className={`${heading} font-bold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>Complete Placement Management</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {benefits.map((b) => (
@@ -58,7 +58,7 @@ export default function ForInstitutionsPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <div className="section-eyebrow justify-center">How it works</div>
-            <h2 className={`${heading} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>Get Started in 4 Steps</h2>
+            <h2 className={`${heading} font-bold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>Get Started in 4 Steps</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {steps.map((s) => (
@@ -86,7 +86,7 @@ export default function ForInstitutionsPage() {
       {/* CTA */}
       <section className="px-4 py-16" style={{ background: "var(--primary)" }}>
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className={`${heading} font-extrabold text-xl md:text-2xl text-white mb-3`}>Ready to Transform Placements?</h2>
+          <h2 className={`${heading} font-bold text-xl md:text-2xl text-white mb-3`}>Ready to Transform Placements?</h2>
           <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.7)" }}>Join institutions using SkillMap for student career readiness.</p>
           <Link href="/forms/institution-onboarding" className="inline-block rounded-xl px-8 py-3 text-sm font-semibold no-underline" style={{ background: "white", color: "var(--primary)" }}>
             Register Institution — Free

@@ -48,7 +48,7 @@ export default function BlogPostPage() {
         )}
 
         {/* Title */}
-        <h1 className={`${heading} font-extrabold text-2xl md:text-4xl mb-4`} style={{ color: "var(--ink)" }}>{post.title}</h1>
+        <h1 className={`${heading} font-bold text-2xl md:text-4xl mb-4`} style={{ color: "var(--ink)" }}>{post.title}</h1>
 
         {/* Meta */}
         <div className="flex items-center gap-4 mb-8 text-sm" style={{ color: "var(--muted)" }}>

@@ -191,7 +191,7 @@ export default function PricingPage() {
       <section className="py-16 px-4 md:px-8 text-center" style={{ background: "var(--ink)" }}>
         <div className="max-w-3xl mx-auto">
           <div className="section-eyebrow justify-center" style={{ color: "var(--primary)" }}>Pricing</div>
-          <h1 className={`${heading} font-extrabold text-3xl md:text-4xl text-white mb-3`}>
+          <h1 className={`${heading} font-bold text-3xl md:text-4xl text-white mb-3`}>
             Start Free. Upgrade When Ready.
           </h1>
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
@@ -221,7 +221,7 @@ export default function PricingPage() {
                     </div>
                   )}
                   <div className={`${heading} text-sm font-bold mb-1`} style={{ color: "var(--ink)" }}>{plan.name}</div>
-                  <div className={`${heading} text-3xl font-extrabold mb-1`} style={{ color: "var(--primary)" }}>
+                  <div className={`${heading} text-3xl font-bold mb-1`} style={{ color: "var(--primary)" }}>
                     {plan.price}<span className="text-sm font-normal" style={{ color: "var(--muted)" }}>{plan.period}</span>
                   </div>
                   <p className="text-xs mb-6" style={{ color: "var(--muted)" }}>{plan.desc}</p>

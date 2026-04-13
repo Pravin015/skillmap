@@ -279,7 +279,7 @@ export default function StudentGuidePage() {
           <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-xs font-bold tracking-[0.1em] uppercase ${heading}`} style={{ background: "var(--primary-light)", color: "var(--primary)", border: "1px solid rgba(10,191,188,0.2)" }}>
             🎓 Student Guide
           </div>
-          <h1 className={`${heading} font-extrabold text-3xl md:text-4xl text-white mb-3`}>Student Onboarding Guide</h1>
+          <h1 className={`${heading} font-bold text-3xl md:text-4xl text-white mb-3`}>Student Onboarding Guide</h1>
           <p className="text-base" style={{ color: "rgba(255,255,255,0.5)" }}>Step-by-step walkthrough of everything you can do on SkillMap. Follow along to test each feature.</p>
         </div>
       </section>
@@ -292,7 +292,7 @@ export default function StudentGuidePage() {
             return (
               <div key={step.id} className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: isOpen ? "var(--ink)" : "var(--border)" }}>
                 <button onClick={() => setOpenStep(isOpen ? null : step.id)} className="w-full flex items-center gap-4 p-5 text-left">
-                  <span className={`${heading} text-3xl font-extrabold shrink-0`} style={{ color: isOpen ? "var(--primary)" : "var(--border)", background: isOpen ? "var(--ink)" : "transparent", padding: isOpen ? "4px 12px" : "0", borderRadius: "12px" }}>{step.num}</span>
+                  <span className={`${heading} text-3xl font-bold shrink-0`} style={{ color: isOpen ? "var(--primary)" : "var(--border)", background: isOpen ? "var(--ink)" : "transparent", padding: isOpen ? "4px 12px" : "0", borderRadius: "12px" }}>{step.num}</span>
                   <div className="flex-1">
                     <h3 className={`${heading} font-bold text-base`} style={{ color: "var(--ink)" }}>{step.title}</h3>
                     <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{step.desc}</p>

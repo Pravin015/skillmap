@@ -114,7 +114,7 @@ export default function EventDetailPage() {
                   <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${heading}`} style={{ background: event.eventType === "VIRTUAL" ? "rgba(6,182,212,0.1)" : "rgba(245,158,11,0.1)", color: event.eventType === "VIRTUAL" ? "#0891b2" : "#d97706" }}>{event.eventType}</span>
                   {isPast && <span className="text-[0.65rem] font-bold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">Ended</span>}
                 </div>
-                <h1 className={`${heading} font-extrabold text-xl md:text-2xl mb-2`}>{event.title}</h1>
+                <h1 className={`${heading} font-bold text-xl md:text-2xl mb-2`}>{event.title}</h1>
                 <p className="text-sm" style={{ color: "var(--muted)" }}>by <strong>{event.createdBy.name}</strong>{event.createdBy.mentorProfile?.currentCompany ? ` · ${event.createdBy.mentorProfile.currentCompany}` : ""}</p>
                 {event.createdBy.mentorProfile && (
                   <Link href={`/mentor/${event.createdBy.mentorProfile.mentorNumber}`} className={`inline-block mt-2 text-xs ${heading} font-bold no-underline`} style={{ color: "var(--primary)", background: "var(--ink)", padding: "2px 8px", borderRadius: "6px" }}>View mentor profile</Link>

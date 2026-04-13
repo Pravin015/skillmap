@@ -96,13 +96,13 @@ export default function MentorProfilePage() {
               {m.user.profileImage ? (
                 <img src={m.user.profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover shrink-0" />
               ) : (
-                <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${heading} font-extrabold text-2xl shrink-0`} style={{ background: "var(--primary)", color: "white" }}>
+                <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${heading} font-bold text-2xl shrink-0`} style={{ background: "var(--primary)", color: "white" }}>
                   {m.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                 </div>
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className={`${heading} font-extrabold text-xl`}>{m.user.name}</h1>
+                  <h1 className={`${heading} font-bold text-xl`}>{m.user.name}</h1>
                   {/* Verified badge */}
                   {isVerified ? (
                     <span className={`inline-flex items-center gap-1 text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${heading} bg-green-100 text-green-700`}>
@@ -126,7 +126,7 @@ export default function MentorProfilePage() {
                     <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${heading}`} style={{ background: "var(--primary)", color: "white" }}>{m.currentCompany}</span>
                   )}
                   {m.compensation === "VOLUNTEER" && (
-                    <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">Free / Volunteer</span>
+                    <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-[#E0F7F7] text-[#0ABFBC]">Free / Volunteer</span>
                   )}
                   {m.compensation === "PAID" && m.sessionRate && (
                     <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">₹{m.sessionRate}/session</span>
@@ -141,25 +141,25 @@ export default function MentorProfilePage() {
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="rounded-2xl border bg-white p-4 text-center" style={{ borderColor: "var(--border)" }}>
-            <div className={`${heading} text-2xl font-extrabold`}>{m.yearsOfExperience}</div>
+            <div className={`${heading} text-2xl font-bold`}>{m.yearsOfExperience}</div>
             <div className="text-[0.65rem] mt-0.5" style={{ color: "var(--muted)" }}>Years Exp.</div>
           </div>
           <div className="rounded-2xl border bg-white p-4 text-center" style={{ borderColor: "var(--border)" }}>
-            <div className={`${heading} text-2xl font-extrabold`}>{m.menteesHelped}</div>
+            <div className={`${heading} text-2xl font-bold`}>{m.menteesHelped}</div>
             <div className="text-[0.65rem] mt-0.5" style={{ color: "var(--muted)" }}>Mentees Helped</div>
           </div>
           <div className="rounded-2xl border bg-white p-4 text-center" style={{ borderColor: "var(--border)" }}>
-            <div className={`${heading} text-2xl font-extrabold`}>{m.totalSessions}</div>
+            <div className={`${heading} text-2xl font-bold`}>{m.totalSessions}</div>
             <div className="text-[0.65rem] mt-0.5" style={{ color: "var(--muted)" }}>Sessions</div>
           </div>
           <div className="rounded-2xl border bg-white p-4 text-center" style={{ borderColor: "var(--border)" }}>
-            <div className={`${heading} text-2xl font-extrabold`} style={{ color: m.rating >= 4.5 ? "#22c55e" : "#f59e0b" }}>
+            <div className={`${heading} text-2xl font-bold`} style={{ color: m.rating >= 4.5 ? "#22c55e" : "#f59e0b" }}>
               {m.rating > 0 ? `${m.rating}★` : "—"}
             </div>
             <div className="text-[0.65rem] mt-0.5" style={{ color: "var(--muted)" }}>Rating</div>
           </div>
           <div className="rounded-2xl border bg-white p-4 text-center" style={{ borderColor: "var(--border)" }}>
-            <div className={`${heading} text-2xl font-extrabold`}>{m.companiesWorked.length}</div>
+            <div className={`${heading} text-2xl font-bold`}>{m.companiesWorked.length}</div>
             <div className="text-[0.65rem] mt-0.5" style={{ color: "var(--muted)" }}>Companies</div>
           </div>
         </div>

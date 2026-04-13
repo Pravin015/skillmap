@@ -91,7 +91,7 @@ export default function JobsPage() {
       {/* Hero header */}
       <section className="py-12 px-4 md:px-8" style={{ background: "var(--ink)" }}>
         <div className="max-w-5xl mx-auto">
-          <h1 className={`${heading} font-extrabold text-2xl md:text-3xl text-white mb-2`}>
+          <h1 className={`${heading} font-bold text-2xl md:text-3xl text-white mb-2`}>
             Job Openings
           </h1>
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
@@ -180,7 +180,7 @@ export default function JobsPage() {
                 <Link key={job.id} href={`/jobs/${job.id}`} className="block rounded-2xl border bg-white p-5 md:p-6 transition-all hover:-translate-y-0.5 hover:shadow-lg no-underline group" style={{ borderColor: "var(--border)" }}>
                   <div className="flex items-start gap-4">
                     {/* Company avatar */}
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${heading} font-extrabold text-lg text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${heading} font-bold text-lg text-white shrink-0`} style={{ background: "var(--ink)" }}>
                       {job.company.charAt(0)}
                     </div>
 
@@ -193,7 +193,7 @@ export default function JobsPage() {
                         </div>
                         {(job.salaryMin || job.salaryMax) && (
                           <div className={`hidden sm:block shrink-0 text-right ${heading}`}>
-                            <div className="font-extrabold text-base" style={{ color: "var(--ink)" }}>
+                            <div className="font-bold text-base" style={{ color: "var(--ink)" }}>
                               {job.salaryMin && job.salaryMax ? `₹${job.salaryMin}–${job.salaryMax}` : job.salaryMax ? `Up to ₹${job.salaryMax}` : `₹${job.salaryMin}+`}
                             </div>
                             <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>LPA</div>

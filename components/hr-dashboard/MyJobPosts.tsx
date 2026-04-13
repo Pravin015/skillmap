@@ -72,7 +72,7 @@ export default function MyJobPosts({ onNavigate }: { onNavigate: (tab: string) =
                   <div className="text-xs" style={{ color: "var(--muted)" }}>{job.company} · {job.location} · {job.workMode} · {job.experienceLevel}</div>
                 </div>
                 <div className="text-center shrink-0">
-                  <div className={`${heading} text-lg font-extrabold`}>{job._count.applications}</div>
+                  <div className={`${heading} text-lg font-bold`}>{job._count.applications}</div>
                   <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Applications</div>
                 </div>
                 <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full shrink-0 ${statusBadge[job.status] || ""}`}>{job.status}</span>

@@ -13,7 +13,7 @@ export default function CompanySettings({ orgName }: { orgName: string }) {
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
         <h3 className={`${heading} font-bold text-base mb-4`}>Organisation Profile</h3>
         <div className="flex items-center gap-4 mb-6">
-          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${heading} font-extrabold text-xl text-white`} style={{ background: "var(--ink)" }}>
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${heading} font-bold text-xl text-white`} style={{ background: "var(--ink)" }}>
             {orgName.charAt(0)}
           </div>
           <div>

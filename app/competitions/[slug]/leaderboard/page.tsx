@@ -49,7 +49,7 @@ export default function LeaderboardPage({ params }: { params: Promise<{ slug: st
                   <div className={`${heading} font-bold text-sm mb-2`} style={{ color: "var(--ink)" }}>{entry.name}</div>
                   <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>{entry.score} pts</div>
                   <div className="rounded-t-xl flex items-end justify-center pb-3" style={{ background: podiumColors[idx], width: 100, height: heights[idx] }}>
-                    <span className={`${heading} text-2xl font-extrabold text-white`}>{idx + 1}</span>
+                    <span className={`${heading} text-2xl font-bold text-white`}>{idx + 1}</span>
                   </div>
                 </div>
               );

@@ -189,7 +189,7 @@ export default function OfferVerifyPage() {
           <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold mb-4" style={{ background: "rgba(239,68,68,0.2)", color: "#fca5a5" }}>
             <span>🛡️</span> Protect Yourself from Fraud
           </div>
-          <h1 className={`${heading} text-2xl md:text-4xl font-extrabold text-white mb-3`}>
+          <h1 className={`${heading} text-2xl md:text-4xl font-bold text-white mb-3`}>
             Fake Offer Letter Detector
           </h1>
           <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.6)" }}>
@@ -437,7 +437,7 @@ Regards,
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className={`${heading} text-3xl font-extrabold`} style={{ color: verdictConfig[result.verdict]?.color }}>{result.trustScore}</span>
+                  <span className={`${heading} text-3xl font-bold`} style={{ color: verdictConfig[result.verdict]?.color }}>{result.trustScore}</span>
                   <span className="text-[10px]" style={{ color: "var(--muted)" }}>Trust Score</span>
                 </div>
               </div>

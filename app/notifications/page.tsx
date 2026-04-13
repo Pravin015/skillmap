@@ -32,7 +32,7 @@ export default function NotificationsPage() {
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className={`${heading} font-extrabold text-2xl`}>Notifications</h1>
+            <h1 className={`${heading} font-bold text-2xl`}>Notifications</h1>
             <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{unread} unread</p>
           </div>
           {unread > 0 && (

@@ -15,11 +15,11 @@ interface User {
 }
 
 const roleBadge: Record<string, string> = {
-  STUDENT: "bg-indigo-100 text-indigo-700",
+  STUDENT: "bg-[#E0F7F7] text-[#0ABFBC]",
   MENTOR: "bg-amber-100 text-amber-700",
   HR: "bg-cyan-100 text-cyan-700",
   ORG: "bg-emerald-100 text-emerald-700",
-  INSTITUTION: "bg-purple-100 text-purple-700",
+  INSTITUTION: "bg-[#E0F7F7] text-[#0ABFBC]",
   ADMIN: "bg-red-100 text-red-700",
 };
 

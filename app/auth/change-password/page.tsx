@@ -38,7 +38,7 @@ export default function ChangePasswordPage() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="text-4xl mb-4">🔐</div>
-          <h1 className={`${heading} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>Set Your Password</h1>
+          <h1 className={`${heading} font-bold text-2xl`} style={{ color: "var(--ink)" }}>Set Your Password</h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>
             Welcome{session?.user?.name ? `, ${session.user.name}` : ""}! Please set a new password for your account.
           </p>

@@ -18,9 +18,9 @@ export default function SkillTag({
           type="checkbox"
           checked={checked}
           onChange={(e) => onChange?.(e.target.checked)}
-          className="h-3.5 w-3.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          className="h-3.5 w-3.5 rounded border-gray-300 text-[#0ABFBC] focus:ring-[#0ABFBC]"
         />
-        <span className={checked ? "text-indigo-700 line-through" : "text-gray-700"}>
+        <span className={checked ? "text-[#0ABFBC] line-through" : "text-gray-700"}>
           {skill}
         </span>
       </label>

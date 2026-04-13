@@ -7,7 +7,7 @@ export default function InstitutionSettings({ orgName }: { orgName: string }) {
       <div><h2 className={`${heading} font-bold text-xl`}>Settings</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Manage your institution profile</p></div>
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
         <div className="flex items-center gap-4 mb-6">
-          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${heading} font-extrabold text-xl text-white`} style={{ background: "var(--ink)" }}>{orgName.charAt(0)}</div>
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${heading} font-bold text-xl text-white`} style={{ background: "var(--ink)" }}>{orgName.charAt(0)}</div>
           <div><div className={`${heading} font-bold text-lg`}>{orgName}</div><span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700">Verified Institution</span></div>
         </div>
         <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>

@@ -76,7 +76,7 @@ export default function SettingsPage() {
     {cropSrc && <PhotoCropper imageSrc={cropSrc} onCropped={handleCroppedPhoto} onCancel={() => setCropSrc(null)} />}
     <div className="min-h-[calc(100vh-4rem)] py-8 px-4 md:px-8" style={{ background: "var(--surface)" }}>
       <div className="max-w-2xl mx-auto space-y-6">
-        <div><h1 className={`${heading} font-extrabold text-2xl`}>Account Settings</h1><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Manage your profile, contact info, and password</p></div>
+        <div><h1 className={`${heading} font-bold text-2xl`}>Account Settings</h1><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Manage your profile, contact info, and password</p></div>
 
         {/* Profile photo */}
         <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
@@ -85,7 +85,7 @@ export default function SettingsPage() {
             {profileImage ? (
               <img src={profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover" />
             ) : (
-              <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${heading} font-extrabold text-2xl text-white`} style={{ background: "var(--ink)" }}>
+              <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${heading} font-bold text-2xl text-white`} style={{ background: "var(--ink)" }}>
                 {name.charAt(0).toUpperCase()}
               </div>
             )}

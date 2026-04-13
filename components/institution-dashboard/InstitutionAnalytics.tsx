@@ -14,7 +14,7 @@ export default function InstitutionAnalytics({ studentCount }: { studentCount: n
         ].map((m) => (
           <div key={m.label} className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
             <div className="text-2xl mb-2">{m.icon}</div>
-            <div className={`${heading} text-2xl font-extrabold`}>{m.value}</div>
+            <div className={`${heading} text-2xl font-bold`}>{m.value}</div>
             <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{m.label}</div>
           </div>
         ))}

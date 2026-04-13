@@ -7,7 +7,7 @@ export default function InstitutionOverview({ studentCount, orgName, onNavigate 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${heading} font-extrabold text-xl`}>{orgName}</h2>
+        <h2 className={`${heading} font-bold text-xl`}>{orgName}</h2>
         <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Institution dashboard — manage students and track placements</p>
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -19,7 +19,7 @@ export default function InstitutionOverview({ studentCount, orgName, onNavigate 
         ].map((s) => (
           <div key={s.label} className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
             <div className="flex items-center justify-between mb-3"><span className="text-2xl">{s.icon}</span><div className="w-8 h-1 rounded-full" style={{ background: s.color }} /></div>
-            <div className={`${heading} text-2xl font-extrabold`}>{s.value}</div>
+            <div className={`${heading} text-2xl font-bold`}>{s.value}</div>
             <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{s.label}</div>
           </div>
         ))}
@@ -46,7 +46,7 @@ export default function InstitutionOverview({ studentCount, orgName, onNavigate 
         <div className="grid grid-cols-5 gap-2">
           {["Applied", "Screening", "Interview", "Offer", "Placed"].map((stage) => (
             <div key={stage} className="rounded-xl border-2 border-dashed p-4 text-center" style={{ borderColor: "var(--border)" }}>
-              <div className={`${heading} text-xl font-extrabold`} style={{ color: "var(--border)" }}>0</div>
+              <div className={`${heading} text-xl font-bold`} style={{ color: "var(--border)" }}>0</div>
               <div className="text-[0.6rem] font-medium" style={{ color: "var(--muted)" }}>{stage}</div>
             </div>
           ))}

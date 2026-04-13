@@ -85,12 +85,12 @@ export default function PublicProfilePage() {
               {p.user.profileImage ? (
                 <img src={p.user.profileImage} alt="" className="w-16 h-16 rounded-2xl object-cover shrink-0" />
               ) : (
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${heading} font-extrabold text-xl text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${heading} font-bold text-xl text-white shrink-0`} style={{ background: "var(--ink)" }}>
                   {p.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                 </div>
               )}
               <div className="flex-1">
-                <h1 className={`${heading} font-extrabold text-xl`}>{p.user.name}</h1>
+                <h1 className={`${heading} font-bold text-xl`}>{p.user.name}</h1>
                 <p className="text-sm" style={{ color: "var(--muted)" }}>
                   {p.collegeName || "College not specified"}{p.user.degree ? ` · ${p.user.degree}` : ""}{p.user.gradYear ? ` · ${p.user.gradYear}` : ""}
                 </p>
@@ -108,7 +108,7 @@ export default function PublicProfilePage() {
               </div>
               {showScore && (
                 <div className="text-center shrink-0">
-                  <div className={`${heading} text-2xl font-extrabold`} style={{ color: scoreColor }}>{p.profileScore}</div>
+                  <div className={`${heading} text-2xl font-bold`} style={{ color: scoreColor }}>{p.profileScore}</div>
                   <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Profile Score</div>
                 </div>
               )}
@@ -177,22 +177,22 @@ export default function PublicProfilePage() {
           {p.academicScore && (
             <div className="rounded-2xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
               <div className="text-xs" style={{ color: "var(--muted)" }}>{p.academicType || "Score"}</div>
-              <div className={`${heading} text-xl font-extrabold mt-1`}>{p.academicScore}</div>
+              <div className={`${heading} text-xl font-bold mt-1`}>{p.academicScore}</div>
             </div>
           )}
           {(p.salaryMin || p.salaryMax) && (
             <div className="rounded-2xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
               <div className="text-xs" style={{ color: "var(--muted)" }}>Expected (LPA)</div>
-              <div className={`${heading} text-xl font-extrabold mt-1`}>{p.salaryMin || "—"}–{p.salaryMax || "—"}</div>
+              <div className={`${heading} text-xl font-bold mt-1`}>{p.salaryMin || "—"}–{p.salaryMax || "—"}</div>
             </div>
           )}
           <div className="rounded-2xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
             <div className="text-xs" style={{ color: "var(--muted)" }}>Available</div>
-            <div className={`${heading} text-xl font-extrabold mt-1`}>{p.availableToJoin ? "Yes" : "No"}</div>
+            <div className={`${heading} text-xl font-bold mt-1`}>{p.availableToJoin ? "Yes" : "No"}</div>
           </div>
           <div className="rounded-2xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
             <div className="text-xs" style={{ color: "var(--muted)" }}>Notice</div>
-            <div className={`${heading} text-xl font-extrabold mt-1`}>{p.joinDate || "—"}</div>
+            <div className={`${heading} text-xl font-bold mt-1`}>{p.joinDate || "—"}</div>
           </div>
         </div>
 

@@ -77,7 +77,7 @@ function LoginInner() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className={`${heading} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>Welcome back</h1>
+          <h1 className={`${heading} font-bold text-2xl`} style={{ color: "var(--ink)" }}>Welcome back</h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>Sign in to your SkillMap account</p>
         </div>
 

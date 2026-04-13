@@ -86,7 +86,7 @@ export default function JobPostsTab() {
                   <div className="text-xs" style={{ color: "var(--muted)" }}>Posted by: {job.postedBy.name} ({job.postedBy.email})</div>
                 </div>
                 <div className="text-center shrink-0">
-                  <div className={`${heading} text-lg font-extrabold`}>{job._count.applications}</div>
+                  <div className={`${heading} text-lg font-bold`}>{job._count.applications}</div>
                   <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Apps</div>
                 </div>
                 <select value={job.status} onChange={(e) => updateStatus(job.id, e.target.value)} className={`text-[0.65rem] font-bold px-2 py-1 rounded-full border-none cursor-pointer ${statusBadge[job.status] || ""}`}>

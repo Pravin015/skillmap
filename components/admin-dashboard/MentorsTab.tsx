@@ -79,7 +79,7 @@ export default function MentorsTab() {
                   <div className="flex items-center gap-2">
                     <span className={`${heading} font-bold`}>{m.user.name}</span>
                     <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${statusBadge[m.status] || ""}`}>{m.status}</span>
-                    <span className="text-[0.6rem] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">{m.compensation}</span>
+                    <span className="text-[0.6rem] font-bold px-2 py-0.5 rounded-full bg-[#E0F7F7] text-[#0ABFBC]">{m.compensation}</span>
                   </div>
                   <div className="text-xs" style={{ color: "var(--muted)" }}>
                     {m.currentRole} at {m.currentCompany || "—"} · {m.yearsOfExperience} yrs · {m.menteesHelped} mentees

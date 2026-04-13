@@ -40,7 +40,7 @@ export default function MentorGuidePage() {
       <section className="py-12 px-4 md:px-8" style={{ background: "var(--ink)" }}>
         <div className="max-w-4xl mx-auto">
           <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-xs font-bold tracking-[0.1em] uppercase ${heading}`} style={{ background: "rgba(245,158,11,0.1)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.2)" }}>🧑‍🏫 Mentor Guide</div>
-          <h1 className={`${heading} font-extrabold text-3xl md:text-4xl text-white mb-3`}>Mentor Guide</h1>
+          <h1 className={`${heading} font-bold text-3xl md:text-4xl text-white mb-3`}>Mentor Guide</h1>
           <p className="text-base" style={{ color: "rgba(255,255,255,0.5)" }}>Step-by-step guide for mentors — set up your profile, manage sessions, create events, and earn.</p>
         </div>
       </section>
@@ -48,7 +48,7 @@ export default function MentorGuidePage() {
         {steps.map((step) => { const isOpen = openStep === step.id; return (
           <div key={step.id} className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: isOpen ? "var(--ink)" : "var(--border)" }}>
             <button onClick={() => setOpenStep(isOpen ? null : step.id)} className="w-full flex items-center gap-4 p-5 text-left">
-              <span className={`${heading} text-3xl font-extrabold shrink-0`} style={{ color: isOpen ? "#f59e0b" : "var(--border)", background: isOpen ? "var(--ink)" : "transparent", padding: isOpen ? "4px 12px" : "0", borderRadius: "12px" }}>{step.num}</span>
+              <span className={`${heading} text-3xl font-bold shrink-0`} style={{ color: isOpen ? "#f59e0b" : "var(--border)", background: isOpen ? "var(--ink)" : "transparent", padding: isOpen ? "4px 12px" : "0", borderRadius: "12px" }}>{step.num}</span>
               <div className="flex-1"><h3 className={`${heading} font-bold text-base`}>{step.title}</h3><p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{step.desc}</p></div>
               <svg className={`w-5 h-5 shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ color: "var(--muted)" }}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
             </button>

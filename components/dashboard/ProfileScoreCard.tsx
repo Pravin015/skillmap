@@ -49,7 +49,7 @@ export default function ProfileScoreCard() {
         <div className="relative shrink-0">
           <svg width="130" height="130" viewBox="0 0 130 130"><circle cx="65" cy="65" r={radius} fill="none" stroke="var(--border)" strokeWidth="10" /><circle cx="65" cy="65" r={radius} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={dashOffset} transform="rotate(-90 65 65)" style={{ transition: "stroke-dashoffset 1.5s ease" }} /></svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={`${heading} text-2xl font-extrabold`} style={{ color }}>{pct}</span>
+            <span className={`${heading} text-2xl font-bold`} style={{ color }}>{pct}</span>
             <span className="text-[0.6rem]" style={{ color: "var(--muted)" }}>out of 100</span>
           </div>
         </div>

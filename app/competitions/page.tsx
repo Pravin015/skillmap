@@ -52,7 +52,7 @@ export default function CompetitionsPage() {
           <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold mb-4" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>
             🏆 Compete & Get Hired
           </div>
-          <h1 className={`${heading} text-2xl md:text-4xl font-extrabold text-white mb-3`}>
+          <h1 className={`${heading} text-2xl md:text-4xl font-bold text-white mb-3`}>
             Competitions & Hiring Challenges
           </h1>
           <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.6)" }}>
