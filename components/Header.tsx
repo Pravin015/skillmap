@@ -16,6 +16,7 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/companies", label: "Companies" },
   { href: "/chat", label: "AI Advisor" },
+  { href: "/mock-interview", label: "Mock Interview" },
 ];
 
 const roleBadgeColors: Record<string, string> = {

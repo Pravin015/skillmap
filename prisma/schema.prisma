@@ -45,6 +45,7 @@ model User {
   eventRegs     EventRegistration[]  @relation("EventRegistrations")
   profileViews  ProfileView[]       @relation("ProfileViewer")
   notifications Notification[]
+  mockInterviews MockInterview[]
 }
 
 enum FormType {
@@ -649,4 +650,82 @@ model BlogPost {
   publishedAt   DateTime?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
+}
+
+// ═══ MOCK INTERVIEW MODULE ═══
+
+model MockCompany {
+  id             String          @id @default(cuid())
+  name           String
+  slug           String          @unique
+  logo           String?
+  domain         String          // "IT", "Finance", "Consulting", "E-commerce", etc.
+  description    String?
+  interviewTypes String[]        // ["TECHNICAL", "HR", "BEHAVIORAL", "SYSTEM_DESIGN"]
+  questions      MockQuestion[]
+  interviews     MockInterview[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model MockQuestion {
+  id           String      @id @default(cuid())
+  companyId    String
+  company      MockCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  category     String      // "TECHNICAL", "HR", "BEHAVIORAL", "SYSTEM_DESIGN"
+  difficulty   String      // "EASY", "MEDIUM", "HARD"
+  question     String
+  sampleAnswer String?
+  tips         String?
+  domain       String?     // "CS", "Finance", "Marketing", etc.
+  tags         String[]    @default([])
+  order        Int         @default(0)
+  progress     QuestionProgress[]
+  createdAt    DateTime    @default(now())
+}
+
+model MockInterview {
+  id             String         @id @default(cuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId      String
+  company        MockCompany    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  type           String         // "SELF", "AI", "MENTOR"
+  interviewType  String         // "TECHNICAL", "HR", "BEHAVIORAL", "SYSTEM_DESIGN"
+  difficulty     String         // "EASY", "MEDIUM", "HARD"
+  status         String         @default("IN_PROGRESS") // "IN_PROGRESS", "COMPLETED", "ABANDONED"
+  score          Int?           // overall 0-100
+  feedback       String?        // AI-generated summary
+  duration       Int?           // minutes taken
+  questionsAsked Int?
+  totalQuestions  Int            @default(5)
+  responses      MockResponse[]
+  createdAt      DateTime       @default(now())
+  completedAt    DateTime?
+
+  @@index([userId])
+  @@index([companyId])
+}
+
+model MockResponse {
+  id          String        @id @default(cuid())
+  interviewId String
+  interview   MockInterview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  question    String
+  answer      String
+  aiFeedback  String?
+  score       Int?          // 0-10 per question
+  order       Int
+  createdAt   DateTime      @default(now())
+}
+
+model QuestionProgress {
+  id         String       @id @default(cuid())
+  userId     String
+  questionId String
+  question   MockQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  practiced  Boolean      @default(true)
+  createdAt  DateTime     @default(now())
+
+  @@unique([userId, questionId])
 }
