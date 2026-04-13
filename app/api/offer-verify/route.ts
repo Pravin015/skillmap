@@ -84,28 +84,59 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   const userId = (session?.user as { id?: string })?.id;
 
-  const { companyName, offerText, communicationChannel } = await req.json();
+  const { companyName, offerText, communicationChannel, fileData, fileType } = await req.json();
 
-  if (!companyName || !offerText) {
-    return NextResponse.json({ error: "Company name and offer letter text are required" }, { status: 400 });
+  if (!companyName) {
+    return NextResponse.json({ error: "Company name is required" }, { status: 400 });
   }
 
-  if (offerText.length < 50) {
+  // Must provide either text or file
+  if (!offerText && !fileData) {
+    return NextResponse.json({ error: "Please paste the offer letter text or upload the file" }, { status: 400 });
+  }
+
+  if (offerText && !fileData && offerText.length < 50) {
     return NextResponse.json({ error: "Please paste the complete offer letter text (minimum 50 characters)" }, { status: 400 });
   }
 
   try {
-    const userMessage = `Company Name: ${companyName}
-Communication Channel: ${communicationChannel || "Not specified"}
+    // Build message content based on input type
+    const messageContent: Anthropic.MessageCreateParams["messages"][0]["content"] = [];
 
-OFFER LETTER TEXT:
-${offerText}`;
+    if (fileData) {
+      // File uploaded — use Claude Vision to read + analyze the document
+      // Strip data URL prefix if present (e.g., "data:image/png;base64,...")
+      const base64Data = fileData.includes(",") ? fileData.split(",")[1] : fileData;
+
+      // Map file type to valid media type for Claude Vision
+      let mediaType: "image/png" | "image/jpeg" | "image/gif" | "image/webp" = "image/png";
+      if (fileType?.includes("jpeg") || fileType?.includes("jpg")) mediaType = "image/jpeg";
+      else if (fileType?.includes("webp")) mediaType = "image/webp";
+      else if (fileType?.includes("gif")) mediaType = "image/gif";
+      // For PDFs: convert to image/png media type (user should screenshot or we handle on frontend)
+      // Claude Vision accepts images, not PDFs directly
+
+      messageContent.push({
+        type: "image",
+        source: { type: "base64", media_type: mediaType, data: base64Data },
+      });
+      messageContent.push({
+        type: "text",
+        text: `Company Name: ${companyName}\nCommunication Channel: ${communicationChannel || "Not specified"}\n\nThis is an uploaded offer letter document. Read ALL the text from this image/document carefully, then analyze it against all 20 parameters. Check the letterhead, formatting, logo, signatures, and overall document quality visually as well.`,
+      });
+    } else {
+      // Text pasted
+      messageContent.push({
+        type: "text",
+        text: `Company Name: ${companyName}\nCommunication Channel: ${communicationChannel || "Not specified"}\n\nOFFER LETTER TEXT:\n${offerText}`,
+      });
+    }
 
     const result = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 2048,
       system: ANALYSIS_PROMPT,
-      messages: [{ role: "user", content: userMessage }],
+      messages: [{ role: "user", content: messageContent }],
     });
 
     const responseText = result.content[0].type === "text" ? result.content[0].text : "";
@@ -125,7 +156,7 @@ ${offerText}`;
       data: {
         userId: userId || null,
         companyName,
-        offerText,
+        offerText: offerText || "[Uploaded document — analyzed via AI Vision]",
         trustScore: analysis.trustScore || 0,
         verdict: analysis.verdict || "SUSPICIOUS",
         analysis: JSON.stringify(analysis),

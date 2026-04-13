@@ -67,24 +67,90 @@ export default function OfferVerifyPage() {
   const [companyName, setCompanyName] = useState("");
   const [offerText, setOfferText] = useState("");
   const [channel, setChannel] = useState("");
+  const [inputMode, setInputMode] = useState<"paste" | "upload">("upload");
+  const [fileData, setFileData] = useState<string | null>(null);
+  const [fileType, setFileType] = useState<string>("");
+  const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState("");
 
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowed = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"];
+    if (!allowed.includes(file.type)) {
+      setError("Please upload a PNG, JPG, or WEBP image. If you have a PDF, take a screenshot first.");
+      return;
+    }
+
+    // Max 10MB
+    if (file.size > 10 * 1024 * 1024) {
+      setError("File size must be less than 10MB");
+      return;
+    }
+
+    setFileName(file.name);
+    setError("");
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setFileData(base64);
+
+      // For PDFs, Claude vision needs image/* media type — we'll send as-is and let the API handle it
+      if (file.type === "application/pdf") {
+        setFileType("application/pdf");
+      } else {
+        setFileType(file.type);
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeFile() {
+    setFileData(null);
+    setFileName("");
+    setFileType("");
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!companyName.trim() || !offerText.trim()) return;
-    if (offerText.length < 50) { setError("Please paste the complete offer letter (minimum 50 characters)"); return; }
+    if (!companyName.trim()) return;
+
+    // Validate based on mode
+    if (inputMode === "paste" && (!offerText.trim() || offerText.length < 50)) {
+      setError("Please paste the complete offer letter (minimum 50 characters)");
+      return;
+    }
+    if (inputMode === "upload" && !fileData) {
+      setError("Please upload the offer letter file");
+      return;
+    }
 
     setLoading(true);
     setError("");
     setResult(null);
 
     try {
+      const body: Record<string, string | null> = {
+        companyName: companyName.trim(),
+        communicationChannel: channel,
+      };
+
+      if (inputMode === "paste") {
+        body.offerText = offerText.trim();
+      } else {
+        body.fileData = fileData;
+        body.fileType = fileType;
+      }
+
       const res = await fetch("/api/offer-verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ companyName: companyName.trim(), offerText: offerText.trim(), communicationChannel: channel }),
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
@@ -102,7 +168,11 @@ export default function OfferVerifyPage() {
     setCompanyName("");
     setOfferText("");
     setChannel("");
+    setFileData(null);
+    setFileName("");
+    setFileType("");
     setError("");
+    setInputMode("upload");
   }
 
   function getScoreColor(score: number) {
@@ -179,18 +249,93 @@ export default function OfferVerifyPage() {
                 </select>
               </div>
 
-              {/* Offer Letter Text */}
+              {/* Input Mode Tabs */}
               <div className="mb-4">
-                <label className="text-xs font-medium block mb-1.5" style={{ color: "var(--ink)" }}>
-                  Offer Letter Content *
+                <label className="text-xs font-medium block mb-2" style={{ color: "var(--ink)" }}>
+                  Offer Letter *
                 </label>
-                <p className="text-[10px] mb-2" style={{ color: "var(--muted)" }}>
-                  Paste the complete offer letter text below. Include everything — from, to, subject, body, salary details, terms, signature.
-                </p>
-                <textarea
-                  value={offerText}
-                  onChange={(e) => setOfferText(e.target.value)}
-                  placeholder={`Paste the full offer letter here...
+                <div className="flex gap-1 mb-3 p-1 rounded-xl" style={{ background: "var(--surface)" }}>
+                  <button
+                    type="button"
+                    onClick={() => setInputMode("upload")}
+                    className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${syne}`}
+                    style={{
+                      background: inputMode === "upload" ? "var(--ink)" : "transparent",
+                      color: inputMode === "upload" ? "var(--accent)" : "var(--muted)",
+                    }}
+                  >
+                    📎 Upload File
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setInputMode("paste")}
+                    className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${syne}`}
+                    style={{
+                      background: inputMode === "paste" ? "var(--ink)" : "transparent",
+                      color: inputMode === "paste" ? "var(--accent)" : "var(--muted)",
+                    }}
+                  >
+                    📝 Paste Text
+                  </button>
+                </div>
+
+                {inputMode === "upload" ? (
+                  /* File Upload */
+                  <div>
+                    {!fileData ? (
+                      <label className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 cursor-pointer transition-all hover:border-[var(--ink)] hover:bg-gray-50" style={{ borderColor: "var(--border)" }}>
+                        <div className="text-3xl mb-2">📄</div>
+                        <p className={`${syne} text-sm font-bold mb-1`} style={{ color: "var(--ink)" }}>
+                          Drop your offer letter here
+                        </p>
+                        <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>
+                          or click to browse files
+                        </p>
+                        <div className="flex gap-2">
+                          {["PNG", "JPG", "WEBP"].map((t) => (
+                            <span key={t} className="rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ background: "var(--surface)", color: "var(--muted)" }}>{t}</span>
+                          ))}
+                        </div>
+                        <p className="text-[10px] mt-2" style={{ color: "var(--muted)" }}>Max 10MB</p>
+                        <input
+                          type="file"
+                          accept=".png,.jpg,.jpeg,.webp"
+                          onChange={handleFileChange}
+                          className="hidden"
+                        />
+                      </label>
+                    ) : (
+                      <div className="rounded-xl border p-4 flex items-center gap-3" style={{ borderColor: "var(--ink)", background: "rgba(232,255,71,0.05)" }}>
+                        <div className="text-2xl">
+                          {fileType.includes("pdf") ? "📑" : "🖼️"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`${syne} text-sm font-bold truncate`} style={{ color: "var(--ink)" }}>{fileName}</p>
+                          <p className="text-[10px]" style={{ color: "var(--muted)" }}>
+                            {fileType.includes("pdf") ? "PDF Document" : "Image"} — Ready for analysis
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={removeFile}
+                          className="text-xs px-2 py-1 rounded-lg border transition-colors hover:bg-red-50"
+                          style={{ borderColor: "var(--border)", color: "#ef4444" }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+                    <p className="text-[10px] mt-2" style={{ color: "var(--muted)" }}>
+                      Upload a screenshot or photo of the offer letter. AI will read it visually — checking letterhead, formatting, signatures, and all text content. For PDF files, take a screenshot first.
+                    </p>
+                  </div>
+                ) : (
+                  /* Text Paste */
+                  <div>
+                    <textarea
+                      value={offerText}
+                      onChange={(e) => setOfferText(e.target.value)}
+                      placeholder={`Paste the full offer letter here...
 
 Example:
 From: hr@company.com
@@ -206,17 +351,18 @@ Terms and Conditions: ...
 Regards,
 [HR Name]
 [Designation]`}
-                  rows={14}
-                  className="w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--ink)] font-mono"
-                  style={{ borderColor: "var(--border)", lineHeight: "1.6" }}
-                  required
-                />
-                <div className="flex justify-between mt-1">
-                  <span className="text-[10px]" style={{ color: offerText.length < 50 && offerText.length > 0 ? "#ef4444" : "var(--muted)" }}>
-                    {offerText.length < 50 && offerText.length > 0 ? "Minimum 50 characters required" : "Paste the complete letter for accurate analysis"}
-                  </span>
-                  <span className="text-[10px]" style={{ color: "var(--muted)" }}>{offerText.length} characters</span>
-                </div>
+                      rows={12}
+                      className="w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--ink)] font-mono"
+                      style={{ borderColor: "var(--border)", lineHeight: "1.6" }}
+                    />
+                    <div className="flex justify-between mt-1">
+                      <span className="text-[10px]" style={{ color: offerText.length < 50 && offerText.length > 0 ? "#ef4444" : "var(--muted)" }}>
+                        {offerText.length < 50 && offerText.length > 0 ? "Minimum 50 characters required" : "Paste the complete letter for accurate analysis"}
+                      </span>
+                      <span className="text-[10px]" style={{ color: "var(--muted)" }}>{offerText.length} characters</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {error && (
@@ -232,7 +378,7 @@ Regards,
 
               <button
                 type="submit"
-                disabled={loading || !companyName.trim() || offerText.length < 50}
+                disabled={loading || !companyName.trim() || (inputMode === "paste" && offerText.length < 50) || (inputMode === "upload" && !fileData)}
                 className={`w-full rounded-xl px-6 py-3.5 text-sm font-bold transition-all disabled:opacity-50 ${syne}`}
                 style={{ background: "var(--ink)", color: "var(--accent)" }}
               >
