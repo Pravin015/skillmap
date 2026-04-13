@@ -143,7 +143,7 @@ export default function Home() {
               fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
               lineHeight: 1.0,
               letterSpacing: "-0.04em",
-              fontWeight: 900,
+              fontWeight: 700,
               marginBottom: "1.5rem",
             }}
           >
@@ -274,7 +274,7 @@ export default function Home() {
                 className="text-center card-dark"
                 style={{ padding: "1.25rem 2rem" }}
               >
-                <div className={heading} style={{ fontSize: "2rem", fontWeight: 800, color: "#FFFFFF" }}>{s.num}</div>
+                <div className={heading} style={{ fontSize: "2rem", fontWeight: 700, color: "#FFFFFF" }}>{s.num}</div>
                 <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "rgba(255,255,255,0.7)", marginTop: "0.25rem" }}>{s.label}</div>
                 <div style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)", marginTop: "0.2rem" }}>{s.sub}</div>
               </div>
@@ -340,7 +340,7 @@ export default function Home() {
               {/* Mock Score Widget */}
               <div style={{ borderRadius: "0.75rem", padding: "1.25rem", background: "rgba(255,255,255,0.03)" }}>
                 <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "0.5rem" }}>Interview Score</div>
-                <div className={heading} style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--primary)", lineHeight: 1 }}>78<span style={{ fontSize: "1rem", color: "var(--color-text-muted)" }}>/100</span></div>
+                <div className={heading} style={{ fontSize: "2.5rem", fontWeight: 700, color: "var(--primary)", lineHeight: 1 }}>78<span style={{ fontSize: "1rem", color: "var(--color-text-muted)" }}>/100</span></div>
                 <div className="mt-3 space-y-2">
                   {[{ label: "Technical", pct: 85 }, { label: "Communication", pct: 70 }, { label: "Domain", pct: 80 }].map((b) => (
                     <div key={b.label}>
@@ -641,7 +641,7 @@ export default function Home() {
           </div>
 
           {/* Headline */}
-          <h2 className={heading} style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 800, lineHeight: 1.1, color: "#fff", marginBottom: "1rem" }}>
+          <h2 className={heading} style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 700, lineHeight: 1.1, color: "#fff", marginBottom: "1rem" }}>
             Your Dream Company<br />Is Looking For Someone<br /><span style={{ color: "var(--primary)" }}>Exactly Like You.</span>
           </h2>
 
