@@ -427,55 +427,131 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ WHY SKILLMAP ═══ */}
-      <section className="px-4 py-16" style={{ background: "var(--surface-alt)" }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <div className="section-eyebrow justify-center">Why SkillMap</div>
-            <h2 className={`${heading} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>
-              Not a Job Board. A Readiness Engine.
-            </h2>
-            <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>What competitors don&apos;t offer — we include for free</p>
+      {/* ═══ WHY SKILLMAP — Comparison Table ═══ */}
+      <section className="px-4" style={{ background: "var(--color-bg-subtle)", paddingTop: "6rem", paddingBottom: "6rem" }}>
+        <div className="mx-auto" style={{ maxWidth: 1200 }}>
+          <div className="text-center mb-12">
+            <div className="section-eyebrow justify-center">WHY SKILLMAP</div>
+            <h2 className={heading} style={{ color: "var(--ink)" }}>Not a Course. Not a Job Board.</h2>
+            <p className="mt-2 mx-auto" style={{ color: "var(--color-text-secondary)", fontSize: "1rem", maxWidth: 550, lineHeight: 1.6 }}>
+              The only platform built end-to-end for Indian graduates who want a job, not a certificate.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {whyUs.map((d) => (
-              <div key={d.title} className="card-elevated" style={{ borderLeft: "3px solid var(--primary)" }}>
-                <h3 className={`${heading} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>{d.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{d.desc}</p>
+          {/* Desktop Table */}
+          <div className="hidden md:block mx-auto overflow-hidden" style={{ maxWidth: 900, border: "1px solid var(--color-border)", borderRadius: "1rem" }}>
+            <table className="w-full" style={{ borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ background: "var(--color-bg-dark)" }}>
+                  <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "#fff", fontSize: "0.85rem", fontWeight: 600, width: "35%" }}>Feature</th>
+                  <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--primary)", fontSize: "0.85rem", fontWeight: 700, width: "25%" }}>SkillMap</th>
+                  <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--color-text-secondary)", fontSize: "0.85rem", fontWeight: 500 }}>Naukri / LinkedIn</th>
+                  <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--color-text-secondary)", fontSize: "0.85rem", fontWeight: 500 }}>upGrad / Scaler</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { feature: "AI Career Roadmap", sm: "✓ Free, personalised", nk: "✗ Not available", up: "~ Paid courses only" },
+                  { feature: "Company-Specific Prep", sm: "✓ 15 companies mapped", nk: "✗ Generic listings", up: "✗ Generic curriculum" },
+                  { feature: "AI Mock Interviews", sm: "✓ Real-time feedback", nk: "✗ Not available", up: "~ Limited, paid" },
+                  { feature: "Verified Mentors", sm: "✓ Book from Rs.300", nk: "✗ No mentoring", up: "~ Expensive packages" },
+                  { feature: "Fake Offer Detection", sm: "✓ AI-powered, instant", nk: "✗ Not available", up: "✗ Not available" },
+                  { feature: "Proctored Skill Labs", sm: "✓ Free, employer-trusted", nk: "✗ Not available", up: "~ Paid add-on" },
+                  { feature: "Cost", sm: "✓ Free or Rs.299/mo", nk: "~ Free but limited", up: "✗ Rs.3-4 Lakhs" },
+                ].map((row, i) => (
+                  <tr key={row.feature} style={{ background: i % 2 === 0 ? "#fff" : "var(--color-bg-subtle)", borderBottom: "1px solid var(--color-border)" }}>
+                    <td style={{ padding: "1rem 1.5rem", fontWeight: 600, color: "var(--color-text-primary)", fontSize: "0.9rem" }}>{row.feature}</td>
+                    <td style={{ padding: "1rem 1.5rem", fontSize: "0.9rem" }}>
+                      <span style={{ color: "var(--primary)", fontWeight: 700 }}>{row.sm.charAt(0)}</span>
+                      <span style={{ color: "var(--color-text-primary)", marginLeft: 4 }}>{row.sm.slice(1)}</span>
+                    </td>
+                    <td style={{ padding: "1rem 1.5rem", fontSize: "0.85rem" }}>
+                      <span style={{ color: row.nk.startsWith("✗") ? "#D1D5DB" : "#F59E0B", fontWeight: 700 }}>{row.nk.charAt(0)}</span>
+                      <span style={{ color: "var(--color-text-secondary)", marginLeft: 4 }}>{row.nk.slice(1)}</span>
+                    </td>
+                    <td style={{ padding: "1rem 1.5rem", fontSize: "0.85rem" }}>
+                      <span style={{ color: row.up.startsWith("✗") ? "#D1D5DB" : row.up.startsWith("~") ? "#F59E0B" : "var(--primary)", fontWeight: 700 }}>{row.up.charAt(0)}</span>
+                      <span style={{ color: "var(--color-text-secondary)", marginLeft: 4 }}>{row.up.slice(1)}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile: Stacked Cards (SkillMap column only) */}
+          <div className="md:hidden space-y-3">
+            {[
+              { feature: "AI Career Roadmap", value: "Free, personalised" },
+              { feature: "Company-Specific Prep", value: "15 companies mapped" },
+              { feature: "AI Mock Interviews", value: "Real-time feedback" },
+              { feature: "Verified Mentors", value: "Book from Rs.300" },
+              { feature: "Fake Offer Detection", value: "AI-powered, instant" },
+              { feature: "Proctored Skill Labs", value: "Free, employer-trusted" },
+              { feature: "Cost", value: "Free or Rs.299/mo" },
+            ].map((r) => (
+              <div key={r.feature} style={{ background: "#fff", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "1rem 1.25rem" }}>
+                <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "0.25rem" }}>{r.feature}</div>
+                <div style={{ fontSize: "0.85rem", color: "var(--primary)", fontWeight: 600 }}>✓ {r.value}</div>
               </div>
             ))}
           </div>
+
+          <p className="text-center mt-6" style={{ color: "var(--color-text-secondary)", fontSize: "0.8rem" }}>
+            * Competitor features based on publicly available information, April 2026
+          </p>
         </div>
       </section>
 
       {/* ═══ TESTIMONIALS ═══ */}
-      <section className="px-4 py-16" style={{ background: "var(--surface)" }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <div className="section-eyebrow justify-center">Success Stories</div>
-            <h2 className={`${heading} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>
-              Real Results. Real People.
-            </h2>
+      <section className="px-4" style={{ background: "#FFFFFF", paddingTop: "6rem", paddingBottom: "6rem" }}>
+        <div className="mx-auto" style={{ maxWidth: 900 }}>
+          <div className="text-center mb-12">
+            <div className="section-eyebrow justify-center">SUCCESS STORIES</div>
+            <h2 className={heading} style={{ color: "var(--ink)" }}>They Were Exactly Where You Are.</h2>
+            <p className="mt-1" style={{ color: "var(--color-text-secondary)", fontSize: "1rem" }}>Then they used SkillMap.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {reviews.map((r) => (
-              <div key={r.name} className="card-elevated">
-                <div className="text-xs mb-3 tracking-wider" style={{ color: "var(--warning)" }}>★★★★★</div>
-                <p className="text-sm leading-relaxed mb-4 italic" style={{ color: "var(--ink-light)" }}>&ldquo;{r.quote}&rdquo;</p>
-                <div className="flex items-center gap-3 pt-3 border-t" style={{ borderColor: "var(--border)" }}>
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ background: "var(--primary)" }}>
-                    {r.name.split(" ").map((w) => w[0]).join("")}
-                  </div>
+          {/* Featured Quote */}
+          <div className="mb-6" style={{ background: "var(--color-bg-dark)", border: "1px solid rgba(10,191,188,0.15)", borderRadius: "1rem", padding: "3rem", maxWidth: 750, margin: "0 auto 1.5rem" }}>
+            <div style={{ color: "#F59E0B", fontSize: "1rem", marginBottom: "0.75rem" }}>★★★★★</div>
+            <div style={{ color: "var(--primary)", fontFamily: "Georgia, serif", fontSize: "5rem", lineHeight: 0, marginBottom: "1.5rem" }}>&ldquo;</div>
+            <p className={heading} style={{ color: "#fff", fontSize: "1.3rem", fontWeight: 500, lineHeight: 1.6, marginBottom: "1.5rem" }}>
+              SkillMap told me I was missing CEH certification for TCS Cybersecurity. Got it in 5 weeks. Got the call in week 6.
+            </p>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center shrink-0" style={{ width: "2.5rem", height: "2.5rem", borderRadius: "50%", background: "var(--primary)", color: "#fff", fontWeight: 700, fontSize: "0.85rem" }}>RK</div>
+              <div>
+                <div style={{ color: "#fff", fontWeight: 600, fontSize: "0.95rem" }}>Rahul Kumar</div>
+                <div style={{ color: "var(--color-text-secondary)", fontSize: "0.8rem" }}>B.Tech CSE, 2025 · Now at TCS</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Supporting Quotes */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ maxWidth: 750, margin: "0 auto" }}>
+            {[
+              { quote: "Nobody told me KPMG looks for ISO 27001 knowledge. SkillMap's roadmap was so specific — I knew exactly what to do.", name: "Priya Sharma", role: "MBA Finance, 2025 · Now at KPMG", initials: "PS" },
+              { quote: "The AI advisor felt like talking to a senior who actually knew what they were talking about. Cracked Infosys first attempt.", name: "Sneha Joshi", role: "B.Tech IT, 2026 · Infosys", initials: "SJ" },
+            ].map((r) => (
+              <div key={r.name} style={{ background: "#fff", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "2rem" }}>
+                <div style={{ color: "#F59E0B", fontSize: "0.85rem", marginBottom: "0.75rem" }}>★★★★★</div>
+                <div style={{ color: "var(--primary)", fontFamily: "Georgia, serif", fontSize: "2.5rem", lineHeight: 0, marginBottom: "1rem" }}>&ldquo;</div>
+                <p style={{ fontSize: "1rem", color: "var(--color-text-primary)", lineHeight: 1.65, marginBottom: "1.25rem" }}>{r.quote}</p>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center shrink-0" style={{ width: "2rem", height: "2rem", borderRadius: "50%", background: "var(--primary-light)", color: "var(--primary)", fontWeight: 700, fontSize: "0.7rem" }}>{r.initials}</div>
                   <div>
-                    <div className="text-xs font-semibold" style={{ color: "var(--ink)" }}>{r.name}</div>
-                    <div className="text-[10px]" style={{ color: "var(--muted)" }}>{r.role} · {r.company}</div>
+                    <div style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--color-text-primary)" }}>{r.name}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>{r.role}</div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+
+          <p className="text-center mt-8" style={{ color: "var(--color-text-secondary)", fontSize: "0.9rem" }}>
+            Join students who stopped guessing and started preparing.
+          </p>
         </div>
       </section>
 
@@ -506,34 +582,91 @@ export default function Home() {
       </section>
 
       {/* ═══ FINAL CTA ═══ */}
-      <section className="px-4 py-20" style={{ background: "var(--primary)" }}>
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className={`${heading} font-extrabold text-xl md:text-2xl text-white mb-3`}>
-            Your Dream Company is Hiring Right Now
+      <section
+        className="relative px-4 text-center"
+        style={{ background: "var(--color-bg-dark)", paddingTop: "7rem", paddingBottom: "7rem" }}
+      >
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(10,191,188,0.12) 0%, transparent 70%)" }} />
+
+        <div className="relative mx-auto" style={{ maxWidth: 650 }}>
+          {/* Eyebrow pill */}
+          <div
+            className="inline-flex items-center mb-6"
+            style={{
+              background: "rgba(10,191,188,0.1)",
+              border: "1px solid rgba(10,191,188,0.2)",
+              borderRadius: 999,
+              padding: "0.3rem 1rem",
+              fontSize: "0.7rem",
+              fontWeight: 600,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase" as const,
+              color: "var(--primary)",
+            }}
+          >
+            Your next step takes 2 minutes
+          </div>
+
+          {/* Headline */}
+          <h2 className={heading} style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 800, lineHeight: 1.1, color: "#fff", marginBottom: "1rem" }}>
+            Your Dream Company<br />Is Looking For Someone<br /><span style={{ color: "var(--primary)" }}>Exactly Like You.</span>
           </h2>
-          <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.7)" }}>
-            Tell us where you want to be — we&apos;ll show you how to get there.
+
+          <p style={{ color: "var(--color-text-secondary)", fontSize: "1rem", marginBottom: "2.5rem" }}>
+            Tell us where you want to go. We&apos;ll show you exactly how to get there.
           </p>
 
-          <form onSubmit={handleChatSubmit} className="max-w-lg mx-auto mb-4">
-            <div className="flex items-center gap-2 rounded-2xl p-2" style={{ background: "rgba(255,255,255,0.15)" }}>
-              <svg className="ml-3 shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          {/* Input Bar */}
+          <form onSubmit={handleChatSubmit} className="max-w-lg mx-auto">
+            <div
+              className="flex items-center gap-2 p-2"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: "0.625rem",
+              }}
+            >
+              <svg className="ml-3 shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="I want to join Amazon as a Data Analyst..."
-                className="flex-1 py-3 px-2 text-sm outline-none bg-transparent text-white placeholder:text-white/50"
+                placeholder="I want to join Deloitte as a Data Analyst..."
+                className="flex-1 py-3 px-2 text-sm outline-none bg-transparent"
+                style={{ color: "#fff" }}
               />
-              <button type="submit" className="shrink-0 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all hover:opacity-90" style={{ background: "white", color: "var(--primary)" }}>
-                Start Free
+              <button
+                type="submit"
+                className="shrink-0 font-semibold transition-all"
+                style={{ background: "var(--primary)", color: "#fff", padding: "0.6rem 1.25rem", fontSize: "0.85rem", borderRadius: "0.5rem", border: "none", cursor: "pointer" }}
+              >
+                Start Free →
               </button>
             </div>
           </form>
 
-          <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
-            Free to start · No credit card · Takes 3 minutes
+          <p className="mt-3" style={{ color: "var(--color-text-secondary)", fontSize: "0.8rem" }}>
+            Free to start · No credit card · No courses to buy
           </p>
+
+          {/* Trust badges */}
+          <div className="flex justify-center gap-2 mt-3 flex-wrap">
+            {["🔒 Secure", "🤖 AI-Powered", "🇮🇳 Built for India"].map((badge) => (
+              <span
+                key={badge}
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 999,
+                  padding: "0.3rem 0.8rem",
+                  color: "var(--color-text-muted)",
+                  fontSize: "0.75rem",
+                }}
+              >
+                {badge}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
     </div>
