@@ -261,7 +261,7 @@ export default function OfferVerifyPage() {
                     className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${syne}`}
                     style={{
                       background: inputMode === "upload" ? "var(--ink)" : "transparent",
-                      color: inputMode === "upload" ? "var(--accent)" : "var(--muted)",
+                      color: inputMode === "upload" ? "var(--primary)" : "var(--muted)",
                     }}
                   >
                     📎 Upload File
@@ -272,7 +272,7 @@ export default function OfferVerifyPage() {
                     className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${syne}`}
                     style={{
                       background: inputMode === "paste" ? "var(--ink)" : "transparent",
-                      color: inputMode === "paste" ? "var(--accent)" : "var(--muted)",
+                      color: inputMode === "paste" ? "var(--primary)" : "var(--muted)",
                     }}
                   >
                     📝 Paste Text
@@ -372,7 +372,7 @@ Regards,
               )}
 
               {/* Privacy Note */}
-              <div className="rounded-xl p-3 mb-6 text-xs" style={{ background: "rgba(232,255,71,0.1)", color: "var(--muted)" }}>
+              <div className="rounded-xl p-3 mb-6 text-xs" style={{ background: "var(--primary-light)", color: "var(--muted)" }}>
                 <strong style={{ color: "var(--ink)" }}>🔒 Privacy:</strong> Your offer letter content is analyzed by AI and stored securely. We never share your data with third parties.
               </div>
 
@@ -380,11 +380,11 @@ Regards,
                 type="submit"
                 disabled={loading || !companyName.trim() || (inputMode === "paste" && offerText.length < 50) || (inputMode === "upload" && !fileData)}
                 className={`w-full rounded-xl px-6 py-3.5 text-sm font-bold transition-all disabled:opacity-50 ${syne}`}
-                style={{ background: "var(--ink)", color: "var(--accent)" }}
+                style={{ background: "var(--primary)", color: "white" }}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
                     Analyzing 20 parameters...
                   </span>
                 ) : (
@@ -551,7 +551,7 @@ Regards,
               <Link
                 href="/mock-interview"
                 className="flex-1 rounded-xl px-4 py-3 text-sm font-bold text-center no-underline transition-all hover:opacity-90"
-                style={{ background: "var(--ink)", color: "var(--accent)" }}
+                style={{ background: "var(--primary)", color: "white" }}
               >
                 Practice Mock Interview →
               </Link>

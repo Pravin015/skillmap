@@ -10,7 +10,7 @@ interface Problem { id: string; question: string; optionA: string; optionB: stri
 interface Lab { id: string; title: string; domain: string; description: string | null; difficulty: string; timeLimit: number; passingScore: number; problems: Problem[] }
 
 export default function LabPage() {
-  return <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>}><LabInner /></Suspense>;
+  return <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>}><LabInner /></Suspense>;
 }
 
 function LabInner() {
@@ -66,7 +66,7 @@ function LabInner() {
   const secs = timeLeft % 60;
   const urgentTime = timeLeft < 300; // < 5 min
 
-  if (loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
   if (!lab) return <div className="flex min-h-[60vh] items-center justify-center"><p>Lab not found</p></div>;
 
   // Result screen
@@ -81,7 +81,7 @@ function LabInner() {
             <div className={`${syne} text-5xl font-extrabold mb-2`} style={{ color: result.passed ? "#22c55e" : "#ef4444" }}>{result.percentage}%</div>
             <p className="text-sm" style={{ color: "var(--muted)" }}>{result.score}/{result.total} correct · Passing: {lab.passingScore}%</p>
             <div className="mt-6 flex gap-3 justify-center">
-              {jobId && <Link href={`/jobs/${jobId}`} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Back to Job</Link>}
+              {jobId && <Link href={`/jobs/${jobId}`} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>Back to Job</Link>}
               <Link href="/dashboard" className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline border`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Dashboard</Link>
             </div>
           </div>
@@ -107,7 +107,7 @@ function LabInner() {
             <div className="rounded-xl p-3 text-xs mb-6" style={{ background: "rgba(239,68,68,0.05)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.1)" }}>
               ⚠️ Once started, the timer cannot be paused. Make sure you have a stable internet connection.
             </div>
-            <button onClick={startLab} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Start Lab →</button>
+            <button onClick={startLab} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>Start Lab →</button>
           </div>
         </div>
       </div>
@@ -124,7 +124,7 @@ function LabInner() {
           <div className={`${syne} font-bold text-sm`}>{lab.title}</div>
           <div className="flex items-center gap-4">
             <span className="text-xs" style={{ color: "var(--muted)" }}>{Object.keys(answers).length}/{lab.problems.length} answered</span>
-            <div className={`${syne} font-extrabold text-lg px-4 py-1.5 rounded-xl ${urgentTime ? "animate-pulse" : ""}`} style={{ background: urgentTime ? "rgba(239,68,68,0.1)" : "var(--ink)", color: urgentTime ? "#dc2626" : "var(--accent)" }}>
+            <div className={`${syne} font-extrabold text-lg px-4 py-1.5 rounded-xl ${urgentTime ? "animate-pulse" : ""}`} style={{ background: urgentTime ? "rgba(239,68,68,0.1)" : "var(--ink)", color: urgentTime ? "#dc2626" : "var(--primary)" }}>
               {String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
             </div>
           </div>
@@ -135,7 +135,7 @@ function LabInner() {
         {lab.problems.map((p, i) => (
           <div key={p.id} className="rounded-2xl border bg-white p-6" style={{ borderColor: answers[p.id] ? "var(--ink)" : "var(--border)" }}>
             <div className="flex items-start gap-3 mb-4">
-              <span className={`${syne} font-extrabold text-sm shrink-0 w-8 h-8 rounded-lg flex items-center justify-center`} style={{ background: answers[p.id] ? "var(--ink)" : "var(--border)", color: answers[p.id] ? "var(--accent)" : "var(--muted)" }}>{i + 1}</span>
+              <span className={`${syne} font-extrabold text-sm shrink-0 w-8 h-8 rounded-lg flex items-center justify-center`} style={{ background: answers[p.id] ? "var(--ink)" : "var(--border)", color: answers[p.id] ? "var(--primary)" : "var(--muted)" }}>{i + 1}</span>
               <p className="text-sm font-medium leading-relaxed">{p.question}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-11">
@@ -143,7 +143,7 @@ function LabInner() {
                 const text = opt === "A" ? p.optionA : opt === "B" ? p.optionB : opt === "C" ? p.optionC : p.optionD;
                 const selected = answers[p.id] === opt;
                 return (
-                  <button key={opt} onClick={() => setAnswers({ ...answers, [p.id]: opt })} className={`text-left px-4 py-3 rounded-xl border text-sm transition-all ${selected ? "font-bold" : ""}`} style={{ background: selected ? "var(--ink)" : "white", color: selected ? "var(--accent)" : "var(--ink)", borderColor: selected ? "var(--ink)" : "var(--border)" }}>
+                  <button key={opt} onClick={() => setAnswers({ ...answers, [p.id]: opt })} className={`text-left px-4 py-3 rounded-xl border text-sm transition-all ${selected ? "font-bold" : ""}`} style={{ background: selected ? "var(--ink)" : "white", color: selected ? "var(--primary)" : "var(--ink)", borderColor: selected ? "var(--ink)" : "var(--border)" }}>
                     <span className="font-bold mr-2">{opt}.</span>{text}
                   </button>
                 );
@@ -153,7 +153,7 @@ function LabInner() {
         ))}
 
         <div className="flex justify-center pt-4">
-          <button onClick={handleSubmit} disabled={submitting} className={`px-10 py-3.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+          <button onClick={handleSubmit} disabled={submitting} className={`px-10 py-3.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
             {submitting ? "Submitting..." : `Submit Lab (${Object.keys(answers).length}/${lab.problems.length} answered)`}
           </button>
         </div>

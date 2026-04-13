@@ -276,7 +276,7 @@ export default function StudentGuidePage() {
       {/* Header */}
       <section className="py-12 px-4 md:px-8" style={{ background: "var(--ink)" }}>
         <div className="max-w-4xl mx-auto">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-xs font-bold tracking-[0.1em] uppercase ${syne}`} style={{ background: "rgba(232,255,71,0.1)", color: "var(--accent)", border: "1px solid rgba(232,255,71,0.2)" }}>
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-xs font-bold tracking-[0.1em] uppercase ${syne}`} style={{ background: "var(--primary-light)", color: "var(--primary)", border: "1px solid rgba(99,102,241,0.2)" }}>
             🎓 Student Guide
           </div>
           <h1 className={`${syne} font-extrabold text-3xl md:text-4xl text-white mb-3`}>Student Onboarding Guide</h1>
@@ -292,7 +292,7 @@ export default function StudentGuidePage() {
             return (
               <div key={step.id} className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: isOpen ? "var(--ink)" : "var(--border)" }}>
                 <button onClick={() => setOpenStep(isOpen ? null : step.id)} className="w-full flex items-center gap-4 p-5 text-left">
-                  <span className={`${syne} text-3xl font-extrabold shrink-0`} style={{ color: isOpen ? "var(--accent)" : "var(--border)", background: isOpen ? "var(--ink)" : "transparent", padding: isOpen ? "4px 12px" : "0", borderRadius: "12px" }}>{step.num}</span>
+                  <span className={`${syne} text-3xl font-extrabold shrink-0`} style={{ color: isOpen ? "var(--primary)" : "var(--border)", background: isOpen ? "var(--ink)" : "transparent", padding: isOpen ? "4px 12px" : "0", borderRadius: "12px" }}>{step.num}</span>
                   <div className="flex-1">
                     <h3 className={`${syne} font-bold text-base`} style={{ color: "var(--ink)" }}>{step.title}</h3>
                     <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{step.desc}</p>
@@ -305,7 +305,7 @@ export default function StudentGuidePage() {
                     {/* Action buttons */}
                     <div className="flex gap-2 flex-wrap mb-5">
                       {step.actions.map((a) => (
-                        <Link key={a.href} href={a.href} target="_blank" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline transition-transform hover:-translate-y-0.5`} style={{ background: a.primary ? "var(--ink)" : "white", color: a.primary ? "var(--accent)" : "var(--ink)", border: a.primary ? "none" : "1px solid var(--border)" }}>
+                        <Link key={a.href} href={a.href} target="_blank" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline transition-transform hover:-translate-y-0.5`} style={{ background: a.primary ? "var(--ink)" : "white", color: a.primary ? "var(--primary)" : "var(--ink)", border: a.primary ? "none" : "1px solid var(--border)" }}>
                           {a.label} ↗
                         </Link>
                       ))}
@@ -317,7 +317,7 @@ export default function StudentGuidePage() {
                       <div className="space-y-1.5">
                         {step.features.map((f, i) => (
                           <div key={i} className="flex gap-2 text-sm">
-                            <span style={{ color: "var(--accent)", background: "var(--ink)", width: "18px", height: "18px", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", fontWeight: 700, flexShrink: 0, marginTop: "2px" }}>✓</span>
+                            <span style={{ color: "var(--primary)", background: "var(--ink)", width: "18px", height: "18px", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", fontWeight: 700, flexShrink: 0, marginTop: "2px" }}>✓</span>
                             <span style={{ color: "var(--muted)" }}>{f}</span>
                           </div>
                         ))}
@@ -325,7 +325,7 @@ export default function StudentGuidePage() {
                     </div>
 
                     {/* Test checklist */}
-                    <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(232,255,71,0.2)", background: "rgba(232,255,71,0.03)" }}>
+                    <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(99,102,241,0.2)", background: "rgba(232,255,71,0.03)" }}>
                       <h4 className={`${syne} font-bold text-sm mb-2`}>🧪 Test checklist:</h4>
                       <div className="space-y-1.5">
                         {step.testChecklist.map((t, i) => (

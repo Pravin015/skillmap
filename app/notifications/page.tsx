@@ -36,12 +36,12 @@ export default function NotificationsPage() {
             <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{unread} unread</p>
           </div>
           {unread > 0 && (
-            <button onClick={markAllRead} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Mark all read</button>
+            <button onClick={markAllRead} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>Mark all read</button>
           )}
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>
+          <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>
         ) : notifications.length === 0 ? (
           <div className="rounded-2xl border bg-white p-16 text-center" style={{ borderColor: "var(--border)" }}>
             <div className="text-5xl mb-4">🔔</div>
@@ -51,9 +51,9 @@ export default function NotificationsPage() {
         ) : (
           <div className="space-y-2">
             {notifications.map((n) => (
-              <div key={n.id} onClick={() => !n.read && markRead(n.id)} className={`rounded-2xl border bg-white p-5 transition-all hover:shadow-md cursor-pointer ${!n.read ? "border-l-4" : ""}`} style={{ borderColor: "var(--border)", borderLeftColor: !n.read ? "var(--accent)" : undefined }}>
+              <div key={n.id} onClick={() => !n.read && markRead(n.id)} className={`rounded-2xl border bg-white p-5 transition-all hover:shadow-md cursor-pointer ${!n.read ? "border-l-4" : ""}`} style={{ borderColor: "var(--border)", borderLeftColor: !n.read ? "var(--primary)" : undefined }}>
                 <div className="flex items-start gap-3">
-                  {!n.read && <div className="w-2 h-2 rounded-full shrink-0 mt-1.5" style={{ background: "var(--accent)" }} />}
+                  {!n.read && <div className="w-2 h-2 rounded-full shrink-0 mt-1.5" style={{ background: "var(--primary)" }} />}
                   <div className="flex-1">
                     <div className={`${syne} text-sm ${n.read ? "font-medium" : "font-bold"}`} style={{ color: "var(--ink)" }}>{n.title}</div>
                     <p className="text-sm mt-1 leading-relaxed" style={{ color: "var(--muted)" }}>{n.message}</p>

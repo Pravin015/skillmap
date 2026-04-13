@@ -46,7 +46,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ compan
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}>
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
       </div>
     );
   }
@@ -171,7 +171,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ compan
               <Link
                 href={`/mock-interview/${companySlug}/ai?type=${aiType}&difficulty=${aiDifficulty}&questions=${aiQuestions}`}
                 className="rounded-xl px-4 py-2.5 text-xs font-bold text-center transition-all hover:opacity-90 no-underline"
-                style={{ background: "var(--ink)", color: "var(--accent)" }}
+                style={{ background: "var(--primary)", color: "white" }}
               >
                 Start AI Interview
               </Link>
@@ -179,7 +179,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ compan
               <Link
                 href="/auth/login"
                 className="rounded-xl px-4 py-2.5 text-xs font-bold text-center transition-all hover:opacity-90 no-underline"
-                style={{ background: "var(--ink)", color: "var(--accent)" }}
+                style={{ background: "var(--primary)", color: "white" }}
               >
                 Login to Start
               </Link>

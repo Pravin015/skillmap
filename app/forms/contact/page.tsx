@@ -67,7 +67,7 @@ export default function ContactForm() {
           <label className={labelClass}>Message *</label>
           <textarea required placeholder="Tell us how we can help..." rows={5} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} />
         </div>
-        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Send Message</button>
+        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Send Message</button>
       </form>
     </FormWrapper>
   );

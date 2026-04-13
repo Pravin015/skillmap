@@ -64,7 +64,7 @@ export default function HistoryPage() {
       <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}>
         <div className="text-center">
           <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>Please login to view your interview history.</p>
-          <Link href="/auth/login" className="rounded-xl px-6 py-2.5 text-sm font-bold no-underline" style={{ background: "var(--ink)", color: "var(--accent)" }}>
+          <Link href="/auth/login" className="rounded-xl px-6 py-2.5 text-sm font-bold no-underline" style={{ background: "var(--primary)", color: "white" }}>
             Login
           </Link>
         </div>
@@ -109,7 +109,7 @@ export default function HistoryPage() {
               className="rounded-full px-4 py-1.5 text-xs font-medium border transition-all"
               style={{
                 background: filter === f ? "var(--ink)" : "white",
-                color: filter === f ? "var(--accent)" : "var(--ink)",
+                color: filter === f ? "var(--primary)" : "var(--ink)",
                 borderColor: filter === f ? "var(--ink)" : "var(--border)",
               }}
             >
@@ -120,12 +120,12 @@ export default function HistoryPage() {
 
         {loading ? (
           <div className="flex justify-center py-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
           </div>
         ) : interviews.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>No interview sessions yet.</p>
-            <Link href="/mock-interview" className="rounded-xl px-6 py-2.5 text-sm font-bold no-underline" style={{ background: "var(--ink)", color: "var(--accent)" }}>
+            <Link href="/mock-interview" className="rounded-xl px-6 py-2.5 text-sm font-bold no-underline" style={{ background: "var(--primary)", color: "white" }}>
               Start Practicing
             </Link>
           </div>

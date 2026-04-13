@@ -246,7 +246,7 @@ function AIInterviewContent({ companySlug }: { companySlug: string }) {
               <Link
                 href="/auth/login"
                 className="block rounded-xl px-4 py-3 text-sm font-bold text-center no-underline"
-                style={{ background: "var(--ink)", color: "var(--accent)" }}
+                style={{ background: "var(--primary)", color: "white" }}
               >
                 Login to Start
               </Link>
@@ -254,7 +254,7 @@ function AIInterviewContent({ companySlug }: { companySlug: string }) {
               <button
                 onClick={startInterview}
                 className="w-full rounded-xl px-4 py-3 text-sm font-bold transition-all hover:opacity-90"
-                style={{ background: "var(--ink)", color: "var(--accent)" }}
+                style={{ background: "var(--primary)", color: "white" }}
               >
                 Start Interview
               </button>
@@ -358,7 +358,7 @@ function AIInterviewContent({ companySlug }: { companySlug: string }) {
               <Link
                 href="/mock-interview/history"
                 className="flex-1 rounded-xl px-4 py-2.5 text-xs font-bold text-center no-underline"
-                style={{ background: "var(--ink)", color: "var(--accent)" }}
+                style={{ background: "var(--primary)", color: "white" }}
               >
                 View History
               </Link>
@@ -503,7 +503,7 @@ function AIInterviewContent({ companySlug }: { companySlug: string }) {
             onClick={handleSend}
             disabled={streaming || !input.trim()}
             className="self-end rounded-xl px-5 py-2.5 text-sm font-bold transition-all disabled:opacity-50"
-            style={{ background: "var(--ink)", color: "var(--accent)" }}
+            style={{ background: "var(--primary)", color: "white" }}
           >
             Send
           </button>
@@ -519,7 +519,7 @@ export default function AIInterviewPage({ params }: { params: Promise<{ companyS
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}>
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
       </div>
     }>
       <AIInterviewContent companySlug={companySlug} />

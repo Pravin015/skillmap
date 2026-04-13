@@ -64,7 +64,7 @@ export default function MentorProfilePage() {
   }, [mentorNumber]);
 
   if (loading) {
-    return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+    return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
   }
 
   if (error || !mentor) {
@@ -89,14 +89,14 @@ export default function MentorProfilePage() {
 
         {/* Header card */}
         <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: "var(--border)" }}>
-          <div className="h-2" style={{ background: isVerified ? "var(--accent)" : isPending ? "#f59e0b" : "#ef4444" }} />
+          <div className="h-2" style={{ background: isVerified ? "var(--primary)" : isPending ? "#f59e0b" : "#ef4444" }} />
           <div className="p-6">
             <div className="flex items-start gap-4">
               {/* Avatar */}
               {m.user.profileImage ? (
                 <img src={m.user.profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover shrink-0" />
               ) : (
-                <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-2xl shrink-0`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-2xl shrink-0`} style={{ background: "var(--primary)", color: "white" }}>
                   {m.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                 </div>
               )}
@@ -123,7 +123,7 @@ export default function MentorProfilePage() {
                 )}
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {m.currentCompany && (
-                    <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{m.currentCompany}</span>
+                    <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${syne}`} style={{ background: "var(--primary)", color: "white" }}>{m.currentCompany}</span>
                   )}
                   {m.compensation === "VOLUNTEER" && (
                     <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">Free / Volunteer</span>
@@ -177,7 +177,7 @@ export default function MentorProfilePage() {
               <button
                 onClick={() => setShowSchedule(true)}
                 className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`}
-                style={{ background: "var(--accent)", color: "var(--ink)" }}
+                style={{ background: "var(--primary)", color: "var(--ink)" }}
               >
                 Schedule Call →
               </button>
@@ -221,7 +221,7 @@ export default function MentorProfilePage() {
                                 if (sRes.ok) { setBookingStatus({ type: "success", text: "Payment successful! Session requested. Mentor will confirm." }); setPrefDate(""); setSessionMsg(""); }
                                 else setBookingStatus({ type: "error", text: sData.error });
                               },
-                              prefill: {}, theme: { color: "#0a0a0f" }, modal: { ondismiss: () => { setBookingStatus({ type: "error", text: "Payment cancelled" }); } },
+                              prefill: {}, theme: { color: "#0f172a" }, modal: { ondismiss: () => { setBookingStatus({ type: "error", text: "Payment cancelled" }); } },
                             } as Record<string, unknown>);
                             rzp.open();
                           }
@@ -234,7 +234,7 @@ export default function MentorProfilePage() {
                     }
                   } catch { setBookingStatus({ type: "error", text: "Failed to book" }); }
                   finally { setBooking(false); }
-                }} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--accent)", color: "var(--ink)" }}>{booking ? "Processing..." : (() => { const rate = sessionType === "GROUP" ? (m.groupSessionRate || m.sessionRate || 0) : (m.sessionRate || 0); return m.compensation === "PAID" && rate > 0 ? `Pay ₹${rate} & Request` : "Request Session (Free)"; })()}</button>
+                }} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "var(--ink)" }}>{booking ? "Processing..." : (() => { const rate = sessionType === "GROUP" ? (m.groupSessionRate || m.sessionRate || 0) : (m.sessionRate || 0); return m.compensation === "PAID" && rate > 0 ? `Pay ₹${rate} & Request` : "Request Session (Free)"; })()}</button>
               </div>
             )}
           </div>
@@ -271,7 +271,7 @@ export default function MentorProfilePage() {
             <h2 className={`${syne} font-bold text-base mb-3`}>Area of Expertise</h2>
             <div className="flex flex-wrap gap-2">
               {m.areaOfExpertise.map((area) => (
-                <span key={area} className={`text-xs font-bold px-3 py-1.5 rounded-full ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{area}</span>
+                <span key={area} className={`text-xs font-bold px-3 py-1.5 rounded-full ${syne}`} style={{ background: "var(--primary)", color: "white" }}>{area}</span>
               ))}
             </div>
           </div>

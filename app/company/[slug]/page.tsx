@@ -36,7 +36,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ slug:
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}>
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ slug:
             </div>
           </div>
           {profile.website && (
-            <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-xs no-underline" style={{ color: "var(--accent)" }}>
+            <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-xs no-underline" style={{ color: "var(--primary)" }}>
               {profile.website} ↗
             </a>
           )}

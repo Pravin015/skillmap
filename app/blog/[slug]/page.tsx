@@ -23,8 +23,8 @@ export default function BlogPostPage() {
 
   useEffect(() => { fetch(`/api/blog/${slug}`).then((r) => r.json()).then((d) => setPost(d.post || null)).finally(() => setLoading(false)); }, [slug]);
 
-  if (loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
-  if (!post) return <div className="flex min-h-[60vh] items-center justify-center"><div className="text-center"><div className="text-5xl mb-4">📝</div><h1 className={`${syne} font-bold text-xl`}>Post not found</h1><Link href="/blog" className={`inline-block mt-4 px-5 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Back to Blog</Link></div></div>;
+  if (loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
+  if (!post) return <div className="flex min-h-[60vh] items-center justify-center"><div className="text-center"><div className="text-5xl mb-4">📝</div><h1 className={`${syne} font-bold text-xl`}>Post not found</h1><Link href="/blog" className={`inline-block mt-4 px-5 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>Back to Blog</Link></div></div>;
 
   const embedUrl = post.videoUrl ? getEmbedUrl(post.videoUrl) : null;
 
@@ -43,7 +43,7 @@ export default function BlogPostPage() {
         {/* Tags */}
         {post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
-            {post.tags.map((t) => (<span key={t} className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{t}</span>))}
+            {post.tags.map((t) => (<span key={t} className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: "var(--primary)", color: "white" }}>{t}</span>))}
           </div>
         )}
 

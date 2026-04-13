@@ -55,9 +55,9 @@ export default function MockInterviewPage() {
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
       {/* Hero */}
       <section className="relative overflow-hidden" style={{ background: "var(--ink)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(232,255,71,0.3) 1px, transparent 0)", backgroundSize: "40px 40px" }} />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(99,102,241,0.3) 1px, transparent 0)", backgroundSize: "40px 40px" }} />
         <div className="relative mx-auto max-w-6xl px-4 py-16 md:py-24 text-center">
-          <div className="inline-block rounded-full px-4 py-1.5 text-xs font-medium mb-6" style={{ background: "rgba(232,255,71,0.15)", color: "var(--accent)" }}>
+          <div className="inline-block rounded-full px-4 py-1.5 text-xs font-medium mb-6" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>
             Interview Preparation
           </div>
           <h1 className={`${syne} text-3xl md:text-5xl font-bold text-white mb-4`}>
@@ -111,7 +111,7 @@ export default function MockInterviewPage() {
               }`}
               style={{
                 background: selectedDomain === d ? "var(--ink)" : "white",
-                color: selectedDomain === d ? "var(--accent)" : "var(--ink)",
+                color: selectedDomain === d ? "var(--primary)" : "var(--ink)",
                 borderColor: selectedDomain === d ? "var(--ink)" : "var(--border)",
               }}
             >
@@ -122,7 +122,7 @@ export default function MockInterviewPage() {
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
           </div>
         ) : companies.length === 0 ? (
           <div className="text-center py-20" style={{ color: "var(--muted)" }}>
@@ -195,7 +195,7 @@ export default function MockInterviewPage() {
                     <Link
                       href={`/mock-interview/${company.slug}/ai`}
                       className="flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all hover:opacity-90 no-underline"
-                      style={{ background: "var(--ink)", color: "var(--accent)" }}
+                      style={{ background: "var(--primary)", color: "white" }}
                     >
                       <span>🤖</span> AI Interview
                     </Link>
@@ -203,7 +203,7 @@ export default function MockInterviewPage() {
                     <Link
                       href="/auth/login"
                       className="flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all hover:opacity-90 no-underline"
-                      style={{ background: "var(--ink)", color: "var(--accent)" }}
+                      style={{ background: "var(--primary)", color: "white" }}
                     >
                       <span>🤖</span> Login for AI Interview
                     </Link>

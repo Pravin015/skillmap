@@ -18,7 +18,7 @@ const roles = [
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>}>
+    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>}>
       <LoginInner />
     </Suspense>
   );
@@ -90,7 +90,7 @@ function LoginInner() {
               className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-bold transition-all sm:text-sm ${syne}`}
               style={{
                 background: activeRole === role.key ? "var(--ink)" : "transparent",
-                color: activeRole === role.key ? "var(--accent)" : "var(--muted)",
+                color: activeRole === role.key ? "var(--primary)" : "var(--muted)",
               }}
             >
               {role.label}
@@ -140,7 +140,7 @@ function LoginInner() {
             type="submit"
             disabled={loading}
             className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`}
-            style={{ background: "var(--ink)", color: "var(--accent)" }}
+            style={{ background: "var(--primary)", color: "white" }}
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>

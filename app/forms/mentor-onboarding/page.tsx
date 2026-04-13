@@ -51,7 +51,7 @@ export default function MentorOnboardingForm() {
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Notice */}
-        <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(232,255,71,0.3)" }}>
+        <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(99,102,241,0.3)" }}>
           <strong className={syne}>Official email required</strong> — We verify all mentors through their company email. Personal emails (Gmail, Yahoo, etc.) are not accepted.
         </div>
 
@@ -155,7 +155,7 @@ export default function MentorOnboardingForm() {
           <textarea placeholder="Tell us your motivation..." rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} />
         </div>
 
-        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Submit Application</button>
+        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Application</button>
       </form>
     </FormWrapper>
   );

@@ -49,7 +49,7 @@ export default function CompetitionsPage() {
       {/* Hero */}
       <section style={{ background: "var(--ink)" }}>
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold mb-4" style={{ background: "rgba(232,255,71,0.15)", color: "var(--accent)" }}>
+          <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold mb-4" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>
             🏆 Compete & Get Hired
           </div>
           <h1 className={`${syne} text-2xl md:text-4xl font-extrabold text-white mb-3`}>
@@ -66,14 +66,14 @@ export default function CompetitionsPage() {
         <div className="mx-auto max-w-6xl px-4 py-3 flex flex-wrap gap-4">
           <div className="flex gap-1.5">
             {["ALL", "HACKATHON", "CODING", "QUIZ", "CASE_STUDY"].map((t) => (
-              <button key={t} onClick={() => setTypeFilter(t)} className="rounded-full px-3 py-1.5 text-xs font-medium border transition-all" style={{ background: typeFilter === t ? "var(--ink)" : "white", color: typeFilter === t ? "var(--accent)" : "var(--muted)", borderColor: typeFilter === t ? "var(--ink)" : "var(--border)" }}>
+              <button key={t} onClick={() => setTypeFilter(t)} className="rounded-full px-3 py-1.5 text-xs font-medium border transition-all" style={{ background: typeFilter === t ? "var(--ink)" : "white", color: typeFilter === t ? "var(--primary)" : "var(--muted)", borderColor: typeFilter === t ? "var(--ink)" : "var(--border)" }}>
                 {t === "ALL" ? "All Types" : typeConfig[t]?.label || t}
               </button>
             ))}
           </div>
           <div className="flex gap-1.5">
             {["ALL", "OPEN", "LIVE", "COMPLETED"].map((s) => (
-              <button key={s} onClick={() => setStatusFilter(s)} className="rounded-full px-3 py-1.5 text-xs font-medium border transition-all" style={{ background: statusFilter === s ? "var(--ink)" : "white", color: statusFilter === s ? "var(--accent)" : "var(--muted)", borderColor: statusFilter === s ? "var(--ink)" : "var(--border)" }}>
+              <button key={s} onClick={() => setStatusFilter(s)} className="rounded-full px-3 py-1.5 text-xs font-medium border transition-all" style={{ background: statusFilter === s ? "var(--ink)" : "white", color: statusFilter === s ? "var(--primary)" : "var(--muted)", borderColor: statusFilter === s ? "var(--ink)" : "var(--border)" }}>
                 {s === "ALL" ? "All Status" : statusColors[s]?.label || s}
               </button>
             ))}
@@ -85,7 +85,7 @@ export default function CompetitionsPage() {
       <section className="mx-auto max-w-6xl px-4 py-8">
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
           </div>
         ) : competitions.length === 0 ? (
           <div className="text-center py-20">

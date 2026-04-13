@@ -54,7 +54,7 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
   }
 
   if (loading || !comp) {
-    return <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+    return <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
   }
 
   const sc = statusColors[comp.status] || statusColors.DRAFT;
@@ -103,7 +103,7 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
 
             {/* Leaderboard Link */}
             {(comp.status === "LIVE" || comp.status === "JUDGING" || comp.status === "COMPLETED") && (
-              <Link href={`/competitions/${slug}/leaderboard`} className="block rounded-2xl border bg-white p-6 text-center transition-all hover:shadow-md no-underline" style={{ borderColor: "var(--accent)" }}>
+              <Link href={`/competitions/${slug}/leaderboard`} className="block rounded-2xl border bg-white p-6 text-center transition-all hover:shadow-md no-underline" style={{ borderColor: "var(--primary)" }}>
                 <span className="text-2xl mb-2 block">🏅</span>
                 <span className={`${syne} text-sm font-bold`} style={{ color: "var(--ink)" }}>View Leaderboard</span>
                 <span className="block text-xs mt-1" style={{ color: "var(--muted)" }}>{comp._count.submissions} submissions</span>
@@ -118,12 +118,12 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
               {msg && <div className="rounded-xl p-3 mb-3 text-xs" style={{ background: msg.includes("Success") ? "#10b98115" : "#f59e0b15", color: msg.includes("Success") ? "#10b981" : "#f59e0b" }}>{msg}</div>}
 
               {!isRegistered && isActive && (
-                <button onClick={handleRegister} disabled={registering} className={`w-full rounded-xl py-3 text-sm font-bold transition-all disabled:opacity-50 ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                <button onClick={handleRegister} disabled={registering} className={`w-full rounded-xl py-3 text-sm font-bold transition-all disabled:opacity-50 ${syne}`} style={{ background: "var(--primary)", color: "white" }}>
                   {registering ? "Registering..." : comp.entryFee ? `Register (₹${comp.entryFee / 100})` : "Register — Free"}
                 </button>
               )}
               {isRegistered && !hasSubmitted && canSubmit && (
-                <Link href={comp.labTemplateId ? `/labs/${comp.labTemplateId}` : `/competitions/${slug}/submit`} className={`block w-full rounded-xl py-3 text-sm font-bold text-center no-underline ${syne}`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
+                <Link href={comp.labTemplateId ? `/labs/${comp.labTemplateId}` : `/competitions/${slug}/submit`} className={`block w-full rounded-xl py-3 text-sm font-bold text-center no-underline ${syne}`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
                   {comp.labTemplateId ? "Start Assessment" : "Submit Solution"}
                 </Link>
               )}

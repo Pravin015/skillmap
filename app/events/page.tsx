@@ -36,7 +36,7 @@ export default function EventsPage() {
       <section className="py-4 px-4 md:px-8 border-b" style={{ background: "white", borderColor: "var(--border)" }}>
         <div className="max-w-5xl mx-auto flex gap-2">
           {["ALL", "FREE", "PAID"].map((f) => (
-            <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === f ? "var(--ink)" : "transparent", color: filter === f ? "var(--accent)" : "var(--muted)", border: filter === f ? "none" : "1px solid var(--border)" }}>
+            <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === f ? "var(--ink)" : "transparent", color: filter === f ? "var(--primary)" : "var(--muted)", border: filter === f ? "none" : "1px solid var(--border)" }}>
               {f === "ALL" ? "All Events" : f}
             </button>
           ))}
@@ -46,7 +46,7 @@ export default function EventsPage() {
       <section className="py-8 px-4 md:px-8">
         <div className="max-w-5xl mx-auto">
           {loading ? (
-            <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>
+            <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>
           ) : events.length === 0 ? (
             <div className="rounded-2xl border bg-white p-16 text-center" style={{ borderColor: "var(--border)" }}>
               <div className="text-5xl mb-4">🎤</div>
@@ -93,7 +93,7 @@ function EventCard({ event }: { event: Event }) {
       <div className="p-5">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
-          <h3 className={`${syne} font-bold text-base group-hover:text-[var(--accent)] transition-colors`} style={{ color: "var(--ink)" }}>{event.title}</h3>
+          <h3 className={`${syne} font-bold text-base group-hover:text-[var(--primary)] transition-colors`} style={{ color: "var(--ink)" }}>{event.title}</h3>
           <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>by {event.createdBy.name}</p>
         </div>
         <span className={`shrink-0 text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: event.pricing === "FREE" ? "rgba(34,197,94,0.1)" : "rgba(139,92,246,0.1)", color: event.pricing === "FREE" ? "#16a34a" : "#7c3aed" }}>

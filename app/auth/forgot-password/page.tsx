@@ -58,14 +58,14 @@ export default function ForgotPasswordPage() {
             {error && <div className="rounded-xl p-3 text-sm mb-4" style={{ background: "rgba(239,68,68,0.05)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.2)" }}>{error}</div>}
             <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Email address</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@example.com" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
-            <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{loading ? "Sending..." : "Send Reset Code"}</button>
+            <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{loading ? "Sending..." : "Send Reset Code"}</button>
             <p className="mt-4 text-center text-sm" style={{ color: "var(--muted)" }}>Remember your password? <Link href="/auth/login" className={`font-bold no-underline ${syne}`} style={{ color: "var(--ink)" }}>Login</Link></p>
           </form>
         )}
 
         {step === 2 && (
           <form onSubmit={handleReset} className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <div className="h-1 -mx-6 -mt-6 mb-6 rounded-t-2xl" style={{ background: "var(--accent)" }} />
+            <div className="h-1 -mx-6 -mt-6 mb-6 rounded-t-2xl" style={{ background: "var(--primary)" }} />
             {error && <div className="rounded-xl p-3 text-sm mb-4" style={{ background: "rgba(239,68,68,0.05)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.2)" }}>{error}</div>}
             <div className="space-y-4">
               <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Verification Code</label>
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
               <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Confirm Password</label>
                 <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required placeholder="Re-enter password" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
             </div>
-            <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{loading ? "Resetting..." : "Reset Password"}</button>
+            <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{loading ? "Resetting..." : "Reset Password"}</button>
             <button type="button" onClick={() => handleSendOTP({ preventDefault: () => {} } as React.FormEvent)} className="mt-2 w-full text-center text-xs" style={{ color: "var(--muted)" }}>Didn&apos;t receive code? Resend</button>
           </form>
         )}
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
             <div className="text-5xl mb-4">✅</div>
             <p className={`${syne} font-bold text-lg mb-2`}>Password updated!</p>
             <p className="text-sm mb-6" style={{ color: "var(--muted)" }}>You can now login with your new password.</p>
-            <Link href="/auth/login" className={`inline-block px-6 py-3 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Go to Login →</Link>
+            <Link href="/auth/login" className={`inline-block px-6 py-3 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>Go to Login →</Link>
           </div>
         )}
       </div>

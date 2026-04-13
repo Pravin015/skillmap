@@ -51,7 +51,7 @@ export default function SubmitPage({ params }: { params: Promise<{ slug: string 
             <textarea value={submissionText} onChange={(e) => setSubmissionText(e.target.value)} placeholder="Describe your approach, key decisions, and solution..." rows={8} className="w-full rounded-xl border px-4 py-3 text-sm outline-none" style={{ borderColor: "var(--border)" }} />
           </div>
 
-          <button type="submit" disabled={submitting} className={`w-full rounded-xl py-3 text-sm font-bold transition-all disabled:opacity-50 ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+          <button type="submit" disabled={submitting} className={`w-full rounded-xl py-3 text-sm font-bold transition-all disabled:opacity-50 ${syne}`} style={{ background: "var(--primary)", color: "white" }}>
             {submitting ? "Submitting..." : "Submit Solution"}
           </button>
         </form>

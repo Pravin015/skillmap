@@ -166,7 +166,7 @@ export default function JobsPage() {
 
           {loading ? (
             <div className="flex justify-center py-20">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
             </div>
           ) : filtered.length === 0 ? (
             <div className="rounded-2xl border bg-white p-16 text-center" style={{ borderColor: "var(--border)" }}>
@@ -188,7 +188,7 @@ export default function JobsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <h2 className={`${syne} font-bold text-base md:text-lg group-hover:text-[var(--accent)] transition-colors`} style={{ color: "var(--ink)" }}>{job.title}</h2>
+                          <h2 className={`${syne} font-bold text-base md:text-lg group-hover:text-[var(--primary)] transition-colors`} style={{ color: "var(--ink)" }}>{job.title}</h2>
                           <p className="text-sm mt-0.5" style={{ color: "var(--muted)" }}>{job.company}</p>
                         </div>
                         {(job.salaryMin || job.salaryMax) && (
@@ -216,7 +216,7 @@ export default function JobsPage() {
                           {job.jobType}
                         </span>
                         {job.domain && (
-                          <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                          <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: "var(--primary)", color: "white" }}>
                             {job.domain}
                           </span>
                         )}

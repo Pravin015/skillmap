@@ -127,7 +127,7 @@ export default function JobDetailPage() {
   }
 
   if (loading) {
-    return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+    return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
   }
 
   if (!job) {
@@ -137,7 +137,7 @@ export default function JobDetailPage() {
           <div className="text-5xl mb-4">💼</div>
           <h1 className={`${syne} font-bold text-xl mb-2`}>Job not found</h1>
           <p className="text-sm" style={{ color: "var(--muted)" }}>This job may have been removed or doesn&apos;t exist.</p>
-          <Link href="/jobs" className={`inline-block mt-4 px-5 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Browse all jobs</Link>
+          <Link href="/jobs" className={`inline-block mt-4 px-5 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>Browse all jobs</Link>
         </div>
       </div>
     );
@@ -160,7 +160,7 @@ export default function JobDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Header card */}
             <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: "var(--border)" }}>
-              <div className="h-2" style={{ background: job.status === "ACTIVE" ? "var(--accent)" : "var(--border)" }} />
+              <div className="h-2" style={{ background: job.status === "ACTIVE" ? "var(--primary)" : "var(--border)" }} />
               <div className="p-6">
                 <div className="flex items-start gap-4">
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-xl text-white shrink-0`} style={{ background: "var(--ink)" }}>
@@ -175,7 +175,7 @@ export default function JobDetailPage() {
                       </span>
                       <span className="text-[0.65rem] font-medium px-2.5 py-1 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>{job.jobType}</span>
                       <span className="text-[0.65rem] font-medium px-2.5 py-1 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>{job.experienceLevel}</span>
-                      {job.domain && <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{job.domain}</span>}
+                      {job.domain && <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: "var(--primary)", color: "white" }}>{job.domain}</span>}
                       {isExpired && <span className="text-[0.65rem] font-bold px-2.5 py-1 rounded-full bg-red-100 text-red-700">Expired</span>}
                     </div>
                   </div>
@@ -221,7 +221,7 @@ export default function JobDetailPage() {
                 <h2 className={`${syne} font-bold text-base mb-4`}>Required Skills</h2>
                 <div className="flex flex-wrap gap-2">
                   {job.skills.map((s) => (
-                    <span key={s} className={`text-xs font-medium px-3 py-1.5 rounded-full ${syne}`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{s}</span>
+                    <span key={s} className={`text-xs font-medium px-3 py-1.5 rounded-full ${syne}`} style={{ background: "var(--primary)", color: "white" }}>{s}</span>
                   ))}
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function JobDetailPage() {
             <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
               <div className="flex items-center justify-between mb-2">
                 <h2 className={`${syne} font-bold text-base`}>Connect with Mentors</h2>
-                <button onClick={fetchMentors} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                <button onClick={fetchMentors} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>
                   {showMentors ? "Refresh" : `Find mentors at ${job.company}`}
                 </button>
               </div>
@@ -264,7 +264,7 @@ export default function JobDetailPage() {
                           <div className="text-xs" style={{ color: "var(--muted)" }}>{m.currentRole} · {m.yearsOfExperience} yrs · ★{m.rating}</div>
                         </div>
                         <span className="text-[0.6rem] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700 shrink-0">Verified</span>
-                        <Link href={`/mentor/${m.mentorNumber}`} className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>View</Link>
+                        <Link href={`/mentor/${m.mentorNumber}`} className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--primary)", color: "white" }}>View</Link>
                       </div>
                     ))}
                   </div>
@@ -287,7 +287,7 @@ export default function JobDetailPage() {
                 <>
                   <p className={`${syne} font-bold text-base mb-2`}>Interested?</p>
                   <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Login to apply for this position</p>
-                  <Link href="/auth/login" className={`block w-full text-center py-3 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Login to apply</Link>
+                  <Link href="/auth/login" className={`block w-full text-center py-3 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>Login to apply</Link>
                 </>
               ) : applied ? (
                 <>
@@ -316,7 +316,7 @@ export default function JobDetailPage() {
                       <label className={`block text-xs font-medium mb-1 ${syne}`}>Cover note (optional)</label>
                       <textarea value={coverNote} onChange={(e) => setCoverNote(e.target.value)} placeholder="Why are you a good fit for this role?" rows={4} className="w-full rounded-xl border px-3 py-2.5 text-sm outline-none resize-none" style={{ borderColor: "var(--border)" }} />
                     </div>
-                    <button onClick={handleApply} disabled={applying} className={`w-full py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                    <button onClick={handleApply} disabled={applying} className={`w-full py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
                       {applying ? "Submitting..." : "Submit Application"}
                     </button>
                     <button onClick={() => setShowApplyForm(false)} className="w-full text-center text-xs" style={{ color: "var(--muted)" }}>Cancel</button>
@@ -326,16 +326,16 @@ export default function JobDetailPage() {
                 <>
                   {job.labTemplate ? (
                     <>
-                      <div className="rounded-xl p-3 mb-3 text-xs border" style={{ background: "rgba(232,255,71,0.05)", borderColor: "rgba(232,255,71,0.2)" }}>
+                      <div className="rounded-xl p-3 mb-3 text-xs border" style={{ background: "rgba(232,255,71,0.05)", borderColor: "rgba(99,102,241,0.2)" }}>
                         <div className={`${syne} font-bold text-sm mb-1`}>🧪 Lab Assessment Required</div>
                         <p style={{ color: "var(--muted)" }}>{job.labTemplate.title} · {job.labTemplate.timeLimit} min · {job.labTemplate.difficulty} · Pass: {job.labTemplate.passingScore}%</p>
                       </div>
-                      <a href={`/labs/${job.labTemplate.id}?jobId=${job.id}`} className={`block w-full text-center py-3.5 rounded-xl ${syne} font-bold text-sm no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
+                      <a href={`/labs/${job.labTemplate.id}?jobId=${job.id}`} className={`block w-full text-center py-3.5 rounded-xl ${syne} font-bold text-sm no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
                         Start Lab & Apply →
                       </a>
                     </>
                   ) : (
-                    <button onClick={() => setShowApplyForm(true)} className={`w-full py-3.5 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
+                    <button onClick={() => setShowApplyForm(true)} className={`w-full py-3.5 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
                       Apply Now →
                     </button>
                   )}

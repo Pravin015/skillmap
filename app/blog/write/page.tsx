@@ -56,7 +56,7 @@ export default function WriteBlogPage() {
             <h2 className={`${syne} font-bold text-base mb-4`}>Cover Image</h2>
             <div className="flex items-center gap-4">
               {coverImage ? <img src={coverImage} alt="" className="w-40 h-24 rounded-xl object-cover" /> : <div className="w-40 h-24 rounded-xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>🖼️</div>}
-              <label className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs cursor-pointer`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+              <label className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
                 {coverImage ? "Change" : "Upload"} <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (!f) return; if (f.size > 2 * 1024 * 1024) { alert("Max 2MB"); return; } const r = new FileReader(); r.onload = () => setCoverImage(r.result as string); r.readAsDataURL(f); }} />
               </label>
             </div>
@@ -89,7 +89,7 @@ export default function WriteBlogPage() {
 
           {/* Actions */}
           <div className="flex gap-3">
-            <button onClick={() => handlePublish(false)} disabled={saving} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+            <button onClick={() => handlePublish(false)} disabled={saving} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
               {saving ? "Saving..." : userRole === "ADMIN" ? "Publish Now" : "Submit for Review"}
             </button>
             <button onClick={() => handlePublish(true)} disabled={saving} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50 border`} style={{ borderColor: "var(--border)", color: "var(--muted)" }}>

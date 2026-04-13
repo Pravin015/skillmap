@@ -24,7 +24,7 @@ export default function LeaderboardPage({ params }: { params: Promise<{ slug: st
       .then((d) => { setCompetition(d.competition); setLeaderboard(d.leaderboard || []); setLoading(false); });
   }, [slug]);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>

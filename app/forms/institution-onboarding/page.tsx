@@ -50,7 +50,7 @@ export default function InstitutionOnboardingForm() {
         </div>
         <div><label className={labelClass}>What do you expect from SkillMap?</label><textarea placeholder="How can we help improve your placement outcomes?" rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
         <label className="flex items-start gap-2 text-sm cursor-pointer"><input type="checkbox" required className="mt-1 accent-[var(--ink)]" /><span style={{ color: "var(--muted)" }}>I confirm I am authorised to register this institution and the information provided is accurate. I understand the account will be activated only after verification.</span></label>
-        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Submit for Review</button>
+        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit for Review</button>
       </form>
     </FormWrapper>
   );

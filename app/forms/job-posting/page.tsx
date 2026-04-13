@@ -100,7 +100,7 @@ export default function JobPostingForm() {
           <label className={labelClass}>Application Deadline</label>
           <input type="date" className={inputClass} style={{ borderColor: "var(--border)" }} />
         </div>
-        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Submit Job Posting</button>
+        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Job Posting</button>
       </form>
     </FormWrapper>
   );

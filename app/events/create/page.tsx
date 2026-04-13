@@ -58,7 +58,7 @@ export default function CreateEventPage() {
                 <div className="w-32 h-20 rounded-xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>🖼️</div>
               )}
               <div>
-                <label className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs cursor-pointer`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                <label className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
                   {coverImage ? "Change image" : "Upload thumbnail"}
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                     const f = e.target.files?.[0]; if (!f) return;
@@ -106,7 +106,7 @@ export default function CreateEventPage() {
           <div><h2 className={`${syne} font-bold text-base mb-4`}>Pricing</h2>
             <div className="flex gap-3 mb-4">
               {["FREE", "PAID"].map((p) => (
-                <button key={p} type="button" onClick={() => setPricing(p)} className={`px-5 py-2.5 rounded-xl text-sm ${syne} font-bold`} style={{ background: pricing === p ? "var(--ink)" : "white", color: pricing === p ? "var(--accent)" : "var(--muted)", border: pricing === p ? "none" : "1px solid var(--border)" }}>{p === "FREE" ? "Free Event" : "Paid Event"}</button>
+                <button key={p} type="button" onClick={() => setPricing(p)} className={`px-5 py-2.5 rounded-xl text-sm ${syne} font-bold`} style={{ background: pricing === p ? "var(--ink)" : "white", color: pricing === p ? "var(--primary)" : "var(--muted)", border: pricing === p ? "none" : "1px solid var(--border)" }}>{p === "FREE" ? "Free Event" : "Paid Event"}</button>
               ))}
             </div>
             {pricing === "PAID" && <div><label className={labelClass}>Price (₹) *</label><input name="price" type="number" min="1" placeholder="e.g. 499" className={inputClass} style={{ borderColor: "var(--border)" }} /><p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Only paid participants will see the joining link</p></div>}
@@ -128,11 +128,11 @@ export default function CreateEventPage() {
             </div>
           </div>
 
-          <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(232,255,71,0.2)" }}>
+          <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(99,102,241,0.2)" }}>
             <strong className={syne}>Approval:</strong> Verified mentors&apos; events are auto-approved. Unverified mentors&apos; events require admin approval before they go live.
           </div>
 
-          <button type="submit" disabled={saving} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{saving ? "Creating..." : "Create Event"}</button>
+          <button type="submit" disabled={saving} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Creating..." : "Create Event"}</button>
         </form>
       </div>
     </div>

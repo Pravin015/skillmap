@@ -91,7 +91,7 @@ function SelfPrepContent({ companySlug }: { companySlug: string }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}>
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
       </div>
     );
   }
@@ -148,7 +148,7 @@ function SelfPrepContent({ companySlug }: { companySlug: string }) {
               className="rounded-full px-3 py-1.5 text-xs font-medium border transition-all"
               style={{
                 background: selectedCategory === cat ? "var(--ink)" : "white",
-                color: selectedCategory === cat ? "var(--accent)" : "var(--ink)",
+                color: selectedCategory === cat ? "var(--primary)" : "var(--ink)",
                 borderColor: selectedCategory === cat ? "var(--ink)" : "var(--border)",
               }}
             >
@@ -227,7 +227,7 @@ function SelfPrepContent({ companySlug }: { companySlug: string }) {
                       </div>
                     )}
                     {q.tips && (
-                      <div className="mt-3 rounded-lg p-3" style={{ background: "rgba(232,255,71,0.1)" }}>
+                      <div className="mt-3 rounded-lg p-3" style={{ background: "var(--primary-light)" }}>
                         <h4 className="text-xs font-bold mb-1" style={{ color: "var(--ink)" }}>💡 Tips</h4>
                         <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{q.tips}</p>
                       </div>
@@ -269,7 +269,7 @@ export default function SelfPrepPage({ params }: { params: Promise<{ companySlug
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}>
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
       </div>
     }>
       <SelfPrepContent companySlug={companySlug} />

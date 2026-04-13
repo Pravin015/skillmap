@@ -17,7 +17,7 @@ const degrees = ["B.Tech/BE", "BCA", "B.Sc", "BBA", "B.Com", "BA", "MBA", "MCA",
 
 export default function SignupPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>}>
+    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>}>
       <SignupInner />
     </Suspense>
   );
@@ -168,8 +168,8 @@ function SignupInner() {
           </p>
           {step === 2 && (
             <div className="flex items-center justify-center gap-2 mt-4">
-              <div className="w-8 h-1 rounded-full" style={{ background: "var(--accent)" }} />
-              <div className="w-8 h-1 rounded-full" style={{ background: "var(--accent)" }} />
+              <div className="w-8 h-1 rounded-full" style={{ background: "var(--primary)" }} />
+              <div className="w-8 h-1 rounded-full" style={{ background: "var(--primary)" }} />
               <span className="text-xs ml-2" style={{ color: "var(--muted)" }}>Step 2 of 2</span>
             </div>
           )}
@@ -182,7 +182,7 @@ function SignupInner() {
               {roles.map((role) => (
                 <button key={role.key} onClick={() => { setActiveRole(role.key); setError(""); }}
                   className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-bold transition-all sm:text-sm ${syne}`}
-                  style={{ background: activeRole === role.key ? "var(--ink)" : "transparent", color: activeRole === role.key ? "var(--accent)" : "var(--muted)" }}>
+                  style={{ background: activeRole === role.key ? "var(--ink)" : "transparent", color: activeRole === role.key ? "var(--primary)" : "var(--muted)" }}>
                   {role.label}
                 </button>
               ))}
@@ -230,7 +230,7 @@ function SignupInner() {
 
               {/* OTP Section */}
               {otpSent && !otpVerified && (
-                <div className="mt-4 rounded-xl p-4 border" style={{ background: "rgba(232,255,71,0.05)", borderColor: "rgba(232,255,71,0.2)" }}>
+                <div className="mt-4 rounded-xl p-4 border" style={{ background: "rgba(232,255,71,0.05)", borderColor: "rgba(99,102,241,0.2)" }}>
                   <p className={`${syne} font-bold text-sm mb-2`}>Enter verification code</p>
                   <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>We sent a 6-digit code to <strong>{email}</strong></p>
                   <input type="text" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="Enter 6-digit code" maxLength={6} className={`${inputClass} text-center text-lg tracking-[0.3em] font-bold`} style={{ borderColor: "var(--border)" }} />
@@ -243,7 +243,7 @@ function SignupInner() {
                 </div>
               )}
 
-              <button type="submit" disabled={loading} className={`mt-4 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+              <button type="submit" disabled={loading} className={`mt-4 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
                 {loading ? "Please wait..." : !otpSent ? "Send verification code" : !otpVerified ? "Verify & continue" : activeRole === "STUDENT" ? "Create account →" : "Create account"}
               </button>
 
@@ -257,7 +257,7 @@ function SignupInner() {
 
         {step === 2 && activeRole === "STUDENT" && (
           <form onSubmit={handleStep2} className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <div className="h-1 -mx-6 -mt-6 mb-6 rounded-t-2xl" style={{ background: "var(--accent)" }} />
+            <div className="h-1 -mx-6 -mt-6 mb-6 rounded-t-2xl" style={{ background: "var(--primary)" }} />
 
             {error && <div className="rounded-xl p-3 text-sm mb-4" style={{ background: "rgba(239,68,68,0.05)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.2)" }}>{error}</div>}
 
@@ -271,7 +271,7 @@ function SignupInner() {
                   ) : (
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>📷</div>
                   )}
-                  <label className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs cursor-pointer`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                  <label className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
                     {profilePhoto ? "Change photo" : "Upload photo"}
                     <input type="file" accept="image/*" className="hidden" required={!profilePhoto} onChange={(e) => {
                       const f = e.target.files?.[0]; if (!f) return;
@@ -319,7 +319,7 @@ function SignupInner() {
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+            <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
               {loading ? "Saving..." : "Complete & Go to Dashboard →"}
             </button>
 

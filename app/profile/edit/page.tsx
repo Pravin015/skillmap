@@ -132,7 +132,7 @@ export default function ProfileEditPage() {
   function updCert(i: number, f: string, v: string) { const u = [...certifications]; (u[i] as unknown as Record<string, string>)[f] = v; setCertifications(u); }
   function rmCert(i: number) { setCertifications(certifications.filter((_, idx) => idx !== i)); }
 
-  if (loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   const roleLabel = userRole === "HR" ? "HR" : userRole === "ORG" ? "Company" : userRole === "INSTITUTION" ? "Institution" : userRole === "ADMIN" ? "Admin" : "Student";
 
@@ -156,7 +156,7 @@ export default function ProfileEditPage() {
             <h2 className={`${syne} font-bold text-base mb-4`}>Profile Photo</h2>
             <div className="flex items-center gap-4">
               {profileImage ? <img src={profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover" /> : <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-2xl text-white`} style={{ background: "var(--ink)" }}>{name.charAt(0)?.toUpperCase()}</div>}
-              <div><button type="button" onClick={() => fileRef.current?.click()} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{profileImage ? "Change" : "Upload"}</button><p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Max 500KB</p></div>
+              <div><button type="button" onClick={() => fileRef.current?.click()} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>{profileImage ? "Change" : "Upload"}</button><p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Max 500KB</p></div>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
             </div>
           </div>
@@ -210,7 +210,7 @@ export default function ProfileEditPage() {
               </div>
               {experienceLevel === "EXPERIENCED" && (
                 <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                  <div className="flex items-center justify-between mb-4"><h2 className={`${syne} font-bold text-base`}>Experience</h2><button type="button" onClick={addExp} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Add</button></div>
+                  <div className="flex items-center justify-between mb-4"><h2 className={`${syne} font-bold text-base`}>Experience</h2><button type="button" onClick={addExp} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>+ Add</button></div>
                   {experiences.length === 0 ? <p className="text-sm text-center py-4" style={{ color: "var(--muted)" }}>None added</p> : <div className="space-y-3">{experiences.map((x, i) => (
                     <div key={i} className="rounded-xl border p-4 relative" style={{ borderColor: "var(--border)" }}>
                       <button type="button" onClick={() => rmExp(i)} className="absolute top-2 right-2 text-red-400 text-sm">✕</button>
@@ -221,7 +221,7 @@ export default function ProfileEditPage() {
                 </div>
               )}
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <div className="flex items-center justify-between mb-4"><h2 className={`${syne} font-bold text-base`}>Certifications</h2><button type="button" onClick={addCert} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Add</button></div>
+                <div className="flex items-center justify-between mb-4"><h2 className={`${syne} font-bold text-base`}>Certifications</h2><button type="button" onClick={addCert} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>+ Add</button></div>
                 {certifications.length === 0 ? <p className="text-sm text-center py-4" style={{ color: "var(--muted)" }}>None added</p> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{certifications.map((c, i) => (
                   <div key={i} className="rounded-xl border p-4 relative" style={{ borderColor: "var(--border)" }}>
                     <button type="button" onClick={() => rmCert(i)} className="absolute top-2 right-2 text-red-400 text-sm">✕</button>
@@ -284,15 +284,15 @@ export default function ProfileEditPage() {
                 {userRole === "ADMIN" && "Full platform control from the Admin Panel."}
               </p>
               <div className="flex gap-2 flex-wrap">
-                {userRole === "HR" && <a href="/hr-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>HR Panel</a>}
-                {userRole === "ORG" && <a href="/company-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Company Dashboard</a>}
-                {userRole === "INSTITUTION" && <a href="/institution-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Institution Dashboard</a>}
-                {userRole === "ADMIN" && <a href="/admin" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Admin Panel</a>}
+                {userRole === "HR" && <a href="/hr-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>HR Panel</a>}
+                {userRole === "ORG" && <a href="/company-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Company Dashboard</a>}
+                {userRole === "INSTITUTION" && <a href="/institution-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Institution Dashboard</a>}
+                {userRole === "ADMIN" && <a href="/admin" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Admin Panel</a>}
               </div>
             </div>
           )}
 
-          <button type="submit" disabled={saving} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{saving ? "Saving..." : "Save Profile"}</button>
+          <button type="submit" disabled={saving} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Saving..." : "Save Profile"}</button>
         </form>
       </div>
     </div>

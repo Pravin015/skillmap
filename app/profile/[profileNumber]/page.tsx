@@ -55,7 +55,7 @@ export default function PublicProfilePage() {
   }, [profileNumber]);
 
   if (loading) {
-    return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+    return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
   }
 
   if (error || !profile) {
@@ -95,7 +95,7 @@ export default function PublicProfilePage() {
                   {p.collegeName || "College not specified"}{p.user.degree ? ` · ${p.user.degree}` : ""}{p.user.gradYear ? ` · ${p.user.gradYear}` : ""}
                 </p>
                 <div className="flex gap-2 mt-2 flex-wrap">
-                  <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${syne}`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
+                  <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${syne}`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
                     {p.experienceLevel === "FRESHER" ? "Fresher" : "Experienced"}
                   </span>
                   {p.fieldOfInterest && (
@@ -129,7 +129,7 @@ export default function PublicProfilePage() {
                   <h3 className={`${syne} font-bold text-base text-white`}>Connect with {p.user.name.split(" ")[0]}</h3>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>Reach out to this candidate directly</p>
                 </div>
-                <button onClick={() => setShowConnect(!showConnect)} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
+                <button onClick={() => setShowConnect(!showConnect)} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
                   {showConnect ? "Hide details" : "Connect now →"}
                 </button>
               </div>
@@ -218,7 +218,7 @@ export default function PublicProfilePage() {
                 <div className={`${syne} font-bold text-sm`}>Resume uploaded</div>
                 <div className="text-xs" style={{ color: "var(--muted)" }}>PDF Document</div>
               </div>
-              <button onClick={() => { const w = window.open(); if (w) w.document.write(`<iframe src="${p.resumeUrl}" style="width:100%;height:100%;border:none;position:fixed;inset:0"></iframe>`); }} className={`shrink-0 px-4 py-2 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>View Resume</button>
+              <button onClick={() => { const w = window.open(); if (w) w.document.write(`<iframe src="${p.resumeUrl}" style="width:100%;height:100%;border:none;position:fixed;inset:0"></iframe>`); }} className={`shrink-0 px-4 py-2 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>View Resume</button>
               <a href={p.resumeUrl} download="resume.pdf" className={`shrink-0 px-4 py-2 rounded-lg text-xs font-medium border no-underline`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Download</a>
             </div>
           </div>
@@ -267,7 +267,7 @@ export default function PublicProfilePage() {
             <div className="space-y-4">
               {p.experiences.map((exp, i) => (
                 <div key={i} className="flex gap-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm" style={{ background: "var(--ink)", color: "var(--accent)" }}>{exp.company.charAt(0)}</div>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm" style={{ background: "var(--primary)", color: "white" }}>{exp.company.charAt(0)}</div>
                   <div>
                     <div className={`${syne} font-bold text-sm`}>{exp.role}</div>
                     <div className="text-xs" style={{ color: "var(--muted)" }}>{exp.company} · {exp.startDate} – {exp.current ? "Present" : exp.endDate || "—"}</div>

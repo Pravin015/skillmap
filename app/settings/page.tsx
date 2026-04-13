@@ -69,7 +69,7 @@ export default function SettingsPage() {
     setProfileImage(base64);
   }
 
-  if (loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <>
@@ -90,7 +90,7 @@ export default function SettingsPage() {
               </div>
             )}
             <div>
-              <button onClick={() => fileRef.current?.click()} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+              <button onClick={() => fileRef.current?.click()} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>
                 {profileImage ? "Change photo" : "Upload photo"}
               </button>
               <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Max 500KB · JPG, PNG</p>
@@ -114,7 +114,7 @@ export default function SettingsPage() {
             <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Role</label>
               <input type="text" value={role} readOnly className={`${inputClass} bg-gray-50 cursor-not-allowed`} style={{ borderColor: "var(--border)", color: "var(--muted)" }} /></div>
           </div>
-          <button type="submit" disabled={saving} className={`mt-5 px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{saving ? "Saving..." : "Save Changes"}</button>
+          <button type="submit" disabled={saving} className={`mt-5 px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Saving..." : "Save Changes"}</button>
         </form>
 
         {/* Change password */}
@@ -129,7 +129,7 @@ export default function SettingsPage() {
             <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Confirm New Password</label>
               <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required placeholder="Re-enter new password" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
           </div>
-          <button type="submit" disabled={saving} className={`mt-5 px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{saving ? "Changing..." : "Change Password"}</button>
+          <button type="submit" disabled={saving} className={`mt-5 px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Changing..." : "Change Password"}</button>
         </form>
       </div>
     </div>

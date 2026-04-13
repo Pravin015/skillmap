@@ -45,7 +45,7 @@ export default function ChangePasswordPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-          <div className="h-1 -mx-6 -mt-6 mb-6 rounded-t-2xl" style={{ background: "var(--accent)" }} />
+          <div className="h-1 -mx-6 -mt-6 mb-6 rounded-t-2xl" style={{ background: "var(--primary)" }} />
 
           {error && <div className="rounded-xl p-3 text-sm mb-4" style={{ background: "rgba(239,68,68,0.05)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.2)" }}>{error}</div>}
 
@@ -60,7 +60,7 @@ export default function ChangePasswordPage() {
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+          <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
             {loading ? "Saving..." : "Set Password & Continue"}
           </button>
         </form>

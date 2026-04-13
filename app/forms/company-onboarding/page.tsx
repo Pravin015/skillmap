@@ -174,7 +174,7 @@ export default function CompanyOnboardingForm() {
           <span style={{ color: "var(--muted)" }}>I confirm that I am authorised to register this company on SkillMap and that the information provided is accurate. I understand the account will be activated only after verification.</span>
         </label>
 
-        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Submit for Verification</button>
+        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit for Verification</button>
       </form>
     </FormWrapper>
   );

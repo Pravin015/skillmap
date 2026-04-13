@@ -16,7 +16,7 @@ const quickPrompts = [
 
 export default function ChatPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>}>
+    <Suspense fallback={<div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>}>
       <ChatInner />
     </Suspense>
   );
@@ -104,7 +104,7 @@ function ChatInner() {
       {/* Header */}
       <div className="px-4 py-4 border-b" style={{ borderColor: "var(--border)", background: "white" }}>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ background: "var(--ink)", color: "var(--accent)" }}>✦</div>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ background: "var(--primary)", color: "white" }}>✦</div>
           <div>
             <h1 className={`${syne} font-bold text-base`} style={{ color: "var(--ink)" }}>AI Career Advisor</h1>
             {profile && <p className="text-xs" style={{ color: "var(--muted)" }}>Personalised for {profile.name} · {profile.domain}</p>}
@@ -116,7 +116,7 @@ function ChatInner() {
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-6" style={{ background: "var(--surface)" }}>
         {messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center text-center">
-            <div className="mb-4 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl" style={{ background: "var(--ink)", color: "var(--accent)" }}>✦</div>
+            <div className="mb-4 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl" style={{ background: "var(--primary)", color: "white" }}>✦</div>
             <h2 className={`${syne} font-bold text-lg mb-2`} style={{ color: "var(--ink)" }}>Your AI career advisor</h2>
             <p className="mb-8 max-w-md text-sm" style={{ color: "var(--muted)" }}>Ask anything about your career path, skill preparation, or interview strategy. I have your profile context loaded.</p>
             <div className="flex flex-wrap justify-center gap-2">
@@ -133,9 +133,9 @@ function ChatInner() {
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
               {msg.role === "assistant" && (
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-xs mr-2 mt-1 shrink-0" style={{ background: "var(--ink)", color: "var(--accent)" }}>✦</div>
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-xs mr-2 mt-1 shrink-0" style={{ background: "var(--primary)", color: "white" }}>✦</div>
               )}
-              <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === "user" ? "" : ""}`} style={{ background: msg.role === "user" ? "var(--ink)" : "white", color: msg.role === "user" ? "var(--accent)" : "var(--ink)", border: msg.role === "assistant" ? "1px solid var(--border)" : "none" }}>
+              <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === "user" ? "" : ""}`} style={{ background: msg.role === "user" ? "var(--ink)" : "white", color: msg.role === "user" ? "var(--primary)" : "var(--ink)", border: msg.role === "assistant" ? "1px solid var(--border)" : "none" }}>
                 {msg.role === "assistant" ? (
                   <div className="whitespace-pre-wrap">{msg.content || (
                     <span className="inline-flex items-center gap-1">
@@ -168,7 +168,7 @@ function ChatInner() {
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isStreaming}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors disabled:opacity-40"
-            style={{ background: "var(--ink)", color: "var(--accent)" }}
+            style={{ background: "var(--primary)", color: "white" }}
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />

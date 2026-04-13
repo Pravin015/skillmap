@@ -77,7 +77,7 @@ export default function PartnerForm() {
           <label className={labelClass}>What do you hope to achieve through this partnership? *</label>
           <textarea required placeholder="Describe your goals and how you'd like to collaborate with SkillMap..." rows={4} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} />
         </div>
-        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Submit Partnership Request</button>
+        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Partnership Request</button>
       </form>
     </FormWrapper>
   );
