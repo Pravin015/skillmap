@@ -729,3 +729,24 @@ model QuestionProgress {
 
   @@unique([userId, questionId])
 }
+
+// ═══ OFFER LETTER VERIFICATION MODULE ═══
+
+model OfferVerification {
+  id              String   @id @default(cuid())
+  userId          String?
+  companyName     String
+  offerText       String   // full text of the offer letter
+  trustScore      Int      // 0-100 (0 = definite scam, 100 = likely genuine)
+  verdict         String   // "LIKELY_GENUINE", "SUSPICIOUS", "LIKELY_FAKE", "DEFINITE_SCAM"
+  analysis        String   // AI-generated detailed analysis (JSON)
+  redFlags        String[] // list of red flags found
+  greenFlags      String[] // list of positive signals found
+  riskLevel       String   // "LOW", "MEDIUM", "HIGH", "CRITICAL"
+  parameterScores String   // JSON: scores per parameter
+  recommendation  String   // AI recommendation text
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+  @@index([verdict])
+}

@@ -17,6 +17,7 @@ import LabsTab from "@/components/admin-dashboard/LabsTab";
 import BlogTab from "@/components/admin-dashboard/BlogTab";
 import FormsTab from "@/components/admin-dashboard/FormsTab";
 import PlatformSettings from "@/components/admin-dashboard/PlatformSettings";
+import NTTUsersTab from "@/components/admin-dashboard/NTTUsersTab";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -38,6 +39,12 @@ const sidebarCategories: SidebarCategory[] = [
       { id: "students", label: "Students", icon: "🎓" },
       { id: "hrs", label: "HR Accounts", icon: "👥" },
       { id: "mentors", label: "Mentors", icon: "🧑‍🏫" },
+    ],
+  },
+  {
+    label: "Enterprise Clients",
+    items: [
+      { id: "ntt-users", label: "NTT Users", icon: "🔷" },
     ],
   },
   {
@@ -120,6 +127,7 @@ export default function AdminPage() {
       case "labs": return <LabsTab />;
       case "blog": return <BlogTab />;
       case "forms": return <FormsTab />;
+      case "ntt-users": return <NTTUsersTab users={users} />;
       case "settings": return <PlatformSettings />;
       default: return <AdminOverview stats={stats} onNavigate={setActiveTab} />;
     }
