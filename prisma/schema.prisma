@@ -46,7 +46,8 @@ model User {
   profileViews  ProfileView[]       @relation("ProfileViewer")
   notifications Notification[]
   mockInterviews MockInterview[]
-  companyProfile CompanyProfile?
+  companyProfile    CompanyProfile?
+  competitionsCreated Competition[] @relation("CompetitionCreator")
 }
 
 enum FormType {
@@ -783,4 +784,89 @@ model ApplicationNote {
   createdAt     DateTime @default(now())
 
   @@index([applicationId])
+}
+
+// ═══ COMPETITIONS & HIRING CHALLENGES ═══
+
+model Competition {
+  id                String   @id @default(cuid())
+  createdById       String
+  createdBy         User     @relation("CompetitionCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  title             String
+  slug              String   @unique
+  description       String
+  rules             String?
+  prizes            String?
+  coverImageUrl     String?
+
+  type              String   @default("HACKATHON") // HACKATHON, CODING, QUIZ, CASE_STUDY
+  difficulty        String   @default("MEDIUM")    // EASY, MEDIUM, HARD
+  domain            String?
+
+  // Timing
+  registrationStart DateTime
+  registrationEnd   DateTime
+  startDate         DateTime
+  endDate           DateTime
+
+  // Capacity
+  maxParticipants   Int      @default(500)
+  teamSize          Int      @default(1)
+
+  // Assessment link
+  labTemplateId     String?
+
+  // Pricing
+  entryFee          Int?     // paise, null = free
+
+  // Company sponsorship
+  companyName       String?
+  companyLogo       String?
+  hiringEnabled     Boolean  @default(false)
+
+  // Status
+  status            String   @default("DRAFT") // DRAFT, OPEN, LIVE, JUDGING, COMPLETED, CANCELLED
+
+  participants      CompetitionParticipant[]
+  submissions       CompetitionSubmission[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status])
+  @@index([type])
+}
+
+model CompetitionParticipant {
+  id              String      @id @default(cuid())
+  competitionId   String
+  competition     Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  userId          String
+  teamName        String?
+  role            String      @default("INDIVIDUAL")
+  status          String      @default("REGISTERED")
+  registeredAt    DateTime    @default(now())
+
+  @@unique([competitionId, userId])
+}
+
+model CompetitionSubmission {
+  id              String      @id @default(cuid())
+  competitionId   String
+  competition     Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  userId          String
+
+  labAttemptId    String?
+  score           Int?
+  submissionUrl   String?
+  submissionText  String?
+
+  totalScore      Int         @default(0)
+  rank            Int?
+
+  submittedAt     DateTime    @default(now())
+
+  @@unique([competitionId, userId])
+  @@index([competitionId, totalScore])
 }
