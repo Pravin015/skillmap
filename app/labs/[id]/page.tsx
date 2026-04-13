@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
+import ProctoringGuard from "@/components/ProctoringGuard";
 const syne = "font-[family-name:var(--font-syne)]";
 
 interface Problem { id: string; question: string; optionA: string; optionB: string; optionC: string; optionD: string; order: number }
@@ -115,6 +116,7 @@ function LabInner() {
 
   // Lab in progress
   return (
+    <ProctoringGuard sessionId={attemptId || ""} sessionType="LAB" strictMode={true} maxViolations={4} onAutoSubmit={handleSubmit} enabled={!!attemptId}>
     <div className="min-h-[calc(100vh-4rem)]" style={{ background: "var(--surface)" }}>
       {/* Timer bar */}
       <div className="sticky top-16 z-40 border-b py-3 px-4" style={{ background: "white", borderColor: "var(--border)" }}>
@@ -157,5 +159,6 @@ function LabInner() {
         </div>
       </div>
     </div>
+    </ProctoringGuard>
   );
 }

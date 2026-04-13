@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef, use, Suspense } from "react";
 import { useSession } from "next-auth/react";
+import ProctoringGuard from "@/components/ProctoringGuard";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -370,6 +371,7 @@ function AIInterviewContent({ companySlug }: { companySlug: string }) {
 
   // ═══ INTERVIEW PHASE ═══
   return (
+    <ProctoringGuard sessionId={interview?.id || ""} sessionType="MOCK_INTERVIEW" strictMode={false} enabled={!!interview}>
     <div className="flex flex-col h-screen" style={{ background: "var(--surface)" }}>
       {/* Header */}
       <div className="border-b px-4 py-3 flex items-center justify-between shrink-0" style={{ background: "white", borderColor: "var(--border)" }}>
@@ -508,6 +510,7 @@ function AIInterviewContent({ companySlug }: { companySlug: string }) {
         </div>
       </div>
     </div>
+    </ProctoringGuard>
   );
 }
 

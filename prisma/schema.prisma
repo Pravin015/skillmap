@@ -870,3 +870,23 @@ model CompetitionSubmission {
   @@unique([competitionId, userId])
   @@index([competitionId, totalScore])
 }
+
+// ═══ PROCTORING ═══
+
+model ProctoringLog {
+  id               String    @id @default(cuid())
+  sessionId        String    // lab attemptId or mock interview ID
+  sessionType      String    // "LAB" or "MOCK_INTERVIEW"
+  userId           String
+  events           String    @default("[]") // JSON array of events
+  tabSwitches      Int       @default(0)
+  fullscreenExits  Int       @default(0)
+  copyAttempts     Int       @default(0)
+  webcamUrl        String?
+  startedAt        DateTime  @default(now())
+  endedAt          DateTime?
+  flagged          Boolean   @default(false)
+
+  @@index([sessionId])
+  @@index([userId])
+}
