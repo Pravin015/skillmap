@@ -60,6 +60,7 @@ export default function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
   const [profileImg, setProfileImg] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,6 +68,12 @@ export default function Header() {
       fetch("/api/profile/image").then((r) => r.json()).then((d) => { if (d.image) setProfileImg(d.image); }).catch(() => {});
     }
   }, [session]);
+
+  useEffect(() => {
+    function handleScroll() { setScrolled(window.scrollY > 50); }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -100,13 +107,13 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b" style={{ borderColor: "var(--border)", background: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}>
+    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: scrolled ? "rgba(12,26,26,0.95)" : "rgba(12,26,26,0.8)", backdropFilter: "blur(12px)" }}>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4" ref={dropdownRef}>
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 no-underline shrink-0" onClick={() => setMobileNav(false)}>
           <div className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white" style={{ background: "var(--primary)" }}>S</div>
-          <span className={`${heading} text-lg font-extrabold`} style={{ color: "var(--ink)" }}>
-            Skill<span className="text-white px-1 py-0.5 rounded" style={{ background: "var(--primary)" }}>Map</span>
+          <span className={`${heading} text-lg font-extrabold text-white`}>
+            Skill<span className="px-1 py-0.5 rounded" style={{ background: "var(--primary)", color: "#fff" }}>Map</span>
           </span>
         </Link>
 
@@ -121,8 +128,8 @@ export default function Header() {
                   openDropdown === group.label ? "" : ""
                 }`}
                 style={{
-                  color: openDropdown === group.label ? "var(--primary)" : "var(--muted)",
-                  background: openDropdown === group.label ? "var(--primary-light)" : "transparent",
+                  color: openDropdown === group.label ? "var(--primary)" : "rgba(255,255,255,0.6)",
+                  background: openDropdown === group.label ? "rgba(10,191,188,0.1)" : "transparent",
                 }}
               >
                 {group.label}
@@ -152,8 +159,8 @@ export default function Header() {
               href={link.href}
               className="rounded-lg px-3 py-2 text-[13px] font-medium transition-colors no-underline"
               style={{
-                color: pathname.startsWith(link.href) ? "var(--primary)" : "var(--muted)",
-                background: pathname.startsWith(link.href) ? "var(--primary-light)" : "transparent",
+                color: pathname.startsWith(link.href) ? "var(--primary)" : "rgba(255,255,255,0.6)",
+                background: pathname.startsWith(link.href) ? "rgba(10,191,188,0.1)" : "transparent",
               }}
             >
               {link.label}
@@ -169,7 +176,7 @@ export default function Header() {
               <div className="relative">
                 <button
                   onClick={() => { setShowUserMenu(!showUserMenu); setOpenDropdown(null); }}
-                  className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-slate-50"
+                  className="flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-white/5"
                 >
                   {profileImg ? (
                     <img src={profileImg} alt="" className="h-8 w-8 rounded-full object-cover" />
@@ -178,7 +185,7 @@ export default function Header() {
                       {session.user.name?.charAt(0).toUpperCase() || "U"}
                     </div>
                   )}
-                  <span className="hidden sm:block text-sm font-medium" style={{ color: "var(--ink)" }}>
+                  <span className="hidden sm:block text-sm font-medium" style={{ color: "rgba(255,255,255,0.8)" }}>
                     {session.user.name?.split(" ")[0]}
                   </span>
                 </button>
@@ -212,7 +219,7 @@ export default function Header() {
             </>
           ) : (
             <div className="hidden sm:flex items-center gap-2">
-              <Link href="/auth/login" className="rounded-lg px-4 py-2 text-[13px] font-medium no-underline transition-colors" style={{ color: "var(--ink)" }}>
+              <Link href="/auth/login" className="rounded-lg px-4 py-2 text-[13px] font-medium no-underline transition-colors" style={{ color: "rgba(255,255,255,0.7)" }}>
                 Log in
               </Link>
               <Link href="/auth/signup" className="btn-primary no-underline" style={{ padding: "8px 20px", fontSize: "13px" }}>
@@ -226,16 +233,16 @@ export default function Header() {
             onClick={() => { setMobileNav(!mobileNav); setOpenDropdown(null); setShowUserMenu(false); }}
             className="lg:hidden flex flex-col gap-1.5 p-2"
           >
-            <span className="block w-5 h-0.5 rounded-full transition-all" style={{ background: "var(--ink)", transform: mobileNav ? "rotate(45deg) translateY(4px)" : "" }} />
-            <span className="block w-5 h-0.5 rounded-full transition-all" style={{ background: "var(--ink)", opacity: mobileNav ? 0 : 1 }} />
-            <span className="block w-5 h-0.5 rounded-full transition-all" style={{ background: "var(--ink)", transform: mobileNav ? "rotate(-45deg) translateY(-4px)" : "" }} />
+            <span className="block w-5 h-0.5 rounded-full transition-all" style={{ background: "rgba(255,255,255,0.7)", transform: mobileNav ? "rotate(45deg) translateY(4px)" : "" }} />
+            <span className="block w-5 h-0.5 rounded-full transition-all" style={{ background: "rgba(255,255,255,0.7)", opacity: mobileNav ? 0 : 1 }} />
+            <span className="block w-5 h-0.5 rounded-full transition-all" style={{ background: "rgba(255,255,255,0.7)", transform: mobileNav ? "rotate(-45deg) translateY(-4px)" : "" }} />
           </button>
         </div>
       </div>
 
       {/* Mobile Nav */}
       {mobileNav && (
-        <div className="lg:hidden border-t animate-slide-down" style={{ borderColor: "var(--border)", background: "white" }}>
+        <div className="lg:hidden border-t animate-slide-down" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(12,26,26,0.95)", backdropFilter: "blur(12px)" }}>
           <div className="max-w-6xl mx-auto px-4 py-3 space-y-1">
             {allMobileLinks.map((link) => (
               <Link
@@ -243,14 +250,14 @@ export default function Header() {
                 href={link.href}
                 onClick={() => setMobileNav(false)}
                 className="block rounded-lg px-3 py-2.5 text-sm font-medium no-underline transition-colors"
-                style={{ color: pathname === link.href ? "var(--primary)" : "var(--ink-light)" }}
+                style={{ color: pathname === link.href ? "var(--primary)" : "rgba(255,255,255,0.6)" }}
               >
                 {link.label}
               </Link>
             ))}
             {!session && (
-              <div className="pt-2 border-t mt-2 flex gap-2" style={{ borderColor: "var(--border)" }}>
-                <Link href="/auth/login" className="flex-1 text-center rounded-lg py-2.5 text-sm font-medium no-underline border" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Log in</Link>
+              <div className="pt-2 border-t mt-2 flex gap-2" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+                <Link href="/auth/login" className="flex-1 text-center rounded-lg py-2.5 text-sm font-medium no-underline border" style={{ borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)" }}>Log in</Link>
                 <Link href="/auth/signup" className="flex-1 text-center btn-primary no-underline" style={{ padding: "10px 0" }}>Sign Up</Link>
               </div>
             )}

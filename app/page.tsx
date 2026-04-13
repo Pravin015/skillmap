@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -41,11 +41,11 @@ const reviews = [
 ];
 
 const faqItems = [
-  { q: "Is SkillMap only for engineering graduates?", a: "Not at all. We cover paths for B.Com, BBA, B.Sc, BA, MBA, MCA and more. KPMG, Deloitte, EY and many others hire from non-engineering backgrounds." },
-  { q: "How does the AI know what skills I need?", a: "We've built a detailed database of skill requirements per company and role — sourced from job descriptions, interview reports, and hiring patterns. The AI cross-references this with your background." },
-  { q: "How long does it take to get hired?", a: "For fresher-friendly companies like TCS/Wipro, 4-8 weeks. For Google or Deloitte, 3-6 months. We give honest timelines, not false promises." },
-  { q: "Is it free?", a: "Yes. Jobs, AI advisor, mock interviews, competitions, and events are free. Premium features are Rs.299/mo with the Career Ready plan." },
-  { q: "What about fake job offers?", a: "Our Offer Verification tool checks 20 fraud parameters using AI. Upload any offer letter and get a trust score instantly. Report scams to cybercrime.gov.in." },
+  { q: "Is SkillMap only for engineering graduates?", a: "No — SkillMap works for any domain. Whether you're in engineering, MBA, commerce, or arts, you can tell us your target company and role and we'll build a roadmap specific to you." },
+  { q: "How does the AI know what skills I need?", a: "Our AI is trained on real hiring patterns from 15+ companies including TCS, Infosys, Google, KPMG, and Deloitte. It maps your profile against what each company actually looks for — not generic job descriptions." },
+  { q: "Is it really free?", a: "Yes. The AI advisor, company roadmaps, mock interview Q&A, job matching, and offer verification are all free. Career Ready (Rs.299/month) unlocks AI-powered live mock interviews and priority mentor booking." },
+  { q: "What if I get a fake job offer?", a: "Upload the offer letter to our Offer Verification tool. Our AI checks 20 fraud parameters — letterhead, email domain, salary realism, payment requests, and more — and gives you a trust score in seconds." },
+  { q: "How long does it take to get hired?", a: "It depends on your starting point. Students who follow their SkillMap roadmap consistently typically see interview calls within 4-8 weeks. The AI tracks your progress and adjusts your plan if you fall behind." },
 ];
 
 export default function Home() {
@@ -53,6 +53,45 @@ export default function Home() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [stat1, setStat1] = useState(0);
+  const [stat2, setStat2] = useState(0);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  // Scroll reveal observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => { entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("in-view"); }); },
+      { threshold: 0.15 }
+    );
+    document.querySelectorAll(".animate-on-scroll").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  // Stat counter animation
+  useEffect(() => {
+    if (!statsVisible) return;
+    const duration = 1500;
+    const steps = 30;
+    const interval = duration / steps;
+    let step = 0;
+    const timer = setInterval(() => {
+      step++;
+      const progress = step / steps;
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setStat1(Math.round(15 * eased));
+      setStat2(Math.round(100 * eased));
+      if (step >= steps) clearInterval(timer);
+    }, interval);
+    return () => clearInterval(timer);
+  }, [statsVisible]);
+
+  useEffect(() => {
+    if (!statsRef.current) return;
+    const observer = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStatsVisible(true); }, { threshold: 0.5 });
+    observer.observe(statsRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   function handleChatSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -68,19 +107,21 @@ export default function Home() {
       <section
         className="relative px-4 pt-28 pb-20 md:pt-36 md:pb-24 flex flex-col items-center justify-center text-center"
         style={{
-          background: "var(--color-bg-dark)",
+          background: "#0D2020",
           minHeight: "100vh",
         }}
       >
-        {/* Subtle radial glow */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 40%, rgba(10,191,188,0.08) 0%, transparent 70%)" }} />
+        {/* Background layers */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(10,191,188,0.07) 0%, transparent 70%)" }} />
+        <div className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none" style={{ background: "linear-gradient(90deg, transparent, rgba(10,191,188,0.3), transparent)" }} />
+        <div className="absolute inset-0 pointer-events-none hero-grid-bg" />
 
         <div className="relative max-w-[800px] mx-auto w-full">
           {/* Eyebrow */}
           <div
             className="animate-fade-up inline-flex items-center gap-2 mb-6 mx-auto"
             style={{
-              background: "rgba(10,191,188,0.1)",
+              background: "rgba(255,255,255,0.05)",
               border: "1px solid rgba(10,191,188,0.2)",
               borderRadius: 999,
               padding: "0.3rem 1rem",
@@ -97,17 +138,18 @@ export default function Home() {
 
           {/* Headline */}
           <h1
-            className={`${heading} animate-fade-up-1 font-[800] mb-6`}
+            className={heading}
             style={{
               fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
-              lineHeight: 1.05,
-              letterSpacing: "-0.03em",
-              color: "#FFFFFF",
+              lineHeight: 1.0,
+              letterSpacing: "-0.04em",
+              fontWeight: 900,
+              marginBottom: "1.5rem",
             }}
           >
-            Nobody Told You<br />
-            <span style={{ color: "var(--primary)" }}>What To Learn.</span><br />
-            We Will.
+            <span className="hero-line hero-line-1 overflow-hidden" style={{ color: "#FFFFFF" }}>Nobody Told You</span>
+            <span className="hero-line hero-line-2 overflow-hidden" style={{ color: "var(--primary)" }}>What To Learn.</span>
+            <span className="hero-line hero-line-3 overflow-hidden" style={{ color: "#FFFFFF" }}>We Will.</span>
           </h1>
 
           {/* Subheadline */}
@@ -133,16 +175,10 @@ export default function Home() {
                 if (el) el.focus();
                 else router.push(session ? "/chat" : "/auth/signup?role=STUDENT");
               }}
-              className={`${heading} font-semibold transition-all`}
+              className={`${heading} btn-primary animate-glow`}
               style={{
-                background: "var(--primary)",
-                color: "#fff",
                 padding: "0.9rem 2.2rem",
                 fontSize: "1rem",
-                borderRadius: "0.5rem",
-                border: "none",
-                cursor: "pointer",
-                boxShadow: "0 4px 20px rgba(10,191,188,0.35)",
               }}
             >
               Build My Roadmap — It&apos;s Free
@@ -227,24 +263,19 @@ export default function Home() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
+          <div ref={statsRef} className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
             {[
-              { num: "15+", label: "Companies Mapped", sub: "With real interview Q&A" },
-              { num: "100+", label: "Interview Questions", sub: "Curated by insiders" },
+              { num: statsVisible ? `${stat1}+` : "0", label: "Companies Mapped", sub: "With real interview Q&A" },
+              { num: statsVisible ? `${stat2}+` : "0", label: "Interview Questions", sub: "Curated by insiders" },
               { num: "Free", label: "To Start", sub: "No credit card needed" },
             ].map((s) => (
               <div
                 key={s.label}
-                className="text-center"
-                style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: "0.75rem",
-                  padding: "1.25rem 2rem",
-                }}
+                className="text-center card-dark"
+                style={{ padding: "1.25rem 2rem" }}
               >
-                <div className={`${heading}`} style={{ fontSize: "2rem", fontWeight: 800, color: "var(--primary)" }}>{s.num}</div>
-                <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "#FFFFFF", marginTop: "0.25rem" }}>{s.label}</div>
+                <div className={heading} style={{ fontSize: "2rem", fontWeight: 800, color: "#FFFFFF" }}>{s.num}</div>
+                <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "rgba(255,255,255,0.7)", marginTop: "0.25rem" }}>{s.label}</div>
                 <div style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)", marginTop: "0.2rem" }}>{s.sub}</div>
               </div>
             ))}
@@ -272,7 +303,7 @@ export default function Home() {
           {/* TIER 1 — Hero Features */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Feature 1: AI Career Advisor */}
-            <div style={{ background: "var(--color-bg-dark)", border: "1px solid rgba(10,191,188,0.2)", borderTop: "2px solid var(--primary)", borderRadius: "1rem", padding: "2.5rem" }}>
+            <div className="card-dark animate-on-scroll" style={{ borderTop: "2px solid var(--primary)", padding: "2.5rem" }}>
               <div className="flex items-center gap-3 mb-4">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h6M7 16h8"/></svg>
                 <span style={{ background: "rgba(10,191,188,0.12)", border: "1px solid rgba(10,191,188,0.25)", borderRadius: 999, padding: "0.2rem 0.7rem", fontSize: "0.7rem", fontWeight: 600, color: "var(--primary)" }}>Powered by Claude AI</span>
@@ -297,7 +328,7 @@ export default function Home() {
             </div>
 
             {/* Feature 2: Mock Interviews */}
-            <div style={{ background: "var(--color-bg-dark)", border: "1px solid rgba(10,191,188,0.2)", borderTop: "2px solid var(--accent)", borderRadius: "1rem", padding: "2.5rem" }}>
+            <div className="card-dark animate-on-scroll" style={{ borderTop: "2px solid var(--accent)", padding: "2.5rem" }}>
               <div className="flex items-center gap-3 mb-4">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
                 <span style={{ background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.25)", borderRadius: 999, padding: "0.2rem 0.7rem", fontSize: "0.7rem", fontWeight: 600, color: "var(--accent)" }}>15 Companies · 3 Modes</span>
@@ -331,7 +362,7 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Job Matching */}
             <div style={{ background: "var(--color-bg-subtle)", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "1.5rem" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="mb-3"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A6363" strokeWidth="1.5" className="mb-3"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
               <h3 className={heading} style={{ fontSize: "1rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.4rem" }}>Jobs That Match You</h3>
               <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", lineHeight: 1.6, marginBottom: "0.75rem" }}>AI calculates your skill-match percentage for every job. See only roles relevant to your domain — no spam, no noise.</p>
               <span style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: 600 }}>Skill match % · One-click apply</span>
@@ -339,7 +370,7 @@ export default function Home() {
 
             {/* Mentor Sessions */}
             <div style={{ background: "var(--color-bg-subtle)", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "1.5rem" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="mb-3"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A6363" strokeWidth="1.5" className="mb-3"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
               <h3 className={heading} style={{ fontSize: "1rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.4rem" }}>Talk to Someone Who&apos;s Been There</h3>
               <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", lineHeight: 1.6, marginBottom: "0.75rem" }}>Book 1-on-1 sessions with verified professionals from your dream companies. Free or paid from Rs.300.</p>
               <span style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: 600 }}>Verified mentors · Rated &amp; reviewed</span>
@@ -355,7 +386,7 @@ export default function Home() {
 
             {/* Lab Assessments */}
             <div style={{ background: "var(--color-bg-subtle)", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "1.5rem" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="mb-3"><path d="M9 3h6v5l3 9H6l3-9V3z"/><path d="M6 17h12"/><path d="M10 3v5"/><path d="M14 3v5"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A6363" strokeWidth="1.5" className="mb-3"><path d="M9 3h6v5l3 9H6l3-9V3z"/><path d="M6 17h12"/><path d="M10 3v5"/><path d="M14 3v5"/></svg>
               <h3 className={heading} style={{ fontSize: "1rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.4rem" }}>Prove Your Skills</h3>
               <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", lineHeight: 1.6, marginBottom: "0.75rem" }}>Timed, proctored MCQ labs with webcam verification. Results employers actually trust — not self-reported skills.</p>
               <span style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: 600 }}>Proctored · Auto-graded · Shareable</span>
@@ -365,7 +396,7 @@ export default function Home() {
       </section>
 
       {/* ═══ HOW IT WORKS ═══ */}
-      <section id="how-section" style={{ background: "var(--color-bg-dark)", paddingTop: "6rem", paddingBottom: "6rem" }}>
+      <section id="how-section" style={{ background: "#0D2020", paddingTop: "6rem", paddingBottom: "6rem" }}>
         <div className="mx-auto px-4" style={{ maxWidth: 1000 }}>
           {/* Header */}
           <div className="text-center mb-14">
@@ -392,8 +423,8 @@ export default function Home() {
                     className="mx-auto flex items-center justify-center"
                     style={{
                       width: "3rem", height: "3rem", borderRadius: "50%",
-                      background: "rgba(10,191,188,0.1)",
-                      border: "1.5px solid var(--primary)",
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1.5px solid rgba(255,255,255,0.2)",
                     }}
                   >
                     <span className={heading} style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--primary)" }}>{step.num}</span>
@@ -442,7 +473,7 @@ export default function Home() {
           <div className="hidden md:block mx-auto overflow-hidden" style={{ maxWidth: 900, border: "1px solid var(--color-border)", borderRadius: "1rem" }}>
             <table className="w-full" style={{ borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ background: "var(--color-bg-dark)" }}>
+                <tr style={{ background: "#0D2020" }}>
                   <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "#fff", fontSize: "0.85rem", fontWeight: 600, width: "35%" }}>Feature</th>
                   <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--primary)", fontSize: "0.85rem", fontWeight: 700, width: "25%" }}>SkillMap</th>
                   <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--color-text-secondary)", fontSize: "0.85rem", fontWeight: 500 }}>Naukri / LinkedIn</th>
@@ -513,7 +544,7 @@ export default function Home() {
           </div>
 
           {/* Featured Quote */}
-          <div className="mb-6" style={{ background: "var(--color-bg-dark)", border: "1px solid rgba(10,191,188,0.15)", borderRadius: "1rem", padding: "3rem", maxWidth: 750, margin: "0 auto 1.5rem" }}>
+          <div className="mb-6" style={{ background: "#0D2020", border: "1px solid rgba(10,191,188,0.15)", borderRadius: "1rem", padding: "3rem", maxWidth: 750, margin: "0 auto 1.5rem" }}>
             <div style={{ color: "#F59E0B", fontSize: "1rem", marginBottom: "0.75rem" }}>★★★★★</div>
             <div style={{ color: "var(--primary)", fontFamily: "Georgia, serif", fontSize: "5rem", lineHeight: 0, marginBottom: "1.5rem" }}>&ldquo;</div>
             <p className={heading} style={{ color: "#fff", fontSize: "1.3rem", fontWeight: 500, lineHeight: 1.6, marginBottom: "1.5rem" }}>
@@ -556,23 +587,25 @@ export default function Home() {
       </section>
 
       {/* ═══ FAQ ═══ */}
-      <section className="px-4 py-16" style={{ background: "var(--surface-alt)" }}>
+      <section className="px-4" style={{ background: "var(--surface-alt)", paddingTop: "6rem", paddingBottom: "6rem" }}>
         <div className="max-w-2xl mx-auto">
-          <h2 className={`${heading} font-extrabold text-2xl text-center mb-8`} style={{ color: "var(--ink)" }}>
-            Frequently Asked Questions
-          </h2>
+          <div className="text-center mb-10">
+            <div className="section-eyebrow justify-center">FAQ</div>
+            <h2 className={heading} style={{ color: "var(--ink)" }}>Questions We Get A Lot.</h2>
+          </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             {faqItems.map((item, i) => (
-              <div key={i} className={`rounded-xl border overflow-hidden ${openFaq === i ? "faq-open" : ""}`} style={{ borderColor: openFaq === i ? "var(--primary)" : "var(--border)", background: "white" }}>
+              <div key={i} className={`animate-on-scroll overflow-hidden ${openFaq === i ? "faq-open" : ""}`} style={{ background: "white", border: `1px solid ${openFaq === i ? "var(--primary)" : "var(--color-border)"}`, borderRadius: "0.75rem" }}>
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex justify-between items-center p-4 text-left bg-transparent border-none cursor-pointer"
+                  className="w-full flex justify-between items-center text-left bg-transparent border-none cursor-pointer"
+                  style={{ padding: "1.25rem 1.5rem" }}
                 >
-                  <span className="text-sm font-semibold pr-4" style={{ color: "var(--ink)" }}>{item.q}</span>
-                  <span className="text-lg shrink-0 faq-icon transition-transform duration-300" style={{ color: openFaq === i ? "var(--primary)" : "var(--muted)" }}>+</span>
+                  <span style={{ fontWeight: 600, color: "var(--color-text-primary)", fontSize: "1rem", paddingRight: "1rem" }}>{item.q}</span>
+                  <span className="shrink-0 faq-icon transition-transform duration-300" style={{ color: openFaq === i ? "var(--primary)" : "var(--muted)", fontSize: "1.2rem" }}>+</span>
                 </button>
-                <div className="faq-answer px-4 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
+                <div className="faq-answer" style={{ padding: "0 1.5rem", color: "var(--color-text-secondary)", fontSize: "0.9rem", lineHeight: 1.7 }}>
                   {item.a}
                 </div>
               </div>
@@ -584,7 +617,7 @@ export default function Home() {
       {/* ═══ FINAL CTA ═══ */}
       <section
         className="relative px-4 text-center"
-        style={{ background: "var(--color-bg-dark)", paddingTop: "7rem", paddingBottom: "7rem" }}
+        style={{ background: "#0D2020", paddingTop: "7rem", paddingBottom: "7rem" }}
       >
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(10,191,188,0.12) 0%, transparent 70%)" }} />
 
@@ -593,7 +626,7 @@ export default function Home() {
           <div
             className="inline-flex items-center mb-6"
             style={{
-              background: "rgba(10,191,188,0.1)",
+              background: "rgba(255,255,255,0.05)",
               border: "1px solid rgba(10,191,188,0.2)",
               borderRadius: 999,
               padding: "0.3rem 1rem",

@@ -63,7 +63,7 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col font-[family-name:var(--font-body)] text-[var(--color-text-primary)]" style={{ background: "var(--color-bg)" }}>
         <Providers>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pt-16">{children}</main>
           <Footer />
         </Providers>
         <Script id="sw-register" strategy="afterInteractive">{`
