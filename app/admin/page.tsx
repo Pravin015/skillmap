@@ -18,6 +18,10 @@ import BlogTab from "@/components/admin-dashboard/BlogTab";
 import FormsTab from "@/components/admin-dashboard/FormsTab";
 import PlatformSettings from "@/components/admin-dashboard/PlatformSettings";
 import NTTUsersTab from "@/components/admin-dashboard/NTTUsersTab";
+import OfferChecksTab from "@/components/admin-dashboard/OfferChecksTab";
+import MockInterviewStats from "@/components/admin-dashboard/MockInterviewStats";
+import PaymentsTab from "@/components/admin-dashboard/PaymentsTab";
+import BulkNotificationsTab from "@/components/admin-dashboard/BulkNotificationsTab";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -64,9 +68,23 @@ const sidebarCategories: SidebarCategory[] = [
     ],
   },
   {
+    label: "Analytics & Reports",
+    items: [
+      { id: "offer-checks", label: "Offer Checks", icon: "🛡️" },
+      { id: "mock-stats", label: "Mock Interviews", icon: "🎤" },
+      { id: "payments", label: "Payments", icon: "💰" },
+    ],
+  },
+  {
     label: "Approvals & Requests",
     items: [
       { id: "forms", label: "Form Submissions", icon: "📋" },
+    ],
+  },
+  {
+    label: "Communication",
+    items: [
+      { id: "notifications", label: "Send Notification", icon: "📢" },
     ],
   },
   {
@@ -118,16 +136,20 @@ export default function AdminPage() {
       case "users": return <UserManagement users={users} onRefresh={fetchUsers} />;
       case "add-user": return <AddUserTab onRefresh={fetchUsers} />;
       case "companies": return <CompaniesTab />;
-      case "hrs": return <HRsTab users={users} />;
+      case "hrs": return <HRsTab users={users} onRefresh={fetchUsers} />;
       case "mentors": return <MentorsTab />;
-      case "students": return <StudentsTab users={users} />;
-      case "institutions": return <InstitutionsTab users={users} />;
+      case "students": return <StudentsTab users={users} onRefresh={fetchUsers} />;
+      case "institutions": return <InstitutionsTab users={users} onRefresh={fetchUsers} />;
       case "jobs": return <JobPostsTab />;
       case "events": return <EventsTab />;
       case "labs": return <LabsTab />;
       case "blog": return <BlogTab />;
       case "forms": return <FormsTab />;
       case "ntt-users": return <NTTUsersTab users={users} />;
+      case "offer-checks": return <OfferChecksTab />;
+      case "mock-stats": return <MockInterviewStats />;
+      case "payments": return <PaymentsTab />;
+      case "notifications": return <BulkNotificationsTab />;
       case "settings": return <PlatformSettings />;
       default: return <AdminOverview stats={stats} onNavigate={setActiveTab} />;
     }

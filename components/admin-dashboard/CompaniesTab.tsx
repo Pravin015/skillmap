@@ -8,29 +8,60 @@ interface Company { id: string; name: string; email: string; organisation: strin
 export default function CompaniesTab() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
+  const [msg, setMsg] = useState("");
+  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    fetch("/api/admin/companies").then((r) => r.json()).then((d) => { setCompanies(d.companies || []); setLoading(false); });
-  }, []);
+  useEffect(() => { fetchCompanies(); }, []);
+
+  async function fetchCompanies() {
+    const res = await fetch("/api/admin/companies");
+    const d = await res.json();
+    setCompanies(d.companies || []);
+    setLoading(false);
+  }
+
+  async function resetPassword(userId: string, name: string) {
+    if (!confirm(`Reset password for ${name}?`)) return;
+    const res = await fetch("/api/admin/users", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId, action: "reset-password" }) });
+    const data = await res.json();
+    if (res.ok) setMsg(`New password for ${name}: ${data.newPassword}`);
+    setTimeout(() => setMsg(""), 10000);
+  }
+
+  async function deleteCompany(userId: string, name: string) {
+    if (!confirm(`Delete company ${name}? All their HR accounts and job posts will also be removed. This cannot be undone.`)) return;
+    await fetch("/api/admin/users", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId }) });
+    fetchCompanies();
+  }
+
+  const filtered = companies.filter((c) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (c.organisation || c.name).toLowerCase().includes(q) || c.email.toLowerCase().includes(q);
+  });
 
   if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className={`${syne} font-bold text-xl`}>Registered Companies</h2>
-        <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{companies.length} organisations on the platform</p>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 className={`${syne} font-bold text-xl`}>Registered Companies</h2>
+          <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{companies.length} organisations on the platform</p>
+        </div>
+        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search companies..." className="rounded-xl border px-3 py-2 text-xs outline-none w-48" style={{ borderColor: "var(--border)" }} />
       </div>
 
-      {companies.length === 0 ? (
+      {msg && <div className="rounded-xl p-3 text-xs font-mono" style={{ background: "rgba(232,255,71,0.15)", color: "var(--ink)" }}>{msg} <button onClick={() => setMsg("")} className="ml-2 underline text-[10px]" style={{ color: "var(--muted)" }}>dismiss</button></div>}
+
+      {filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-4xl mb-3">🏢</div>
-          <p className={`${syne} font-bold text-base mb-1`}>No companies registered yet</p>
-          <p className="text-sm" style={{ color: "var(--muted)" }}>Companies will appear here after onboarding</p>
+          <p className={`${syne} font-bold text-base mb-1`}>{search ? "No companies match" : "No companies registered yet"}</p>
         </div>
       ) : (
-        <div className="grid gap-4">
-          {companies.map((c) => (
+        <div className="grid gap-3">
+          {filtered.map((c) => (
             <div key={c.id} className="rounded-2xl border bg-white p-5 flex items-center gap-4" style={{ borderColor: "var(--border)" }}>
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${syne} font-extrabold text-lg text-white shrink-0`} style={{ background: "var(--ink)" }}>
                 {(c.organisation || c.name).charAt(0)}
@@ -46,7 +77,10 @@ export default function CompaniesTab() {
               <div className="text-xs shrink-0 hidden md:block" style={{ color: "var(--muted)" }}>
                 Joined {new Date(c.createdAt).toLocaleDateString()}
               </div>
-              <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700 shrink-0">Active</span>
+              <div className="flex gap-1.5 shrink-0">
+                <button onClick={() => resetPassword(c.id, c.organisation || c.name)} className="text-[10px] px-2 py-1 rounded-lg border hover:bg-gray-100" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Reset Pwd</button>
+                <button onClick={() => deleteCompany(c.id, c.organisation || c.name)} className="text-[10px] px-2 py-1 rounded-lg border hover:bg-red-50" style={{ borderColor: "var(--border)", color: "#ef4444" }}>Delete</button>
+              </div>
             </div>
           ))}
         </div>
