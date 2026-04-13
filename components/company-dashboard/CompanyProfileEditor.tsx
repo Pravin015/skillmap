@@ -59,7 +59,7 @@ export default function CompanyProfileEditor() {
     setTimeout(() => setMessage(""), 5000);
   }
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-3 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-3 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">
@@ -69,14 +69,14 @@ export default function CompanyProfileEditor() {
           <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>This is your public company page visible to candidates</p>
         </div>
         {profileSlug && (
-          <a href={`/company/${profileSlug}`} target="_blank" className={`${syne} text-xs font-bold px-3 py-1.5 rounded-lg no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+          <a href={`/company/${profileSlug}`} target="_blank" className={`${syne} text-xs font-bold px-3 py-1.5 rounded-lg no-underline`} style={{ background: "var(--primary)", color: "white" }}>
             View Public Page ↗
           </a>
         )}
       </div>
 
       {message && (
-        <div className="rounded-xl p-3 text-sm" style={{ background: message.includes("Failed") ? "#fef2f2" : "rgba(232,255,71,0.15)", color: message.includes("Failed") ? "#ef4444" : "var(--ink)" }}>
+        <div className="rounded-xl p-3 text-sm" style={{ background: message.includes("Failed") ? "#fef2f2" : "var(--primary-light)", color: message.includes("Failed") ? "#ef4444" : "var(--ink)" }}>
           {message}
         </div>
       )}
@@ -133,7 +133,7 @@ export default function CompanyProfileEditor() {
           <textarea value={culture} onChange={(e) => setCulture(e.target.value)} rows={3} placeholder="Describe your work environment, values, benefits, and what it's like working at your company..." className="w-full rounded-xl border px-4 py-2.5 text-sm outline-none" style={{ borderColor: "var(--border)" }} />
         </div>
 
-        <button type="submit" disabled={saving} className={`${syne} rounded-xl px-6 py-2.5 text-sm font-bold transition-all disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+        <button type="submit" disabled={saving} className={`${syne} rounded-xl px-6 py-2.5 text-sm font-bold transition-all disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
           {saving ? "Saving..." : "Save Profile"}
         </button>
       </form>

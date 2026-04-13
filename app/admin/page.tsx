@@ -129,7 +129,7 @@ export default function AdminPage() {
   }, [status, userRole, router, fetchUsers]);
 
   if (status === "loading" || loading) {
-    return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+    return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
   }
 
   function renderTab() {
@@ -182,8 +182,8 @@ export default function AdminPage() {
                     onClick={() => setActiveTab(item.id)}
                     className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-[0.8rem] transition-colors"
                     style={{
-                      background: activeTab === item.id ? "var(--ink)" : "transparent",
-                      color: activeTab === item.id ? "var(--accent)" : "var(--muted)",
+                      background: activeTab === item.id ? "var(--primary-light)" : "transparent",
+                      color: activeTab === item.id ? "var(--primary)" : "var(--muted)",
                       fontWeight: activeTab === item.id ? 700 : 400,
                     }}
                   >
@@ -210,8 +210,8 @@ export default function AdminPage() {
             onClick={() => setActiveTab(item.id)}
             className={`shrink-0 flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-lg text-[0.5rem] transition-colors ${syne}`}
             style={{
-              background: activeTab === item.id ? "var(--ink)" : "transparent",
-              color: activeTab === item.id ? "var(--accent)" : "var(--muted)",
+              background: activeTab === item.id ? "var(--primary-light)" : "transparent",
+              color: activeTab === item.id ? "var(--primary)" : "var(--muted)",
             }}
           >
             <span className="text-sm">{item.icon}</span>

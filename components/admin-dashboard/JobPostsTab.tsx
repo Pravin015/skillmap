@@ -51,7 +51,7 @@ export default function JobPostsTab() {
 
   const filtered = filter === "ALL" ? jobs : jobs.filter((j) => j.status === filter);
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">
@@ -62,7 +62,7 @@ export default function JobPostsTab() {
 
       <div className="flex gap-2 flex-wrap">
         {["ALL", "ACTIVE", "CLOSED", "DRAFT", "UNDER_REVIEW"].map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === f ? "var(--ink)" : "white", color: filter === f ? "var(--accent)" : "var(--muted)", border: filter === f ? "none" : "1px solid var(--border)" }}>
+          <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === f ? "var(--ink)" : "white", color: filter === f ? "var(--primary)" : "var(--muted)", border: filter === f ? "none" : "1px solid var(--border)" }}>
             {f === "ALL" ? "All" : f.replace("_", " ")} ({f === "ALL" ? jobs.length : jobs.filter((j) => j.status === f).length})
           </button>
         ))}

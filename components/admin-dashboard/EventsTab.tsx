@@ -44,17 +44,17 @@ export default function EventsTab() {
 
   const filtered = filter === "ALL" ? events : events.filter((e) => e.status === filter);
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between"><div><h2 className={`${syne} font-bold text-xl`}>Events Management</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{events.length} events · {events.filter((e) => e.status === "PENDING_APPROVAL").length} pending approval</p></div>
-        <Link href="/events/create" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Create</Link>
+        <Link href="/events/create" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>+ Create</Link>
       </div>
 
       <div className="flex gap-2 flex-wrap">
         {["ALL", "PENDING_APPROVAL", "APPROVED", "REJECTED", "CANCELLED"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--accent)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
+          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
             {s === "ALL" ? "All" : s.replace("_", " ")} ({s === "ALL" ? events.length : events.filter((e) => e.status === s).length})
           </button>
         ))}
@@ -73,11 +73,11 @@ export default function EventsTab() {
                 </div>
                 <div className="flex gap-2 shrink-0">
                   {e.status === "PENDING_APPROVAL" && (
-                    <><button onClick={() => handleAction(e.id, "approve")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Approve</button>
+                    <><button onClick={() => handleAction(e.id, "approve")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Approve</button>
                     <button onClick={() => handleAction(e.id, "reject", "Does not meet guidelines")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Reject</button></>
                   )}
                   {e.status === "APPROVED" && <button onClick={() => handleAction(e.id, "cancel")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Cancel</button>}
-                  <button onClick={() => showAttendees(e.id)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Attendees</button>
+                  <button onClick={() => showAttendees(e.id)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Attendees</button>
                   <Link href={`/events/${e.id}`} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border no-underline hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>View</Link>
                 </div>
               </div>

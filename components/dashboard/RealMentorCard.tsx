@@ -68,7 +68,7 @@ export default function RealMentorCard() {
                   <span>{m.compensation === "VOLUNTEER" ? "Free" : m.sessionRate ? `₹${m.sessionRate}` : "Paid"}</span>
                 </div>
               </div>
-              <span className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.65rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Book</span>
+              <span className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.65rem]`} style={{ background: "var(--primary)", color: "white" }}>Book</span>
             </Link>
           ))}
           {mentors.length > 5 && (

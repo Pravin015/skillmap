@@ -54,14 +54,14 @@ export default function AddUserTab({ onRefresh }: { onRefresh: () => void }) {
 
       <div className="flex gap-2 flex-wrap">
         {["STUDENT", "HR", "ORG", "INSTITUTION", "MENTOR", "ADMIN"].map((r) => (
-          <button key={r} onClick={() => setRole(r)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: role === r ? "var(--ink)" : "white", color: role === r ? "var(--accent)" : "var(--muted)", border: role === r ? "none" : "1px solid var(--border)" }}>{r}</button>
+          <button key={r} onClick={() => setRole(r)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: role === r ? "var(--ink)" : "white", color: role === r ? "var(--primary)" : "var(--muted)", border: role === r ? "none" : "1px solid var(--border)" }}>{r}</button>
         ))}
       </div>
 
       <form onSubmit={handleSubmit} className="rounded-2xl border bg-white p-6 space-y-5" style={{ borderColor: "var(--border)" }}>
         {message && <div className={`rounded-xl p-3 text-sm ${message.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>{message.text}</div>}
         {tempPwd && (
-          <div className="rounded-xl p-4 border" style={{ background: "rgba(232,255,71,0.1)", borderColor: "rgba(232,255,71,0.3)" }}>
+          <div className="rounded-xl p-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(232,255,71,0.3)" }}>
             <div className={`${syne} font-bold text-sm mb-1`}>Temporary Password</div>
             <code className="text-base font-mono font-bold select-all">{tempPwd}</code>
             <p className="text-xs mt-2" style={{ color: "var(--muted)" }}>Share with the user. Shown only once.</p>
@@ -103,7 +103,7 @@ export default function AddUserTab({ onRefresh }: { onRefresh: () => void }) {
         )}
 
         <p className="text-xs" style={{ color: "var(--muted)" }}>Creating as: <strong className={syne}>{role}</strong>. A temporary password will be auto-generated.</p>
-        <button type="submit" disabled={saving} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{saving ? "Creating..." : `Create ${role} Account`}</button>
+        <button type="submit" disabled={saving} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Creating..." : `Create ${role} Account`}</button>
       </form>
     </div>
   );

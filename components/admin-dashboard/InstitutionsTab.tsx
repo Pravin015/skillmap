@@ -40,7 +40,7 @@ export default function InstitutionsTab({ users, onRefresh }: { users: User[]; o
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search institutions..." className="rounded-xl border px-3 py-2 text-xs outline-none w-48" style={{ borderColor: "var(--border)" }} />
       </div>
 
-      {msg && <div className="rounded-xl p-3 text-xs font-mono" style={{ background: "rgba(232,255,71,0.15)", color: "var(--ink)" }}>{msg} <button onClick={() => setMsg("")} className="ml-2 underline text-[10px]" style={{ color: "var(--muted)" }}>dismiss</button></div>}
+      {msg && <div className="rounded-xl p-3 text-xs font-mono" style={{ background: "var(--primary-light)", color: "var(--ink)" }}>{msg} <button onClick={() => setMsg("")} className="ml-2 underline text-[10px]" style={{ color: "var(--muted)" }}>dismiss</button></div>}
 
       {filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>

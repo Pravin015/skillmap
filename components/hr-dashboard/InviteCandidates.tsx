@@ -12,7 +12,7 @@ export default function InviteCandidates() {
 
   useEffect(() => { fetch("/api/invites").then((r) => r.json()).then((d) => setInvites(d.invites || [])).finally(() => setLoading(false)); }, []);
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">

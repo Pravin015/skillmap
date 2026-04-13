@@ -23,25 +23,25 @@ export default function BlogTab() {
   const filtered = filter === "ALL" ? posts : posts.filter((p) => p.status === filter);
   const pending = posts.filter((p) => p.status === "PENDING_REVIEW").length;
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div><h2 className={`${syne} font-bold text-xl`}>Blog Management</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{posts.length} posts · {pending} pending review</p></div>
-        <Link href="/blog/write" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Write Post</Link>
+        <Link href="/blog/write" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>+ Write Post</Link>
       </div>
 
       <div className="flex gap-2 flex-wrap">
         {["ALL", "PENDING_REVIEW", "PUBLISHED", "DRAFT", "REJECTED"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--accent)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
+          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
             {s === "ALL" ? "All" : s.replace("_", " ")} ({s === "ALL" ? posts.length : posts.filter((p) => p.status === s).length})
           </button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}><div className="text-4xl mb-3">📝</div><p className={`${syne} font-bold text-base`}>No posts</p><Link href="/blog/write" className={`inline-block mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Write first post</Link></div>
+        <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}><div className="text-4xl mb-3">📝</div><p className={`${syne} font-bold text-base`}>No posts</p><Link href="/blog/write" className={`inline-block mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Write first post</Link></div>
       ) : (
         <div className="space-y-3">
           {filtered.map((p) => (
@@ -52,7 +52,7 @@ export default function BlogTab() {
               </div>
               <div className="flex gap-2 shrink-0">
                 {p.status === "PENDING_REVIEW" && (
-                  <><button onClick={() => handleAction(p.slug, "approve")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Publish</button>
+                  <><button onClick={() => handleAction(p.slug, "approve")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Publish</button>
                   <button onClick={() => handleAction(p.slug, "reject")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Reject</button></>
                 )}
                 <Link href={`/blog/${p.slug}`} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border no-underline hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>View</Link>

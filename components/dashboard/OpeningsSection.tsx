@@ -16,7 +16,7 @@ export default function OpeningsSection({ jobs }: { jobs: Job[] }) {
           </p>
         </div>
         {jobs.length > 0 && (
-          <Link href="/companies" className={`text-xs ${syne} font-bold no-underline px-2.5 py-1 rounded-lg`} style={{ background: "var(--ink)", color: "var(--accent)" }}>View all</Link>
+          <Link href="/companies" className={`text-xs ${syne} font-bold no-underline px-2.5 py-1 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>View all</Link>
         )}
       </div>
 
@@ -25,7 +25,7 @@ export default function OpeningsSection({ jobs }: { jobs: Job[] }) {
           <div className="text-3xl mb-3">💼</div>
           <p className={`${syne} font-bold text-sm mb-1`}>No openings yet</p>
           <p className="text-xs" style={{ color: "var(--muted)" }}>Complete your onboarding to see matched roles from your dream companies</p>
-          <Link href="/onboarding" className={`inline-block mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Setup preferences</Link>
+          <Link href="/onboarding" className={`inline-block mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Setup preferences</Link>
         </div>
       ) : (
         <div className="space-y-3">
@@ -43,7 +43,7 @@ export default function OpeningsSection({ jobs }: { jobs: Job[] }) {
                   <div className="text-[0.65rem]" style={{ color: "var(--muted)" }}>Deadline</div>
                   <div className={`text-xs ${syne} font-bold`}>{job.deadline}</div>
                 </div>
-                <Link href={`/chat?job=${job.id}`} className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Prep</Link>
+                <Link href={`/chat?job=${job.id}`} className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Prep</Link>
               </div>
             );
           })}

@@ -264,7 +264,7 @@ export default function ProctoringGuard({
           <button
             onClick={startProctoring}
             className={`w-full rounded-xl py-3 text-sm font-bold transition-all ${syne}`}
-            style={{ background: "var(--ink)", color: "var(--accent)" }}
+            style={{ background: "var(--primary)", color: "white" }}
           >
             I Understand — Start {sessionType === "LAB" ? "Assessment" : "Interview"}
           </button>
@@ -307,7 +307,7 @@ export default function ProctoringGuard({
             <button
               onClick={() => document.documentElement.requestFullscreen().catch(() => {})}
               className={`${syne} rounded-xl px-6 py-3 text-sm font-bold`}
-              style={{ background: "var(--accent)", color: "var(--ink)" }}
+              style={{ background: "white", color: "var(--primary)" }}
             >
               Return to Fullscreen
             </button>

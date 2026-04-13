@@ -148,7 +148,7 @@ export default function NTTUsersTab({ users }: { users: User[] }) {
               className="rounded-full px-3 py-1.5 text-xs font-medium border transition-all"
               style={{
                 background: roleFilter === role ? "var(--ink)" : "white",
-                color: roleFilter === role ? "var(--accent)" : "var(--ink)",
+                color: roleFilter === role ? "var(--primary)" : "var(--ink)",
                 borderColor: roleFilter === role ? "var(--ink)" : "var(--border)",
               }}
             >

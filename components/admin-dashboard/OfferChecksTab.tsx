@@ -24,7 +24,7 @@ export default function OfferChecksTab() {
   const filtered = filter === "ALL" ? checks : checks.filter((c) => c.verdict === filter);
   const scamCount = checks.filter((c) => c.verdict === "DEFINITE_SCAM" || c.verdict === "LIKELY_FAKE").length;
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-4">
@@ -51,7 +51,7 @@ export default function OfferChecksTab() {
       {/* Filter */}
       <div className="flex gap-2">
         {["ALL", "LIKELY_GENUINE", "SUSPICIOUS", "LIKELY_FAKE", "DEFINITE_SCAM"].map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className="rounded-full px-3 py-1.5 text-[10px] font-medium border transition-all" style={{ background: filter === f ? "var(--ink)" : "white", color: filter === f ? "var(--accent)" : "var(--muted)", borderColor: filter === f ? "var(--ink)" : "var(--border)" }}>
+          <button key={f} onClick={() => setFilter(f)} className="rounded-full px-3 py-1.5 text-[10px] font-medium border transition-all" style={{ background: filter === f ? "var(--ink)" : "white", color: filter === f ? "var(--primary)" : "var(--muted)", borderColor: filter === f ? "var(--ink)" : "var(--border)" }}>
             {f === "ALL" ? `All (${checks.length})` : `${f.replace("_", " ")} (${checks.filter((c) => c.verdict === f).length})`}
           </button>
         ))}

@@ -61,21 +61,21 @@ export default function ResumeCard() {
 
       {resumeName ? (
         <div className="rounded-xl border p-4 flex items-center gap-3" style={{ borderColor: "var(--border)", background: "rgba(232,255,71,0.05)" }}>
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg" style={{ background: "var(--ink)", color: "var(--accent)" }}>📄</div>
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg" style={{ background: "var(--primary)", color: "white" }}>📄</div>
           <div className="flex-1 min-w-0">
             <div className={`${syne} font-bold text-sm truncate`}>{resumeName}</div>
             <div className="text-xs" style={{ color: "var(--muted)" }}>Uploaded successfully</div>
           </div>
           <div className="flex gap-2 shrink-0">
             <button onClick={viewResume} className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-gray-100" style={{ color: "var(--ink)" }}>View</button>
-            <button onClick={() => fileRef.current?.click()} className={`text-xs ${syne} font-bold px-3 py-1.5 rounded-lg`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Update</button>
+            <button onClick={() => fileRef.current?.click()} className={`text-xs ${syne} font-bold px-3 py-1.5 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>Update</button>
             <button onClick={removeResume} className="text-xs font-medium px-2 py-1.5 rounded-lg text-red-500 hover:bg-red-50">✕</button>
           </div>
         </div>
       ) : (
         <div
-          className={`rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${dragging ? "border-[var(--accent)] bg-[rgba(232,255,71,0.05)]" : "hover:border-gray-400"}`}
-          style={{ borderColor: dragging ? "var(--accent)" : "var(--border)" }}
+          className={`rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${dragging ? "border-[var(--primary)] bg-[rgba(232,255,71,0.05)]" : "hover:border-gray-400"}`}
+          style={{ borderColor: dragging ? "var(--primary)" : "var(--border)" }}
           onClick={() => fileRef.current?.click()}
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
           onDragLeave={() => setDragging(false)}

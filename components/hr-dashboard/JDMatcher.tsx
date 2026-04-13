@@ -70,7 +70,7 @@ export default function JDMatcher() {
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
         <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Paste Job Description *</label>
         <textarea value={jd} onChange={(e) => setJd(e.target.value)} placeholder="Paste the full job description here — include role, skills, experience requirements, responsibilities..." rows={6} className="w-full rounded-xl border px-4 py-3 text-sm outline-none resize-none focus:border-[var(--ink)]" style={{ borderColor: "var(--border)" }} />
-        <button onClick={handleMatch} disabled={loading || jd.length < 20} className={`mt-3 px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+        <button onClick={handleMatch} disabled={loading || jd.length < 20} className={`mt-3 px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
           {loading ? "🤖 AI is matching..." : "Find matching candidates →"}
         </button>
       </div>
@@ -83,14 +83,14 @@ export default function JDMatcher() {
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
               <button onClick={selectAll} className={`px-3 py-1.5 rounded-lg text-xs font-medium border`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>{selected.size === candidates.length ? "Deselect all" : `Select all (${candidates.length})`}</button>
-              {selected.size > 0 && <span className={`${syne} text-xs font-bold`} style={{ color: "var(--accent)", background: "var(--ink)", padding: "4px 10px", borderRadius: "8px" }}>{selected.size} selected</span>}
+              {selected.size > 0 && <span className={`${syne} text-xs font-bold`} style={{ color: "var(--primary)", background: "var(--ink)", padding: "4px 10px", borderRadius: "8px" }}>{selected.size} selected</span>}
             </div>
           </div>
 
           {/* Results */}
           <div className="space-y-3">
             {candidates.map((c) => (
-              <div key={c.profileNumber} className={`rounded-2xl border bg-white p-5 transition-all ${selected.has(c.profileNumber) ? "ring-2 ring-[var(--accent)]" : ""}`} style={{ borderColor: selected.has(c.profileNumber) ? "var(--ink)" : "var(--border)" }}>
+              <div key={c.profileNumber} className={`rounded-2xl border bg-white p-5 transition-all ${selected.has(c.profileNumber) ? "ring-2 ring-[var(--primary)]" : ""}`} style={{ borderColor: selected.has(c.profileNumber) ? "var(--ink)" : "var(--border)" }}>
                 <div className="flex items-center gap-4">
                   <input type="checkbox" checked={selected.has(c.profileNumber)} onChange={() => toggleSelect(c.profileNumber)} className="w-4 h-4 accent-[var(--ink)] shrink-0" />
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${syne} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>{c.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}</div>
@@ -104,7 +104,7 @@ export default function JDMatcher() {
                     <div className={`${syne} text-xl font-extrabold`} style={{ color: scoreColor(c.aiMatchPercent) }}>{c.aiMatchPercent}%</div>
                     <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>AI Match</div>
                   </div>
-                  <Link href={`/profile/${c.profileNumber}`} target="_blank" className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>View ↗</Link>
+                  <Link href={`/profile/${c.profileNumber}`} target="_blank" className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--primary)", color: "white" }}>View ↗</Link>
                 </div>
               </div>
             ))}
@@ -124,7 +124,7 @@ export default function JDMatcher() {
                     <input value={inviteMsg} onChange={(e) => setInviteMsg(e.target.value)} placeholder="Message (optional)" className="flex-1 rounded-lg px-3 py-2 text-xs" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.15)" }} />
                   </div>
                 </div>
-                <button onClick={sendInvites} disabled={inviting} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
+                <button onClick={sendInvites} disabled={inviting} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
                   {inviting ? "Sending..." : `Send ${selected.size} invite${selected.size !== 1 ? "s" : ""}`}
                 </button>
               </div>

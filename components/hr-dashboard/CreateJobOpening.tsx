@@ -159,7 +159,7 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
             <input name="perks" type="text" placeholder="e.g. WFH, health insurance" className={inputClass} style={{ borderColor: "var(--border)" }} />
           </div>
         </div>
-        <button type="submit" disabled={saving} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+        <button type="submit" disabled={saving} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
           {saving ? "Posting..." : "Post Job Opening"}
         </button>
       </form>

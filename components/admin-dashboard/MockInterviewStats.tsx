@@ -25,7 +25,7 @@ export default function MockInterviewStats() {
   interviews.forEach((i) => companyMap.set(i.companyName, (companyMap.get(i.companyName) || 0) + 1));
   const topCompanies = [...companyMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-4">

@@ -45,12 +45,12 @@ export default function LabsTab() {
     setProblems(padded.slice(0, 10));
   }
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between"><div><h2 className={`${syne} font-bold text-xl`}>Lab Templates</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{labs.length} templates</p></div>
-        <button onClick={() => { setShowCreate(!showCreate); setEditLabId(null); }} className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{showCreate ? "Cancel" : "+ Create Lab"}</button></div>
+        <button onClick={() => { setShowCreate(!showCreate); setEditLabId(null); }} className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>{showCreate ? "Cancel" : "+ Create Lab"}</button></div>
 
       {msg && <div className={`rounded-xl p-3 text-sm ${msg.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>{msg.text}</div>}
 
@@ -65,7 +65,7 @@ export default function LabsTab() {
             <div><label className={`block text-sm font-medium mb-1 ${syne}`}>Passing Score (%)</label><input name="passingScore" type="number" defaultValue={60} min={0} max={100} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
           </div>
           <div><label className={`block text-sm font-medium mb-1 ${syne}`}>Description</label><textarea name="description" placeholder="What this lab tests..." rows={2} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
-          <button type="submit" className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Create & Add Problems</button>
+          <button type="submit" className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>Create & Add Problems</button>
         </form>
       )}
 
@@ -91,7 +91,7 @@ export default function LabsTab() {
               </div>
             ))}
           </div>
-          <button onClick={handleSaveProblems} className={`mt-4 px-5 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Save Problems</button>
+          <button onClick={handleSaveProblems} className={`mt-4 px-5 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>Save Problems</button>
         </div>
       )}
 
@@ -108,7 +108,7 @@ export default function LabsTab() {
               </div>
               <div className="flex gap-2 shrink-0">
                 <button onClick={() => loadProblems(lab.id)} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Edit</button>
-                <button onClick={() => togglePublish(lab.id, lab.status)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{lab.status === "PUBLISHED" ? "Unpublish" : "Publish"}</button>
+                <button onClick={() => togglePublish(lab.id, lab.status)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>{lab.status === "PUBLISHED" ? "Unpublish" : "Publish"}</button>
                 <button onClick={() => deleteLab(lab.id)} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Delete</button>
               </div>
             </div>

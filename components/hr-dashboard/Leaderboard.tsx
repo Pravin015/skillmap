@@ -22,7 +22,7 @@ export default function Leaderboard() {
     fetch(`/api/competitions/${selectedSlug}/leaderboard`).then((r) => r.json()).then((d) => { setLeaderboard(d.leaderboard || []); setLbLoading(false); });
   }, [selectedSlug]);
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">
@@ -43,7 +43,7 @@ export default function Leaderboard() {
             {comps.map((c) => <option key={c.slug} value={c.slug}>{c.title} ({c.status} · {c._count.submissions} submissions)</option>)}
           </select>
 
-          {lbLoading && <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>}
+          {lbLoading && <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>}
 
           {selectedSlug && !lbLoading && leaderboard.length === 0 && (
             <div className="rounded-2xl border bg-white p-8 text-center" style={{ borderColor: "var(--border)" }}>

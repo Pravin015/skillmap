@@ -107,7 +107,7 @@ export default function CandidatePipeline() {
   const filtered = jobFilter === "ALL" ? applications : applications.filter((a) => a.jobId === jobFilter);
 
   if (loading) {
-    return <div className="flex justify-center py-12"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+    return <div className="flex justify-center py-12"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
   }
 
   return (
@@ -134,7 +134,7 @@ export default function CandidatePipeline() {
 
       {/* Bulk Actions */}
       {selectedIds.size > 0 && (
-        <div className="rounded-xl border p-3 flex items-center gap-3" style={{ background: "rgba(232,255,71,0.1)", borderColor: "var(--accent)" }}>
+        <div className="rounded-xl border p-3 flex items-center gap-3" style={{ background: "var(--primary-light)", borderColor: "var(--primary)" }}>
           <span className="text-xs font-medium">{selectedIds.size} selected</span>
           <select
             value={bulkStatus}
@@ -146,7 +146,7 @@ export default function CandidatePipeline() {
             {STAGES.map((s) => <option key={s} value={s}>{s}</option>)}
             <option value="REJECTED">REJECTED</option>
           </select>
-          <button onClick={bulkMove} disabled={!bulkStatus} className={`${syne} text-xs font-bold px-3 py-1 rounded-lg disabled:opacity-40`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+          <button onClick={bulkMove} disabled={!bulkStatus} className={`${syne} text-xs font-bold px-3 py-1 rounded-lg disabled:opacity-40`} style={{ background: "var(--primary)", color: "white" }}>
             Move
           </button>
           <button onClick={() => setSelectedIds(new Set())} className="text-xs" style={{ color: "var(--muted)" }}>Clear</button>
@@ -261,7 +261,7 @@ export default function CandidatePipeline() {
 
               {reportLoading ? (
                 <div className="flex justify-center py-8">
-                  <div className="h-6 w-6 animate-spin rounded-full border-3 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+                  <div className="h-6 w-6 animate-spin rounded-full border-3 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
                 </div>
               ) : report ? (
                 <>
@@ -281,7 +281,7 @@ export default function CandidatePipeline() {
                       </div>
                     )}
                     <div className="flex gap-2 mt-2">
-                      {report.user.profile?.resumeUrl && <a href={report.user.profile.resumeUrl} target="_blank" className="text-[10px] px-2 py-1 rounded-lg no-underline" style={{ background: "var(--ink)", color: "var(--accent)" }}>Resume</a>}
+                      {report.user.profile?.resumeUrl && <a href={report.user.profile.resumeUrl} target="_blank" className="text-[10px] px-2 py-1 rounded-lg no-underline" style={{ background: "var(--primary)", color: "white" }}>Resume</a>}
                       {report.user.profile?.linkedinUrl && <a href={report.user.profile.linkedinUrl} target="_blank" className="text-[10px] px-2 py-1 rounded-lg border no-underline" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>LinkedIn</a>}
                       {report.user.profile?.githubUrl && <a href={report.user.profile.githubUrl} target="_blank" className="text-[10px] px-2 py-1 rounded-lg border no-underline" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>GitHub</a>}
                     </div>
@@ -351,7 +351,7 @@ export default function CandidatePipeline() {
                     className="flex-1 rounded-lg border px-3 py-2 text-xs outline-none"
                     style={{ borderColor: "var(--border)" }}
                   />
-                  <button onClick={addNote} className={`${syne} text-xs font-bold px-3 py-2 rounded-lg`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Add</button>
+                  <button onClick={addNote} className={`${syne} text-xs font-bold px-3 py-2 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>Add</button>
                 </div>
                 {notes.length === 0 && <p className="text-[10px] text-center py-2" style={{ color: "var(--muted)" }}>No notes yet</p>}
                 {notes.map((n) => (

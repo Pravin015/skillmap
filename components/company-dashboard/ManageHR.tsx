@@ -69,7 +69,7 @@ export default function ManageHR({ hrs, onRefresh }: Props) {
           <h2 className={`${syne} font-bold text-xl`}>Manage HR Accounts</h2>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Add, remove, or reset passwords for your HR team</p>
         </div>
-        <button onClick={() => setShowAdd(!showAdd)} className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+        <button onClick={() => setShowAdd(!showAdd)} className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>
           {showAdd ? "Cancel" : "+ Add HR"}
         </button>
       </div>
@@ -85,7 +85,7 @@ export default function ManageHR({ hrs, onRefresh }: Props) {
             </div>
           )}
           {tempPassword && (
-            <div className="rounded-xl p-4 mb-4 border" style={{ background: "rgba(232,255,71,0.1)", borderColor: "rgba(232,255,71,0.3)" }}>
+            <div className="rounded-xl p-4 mb-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(232,255,71,0.3)" }}>
               <div className={`${syne} font-bold text-sm mb-1`}>Temporary Password (share with HR)</div>
               <code className="text-base font-mono font-bold select-all">{tempPassword}</code>
               <p className="text-xs mt-2" style={{ color: "var(--muted)" }}>This password is shown only once. Copy it now and share it securely with the HR.</p>
@@ -107,7 +107,7 @@ export default function ManageHR({ hrs, onRefresh }: Props) {
             </div>
           </div>
           <p className="text-xs mt-3" style={{ color: "var(--muted)" }}>A temporary password will be generated. Share it with the HR so they can log in.</p>
-          <button type="submit" disabled={saving} className={`mt-4 px-5 py-2.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+          <button type="submit" disabled={saving} className={`mt-4 px-5 py-2.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
             {saving ? "Creating..." : "Create HR Account"}
           </button>
         </form>
@@ -117,7 +117,7 @@ export default function ManageHR({ hrs, onRefresh }: Props) {
       <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: "var(--border)" }}>
         <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
           <h3 className={`${syne} font-bold`}>Your HR Team</h3>
-          <span className={`${syne} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{hrs.length}</span>
+          <span className={`${syne} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>{hrs.length}</span>
         </div>
 
         {hrs.length === 0 ? (

@@ -38,12 +38,12 @@ export default function ApplicationsCard() {
     <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between mb-2">
         <h3 className={`${syne} font-bold text-base`}>Companies Applied</h3>
-        <span className={`${syne} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: apps.length > 0 ? "var(--ink)" : "var(--border)", color: apps.length > 0 ? "var(--accent)" : "var(--muted)" }}>{apps.length}</span>
+        <span className={`${syne} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: apps.length > 0 ? "var(--ink)" : "var(--border)", color: apps.length > 0 ? "var(--primary)" : "var(--muted)" }}>{apps.length}</span>
       </div>
       <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Track your application status across companies</p>
 
       {loading ? (
-        <div className="flex justify-center py-6"><div className="h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>
+        <div className="flex justify-center py-6"><div className="h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>
       ) : apps.length === 0 ? (
         <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-3xl mb-3">📋</div>

@@ -76,7 +76,7 @@ export default function DashboardPage() {
   if (status === "loading" || !profile) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} />
       </div>
     );
   }
@@ -105,7 +105,7 @@ export default function DashboardPage() {
               }`}
               style={{
                 background: activeSection === item.id ? "var(--ink)" : "transparent",
-                color: activeSection === item.id ? "var(--accent)" : "var(--muted)",
+                color: activeSection === item.id ? "var(--primary)" : "var(--muted)",
               }}
             >
               <span className="text-base">{item.icon}</span>
@@ -128,7 +128,7 @@ export default function DashboardPage() {
             className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] transition-colors ${syne}`}
             style={{
               background: activeSection === item.id ? "var(--ink)" : "transparent",
-              color: activeSection === item.id ? "var(--accent)" : "var(--muted)",
+              color: activeSection === item.id ? "var(--primary)" : "var(--muted)",
             }}
           >
             <span className="text-sm">{item.icon}</span>
@@ -142,7 +142,7 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className={`${syne} font-extrabold text-2xl md:text-3xl`}>
-            {greeting()}, <span style={{ color: "var(--accent)", background: "var(--ink)", padding: "0 6px", borderRadius: "6px" }}>{profile.name.split(" ")[0]}</span>
+            {greeting()}, <span style={{ color: "var(--primary)", background: "var(--ink)", padding: "0 6px", borderRadius: "6px" }}>{profile.name.split(" ")[0]}</span>
           </h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>
             Here&apos;s your career progress · {profile.domain} · {profile.companies.length} dream companies
@@ -220,7 +220,7 @@ function EventsWidget() {
     <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between mb-2">
         <h3 className={`${s} font-bold text-base`}>Upcoming Events</h3>
-        <Link href="/events" className={`text-xs ${s} font-bold no-underline px-2.5 py-1 rounded-lg`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Browse all</Link>
+        <Link href="/events" className={`text-xs ${s} font-bold no-underline px-2.5 py-1 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>Browse all</Link>
       </div>
       <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Career guidance sessions by mentors</p>
       {events.length === 0 ? (

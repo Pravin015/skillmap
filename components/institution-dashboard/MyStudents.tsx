@@ -27,7 +27,7 @@ export default function MyStudents({ students, onRefresh, onNavigate }: { studen
           <h2 className={`${syne} font-bold text-xl`}>My Students</h2>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{students.length} students enrolled</p>
         </div>
-        <button onClick={() => onNavigate("add-student")} className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Add Student</button>
+        <button onClick={() => onNavigate("add-student")} className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>+ Add Student</button>
       </div>
       <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or email..." className="w-full rounded-xl border px-4 py-3 text-sm outline-none" style={{ borderColor: "var(--border)" }} />
       {filtered.length === 0 ? (
@@ -54,7 +54,7 @@ export default function MyStudents({ students, onRefresh, onNavigate }: { studen
                   <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Score</div>
                 </div>
                 <div className="flex gap-2 shrink-0">
-                  <Link href={`/profile/${s.profileNumber}`} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>View</Link>
+                  <Link href={`/profile/${s.profileNumber}`} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--primary)", color: "white" }}>View</Link>
                   <button onClick={() => handleDelete(s.userId, s.user.name)} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Remove</button>
                 </div>
               </div>

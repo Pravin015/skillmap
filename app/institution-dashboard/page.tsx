@@ -39,7 +39,7 @@ export default function InstitutionDashboardPage() {
     if (status === "authenticated") fetchStudents();
   }, [status, userRole, router, fetchStudents]);
 
-  if (status === "loading" || loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (status === "loading" || loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   function renderTab() {
     switch (activeTab) {
@@ -59,7 +59,7 @@ export default function InstitutionDashboardPage() {
         <div className="mb-6 px-3"><div className={`${syne} font-bold text-sm`} style={{ color: "var(--ink)" }}>Institution</div><div className="text-xs mt-0.5 truncate" style={{ color: "var(--muted)" }}>{orgName}</div></div>
         <nav className="flex flex-col gap-0.5 flex-1">
           {tabs.map((t) => (
-            <button key={t.id} onClick={() => setActiveTab(t.id)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition-colors" style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--accent)" : "var(--muted)", fontWeight: activeTab === t.id ? 700 : 400 }}>
+            <button key={t.id} onClick={() => setActiveTab(t.id)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition-colors" style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--primary)" : "var(--muted)", fontWeight: activeTab === t.id ? 700 : 400 }}>
               <span className="text-base">{t.icon}</span><span className={syne}>{t.label}</span>
             </button>
           ))}
@@ -67,7 +67,7 @@ export default function InstitutionDashboardPage() {
         <div className="px-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}><div className={`${syne} font-bold text-xs truncate`}>{session?.user?.name}</div><div className="text-[0.65rem]" style={{ color: "var(--muted)" }}>Institution Admin</div></div>
       </aside>
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 overflow-x-auto border-t flex gap-0.5 px-2 py-2" style={{ background: "white", borderColor: "var(--border)" }}>
-        {tabs.map((t) => (<button key={t.id} onClick={() => setActiveTab(t.id)} className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] ${syne}`} style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--accent)" : "var(--muted)" }}><span className="text-sm">{t.icon}</span>{t.label}</button>))}
+        {tabs.map((t) => (<button key={t.id} onClick={() => setActiveTab(t.id)} className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] ${syne}`} style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--primary)" : "var(--muted)" }}><span className="text-sm">{t.icon}</span>{t.label}</button>))}
       </div>
       <div className="flex-1 px-4 md:px-8 py-8 pb-24 lg:pb-8 max-w-5xl">{renderTab()}</div>
     </div>

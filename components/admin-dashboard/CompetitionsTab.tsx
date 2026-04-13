@@ -32,7 +32,7 @@ export default function CompetitionsTab() {
 
   const filtered = filter === "ALL" ? comps : comps.filter((c) => c.status === filter);
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-4">
@@ -43,7 +43,7 @@ export default function CompetitionsTab() {
 
       <div className="flex gap-2 flex-wrap">
         {["ALL", "DRAFT", "OPEN", "LIVE", "JUDGING", "COMPLETED"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className="rounded-full px-3 py-1.5 text-[10px] font-medium border transition-all" style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--accent)" : "var(--muted)", borderColor: filter === s ? "var(--ink)" : "var(--border)" }}>
+          <button key={s} onClick={() => setFilter(s)} className="rounded-full px-3 py-1.5 text-[10px] font-medium border transition-all" style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", borderColor: filter === s ? "var(--ink)" : "var(--border)" }}>
             {s} ({s === "ALL" ? comps.length : comps.filter((c) => c.status === s).length})
           </button>
         ))}

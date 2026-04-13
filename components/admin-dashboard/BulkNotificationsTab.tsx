@@ -43,7 +43,7 @@ export default function BulkNotificationsTab() {
       </div>
 
       {result && (
-        <div className="rounded-xl p-3 text-sm" style={{ background: result.includes("Failed") ? "#fef2f2" : "rgba(232,255,71,0.15)", color: result.includes("Failed") ? "#ef4444" : "var(--ink)" }}>
+        <div className="rounded-xl p-3 text-sm" style={{ background: result.includes("Failed") ? "#fef2f2" : "var(--primary-light)", color: result.includes("Failed") ? "#ef4444" : "var(--ink)" }}>
           {result}
         </div>
       )}
@@ -56,7 +56,7 @@ export default function BulkNotificationsTab() {
               <button
                 key={r} type="button" onClick={() => setTargetRole(r)}
                 className="rounded-full px-4 py-2 text-xs font-medium border transition-all"
-                style={{ background: targetRole === r ? "var(--ink)" : "white", color: targetRole === r ? "var(--accent)" : "var(--ink)", borderColor: targetRole === r ? "var(--ink)" : "var(--border)" }}
+                style={{ background: targetRole === r ? "var(--ink)" : "white", color: targetRole === r ? "var(--primary)" : "var(--ink)", borderColor: targetRole === r ? "var(--ink)" : "var(--border)" }}
               >
                 {r === "ALL" ? "📢 Everyone" : r === "STUDENT" ? "🎓 Students" : r === "HR" ? "👥 HRs" : r === "ORG" ? "🏢 Companies" : r === "MENTOR" ? "🧑‍🏫 Mentors" : "🏫 Institutions"}
               </button>
@@ -79,7 +79,7 @@ export default function BulkNotificationsTab() {
           <span className="text-xs" style={{ color: "var(--ink)" }}>Also send as email to all recipients</span>
         </label>
 
-        <button type="submit" disabled={sending || !title.trim() || !message.trim()} className={`${syne} rounded-xl px-6 py-2.5 text-sm font-bold transition-all disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+        <button type="submit" disabled={sending || !title.trim() || !message.trim()} className={`${syne} rounded-xl px-6 py-2.5 text-sm font-bold transition-all disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
           {sending ? "Sending..." : `📢 Send to ${targetRole === "ALL" ? "Everyone" : targetRole + "s"}`}
         </button>
       </form>

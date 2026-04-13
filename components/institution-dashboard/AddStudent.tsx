@@ -36,7 +36,7 @@ export default function AddStudent({ onRefresh }: { onRefresh: () => void }) {
       <form onSubmit={handleSubmit} className="rounded-2xl border bg-white p-6 space-y-5" style={{ borderColor: "var(--border)" }}>
         {message && <div className={`rounded-xl p-3 text-sm ${message.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>{message.text}</div>}
         {tempPwd && (
-          <div className="rounded-xl p-4 border" style={{ background: "rgba(232,255,71,0.1)", borderColor: "rgba(232,255,71,0.3)" }}>
+          <div className="rounded-xl p-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(232,255,71,0.3)" }}>
             <div className={`${syne} font-bold text-sm mb-1`}>Temporary Password</div>
             <code className="text-base font-mono font-bold select-all">{tempPwd}</code>
             <p className="text-xs mt-2" style={{ color: "var(--muted)" }}>Share this with the student. Shown only once.</p>
@@ -51,7 +51,7 @@ export default function AddStudent({ onRefresh }: { onRefresh: () => void }) {
             <select value={gradYear} onChange={(e) => setGradYear(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}><option value="">Select</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option></select></div>
         </div>
         <p className="text-xs" style={{ color: "var(--muted)" }}>A temporary password will be generated. The student&apos;s profile will be linked to your institution.</p>
-        <button type="submit" disabled={saving} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{saving ? "Creating..." : "Create Student Account"}</button>
+        <button type="submit" disabled={saving} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Creating..." : "Create Student Account"}</button>
       </form>
     </div>
   );

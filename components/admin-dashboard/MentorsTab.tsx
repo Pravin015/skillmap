@@ -44,7 +44,7 @@ export default function MentorsTab() {
 
   const filtered = filter === "ALL" ? mentors : mentors.filter((m) => m.status === filter);
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">
@@ -55,7 +55,7 @@ export default function MentorsTab() {
 
       <div className="flex gap-2 flex-wrap">
         {["ALL", "PENDING", "VERIFIED", "UNVERIFIED", "SUSPENDED"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--accent)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
+          <button key={s} onClick={() => setFilter(s)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
             {s === "ALL" ? "All" : s} ({s === "ALL" ? mentors.length : mentors.filter((m) => m.status === s).length})
           </button>
         ))}
@@ -95,7 +95,7 @@ export default function MentorsTab() {
                 </div>
                 <div className="flex gap-2 shrink-0">
                   {m.status !== "VERIFIED" && (
-                    <button onClick={() => updateStatus(m.id, "VERIFIED")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Verify</button>
+                    <button onClick={() => updateStatus(m.id, "VERIFIED")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Verify</button>
                   )}
                   {m.status !== "SUSPENDED" && m.status !== "UNVERIFIED" && (
                     <button onClick={() => updateStatus(m.id, "SUSPENDED")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Suspend</button>

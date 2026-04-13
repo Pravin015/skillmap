@@ -60,14 +60,14 @@ export default function UserManagement({ users, onRefresh }: { users: User[]; on
       <div className="flex gap-3 flex-wrap">
         <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or email..." className="flex-1 min-w-[200px] rounded-xl border px-4 py-2.5 text-sm outline-none" style={{ borderColor: "var(--border)" }} />
         {["ALL", "STUDENT", "MENTOR", "HR", "ORG", "INSTITUTION", "ADMIN"].map((r) => (
-          <button key={r} onClick={() => setFilter(r)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === r ? "var(--ink)" : "white", color: filter === r ? "var(--accent)" : "var(--muted)", border: filter === r ? "none" : "1px solid var(--border)" }}>
+          <button key={r} onClick={() => setFilter(r)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === r ? "var(--ink)" : "white", color: filter === r ? "var(--primary)" : "var(--muted)", border: filter === r ? "none" : "1px solid var(--border)" }}>
             {r === "ALL" ? "All" : r} {r !== "ALL" && `(${users.filter((u) => u.role === r).length})`}
           </button>
         ))}
       </div>
 
       {resetPwd && (
-        <div className="rounded-xl p-4 border" style={{ background: "rgba(232,255,71,0.1)", borderColor: "rgba(232,255,71,0.3)" }}>
+        <div className="rounded-xl p-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(232,255,71,0.3)" }}>
           <div className={`${syne} font-bold text-sm mb-1`}>New password generated:</div>
           <code className="text-base font-mono font-bold select-all">{resetPwd.pwd}</code>
           <button onClick={() => setResetPwd(null)} className="ml-4 text-xs underline" style={{ color: "var(--muted)" }}>Dismiss</button>

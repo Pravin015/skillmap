@@ -41,7 +41,7 @@ export default function StudentsTab({ users, onRefresh }: { users: User[]; onRef
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search students..." className="rounded-xl border px-3 py-2 text-xs outline-none w-48" style={{ borderColor: "var(--border)" }} />
       </div>
 
-      {msg && <div className="rounded-xl p-3 text-xs font-mono" style={{ background: "rgba(232,255,71,0.15)", color: "var(--ink)" }}>{msg} <button onClick={() => setMsg("")} className="ml-2 underline text-[10px]" style={{ color: "var(--muted)" }}>dismiss</button></div>}
+      {msg && <div className="rounded-xl p-3 text-xs font-mono" style={{ background: "var(--primary-light)", color: "var(--ink)" }}>{msg} <button onClick={() => setMsg("")} className="ml-2 underline text-[10px]" style={{ color: "var(--muted)" }}>dismiss</button></div>}
 
       {filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>
@@ -69,7 +69,7 @@ export default function StudentsTab({ users, onRefresh }: { users: User[]; onRef
                     <td className="px-4 py-3 text-xs hidden sm:table-cell" style={{ color: "var(--muted)" }}>{new Date(s.createdAt).toLocaleDateString()}</td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1.5">
-                        <a href={`/profile/${s.id}`} target="_blank" className={`text-[10px] ${syne} font-bold no-underline px-2 py-1 rounded-lg`} style={{ background: "var(--ink)", color: "var(--accent)" }}>View ↗</a>
+                        <a href={`/profile/${s.id}`} target="_blank" className={`text-[10px] ${syne} font-bold no-underline px-2 py-1 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>View ↗</a>
                         <button onClick={() => resetPassword(s.id, s.name)} className="text-[10px] px-2 py-1 rounded-lg border hover:bg-gray-100" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Reset Pwd</button>
                         <button onClick={() => deleteUser(s.id, s.name)} className="text-[10px] px-2 py-1 rounded-lg border hover:bg-red-50" style={{ borderColor: "var(--border)", color: "#ef4444" }}>Delete</button>
                       </div>

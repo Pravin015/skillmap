@@ -7,11 +7,11 @@ export default function LabsPrepCard() {
   return (
     <div className="rounded-2xl border overflow-hidden relative" style={{ borderColor: "var(--border)", background: "var(--ink)" }}>
       {/* Glow */}
-      <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-[60px] opacity-10" style={{ background: "var(--accent)" }} />
+      <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-[60px] opacity-10" style={{ background: "var(--primary)" }} />
       <div className="p-6 relative">
         <div className="flex items-center gap-2 mb-1">
           <h3 className={`${syne} font-bold text-base text-white`}>Labs & Interview Prep</h3>
-          <span className={`${syne} text-[0.55rem] font-bold px-2 py-0.5 rounded-full`} style={{ background: "var(--accent)", color: "var(--ink)" }}>COMING SOON</span>
+          <span className={`${syne} text-[0.55rem] font-bold px-2 py-0.5 rounded-full`} style={{ background: "var(--primary)", color: "var(--ink)" }}>COMING SOON</span>
         </div>
         <p className="text-xs mb-5" style={{ color: "rgba(255,255,255,0.5)" }}>Hands-on practice tailored to your target companies</p>
 
@@ -25,7 +25,7 @@ export default function LabsPrepCard() {
           ))}
         </div>
 
-        <button className={`mt-5 w-full py-3 rounded-xl ${syne} font-bold text-sm border transition-colors hover:border-[var(--accent)]`} style={{ borderColor: "rgba(255,255,255,0.15)", color: "var(--accent)", background: "transparent" }}>
+        <button className={`mt-5 w-full py-3 rounded-xl ${syne} font-bold text-sm border transition-colors hover:border-[var(--primary)]`} style={{ borderColor: "rgba(255,255,255,0.15)", color: "var(--primary)", background: "transparent" }}>
           Notify me when it launches
         </button>
       </div>

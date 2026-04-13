@@ -31,13 +31,13 @@ export default function MyMentorshipCard() {
   const pending = sessions.filter((s) => s.status === "REQUESTED");
   const past = sessions.filter((s) => s.status === "COMPLETED" || (s.status === "ACCEPTED" && new Date(s.preferredDate) < new Date()));
 
-  if (loading) return <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}><div className="flex justify-center py-6"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div></div>;
+  if (loading) return <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}><div className="flex justify-center py-6"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div></div>;
 
   return (
     <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between mb-2">
         <h3 className={`${syne} font-bold text-base`}>My Mentorship</h3>
-        <span className={`${syne} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: sessions.length > 0 ? "var(--ink)" : "var(--border)", color: sessions.length > 0 ? "var(--accent)" : "var(--muted)" }}>{sessions.length}</span>
+        <span className={`${syne} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: sessions.length > 0 ? "var(--ink)" : "var(--border)", color: sessions.length > 0 ? "var(--primary)" : "var(--muted)" }}>{sessions.length}</span>
       </div>
       <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Your booked sessions with mentors</p>
 
@@ -86,7 +86,7 @@ export default function MyMentorshipCard() {
           </div>
           <textarea value={review} onChange={(e) => setReview(e.target.value)} placeholder="Write a review (optional)" rows={2} className="w-full rounded-lg border px-3 py-2 text-sm resize-none mb-2" style={{ borderColor: "var(--border)" }} />
           <div className="flex gap-2">
-            <button onClick={() => submitRating(ratingSession)} className={`px-4 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Submit</button>
+            <button onClick={() => submitRating(ratingSession)} className={`px-4 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>Submit</button>
             <button onClick={() => setRatingSession(null)} className="text-xs" style={{ color: "var(--muted)" }}>Cancel</button>
           </div>
         </div>

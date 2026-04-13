@@ -40,7 +40,7 @@ export default function CompaniesTab() {
     return (c.organisation || c.name).toLowerCase().includes(q) || c.email.toLowerCase().includes(q);
   });
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-4">
@@ -52,7 +52,7 @@ export default function CompaniesTab() {
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search companies..." className="rounded-xl border px-3 py-2 text-xs outline-none w-48" style={{ borderColor: "var(--border)" }} />
       </div>
 
-      {msg && <div className="rounded-xl p-3 text-xs font-mono" style={{ background: "rgba(232,255,71,0.15)", color: "var(--ink)" }}>{msg} <button onClick={() => setMsg("")} className="ml-2 underline text-[10px]" style={{ color: "var(--muted)" }}>dismiss</button></div>}
+      {msg && <div className="rounded-xl p-3 text-xs font-mono" style={{ background: "var(--primary-light)", color: "var(--ink)" }}>{msg} <button onClick={() => setMsg("")} className="ml-2 underline text-[10px]" style={{ color: "var(--muted)" }}>dismiss</button></div>}
 
       {filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>

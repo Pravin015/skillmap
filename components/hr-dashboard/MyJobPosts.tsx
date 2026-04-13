@@ -42,7 +42,7 @@ export default function MyJobPosts({ onNavigate }: { onNavigate: (tab: string) =
     fetchJobs();
   }
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">
@@ -51,7 +51,7 @@ export default function MyJobPosts({ onNavigate }: { onNavigate: (tab: string) =
           <h2 className={`${syne} font-bold text-xl`}>My Job Posts</h2>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{jobs.length} job{jobs.length !== 1 ? "s" : ""} posted</p>
         </div>
-        <button onClick={() => onNavigate("create-job")} className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ New Post</button>
+        <button onClick={() => onNavigate("create-job")} className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>+ New Post</button>
       </div>
 
       {jobs.length === 0 ? (
@@ -59,7 +59,7 @@ export default function MyJobPosts({ onNavigate }: { onNavigate: (tab: string) =
           <div className="text-4xl mb-3">📝</div>
           <p className={`${syne} font-bold text-base mb-1`}>No job posts yet</p>
           <p className="text-sm" style={{ color: "var(--muted)" }}>Create your first job posting to start receiving applications</p>
-          <button onClick={() => onNavigate("create-job")} className={`mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Create job post</button>
+          <button onClick={() => onNavigate("create-job")} className={`mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>Create job post</button>
         </div>
       ) : (
         <div className="space-y-3">

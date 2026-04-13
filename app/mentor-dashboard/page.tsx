@@ -75,7 +75,7 @@ export default function MentorDashboardPage() {
     fetchData();
   }
 
-  if (status === "loading" || loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (status === "loading" || loading) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   const pending = sessions.filter((s) => s.status === "REQUESTED");
   const upcoming = sessions.filter((s) => s.status === "ACCEPTED" && new Date(s.preferredDate) >= new Date());
@@ -86,12 +86,12 @@ export default function MentorDashboardPage() {
       <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] py-6 px-3" style={{ borderColor: "var(--border)", background: "white" }}>
         <div className="mb-6 px-3"><div className={`${syne} font-bold text-sm`} style={{ color: "var(--ink)" }}>Mentor Panel</div><div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{session?.user?.name}</div></div>
         <nav className="flex flex-col gap-0.5 flex-1">
-          {tabs.map((t) => (<button key={t.id} onClick={() => setActiveTab(t.id)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition-colors" style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--accent)" : "var(--muted)", fontWeight: activeTab === t.id ? 700 : 400 }}><span className="text-base">{t.icon}</span><span className={syne}>{t.label}</span></button>))}
+          {tabs.map((t) => (<button key={t.id} onClick={() => setActiveTab(t.id)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition-colors" style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--primary)" : "var(--muted)", fontWeight: activeTab === t.id ? 700 : 400 }}><span className="text-base">{t.icon}</span><span className={syne}>{t.label}</span></button>))}
         </nav>
       </aside>
 
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 overflow-x-auto border-t flex gap-0.5 px-2 py-2" style={{ background: "white", borderColor: "var(--border)" }}>
-        {tabs.map((t) => (<button key={t.id} onClick={() => setActiveTab(t.id)} className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] ${syne}`} style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--accent)" : "var(--muted)" }}><span className="text-sm">{t.icon}</span>{t.label}</button>))}
+        {tabs.map((t) => (<button key={t.id} onClick={() => setActiveTab(t.id)} className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] ${syne}`} style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--primary)" : "var(--muted)" }}><span className="text-sm">{t.icon}</span>{t.label}</button>))}
       </div>
 
       <div className="flex-1 px-4 md:px-8 py-8 pb-24 lg:pb-8 max-w-5xl">
@@ -119,12 +119,12 @@ export default function MentorDashboardPage() {
                 {pending.map((s) => (
                   <div key={s.id} className="flex items-center gap-4 p-3 rounded-xl border mb-2" style={{ borderColor: "var(--border)" }}>
                     <div className="flex-1"><div className={`${syne} font-bold text-sm`}>{s.student?.name}</div><div className="text-xs" style={{ color: "var(--muted)" }}>{s.sessionType} · {new Date(s.preferredDate).toLocaleDateString()} · {s.duration}{s.message ? ` · "${s.message}"` : ""}</div></div>
-                    <button onClick={() => setActiveTab("sessions")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Respond</button>
+                    <button onClick={() => setActiveTab("sessions")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Respond</button>
                   </div>
                 ))}
               </div>
             )}
-            <div className="flex gap-3"><Link href="/events/create" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Create Event</Link></div>
+            <div className="flex gap-3"><Link href="/events/create" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>+ Create Event</Link></div>
           </div>
         )}
 
@@ -151,13 +151,13 @@ export default function MentorDashboardPage() {
                             <div className="flex flex-col gap-2">
                               <input value={acceptLink.id === s.id ? acceptLink.link : ""} onChange={(e) => setAcceptLink({ ...acceptLink, id: s.id, link: e.target.value })} placeholder="Zoom/Meet link" className="rounded-lg border px-3 py-1.5 text-xs w-48" style={{ borderColor: "var(--border)" }} />
                               <div className="flex gap-2">
-                                <button onClick={() => handleAction(s.id, "accept", { meetingLink: acceptLink.link, mentorNotes: acceptLink.notes })} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Accept</button>
+                                <button onClick={() => handleAction(s.id, "accept", { meetingLink: acceptLink.link, mentorNotes: acceptLink.notes })} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Accept</button>
                                 <button onClick={() => handleAction(s.id, "reject", { reason: "Schedule conflict" })} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Decline</button>
                               </div>
                             </div>
                           </>
                         )}
-                        {s.status === "ACCEPTED" && <button onClick={() => handleAction(s.id, "complete")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Mark Complete</button>}
+                        {s.status === "ACCEPTED" && <button onClick={() => handleAction(s.id, "complete")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Mark Complete</button>}
                         {s.status === "ACCEPTED" && s.meetingLink && <a href={s.meetingLink} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg text-[0.7rem] font-bold bg-green-100 text-green-700 no-underline">Join</a>}
                       </div>
                     </div>
@@ -172,16 +172,16 @@ export default function MentorDashboardPage() {
         {activeTab === "events" && (
           <div className="space-y-6">
             <div className="flex items-center justify-between"><div><h2 className={`${syne} font-bold text-xl`}>My Events</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{events.length} events</p></div>
-              <Link href="/events/create" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>+ Create</Link></div>
+              <Link href="/events/create" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>+ Create</Link></div>
             {events.length === 0 ? (
-              <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}><div className="text-4xl mb-3">🎤</div><p className={`${syne} font-bold text-base`}>No events</p><Link href="/events/create" className={`inline-block mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Create your first event</Link></div>
+              <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}><div className="text-4xl mb-3">🎤</div><p className={`${syne} font-bold text-base`}>No events</p><Link href="/events/create" className={`inline-block mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Create your first event</Link></div>
             ) : (
               <div className="space-y-3">{events.map((e) => (
                 <div key={e.id} className="rounded-2xl border bg-white p-5 flex items-center gap-4 flex-wrap" style={{ borderColor: "var(--border)" }}>
                   <div className="flex-1 min-w-0"><div className={`${syne} font-bold`}>{e.title}</div><div className="text-xs" style={{ color: "var(--muted)" }}>{new Date(e.date).toLocaleDateString()} · {e.pricing === "FREE" ? "Free" : `₹${(e.price || 0) / 100}`} · {e._count.registrations} registered</div></div>
                   <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full shrink-0 ${e.status === "APPROVED" ? "bg-green-100 text-green-700" : e.status === "PENDING_APPROVAL" ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-700"}`}>{e.status.replace("_", " ")}</span>
                   <div className="flex gap-2 shrink-0">
-                    <button onClick={() => showAttendees(e.id)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Attendees ({e._count.registrations})</button>
+                    <button onClick={() => showAttendees(e.id)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Attendees ({e._count.registrations})</button>
                     <Link href={`/events/${e.id}`} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border no-underline hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>View</Link>
                   </div>
                 </div>
@@ -199,7 +199,7 @@ export default function MentorDashboardPage() {
                     </div>
                     <div className="max-h-96 overflow-y-auto">
                       {loadingAttendees ? (
-                        <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>
+                        <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>
                       ) : attendees.length === 0 ? (
                         <div className="p-8 text-center text-sm" style={{ color: "var(--muted)" }}>No attendees yet</div>
                       ) : (
@@ -232,7 +232,7 @@ export default function MentorDashboardPage() {
           <div className="space-y-6">
             <div><h2 className={`${syne} font-bold text-xl`}>My Mentor Profile</h2></div>
             <div className="flex gap-3 flex-wrap">
-              <Link href="/profile/edit" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Edit Profile</Link>
+              <Link href="/profile/edit" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>Edit Profile</Link>
               <Link href="/settings" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline border`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Account Settings</Link>
             </div>
           </div>

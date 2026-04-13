@@ -20,7 +20,7 @@ export default function HRInterestCard() {
       <div className="flex items-center justify-between mb-2">
         <h3 className={`${syne} font-bold text-base`}>Profile Views</h3>
         {viewCount > 0 && (
-          <span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "var(--accent)" }} /><span className="relative inline-flex rounded-full h-3 w-3" style={{ background: "var(--accent)" }} /></span>
+          <span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "var(--primary)" }} /><span className="relative inline-flex rounded-full h-3 w-3" style={{ background: "var(--primary)" }} /></span>
         )}
       </div>
       <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>HR and recruiters who viewed your profile</p>

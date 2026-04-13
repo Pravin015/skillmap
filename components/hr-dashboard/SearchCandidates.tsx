@@ -50,7 +50,7 @@ export default function SearchCandidates() {
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
         <div className="flex gap-3">
           <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Search by name, email, skills, college, company..." className="flex-1 rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)]" style={{ borderColor: "var(--border)" }} />
-          <button onClick={handleSearch} disabled={loading} className={`px-5 py-3 rounded-xl ${syne} font-bold text-sm shrink-0 disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+          <button onClick={handleSearch} disabled={loading} className={`px-5 py-3 rounded-xl ${syne} font-bold text-sm shrink-0 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
             {loading ? "Searching..." : "Search"}
           </button>
         </div>
@@ -103,10 +103,10 @@ export default function SearchCandidates() {
                     <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Score</div>
                   </div>
                   <div className="flex gap-2 shrink-0">
-                    <span className="text-[0.6rem] font-bold px-2 py-0.5 rounded-full" style={{ background: c.experienceLevel === "FRESHER" ? "var(--accent)" : "rgba(139,92,246,0.1)", color: c.experienceLevel === "FRESHER" ? "var(--ink)" : "#7c3aed" }}>
+                    <span className="text-[0.6rem] font-bold px-2 py-0.5 rounded-full" style={{ background: c.experienceLevel === "FRESHER" ? "var(--primary)" : "rgba(139,92,246,0.1)", color: c.experienceLevel === "FRESHER" ? "var(--ink)" : "#7c3aed" }}>
                       {c.experienceLevel === "FRESHER" ? "Fresher" : "Experienced"}
                     </span>
-                    <Link href={`/profile/${c.profileNumber}`} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>View</Link>
+                    <Link href={`/profile/${c.profileNumber}`} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--primary)", color: "white" }}>View</Link>
                   </div>
                 </div>
               ))}

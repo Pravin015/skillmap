@@ -26,7 +26,7 @@ export default function PaymentsTab() {
   const totalRevenue = payments.filter((p) => p.status === "CAPTURED").reduce((s, p) => s + p.amount, 0);
   const totalPending = payments.filter((p) => p.status === "CREATED" || p.status === "AUTHORIZED").reduce((s, p) => s + p.amount, 0);
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-4">
@@ -51,7 +51,7 @@ export default function PaymentsTab() {
 
       <div className="flex gap-2">
         {["ALL", "CAPTURED", "CREATED", "AUTHORIZED", "FAILED", "REFUNDED"].map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className="rounded-full px-3 py-1.5 text-[10px] font-medium border transition-all" style={{ background: filter === f ? "var(--ink)" : "white", color: filter === f ? "var(--accent)" : "var(--muted)", borderColor: filter === f ? "var(--ink)" : "var(--border)" }}>
+          <button key={f} onClick={() => setFilter(f)} className="rounded-full px-3 py-1.5 text-[10px] font-medium border transition-all" style={{ background: filter === f ? "var(--ink)" : "white", color: filter === f ? "var(--primary)" : "var(--muted)", borderColor: filter === f ? "var(--ink)" : "var(--border)" }}>
             {f} ({f === "ALL" ? payments.length : payments.filter((p) => p.status === f).length})
           </button>
         ))}

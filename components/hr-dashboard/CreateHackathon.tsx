@@ -59,7 +59,7 @@ export default function CreateHackathon() {
     setMyComps((prev) => prev.map((c) => c.slug === slug ? { ...c, status } : c));
   }
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">
@@ -68,12 +68,12 @@ export default function CreateHackathon() {
           <h2 className={`${syne} font-bold text-xl`}>Competitions & Challenges</h2>
           <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Create hackathons, coding challenges, quizzes, and case studies</p>
         </div>
-        <button onClick={() => setShowForm(!showForm)} className={`${syne} text-xs font-bold px-4 py-2 rounded-xl`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+        <button onClick={() => setShowForm(!showForm)} className={`${syne} text-xs font-bold px-4 py-2 rounded-xl`} style={{ background: "var(--primary)", color: "white" }}>
           {showForm ? "Cancel" : "+ New Competition"}
         </button>
       </div>
 
-      {msg && <div className="rounded-xl p-3 text-sm" style={{ background: msg.includes("Failed") ? "#fef2f2" : "rgba(232,255,71,0.15)", color: msg.includes("Failed") ? "#ef4444" : "var(--ink)" }}>{msg}</div>}
+      {msg && <div className="rounded-xl p-3 text-sm" style={{ background: msg.includes("Failed") ? "#fef2f2" : "var(--primary-light)", color: msg.includes("Failed") ? "#ef4444" : "var(--ink)" }}>{msg}</div>}
 
       {showForm && (
         <form onSubmit={handleSubmit} className="rounded-2xl border bg-white p-6 space-y-4" style={{ borderColor: "var(--border)" }}>
@@ -94,7 +94,7 @@ export default function CreateHackathon() {
           <div><label className="text-xs font-medium block mb-1" style={{ color: "var(--ink)" }}>Prizes</label><input value={prizes} onChange={(e) => setPrizes(e.target.value)} placeholder="1st: Rs.50K, 2nd: Rs.25K" className="w-full rounded-xl border px-4 py-2.5 text-sm outline-none" style={{ borderColor: "var(--border)" }} /></div>
           {labs.length > 0 && <div><label className="text-xs font-medium block mb-1" style={{ color: "var(--ink)" }}>Attach Lab Assessment</label><select value={labId} onChange={(e) => setLabId(e.target.value)} className="w-full rounded-xl border px-4 py-2.5 text-sm outline-none" style={{ borderColor: "var(--border)" }}><option value="">No assessment</option>{labs.map((l) => <option key={l.id} value={l.id}>{l.title} ({l.difficulty})</option>)}</select></div>}
           <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={hiringEnabled} onChange={(e) => setHiringEnabled(e.target.checked)} className="accent-[var(--ink)] w-4 h-4" /><span className="text-xs" style={{ color: "var(--ink)" }}>Enable hiring from results</span></label>
-          <button type="submit" disabled={saving} className={`${syne} rounded-xl px-6 py-2.5 text-sm font-bold disabled:opacity-50`} style={{ background: "var(--ink)", color: "var(--accent)" }}>{saving ? "Creating..." : "Create Competition"}</button>
+          <button type="submit" disabled={saving} className={`${syne} rounded-xl px-6 py-2.5 text-sm font-bold disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Creating..." : "Create Competition"}</button>
         </form>
       )}
 

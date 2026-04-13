@@ -54,7 +54,7 @@ export default function ReceivedApplications() {
   const filtered = filter === "ALL" ? apps : apps.filter((a) => a.status === filter);
   const scoreColor = (s: number) => s >= 90 ? "#22c55e" : s >= 70 ? "#f59e0b" : s >= 50 ? "#f97316" : "#ef4444";
 
-  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} /></div>;
+  if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
 
   return (
     <div className="space-y-6">
@@ -65,7 +65,7 @@ export default function ReceivedApplications() {
 
       <div className="flex gap-2 flex-wrap">
         {["ALL", "APPLIED", "SCREENING", "INTERVIEW", "ASSESSMENT", "OFFER", "HIRED", "REJECTED"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--accent)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
+          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
             {s === "ALL" ? "All" : s} ({s === "ALL" ? apps.length : apps.filter((a) => a.status === s).length})
           </button>
         ))}
@@ -108,7 +108,7 @@ export default function ReceivedApplications() {
                   </select>
                 </div>
                 {app.user.profile?.profileNumber ? (
-                  <a href={`/profile/${app.user.profile.profileNumber}`} target="_blank" rel="noopener noreferrer" className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline cursor-pointer`} style={{ background: "var(--ink)", color: "var(--accent)" }}>
+                  <a href={`/profile/${app.user.profile.profileNumber}`} target="_blank" rel="noopener noreferrer" className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
                     View Profile ↗
                   </a>
                 ) : (

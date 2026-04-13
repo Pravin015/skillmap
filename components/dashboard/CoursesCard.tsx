@@ -37,8 +37,8 @@ export default function CoursesCard({ domainKey }: { domainKey: string }) {
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                {c.free && <span className={`${syne} text-[0.6rem] font-bold px-1.5 py-0.5 rounded`} style={{ background: "var(--accent)", color: "var(--ink)" }}>FREE</span>}
-                <a href={c.url} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Start</a>
+                {c.free && <span className={`${syne} text-[0.6rem] font-bold px-1.5 py-0.5 rounded`} style={{ background: "var(--primary)", color: "var(--ink)" }}>FREE</span>}
+                <a href={c.url} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--primary)", color: "white" }}>Start</a>
               </div>
             </div>
           ))}
