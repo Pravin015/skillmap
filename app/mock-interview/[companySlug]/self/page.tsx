@@ -6,7 +6,7 @@ import { useState, useEffect, use } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Question {
   id: string;
@@ -108,7 +108,7 @@ function SelfPrepContent({ companySlug }: { companySlug: string }) {
             <span>/</span>
             <span style={{ color: "rgba(255,255,255,0.8)" }}>Self Prep</span>
           </div>
-          <h1 className={`${syne} text-xl md:text-2xl font-bold text-white mb-2`}>
+          <h1 className={`${heading} text-xl md:text-2xl font-bold text-white mb-2`}>
             {company?.name} — Self Preparation
           </h1>
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>

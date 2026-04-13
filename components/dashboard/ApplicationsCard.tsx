@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const statusColors: Record<string, string> = {
   APPLIED: "bg-blue-100 text-blue-700",
@@ -37,8 +37,8 @@ export default function ApplicationsCard() {
   return (
     <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between mb-2">
-        <h3 className={`${syne} font-bold text-base`}>Companies Applied</h3>
-        <span className={`${syne} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: apps.length > 0 ? "var(--ink)" : "var(--border)", color: apps.length > 0 ? "var(--primary)" : "var(--muted)" }}>{apps.length}</span>
+        <h3 className={`${heading} font-bold text-base`}>Companies Applied</h3>
+        <span className={`${heading} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: apps.length > 0 ? "var(--ink)" : "var(--border)", color: apps.length > 0 ? "var(--primary)" : "var(--muted)" }}>{apps.length}</span>
       </div>
       <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Track your application status across companies</p>
 
@@ -47,16 +47,16 @@ export default function ApplicationsCard() {
       ) : apps.length === 0 ? (
         <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-3xl mb-3">📋</div>
-          <p className={`${syne} font-bold text-sm mb-1`}>No applications yet</p>
+          <p className={`${heading} font-bold text-sm mb-1`}>No applications yet</p>
           <p className="text-xs" style={{ color: "var(--muted)" }}>Browse job openings and apply to start tracking here</p>
         </div>
       ) : (
         <div className="space-y-2.5">
           {apps.map((app) => (
             <div key={app.id} className="flex items-center gap-3 p-3 rounded-xl border transition-colors hover:bg-gray-50" style={{ borderColor: "var(--border)" }}>
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${syne} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>{app.job.company.charAt(0)}</div>
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${heading} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>{app.job.company.charAt(0)}</div>
               <div className="flex-1 min-w-0">
-                <div className={`${syne} font-bold text-sm`}>{app.job.company}</div>
+                <div className={`${heading} font-bold text-sm`}>{app.job.company}</div>
                 <div className="text-xs" style={{ color: "var(--muted)" }}>{app.job.title}</div>
               </div>
               <div className="text-right shrink-0">

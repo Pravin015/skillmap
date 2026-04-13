@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface ProfileData {
   profileNumber: string;
@@ -63,7 +63,7 @@ export default function PublicProfilePage() {
       <div className="flex min-h-[60vh] items-center justify-center px-4">
         <div className="text-center">
           <div className="text-5xl mb-4">🔒</div>
-          <h1 className={`${syne} font-bold text-xl mb-2`}>{error || "Profile not found"}</h1>
+          <h1 className={`${heading} font-bold text-xl mb-2`}>{error || "Profile not found"}</h1>
           <p className="text-sm" style={{ color: "var(--muted)" }}>This profile may not exist or you may not have permission to view it.</p>
         </div>
       </div>
@@ -85,17 +85,17 @@ export default function PublicProfilePage() {
               {p.user.profileImage ? (
                 <img src={p.user.profileImage} alt="" className="w-16 h-16 rounded-2xl object-cover shrink-0" />
               ) : (
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-xl text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${heading} font-extrabold text-xl text-white shrink-0`} style={{ background: "var(--ink)" }}>
                   {p.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                 </div>
               )}
               <div className="flex-1">
-                <h1 className={`${syne} font-extrabold text-xl`}>{p.user.name}</h1>
+                <h1 className={`${heading} font-extrabold text-xl`}>{p.user.name}</h1>
                 <p className="text-sm" style={{ color: "var(--muted)" }}>
                   {p.collegeName || "College not specified"}{p.user.degree ? ` · ${p.user.degree}` : ""}{p.user.gradYear ? ` · ${p.user.gradYear}` : ""}
                 </p>
                 <div className="flex gap-2 mt-2 flex-wrap">
-                  <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${syne}`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
+                  <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${heading}`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
                     {p.experienceLevel === "FRESHER" ? "Fresher" : "Experienced"}
                   </span>
                   {p.fieldOfInterest && (
@@ -108,7 +108,7 @@ export default function PublicProfilePage() {
               </div>
               {showScore && (
                 <div className="text-center shrink-0">
-                  <div className={`${syne} text-2xl font-extrabold`} style={{ color: scoreColor }}>{p.profileScore}</div>
+                  <div className={`${heading} text-2xl font-extrabold`} style={{ color: scoreColor }}>{p.profileScore}</div>
                   <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Profile Score</div>
                 </div>
               )}
@@ -126,10 +126,10 @@ export default function PublicProfilePage() {
             <div className="p-6">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                  <h3 className={`${syne} font-bold text-base text-white`}>Connect with {p.user.name.split(" ")[0]}</h3>
+                  <h3 className={`${heading} font-bold text-base text-white`}>Connect with {p.user.name.split(" ")[0]}</h3>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>Reach out to this candidate directly</p>
                 </div>
-                <button onClick={() => setShowConnect(!showConnect)} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
+                <button onClick={() => setShowConnect(!showConnect)} className={`px-5 py-2.5 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
                   {showConnect ? "Hide details" : "Connect now →"}
                 </button>
               </div>
@@ -167,7 +167,7 @@ export default function PublicProfilePage() {
         {/* Bio */}
         {p.bio && (
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-3`}>About</h2>
+            <h2 className={`${heading} font-bold text-base mb-3`}>About</h2>
             <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{p.bio}</p>
           </div>
         )}
@@ -177,32 +177,32 @@ export default function PublicProfilePage() {
           {p.academicScore && (
             <div className="rounded-2xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
               <div className="text-xs" style={{ color: "var(--muted)" }}>{p.academicType || "Score"}</div>
-              <div className={`${syne} text-xl font-extrabold mt-1`}>{p.academicScore}</div>
+              <div className={`${heading} text-xl font-extrabold mt-1`}>{p.academicScore}</div>
             </div>
           )}
           {(p.salaryMin || p.salaryMax) && (
             <div className="rounded-2xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
               <div className="text-xs" style={{ color: "var(--muted)" }}>Expected (LPA)</div>
-              <div className={`${syne} text-xl font-extrabold mt-1`}>{p.salaryMin || "—"}–{p.salaryMax || "—"}</div>
+              <div className={`${heading} text-xl font-extrabold mt-1`}>{p.salaryMin || "—"}–{p.salaryMax || "—"}</div>
             </div>
           )}
           <div className="rounded-2xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
             <div className="text-xs" style={{ color: "var(--muted)" }}>Available</div>
-            <div className={`${syne} text-xl font-extrabold mt-1`}>{p.availableToJoin ? "Yes" : "No"}</div>
+            <div className={`${heading} text-xl font-extrabold mt-1`}>{p.availableToJoin ? "Yes" : "No"}</div>
           </div>
           <div className="rounded-2xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
             <div className="text-xs" style={{ color: "var(--muted)" }}>Notice</div>
-            <div className={`${syne} text-xl font-extrabold mt-1`}>{p.joinDate || "—"}</div>
+            <div className={`${heading} text-xl font-extrabold mt-1`}>{p.joinDate || "—"}</div>
           </div>
         </div>
 
         {/* Skills */}
         {p.skills.length > 0 && (
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-3`}>Skills</h2>
+            <h2 className={`${heading} font-bold text-base mb-3`}>Skills</h2>
             <div className="flex flex-wrap gap-2">
               {p.skills.map((s) => (
-                <span key={s} className={`text-xs font-medium px-3 py-1.5 rounded-full border ${syne}`} style={{ borderColor: "var(--border)" }}>{s}</span>
+                <span key={s} className={`text-xs font-medium px-3 py-1.5 rounded-full border ${heading}`} style={{ borderColor: "var(--border)" }}>{s}</span>
               ))}
             </div>
           </div>
@@ -211,14 +211,14 @@ export default function PublicProfilePage() {
         {/* Resume */}
         {p.resumeUrl && (
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-3`}>Resume</h2>
+            <h2 className={`${heading} font-bold text-base mb-3`}>Resume</h2>
             <div className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: "var(--border)", background: "rgba(232,255,71,0.05)" }}>
               <span className="text-2xl">📄</span>
               <div className="flex-1">
-                <div className={`${syne} font-bold text-sm`}>Resume uploaded</div>
+                <div className={`${heading} font-bold text-sm`}>Resume uploaded</div>
                 <div className="text-xs" style={{ color: "var(--muted)" }}>PDF Document</div>
               </div>
-              <button onClick={() => { const w = window.open(); if (w) w.document.write(`<iframe src="${p.resumeUrl}" style="width:100%;height:100%;border:none;position:fixed;inset:0"></iframe>`); }} className={`shrink-0 px-4 py-2 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>View Resume</button>
+              <button onClick={() => { const w = window.open(); if (w) w.document.write(`<iframe src="${p.resumeUrl}" style="width:100%;height:100%;border:none;position:fixed;inset:0"></iframe>`); }} className={`shrink-0 px-4 py-2 rounded-lg ${heading} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>View Resume</button>
               <a href={p.resumeUrl} download="resume.pdf" className={`shrink-0 px-4 py-2 rounded-lg text-xs font-medium border no-underline`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Download</a>
             </div>
           </div>
@@ -227,7 +227,7 @@ export default function PublicProfilePage() {
         {/* Links */}
         {(p.githubUrl || p.linkedinUrl || p.portfolioUrl || p.otherLinks.length > 0) && (
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-3`}>Links & Projects</h2>
+            <h2 className={`${heading} font-bold text-base mb-3`}>Links & Projects</h2>
             <div className="space-y-2">
               {p.githubUrl && (
                 <a href={p.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-xl border no-underline transition-colors hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
@@ -263,13 +263,13 @@ export default function PublicProfilePage() {
         {/* Experience */}
         {p.experiences.length > 0 && (
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-4`}>Work Experience</h2>
+            <h2 className={`${heading} font-bold text-base mb-4`}>Work Experience</h2>
             <div className="space-y-4">
               {p.experiences.map((exp, i) => (
                 <div key={i} className="flex gap-4">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm" style={{ background: "var(--primary)", color: "white" }}>{exp.company.charAt(0)}</div>
                   <div>
-                    <div className={`${syne} font-bold text-sm`}>{exp.role}</div>
+                    <div className={`${heading} font-bold text-sm`}>{exp.role}</div>
                     <div className="text-xs" style={{ color: "var(--muted)" }}>{exp.company} · {exp.startDate} – {exp.current ? "Present" : exp.endDate || "—"}</div>
                     {exp.description && <p className="text-xs mt-1 leading-relaxed" style={{ color: "var(--muted)" }}>{exp.description}</p>}
                   </div>
@@ -282,11 +282,11 @@ export default function PublicProfilePage() {
         {/* Certifications */}
         {p.certifications.length > 0 && (
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-4`}>Certifications & Achievements</h2>
+            <h2 className={`${heading} font-bold text-base mb-4`}>Certifications & Achievements</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {p.certifications.map((cert, i) => (
                 <div key={i} className="rounded-xl border p-4" style={{ borderColor: "var(--border)" }}>
-                  <div className={`${syne} font-bold text-sm`}>{cert.title}</div>
+                  <div className={`${heading} font-bold text-sm`}>{cert.title}</div>
                   <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{cert.issuer}{cert.issueDate ? ` · ${cert.issueDate}` : ""}</div>
                   {cert.imageUrl && (
                     <div className="mt-3 rounded-lg overflow-hidden border" style={{ borderColor: "var(--border)" }}>

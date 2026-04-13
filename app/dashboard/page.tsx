@@ -17,7 +17,7 @@ import LabsPrepCard from "@/components/dashboard/LabsPrepCard";
 import MyMentorshipCard from "@/components/dashboard/MyMentorshipCard";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const sidebarItems = [
   { id: "mentor", label: "AI Mentor", icon: "✦" },
@@ -93,7 +93,7 @@ export default function DashboardPage() {
       {/* Sidebar — desktop only */}
       <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] py-6 px-3" style={{ borderColor: "var(--border)", background: "white" }}>
         <div className="mb-6 px-3">
-          <div className={`${syne} font-bold text-sm`} style={{ color: "var(--muted)" }}>Dashboard</div>
+          <div className={`${heading} font-bold text-sm`} style={{ color: "var(--muted)" }}>Dashboard</div>
         </div>
         <nav className="flex flex-col gap-0.5 flex-1">
           {sidebarItems.map((item) => (
@@ -109,12 +109,12 @@ export default function DashboardPage() {
               }}
             >
               <span className="text-base">{item.icon}</span>
-              <span className={syne}>{item.label}</span>
+              <span className={heading}>{item.label}</span>
             </button>
           ))}
         </nav>
         <div className="px-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
-          <div className={`${syne} font-bold text-xs truncate`}>{profile.name}</div>
+          <div className={`${heading} font-bold text-xs truncate`}>{profile.name}</div>
           <div className="text-[0.65rem]" style={{ color: "var(--muted)" }}>{profile.domain}</div>
         </div>
       </aside>
@@ -125,7 +125,7 @@ export default function DashboardPage() {
           <button
             key={item.id}
             onClick={() => scrollToSection(item.id)}
-            className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] transition-colors ${syne}`}
+            className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] transition-colors ${heading}`}
             style={{
               background: activeSection === item.id ? "var(--ink)" : "transparent",
               color: activeSection === item.id ? "var(--primary)" : "var(--muted)",
@@ -141,7 +141,7 @@ export default function DashboardPage() {
       <div className="flex-1 px-4 md:px-8 py-8 pb-24 lg:pb-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className={`${syne} font-extrabold text-2xl md:text-3xl`}>
+          <h1 className={`${heading} font-extrabold text-2xl md:text-3xl`}>
             {greeting()}, <span style={{ color: "var(--primary)", background: "var(--ink)", padding: "0 6px", borderRadius: "6px" }}>{profile.name.split(" ")[0]}</span>
           </h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>
@@ -212,7 +212,7 @@ export default function DashboardPage() {
 }
 
 function EventsWidget() {
-  const s = "font-[family-name:var(--font-syne)]";
+  const s = "font-[family-name:var(--font-heading)]";
   const [events, setEvents] = useState<{ id: string; title: string; date: string; pricing: string; price: number | null; createdBy: { name: string }; _count: { registrations: number } }[]>([]);
   useEffect(() => { fetch("/api/events").then((r) => r.json()).then((d) => setEvents((d.events || []).filter((e: { date: string }) => new Date(e.date) >= new Date()).slice(0, 3))).catch(() => {}); }, []);
 

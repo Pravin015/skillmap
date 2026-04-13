@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Post { slug: string; title: string; excerpt: string | null; coverImageUrl: string | null; authorName: string; authorRole: string; tags: string[]; category: string | null; readTime: number | null; views: number; publishedAt: string | null; videoUrl: string | null }
 
@@ -20,7 +20,7 @@ export default function BlogPage() {
     <div className="min-h-[calc(100vh-4rem)]" style={{ background: "var(--surface)" }}>
       <section className="py-12 px-4 md:px-8" style={{ background: "var(--ink)" }}>
         <div className="max-w-5xl mx-auto">
-          <h1 className={`${syne} font-extrabold text-3xl md:text-4xl text-white mb-2`}>Blog</h1>
+          <h1 className={`${heading} font-extrabold text-3xl md:text-4xl text-white mb-2`}>Blog</h1>
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Career advice, industry insights, and skill-building tips from mentors and experts</p>
         </div>
       </section>
@@ -28,9 +28,9 @@ export default function BlogPage() {
       {allTags.length > 0 && (
         <section className="py-4 px-4 md:px-8 border-b" style={{ background: "white", borderColor: "var(--border)" }}>
           <div className="max-w-5xl mx-auto flex gap-2 flex-wrap">
-            <button onClick={() => setTag("")} className={`px-3 py-1.5 rounded-xl text-xs ${syne} font-bold`} style={{ background: !tag ? "var(--ink)" : "white", color: !tag ? "var(--primary)" : "var(--muted)", border: !tag ? "none" : "1px solid var(--border)" }}>All</button>
+            <button onClick={() => setTag("")} className={`px-3 py-1.5 rounded-xl text-xs ${heading} font-bold`} style={{ background: !tag ? "var(--ink)" : "white", color: !tag ? "var(--primary)" : "var(--muted)", border: !tag ? "none" : "1px solid var(--border)" }}>All</button>
             {allTags.map((t) => (
-              <button key={t} onClick={() => setTag(t)} className={`px-3 py-1.5 rounded-xl text-xs ${syne} font-bold`} style={{ background: tag === t ? "var(--ink)" : "white", color: tag === t ? "var(--primary)" : "var(--muted)", border: tag === t ? "none" : "1px solid var(--border)" }}>{t}</button>
+              <button key={t} onClick={() => setTag(t)} className={`px-3 py-1.5 rounded-xl text-xs ${heading} font-bold`} style={{ background: tag === t ? "var(--ink)" : "white", color: tag === t ? "var(--primary)" : "var(--muted)", border: tag === t ? "none" : "1px solid var(--border)" }}>{t}</button>
             ))}
           </div>
         </section>
@@ -43,7 +43,7 @@ export default function BlogPage() {
           ) : posts.length === 0 ? (
             <div className="rounded-2xl border bg-white p-16 text-center" style={{ borderColor: "var(--border)" }}>
               <div className="text-5xl mb-4">📝</div>
-              <p className={`${syne} font-bold text-lg mb-2`}>No blog posts yet</p>
+              <p className={`${heading} font-bold text-lg mb-2`}>No blog posts yet</p>
               <p className="text-sm" style={{ color: "var(--muted)" }}>Articles from mentors and experts will appear here</p>
             </div>
           ) : (
@@ -60,7 +60,7 @@ export default function BlogPage() {
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {post.tags.slice(0, 3).map((t) => (<span key={t} className="text-[0.6rem] px-2 py-0.5 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>{t}</span>))}
                     </div>
-                    <h2 className={`${syne} font-bold text-base mb-2 group-hover:text-[var(--primary)] transition-colors line-clamp-2`} style={{ color: "var(--ink)" }}>{post.title}</h2>
+                    <h2 className={`${heading} font-bold text-base mb-2 group-hover:text-[var(--primary)] transition-colors line-clamp-2`} style={{ color: "var(--ink)" }}>{post.title}</h2>
                     <p className="text-xs leading-relaxed mb-3 line-clamp-3" style={{ color: "var(--muted)" }}>{post.excerpt}</p>
                     <div className="flex items-center justify-between text-[0.65rem]" style={{ color: "var(--muted)" }}>
                       <span>{post.authorName} · <span className="capitalize">{post.authorRole.toLowerCase()}</span></span>

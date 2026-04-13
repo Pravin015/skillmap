@@ -1,6 +1,6 @@
 "use client";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Props {
   orgName: string;
@@ -26,7 +26,7 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${syne} font-extrabold text-xl`}>{orgName} Dashboard</h2>
+        <h2 className={`${heading} font-extrabold text-xl`}>{orgName} Dashboard</h2>
         <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Overview of your organisation&apos;s hiring activity on SkillMap</p>
       </div>
 
@@ -38,7 +38,7 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
               <span className="text-2xl">{s.icon}</span>
               <div className="w-8 h-1 rounded-full" style={{ background: s.color }} />
             </div>
-            <div className={`${syne} text-2xl font-extrabold`}>{stats[s.key]}</div>
+            <div className={`${heading} text-2xl font-extrabold`}>{stats[s.key]}</div>
             <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{s.label}</div>
           </div>
         ))}
@@ -46,7 +46,7 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
 
       {/* Quick actions */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-4`}>Quick Actions</h3>
+        <h3 className={`${heading} font-bold text-base mb-4`}>Quick Actions</h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { label: "Add HR", icon: "➕", tab: "manage-hr" },
@@ -56,7 +56,7 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
           ].map((a) => (
             <button key={a.label} onClick={() => onNavigate(a.tab)} className="rounded-xl border p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ borderColor: "var(--border)" }}>
               <div className="text-2xl mb-2">{a.icon}</div>
-              <div className={`${syne} font-bold text-sm`}>{a.label}</div>
+              <div className={`${heading} font-bold text-sm`}>{a.label}</div>
             </button>
           ))}
         </div>
@@ -64,13 +64,13 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
 
       {/* Hiring funnel */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-2`}>Hiring Funnel</h3>
+        <h3 className={`${heading} font-bold text-base mb-2`}>Hiring Funnel</h3>
         <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Track candidates through your entire hiring pipeline</p>
         <div className="grid grid-cols-6 gap-2">
           {["Applied", "Screened", "Interview", "Assessment", "Offer", "Hired"].map((stage, i) => (
             <div key={stage} className="text-center">
               <div className="rounded-xl border-2 border-dashed p-3 mb-1" style={{ borderColor: "var(--border)" }}>
-                <div className={`${syne} text-xl font-extrabold`} style={{ color: "var(--border)" }}>0</div>
+                <div className={`${heading} text-xl font-extrabold`} style={{ color: "var(--border)" }}>0</div>
               </div>
               <div className="text-[0.6rem] font-medium" style={{ color: "var(--muted)" }}>{stage}</div>
               {i < 5 && <div className="text-xs mt-1" style={{ color: "var(--border)" }}>→</div>}
@@ -81,7 +81,7 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
 
       {/* Recent activity */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-2`}>Recent Activity</h3>
+        <h3 className={`${heading} font-bold text-base mb-2`}>Recent Activity</h3>
         <div className="rounded-xl border-2 border-dashed p-8 text-center" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm" style={{ color: "var(--muted)" }}>No activity yet. Add HRs and start posting jobs to see activity here.</p>
         </div>

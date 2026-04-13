@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Job {
   id: string;
@@ -91,7 +91,7 @@ export default function JobsPage() {
       {/* Hero header */}
       <section className="py-12 px-4 md:px-8" style={{ background: "var(--ink)" }}>
         <div className="max-w-5xl mx-auto">
-          <h1 className={`${syne} font-extrabold text-2xl md:text-3xl text-white mb-2`}>
+          <h1 className={`${heading} font-extrabold text-2xl md:text-3xl text-white mb-2`}>
             Job Openings
           </h1>
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
@@ -123,16 +123,16 @@ export default function JobsPage() {
       {/* Filters bar */}
       <section className="border-b py-4 px-4 md:px-8 overflow-x-auto" style={{ background: "white", borderColor: "var(--border)" }}>
         <div className="max-w-5xl mx-auto flex gap-3 flex-nowrap">
-          <select value={domain} onChange={(e) => setDomain(e.target.value)} className={`shrink-0 rounded-xl border px-3 py-2 text-xs outline-none ${syne} font-bold`} style={{ borderColor: "var(--border)" }}>
+          <select value={domain} onChange={(e) => setDomain(e.target.value)} className={`shrink-0 rounded-xl border px-3 py-2 text-xs outline-none ${heading} font-bold`} style={{ borderColor: "var(--border)" }}>
             {domains.map((d) => <option key={d} value={d}>{d === "All" ? "All Domains" : d}</option>)}
           </select>
-          <select value={workMode} onChange={(e) => setWorkMode(e.target.value)} className={`shrink-0 rounded-xl border px-3 py-2 text-xs outline-none ${syne} font-bold`} style={{ borderColor: "var(--border)" }}>
+          <select value={workMode} onChange={(e) => setWorkMode(e.target.value)} className={`shrink-0 rounded-xl border px-3 py-2 text-xs outline-none ${heading} font-bold`} style={{ borderColor: "var(--border)" }}>
             {workModes.map((w) => <option key={w} value={w}>{w === "All" ? "Work Mode" : w}</option>)}
           </select>
-          <select value={experience} onChange={(e) => setExperience(e.target.value)} className={`shrink-0 rounded-xl border px-3 py-2 text-xs outline-none ${syne} font-bold`} style={{ borderColor: "var(--border)" }}>
+          <select value={experience} onChange={(e) => setExperience(e.target.value)} className={`shrink-0 rounded-xl border px-3 py-2 text-xs outline-none ${heading} font-bold`} style={{ borderColor: "var(--border)" }}>
             {experienceLevels.map((e) => <option key={e} value={e}>{e === "All" ? "Experience" : e}</option>)}
           </select>
-          <select value={salary} onChange={(e) => setSalary(e.target.value)} className={`shrink-0 rounded-xl border px-3 py-2 text-xs outline-none ${syne} font-bold`} style={{ borderColor: "var(--border)" }}>
+          <select value={salary} onChange={(e) => setSalary(e.target.value)} className={`shrink-0 rounded-xl border px-3 py-2 text-xs outline-none ${heading} font-bold`} style={{ borderColor: "var(--border)" }}>
             {salaryRanges.map((s) => <option key={s.label} value={s.label}>{s.label === "All" ? "Salary Range" : s.label}</option>)}
           </select>
           {/* Mobile location */}
@@ -171,7 +171,7 @@ export default function JobsPage() {
           ) : filtered.length === 0 ? (
             <div className="rounded-2xl border bg-white p-16 text-center" style={{ borderColor: "var(--border)" }}>
               <div className="text-5xl mb-4">🔍</div>
-              <p className={`${syne} font-bold text-lg mb-2`}>No jobs match your filters</p>
+              <p className={`${heading} font-bold text-lg mb-2`}>No jobs match your filters</p>
               <p className="text-sm" style={{ color: "var(--muted)" }}>Try adjusting your search or filters to see more results</p>
             </div>
           ) : (
@@ -180,7 +180,7 @@ export default function JobsPage() {
                 <Link key={job.id} href={`/jobs/${job.id}`} className="block rounded-2xl border bg-white p-5 md:p-6 transition-all hover:-translate-y-0.5 hover:shadow-lg no-underline group" style={{ borderColor: "var(--border)" }}>
                   <div className="flex items-start gap-4">
                     {/* Company avatar */}
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${syne} font-extrabold text-lg text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${heading} font-extrabold text-lg text-white shrink-0`} style={{ background: "var(--ink)" }}>
                       {job.company.charAt(0)}
                     </div>
 
@@ -188,11 +188,11 @@ export default function JobsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <h2 className={`${syne} font-bold text-base md:text-lg group-hover:text-[var(--primary)] transition-colors`} style={{ color: "var(--ink)" }}>{job.title}</h2>
+                          <h2 className={`${heading} font-bold text-base md:text-lg group-hover:text-[var(--primary)] transition-colors`} style={{ color: "var(--ink)" }}>{job.title}</h2>
                           <p className="text-sm mt-0.5" style={{ color: "var(--muted)" }}>{job.company}</p>
                         </div>
                         {(job.salaryMin || job.salaryMax) && (
-                          <div className={`hidden sm:block shrink-0 text-right ${syne}`}>
+                          <div className={`hidden sm:block shrink-0 text-right ${heading}`}>
                             <div className="font-extrabold text-base" style={{ color: "var(--ink)" }}>
                               {job.salaryMin && job.salaryMax ? `₹${job.salaryMin}–${job.salaryMax}` : job.salaryMax ? `Up to ₹${job.salaryMax}` : `₹${job.salaryMin}+`}
                             </div>
@@ -206,7 +206,7 @@ export default function JobsPage() {
                         <span className="text-[0.65rem] font-medium px-2.5 py-1 rounded-full border flex items-center gap-1" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
                           📍 {job.location}
                         </span>
-                        <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: job.workMode === "Remote" ? "rgba(34,197,94,0.1)" : job.workMode === "Hybrid" ? "rgba(139,92,246,0.1)" : "rgba(59,130,246,0.1)", color: job.workMode === "Remote" ? "#16a34a" : job.workMode === "Hybrid" ? "#7c3aed" : "#2563eb" }}>
+                        <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${heading}`} style={{ background: job.workMode === "Remote" ? "rgba(34,197,94,0.1)" : job.workMode === "Hybrid" ? "rgba(139,92,246,0.1)" : "rgba(59,130,246,0.1)", color: job.workMode === "Remote" ? "#16a34a" : job.workMode === "Hybrid" ? "#7c3aed" : "#2563eb" }}>
                           {job.workMode}
                         </span>
                         <span className="text-[0.65rem] font-medium px-2.5 py-1 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
@@ -216,7 +216,7 @@ export default function JobsPage() {
                           {job.jobType}
                         </span>
                         {job.domain && (
-                          <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: "var(--primary)", color: "white" }}>
+                          <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${heading}`} style={{ background: "var(--primary)", color: "white" }}>
                             {job.domain}
                           </span>
                         )}

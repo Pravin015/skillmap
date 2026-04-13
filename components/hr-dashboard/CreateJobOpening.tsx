@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
-const labelClass = `block text-sm font-medium mb-1.5 ${syne}`;
+const labelClass = `block text-sm font-medium mb-1.5 ${heading}`;
 const experienceLevels = ["Fresher", ...Array.from({ length: 30 }, (_, i) => `${i + 1} year${i + 1 > 1 ? "s" : ""}`)];
 
 interface LabOption { id: string; title: string; domain: string; difficulty: string; timeLimit: number; _count: { problems: number } }
@@ -58,7 +58,7 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${syne} font-bold text-xl`}>Create Job Opening</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Create Job Opening</h2>
         <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Post a new job — it will be live immediately for candidates</p>
       </div>
 
@@ -159,7 +159,7 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
             <input name="perks" type="text" placeholder="e.g. WFH, health insurance" className={inputClass} style={{ borderColor: "var(--border)" }} />
           </div>
         </div>
-        <button type="submit" disabled={saving} className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
+        <button type="submit" disabled={saving} className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
           {saving ? "Posting..." : "Post Job Opening"}
         </button>
       </form>

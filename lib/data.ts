@@ -11,7 +11,7 @@ export const COMPANY_COLORS: Record<string, string> = {
   kpmg: "#1D4ED8",
   infosys: "#0EA5E9",
   deloitte: "#86BC25",
-  wipro: "#7C3AED",
+  wipro: "#0ABFBC",
 };
 
 export const DOMAIN_MAP: Record<string, string> = {

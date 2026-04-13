@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Company {
   id: string;
@@ -55,12 +55,12 @@ export default function MockInterviewPage() {
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
       {/* Hero */}
       <section className="relative overflow-hidden" style={{ background: "var(--ink)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(99,102,241,0.3) 1px, transparent 0)", backgroundSize: "40px 40px" }} />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(10,191,188,0.3) 1px, transparent 0)", backgroundSize: "40px 40px" }} />
         <div className="relative mx-auto max-w-6xl px-4 py-16 md:py-24 text-center">
           <div className="inline-block rounded-full px-4 py-1.5 text-xs font-medium mb-6" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>
             Interview Preparation
           </div>
-          <h1 className={`${syne} text-3xl md:text-5xl font-bold text-white mb-4`}>
+          <h1 className={`${heading} text-3xl md:text-5xl font-bold text-white mb-4`}>
             Mock Interviews
           </h1>
           <p className="text-base md:text-lg max-w-2xl mx-auto mb-8" style={{ color: "rgba(255,255,255,0.7)" }}>
@@ -91,7 +91,7 @@ export default function MockInterviewPage() {
             { label: "Preparation Modes", value: 3 },
           ].map((s) => (
             <div key={s.label}>
-              <div className={`${syne} text-xl md:text-2xl font-bold`} style={{ color: "var(--ink)" }}>{s.value}</div>
+              <div className={`${heading} text-xl md:text-2xl font-bold`} style={{ color: "var(--ink)" }}>{s.value}</div>
               <div className="text-xs" style={{ color: "var(--muted)" }}>{s.label}</div>
             </div>
           ))}
@@ -145,7 +145,7 @@ export default function MockInterviewPage() {
                     {company.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <h3 className={`${syne} text-base font-bold truncate`} style={{ color: "var(--ink)" }}>
+                    <h3 className={`${heading} text-base font-bold truncate`} style={{ color: "var(--ink)" }}>
                       {company.name}
                     </h3>
                     <span className="text-xs" style={{ color: "var(--muted)" }}>{company.domain}</span>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 declare global {
   interface Window {
@@ -169,7 +169,7 @@ export default function PricingPage() {
           name: data.name || "",
           email: data.email || "",
         },
-        theme: { color: "#6366f1" },
+        theme: { color: "#0ABFBC" },
         modal: {
           ondismiss: () => setLoading(null),
         },
@@ -191,7 +191,7 @@ export default function PricingPage() {
       <section className="py-16 px-4 md:px-8 text-center" style={{ background: "var(--ink)" }}>
         <div className="max-w-3xl mx-auto">
           <div className="section-eyebrow justify-center" style={{ color: "var(--primary)" }}>Pricing</div>
-          <h1 className={`${syne} font-extrabold text-3xl md:text-4xl text-white mb-3`}>
+          <h1 className={`${heading} font-extrabold text-3xl md:text-4xl text-white mb-3`}>
             Start Free. Upgrade When Ready.
           </h1>
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
@@ -220,8 +220,8 @@ export default function PricingPage() {
                       Most Popular
                     </div>
                   )}
-                  <div className={`${syne} text-sm font-bold mb-1`} style={{ color: "var(--ink)" }}>{plan.name}</div>
-                  <div className={`${syne} text-3xl font-extrabold mb-1`} style={{ color: "var(--primary)" }}>
+                  <div className={`${heading} text-sm font-bold mb-1`} style={{ color: "var(--ink)" }}>{plan.name}</div>
+                  <div className={`${heading} text-3xl font-extrabold mb-1`} style={{ color: "var(--primary)" }}>
                     {plan.price}<span className="text-sm font-normal" style={{ color: "var(--muted)" }}>{plan.period}</span>
                   </div>
                   <p className="text-xs mb-6" style={{ color: "var(--muted)" }}>{plan.desc}</p>
@@ -302,7 +302,7 @@ function PaymentHistory() {
 
   return (
     <div>
-      <h2 className={`${syne} font-bold text-lg mb-4`}>Payment History</h2>
+      <h2 className={`${heading} font-bold text-lg mb-4`}>Payment History</h2>
       <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: "var(--border)" }}>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -319,7 +319,7 @@ function PaymentHistory() {
               {payments.map((p) => (
                 <tr key={p.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3 text-sm">{new Date(p.createdAt).toLocaleDateString()}</td>
-                  <td className={`px-4 py-3 text-sm ${syne} font-bold`}>{p.plan.replace("_", " ")}</td>
+                  <td className={`px-4 py-3 text-sm ${heading} font-bold`}>{p.plan.replace("_", " ")}</td>
                   <td className="px-4 py-3 text-sm font-medium">₹{(p.amount / 100).toFixed(2)}</td>
                   <td className="px-4 py-3">
                     <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${statusColors[p.status] || ""}`}>{p.status}</span>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Competition {
   id: string; title: string; slug: string; description: string; type: string;
@@ -52,7 +52,7 @@ export default function CompetitionsPage() {
           <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold mb-4" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>
             🏆 Compete & Get Hired
           </div>
-          <h1 className={`${syne} text-2xl md:text-4xl font-extrabold text-white mb-3`}>
+          <h1 className={`${heading} text-2xl md:text-4xl font-extrabold text-white mb-3`}>
             Competitions & Hiring Challenges
           </h1>
           <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.6)" }}>
@@ -90,7 +90,7 @@ export default function CompetitionsPage() {
         ) : competitions.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-4xl mb-3">🏆</div>
-            <p className={`${syne} font-bold text-base mb-1`}>No competitions found</p>
+            <p className={`${heading} font-bold text-base mb-1`}>No competitions found</p>
             <p className="text-sm" style={{ color: "var(--muted)" }}>Check back soon for new challenges!</p>
           </div>
         ) : (
@@ -115,7 +115,7 @@ export default function CompetitionsPage() {
                   </div>
 
                   {/* Title + Company */}
-                  <h3 className={`${syne} text-sm font-bold mb-1`} style={{ color: "var(--ink)" }}>{comp.title}</h3>
+                  <h3 className={`${heading} text-sm font-bold mb-1`} style={{ color: "var(--ink)" }}>{comp.title}</h3>
                   {comp.companyName && <p className="text-xs mb-2" style={{ color: "var(--muted)" }}>by {comp.companyName}</p>}
 
                   {/* Description */}

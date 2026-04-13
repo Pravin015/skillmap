@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 export default function ProfileScoreCard() {
   const [animated, setAnimated] = useState(false);
@@ -44,12 +44,12 @@ export default function ProfileScoreCard() {
 
   return (
     <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-      <h3 className={`${syne} font-bold text-base mb-4`}>Profile Score</h3>
+      <h3 className={`${heading} font-bold text-base mb-4`}>Profile Score</h3>
       <div className="flex gap-6 items-center">
         <div className="relative shrink-0">
           <svg width="130" height="130" viewBox="0 0 130 130"><circle cx="65" cy="65" r={radius} fill="none" stroke="var(--border)" strokeWidth="10" /><circle cx="65" cy="65" r={radius} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={dashOffset} transform="rotate(-90 65 65)" style={{ transition: "stroke-dashoffset 1.5s ease" }} /></svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={`${syne} text-2xl font-extrabold`} style={{ color }}>{pct}</span>
+            <span className={`${heading} text-2xl font-extrabold`} style={{ color }}>{pct}</span>
             <span className="text-[0.6rem]" style={{ color: "var(--muted)" }}>out of 100</span>
           </div>
         </div>
@@ -58,7 +58,7 @@ export default function ProfileScoreCard() {
             const itemPct = Math.round((item.score / item.max) * 100);
             return (
               <div key={item.label}>
-                <div className="flex justify-between text-xs mb-0.5"><span style={{ color: "var(--muted)" }}>{item.label}</span><span className={`${syne} font-bold`}>{item.score}/{item.max}</span></div>
+                <div className="flex justify-between text-xs mb-0.5"><span style={{ color: "var(--muted)" }}>{item.label}</span><span className={`${heading} font-bold`}>{item.score}/{item.max}</span></div>
                 <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}><div className="h-full rounded-full transition-all duration-1000" style={{ width: animated ? `${itemPct}%` : "0%", background: itemPct >= 70 ? "#22c55e" : itemPct >= 40 ? "#f59e0b" : "#ef4444" }} /></div>
               </div>
             );

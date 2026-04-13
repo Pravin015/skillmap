@@ -3,9 +3,9 @@ import { useState } from "react";
 import FormWrapper from "@/components/FormWrapper";
 import { submitForm } from "@/lib/submit-form";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
-const labelClass = `block text-sm font-medium mb-1.5 ${syne}`;
+const labelClass = `block text-sm font-medium mb-1.5 ${heading}`;
 const experienceLevels = ["Fresher", ...Array.from({ length: 30 }, (_, i) => `${i + 1} year${i + 1 > 1 ? "s" : ""}`)];
 
 export default function JobPostingForm() {
@@ -100,7 +100,7 @@ export default function JobPostingForm() {
           <label className={labelClass}>Application Deadline</label>
           <input type="date" className={inputClass} style={{ borderColor: "var(--border)" }} />
         </div>
-        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Job Posting</button>
+        <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Job Posting</button>
       </form>
     </FormWrapper>
   );

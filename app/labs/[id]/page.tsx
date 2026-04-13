@@ -4,7 +4,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
 import ProctoringGuard from "@/components/ProctoringGuard";
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Problem { id: string; question: string; optionA: string; optionB: string; optionC: string; optionD: string; order: number }
 interface Lab { id: string; title: string; domain: string; description: string | null; difficulty: string; timeLimit: number; passingScore: number; problems: Problem[] }
@@ -76,13 +76,13 @@ function LabInner() {
         <div className="max-w-md w-full text-center">
           <div className="rounded-2xl border bg-white p-8" style={{ borderColor: "var(--border)" }}>
             <div className="text-5xl mb-4">{result.passed ? "🎉" : "😔"}</div>
-            <h1 className={`${syne} font-extrabold text-2xl mb-2`}>{result.passed ? "Lab Passed!" : "Lab Not Passed"}</h1>
+            <h1 className={`${heading} font-extrabold text-2xl mb-2`}>{result.passed ? "Lab Passed!" : "Lab Not Passed"}</h1>
             <p className="text-sm mb-6" style={{ color: "var(--muted)" }}>{lab.title}</p>
-            <div className={`${syne} text-5xl font-extrabold mb-2`} style={{ color: result.passed ? "#22c55e" : "#ef4444" }}>{result.percentage}%</div>
+            <div className={`${heading} text-5xl font-extrabold mb-2`} style={{ color: result.passed ? "#22c55e" : "#ef4444" }}>{result.percentage}%</div>
             <p className="text-sm" style={{ color: "var(--muted)" }}>{result.score}/{result.total} correct · Passing: {lab.passingScore}%</p>
             <div className="mt-6 flex gap-3 justify-center">
-              {jobId && <Link href={`/jobs/${jobId}`} className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>Back to Job</Link>}
-              <Link href="/dashboard" className={`px-5 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline border`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Dashboard</Link>
+              {jobId && <Link href={`/jobs/${jobId}`} className={`px-5 py-2.5 rounded-xl ${heading} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>Back to Job</Link>}
+              <Link href="/dashboard" className={`px-5 py-2.5 rounded-xl ${heading} font-bold text-sm no-underline border`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Dashboard</Link>
             </div>
           </div>
         </div>
@@ -97,17 +97,17 @@ function LabInner() {
         <div className="max-w-lg w-full">
           <div className="rounded-2xl border bg-white p-8 text-center" style={{ borderColor: "var(--border)" }}>
             <div className="text-4xl mb-4">🧪</div>
-            <h1 className={`${syne} font-extrabold text-2xl mb-2`}>{lab.title}</h1>
+            <h1 className={`${heading} font-extrabold text-2xl mb-2`}>{lab.title}</h1>
             {lab.description && <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>{lab.description}</p>}
             <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}><div className={`${syne} text-lg font-extrabold`}>{lab.problems.length}</div><div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Questions</div></div>
-              <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}><div className={`${syne} text-lg font-extrabold`}>{lab.timeLimit}m</div><div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Time Limit</div></div>
-              <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}><div className={`${syne} text-lg font-extrabold`}>{lab.passingScore}%</div><div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>To Pass</div></div>
+              <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}><div className={`${heading} text-lg font-extrabold`}>{lab.problems.length}</div><div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Questions</div></div>
+              <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}><div className={`${heading} text-lg font-extrabold`}>{lab.timeLimit}m</div><div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Time Limit</div></div>
+              <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}><div className={`${heading} text-lg font-extrabold`}>{lab.passingScore}%</div><div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>To Pass</div></div>
             </div>
             <div className="rounded-xl p-3 text-xs mb-6" style={{ background: "rgba(239,68,68,0.05)", color: "#dc2626", border: "1px solid rgba(239,68,68,0.1)" }}>
               ⚠️ Once started, the timer cannot be paused. Make sure you have a stable internet connection.
             </div>
-            <button onClick={startLab} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>Start Lab →</button>
+            <button onClick={startLab} className={`px-8 py-3 rounded-xl ${heading} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>Start Lab →</button>
           </div>
         </div>
       </div>
@@ -121,10 +121,10 @@ function LabInner() {
       {/* Timer bar */}
       <div className="sticky top-16 z-40 border-b py-3 px-4" style={{ background: "white", borderColor: "var(--border)" }}>
         <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div className={`${syne} font-bold text-sm`}>{lab.title}</div>
+          <div className={`${heading} font-bold text-sm`}>{lab.title}</div>
           <div className="flex items-center gap-4">
             <span className="text-xs" style={{ color: "var(--muted)" }}>{Object.keys(answers).length}/{lab.problems.length} answered</span>
-            <div className={`${syne} font-extrabold text-lg px-4 py-1.5 rounded-xl ${urgentTime ? "animate-pulse" : ""}`} style={{ background: urgentTime ? "rgba(239,68,68,0.1)" : "var(--ink)", color: urgentTime ? "#dc2626" : "var(--primary)" }}>
+            <div className={`${heading} font-extrabold text-lg px-4 py-1.5 rounded-xl ${urgentTime ? "animate-pulse" : ""}`} style={{ background: urgentTime ? "rgba(239,68,68,0.1)" : "var(--ink)", color: urgentTime ? "#dc2626" : "var(--primary)" }}>
               {String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
             </div>
           </div>
@@ -135,7 +135,7 @@ function LabInner() {
         {lab.problems.map((p, i) => (
           <div key={p.id} className="rounded-2xl border bg-white p-6" style={{ borderColor: answers[p.id] ? "var(--ink)" : "var(--border)" }}>
             <div className="flex items-start gap-3 mb-4">
-              <span className={`${syne} font-extrabold text-sm shrink-0 w-8 h-8 rounded-lg flex items-center justify-center`} style={{ background: answers[p.id] ? "var(--ink)" : "var(--border)", color: answers[p.id] ? "var(--primary)" : "var(--muted)" }}>{i + 1}</span>
+              <span className={`${heading} font-extrabold text-sm shrink-0 w-8 h-8 rounded-lg flex items-center justify-center`} style={{ background: answers[p.id] ? "var(--ink)" : "var(--border)", color: answers[p.id] ? "var(--primary)" : "var(--muted)" }}>{i + 1}</span>
               <p className="text-sm font-medium leading-relaxed">{p.question}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-11">
@@ -153,7 +153,7 @@ function LabInner() {
         ))}
 
         <div className="flex justify-center pt-4">
-          <button onClick={handleSubmit} disabled={submitting} className={`px-10 py-3.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
+          <button onClick={handleSubmit} disabled={submitting} className={`px-10 py-3.5 rounded-xl ${heading} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
             {submitting ? "Submitting..." : `Submit Lab (${Object.keys(answers).length}/${lab.problems.length} answered)`}
           </button>
         </div>

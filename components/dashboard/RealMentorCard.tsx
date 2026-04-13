@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Mentor {
   mentorNumber: string; currentCompany: string | null; currentRole: string | null;
@@ -23,7 +23,7 @@ export default function RealMentorCard() {
     <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between mb-2">
         <div>
-          <h3 className={`${syne} font-bold text-base`}>Real Mentors</h3>
+          <h3 className={`${heading} font-bold text-base`}>Real Mentors</h3>
           <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Book 1-on-1 calls with verified industry professionals</p>
         </div>
       </div>
@@ -40,7 +40,7 @@ export default function RealMentorCard() {
       ) : mentors.length === 0 ? (
         <div className="rounded-xl border-2 border-dashed p-8 text-center mt-4" style={{ borderColor: "var(--border)" }}>
           <div className="text-3xl mb-3">🧑‍🏫</div>
-          <p className={`${syne} font-bold text-sm mb-1`}>No mentors available yet</p>
+          <p className={`${heading} font-bold text-sm mb-1`}>No mentors available yet</p>
           <p className="text-xs" style={{ color: "var(--muted)" }}>Verified mentors will appear here once they're onboarded</p>
         </div>
       ) : (
@@ -50,13 +50,13 @@ export default function RealMentorCard() {
               {m.user.profileImage ? (
                 <img src={m.user.profileImage} alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
               ) : (
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${syne} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${heading} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>
                   {m.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                 </div>
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className={`${syne} font-bold text-sm`}>{m.user.name}</span>
+                  <span className={`${heading} font-bold text-sm`}>{m.user.name}</span>
                   <span className="text-[0.55rem] font-bold px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">✓</span>
                 </div>
                 <div className="text-xs truncate" style={{ color: "var(--muted)" }}>
@@ -68,11 +68,11 @@ export default function RealMentorCard() {
                   <span>{m.compensation === "VOLUNTEER" ? "Free" : m.sessionRate ? `₹${m.sessionRate}` : "Paid"}</span>
                 </div>
               </div>
-              <span className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.65rem]`} style={{ background: "var(--primary)", color: "white" }}>Book</span>
+              <span className={`shrink-0 px-3 py-1.5 rounded-lg ${heading} font-bold text-[0.65rem]`} style={{ background: "var(--primary)", color: "white" }}>Book</span>
             </Link>
           ))}
           {mentors.length > 5 && (
-            <p className="text-center text-xs mt-2"><Link href="/for-mentors" className={`${syne} font-bold no-underline`} style={{ color: "var(--ink)" }}>View all {mentors.length} mentors →</Link></p>
+            <p className="text-center text-xs mt-2"><Link href="/for-mentors" className={`${heading} font-bold no-underline`} style={{ color: "var(--ink)" }}>View all {mentors.length} mentors →</Link></p>
           )}
         </div>
       )}

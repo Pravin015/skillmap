@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Event {
   id: string; title: string; description: string; date: string; duration: string | null;
@@ -28,7 +28,7 @@ export default function EventsPage() {
     <div className="min-h-[calc(100vh-4rem)]" style={{ background: "var(--surface)" }}>
       <section className="py-12 px-4 md:px-8" style={{ background: "var(--ink)" }}>
         <div className="max-w-5xl mx-auto">
-          <h1 className={`${syne} font-extrabold text-2xl md:text-3xl text-white mb-2`}>Events</h1>
+          <h1 className={`${heading} font-extrabold text-2xl md:text-3xl text-white mb-2`}>Events</h1>
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Career guidance sessions, workshops, and webinars by industry mentors</p>
         </div>
       </section>
@@ -36,7 +36,7 @@ export default function EventsPage() {
       <section className="py-4 px-4 md:px-8 border-b" style={{ background: "white", borderColor: "var(--border)" }}>
         <div className="max-w-5xl mx-auto flex gap-2">
           {["ALL", "FREE", "PAID"].map((f) => (
-            <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === f ? "var(--ink)" : "transparent", color: filter === f ? "var(--primary)" : "var(--muted)", border: filter === f ? "none" : "1px solid var(--border)" }}>
+            <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-xs ${heading} font-bold`} style={{ background: filter === f ? "var(--ink)" : "transparent", color: filter === f ? "var(--primary)" : "var(--muted)", border: filter === f ? "none" : "1px solid var(--border)" }}>
               {f === "ALL" ? "All Events" : f}
             </button>
           ))}
@@ -50,14 +50,14 @@ export default function EventsPage() {
           ) : events.length === 0 ? (
             <div className="rounded-2xl border bg-white p-16 text-center" style={{ borderColor: "var(--border)" }}>
               <div className="text-5xl mb-4">🎤</div>
-              <p className={`${syne} font-bold text-lg mb-2`}>No events yet</p>
+              <p className={`${heading} font-bold text-lg mb-2`}>No events yet</p>
               <p className="text-sm" style={{ color: "var(--muted)" }}>Upcoming career guidance events from mentors will appear here</p>
             </div>
           ) : (
             <div className="space-y-8">
               {upcoming.length > 0 && (
                 <div>
-                  <h2 className={`${syne} font-bold text-lg mb-4`}>Upcoming Events</h2>
+                  <h2 className={`${heading} font-bold text-lg mb-4`}>Upcoming Events</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {upcoming.map((event) => <EventCard key={event.id} event={event} />)}
                   </div>
@@ -65,7 +65,7 @@ export default function EventsPage() {
               )}
               {past.length > 0 && (
                 <div>
-                  <h2 className={`${syne} font-bold text-lg mb-4`} style={{ color: "var(--muted)" }}>Past Events</h2>
+                  <h2 className={`${heading} font-bold text-lg mb-4`} style={{ color: "var(--muted)" }}>Past Events</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 opacity-60">
                     {past.map((event) => <EventCard key={event.id} event={event} />)}
                   </div>
@@ -93,10 +93,10 @@ function EventCard({ event }: { event: Event }) {
       <div className="p-5">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
-          <h3 className={`${syne} font-bold text-base group-hover:text-[var(--primary)] transition-colors`} style={{ color: "var(--ink)" }}>{event.title}</h3>
+          <h3 className={`${heading} font-bold text-base group-hover:text-[var(--primary)] transition-colors`} style={{ color: "var(--ink)" }}>{event.title}</h3>
           <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>by {event.createdBy.name}</p>
         </div>
-        <span className={`shrink-0 text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: event.pricing === "FREE" ? "rgba(34,197,94,0.1)" : "rgba(139,92,246,0.1)", color: event.pricing === "FREE" ? "#16a34a" : "#7c3aed" }}>
+        <span className={`shrink-0 text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${heading}`} style={{ background: event.pricing === "FREE" ? "rgba(34,197,94,0.1)" : "rgba(139,92,246,0.1)", color: event.pricing === "FREE" ? "#16a34a" : "#7c3aed" }}>
           {event.pricing === "FREE" ? "Free" : `₹${(event.price || 0) / 100}`}
         </span>
       </div>
@@ -106,7 +106,7 @@ function EventCard({ event }: { event: Event }) {
           📅 {new Date(event.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
         </span>
         {event.duration && <span className="text-[0.65rem] font-medium px-2.5 py-1 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>⏱ {event.duration}</span>}
-        <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${syne}`} style={{ background: event.eventType === "VIRTUAL" ? "rgba(6,182,212,0.1)" : "rgba(245,158,11,0.1)", color: event.eventType === "VIRTUAL" ? "#0891b2" : "#d97706" }}>
+        <span className={`text-[0.65rem] font-bold px-2.5 py-1 rounded-full ${heading}`} style={{ background: event.eventType === "VIRTUAL" ? "rgba(6,182,212,0.1)" : "rgba(245,158,11,0.1)", color: event.eventType === "VIRTUAL" ? "#0891b2" : "#d97706" }}>
           {event.eventType}
         </span>
         {event.category && <span className="text-[0.65rem] font-medium px-2.5 py-1 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>{event.category}</span>}

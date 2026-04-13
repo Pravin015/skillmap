@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useState, useEffect, use } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Company {
   id: string;
@@ -74,7 +74,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ compan
               {company.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <h1 className={`${syne} text-2xl md:text-3xl font-bold text-white`}>{company.name}</h1>
+              <h1 className={`${heading} text-2xl md:text-3xl font-bold text-white`}>{company.name}</h1>
               <span className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{company.domain}</span>
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ compan
 
       {/* 3 Option Cards */}
       <section className="mx-auto max-w-6xl px-4 py-8">
-        <h2 className={`${syne} text-lg font-bold mb-6`} style={{ color: "var(--ink)" }}>
+        <h2 className={`${heading} text-lg font-bold mb-6`} style={{ color: "var(--ink)" }}>
           Choose your preparation mode
         </h2>
 
@@ -99,7 +99,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ compan
           {/* Prepare by Yourself */}
           <div className="rounded-2xl border bg-white p-6 flex flex-col" style={{ borderColor: "var(--border)" }}>
             <div className="text-3xl mb-3">📝</div>
-            <h3 className={`${syne} text-base font-bold mb-2`} style={{ color: "var(--ink)" }}>Prepare by Yourself</h3>
+            <h3 className={`${heading} text-base font-bold mb-2`} style={{ color: "var(--ink)" }}>Prepare by Yourself</h3>
             <p className="text-xs mb-4 flex-1" style={{ color: "var(--muted)" }}>
               Browse curated interview questions with sample answers and tips. Track your progress as you practice.
             </p>
@@ -118,7 +118,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ compan
           {/* AI Interview */}
           <div className="rounded-2xl border bg-white p-6 flex flex-col" style={{ borderColor: "var(--ink)" }}>
             <div className="text-3xl mb-3">🤖</div>
-            <h3 className={`${syne} text-base font-bold mb-2`} style={{ color: "var(--ink)" }}>AI Interview</h3>
+            <h3 className={`${heading} text-base font-bold mb-2`} style={{ color: "var(--ink)" }}>AI Interview</h3>
             <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>
               Real-time mock interview powered by AI. Get instant feedback on every answer with a score breakdown.
             </p>
@@ -189,7 +189,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ compan
           {/* Mentor Interview */}
           <div className="rounded-2xl border bg-white p-6 flex flex-col" style={{ borderColor: "var(--border)" }}>
             <div className="text-3xl mb-3">👨‍🏫</div>
-            <h3 className={`${syne} text-base font-bold mb-2`} style={{ color: "var(--ink)" }}>Prepare with Mentor</h3>
+            <h3 className={`${heading} text-base font-bold mb-2`} style={{ color: "var(--ink)" }}>Prepare with Mentor</h3>
             <p className="text-xs mb-4 flex-1" style={{ color: "var(--muted)" }}>
               Book a 1-on-1 session with an experienced mentor who can conduct a realistic interview and give personalized feedback.
             </p>
@@ -206,7 +206,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ compan
 
       {/* Question Categories Preview */}
       <section className="mx-auto max-w-6xl px-4 pb-12">
-        <h2 className={`${syne} text-lg font-bold mb-4`} style={{ color: "var(--ink)" }}>
+        <h2 className={`${heading} text-lg font-bold mb-4`} style={{ color: "var(--ink)" }}>
           Question Categories
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -217,7 +217,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ compan
               className="rounded-xl border bg-white p-4 text-center transition-all hover:shadow-sm no-underline"
               style={{ borderColor: "var(--border)" }}
             >
-              <div className={`${syne} text-xl font-bold`} style={{ color: "var(--ink)" }}>{questions.length}</div>
+              <div className={`${heading} text-xl font-bold`} style={{ color: "var(--ink)" }}>{questions.length}</div>
               <div className="text-xs" style={{ color: "var(--muted)" }}>
                 {cat.replace("_", " ")} Questions
               </div>

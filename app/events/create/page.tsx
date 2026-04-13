@@ -2,9 +2,9 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
-const labelClass = `block text-sm font-medium mb-1.5 ${syne}`;
+const labelClass = `block text-sm font-medium mb-1.5 ${heading}`;
 
 export default function CreateEventPage() {
   const { data: session } = useSession();
@@ -42,7 +42,7 @@ export default function CreateEventPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)] py-8 px-4 md:px-8" style={{ background: "var(--surface)" }}>
       <div className="max-w-3xl mx-auto">
-        <div className="mb-8"><h1 className={`${syne} font-extrabold text-2xl`}>Create Event</h1><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Host a career guidance session, workshop, or webinar</p></div>
+        <div className="mb-8"><h1 className={`${heading} font-extrabold text-2xl`}>Create Event</h1><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Host a career guidance session, workshop, or webinar</p></div>
 
         <form onSubmit={handleSubmit} className="rounded-2xl border bg-white p-6 md:p-8 space-y-6" style={{ borderColor: "var(--border)" }}>
           {message && <div className={`rounded-xl p-4 text-sm font-medium ${message.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>{message.text}</div>}
@@ -50,7 +50,7 @@ export default function CreateEventPage() {
           {/* Basic */}
           {/* Cover Image */}
           <div>
-            <h2 className={`${syne} font-bold text-base mb-4`}>Cover Image</h2>
+            <h2 className={`${heading} font-bold text-base mb-4`}>Cover Image</h2>
             <div className="flex items-center gap-4">
               {coverImage ? (
                 <img src={coverImage} alt="" className="w-32 h-20 rounded-xl object-cover" />
@@ -58,7 +58,7 @@ export default function CreateEventPage() {
                 <div className="w-32 h-20 rounded-xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>🖼️</div>
               )}
               <div>
-                <label className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
+                <label className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
                   {coverImage ? "Change image" : "Upload thumbnail"}
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                     const f = e.target.files?.[0]; if (!f) return;
@@ -73,7 +73,7 @@ export default function CreateEventPage() {
             </div>
           </div>
 
-          <div><h2 className={`${syne} font-bold text-base mb-4`}>Event Details</h2>
+          <div><h2 className={`${heading} font-bold text-base mb-4`}>Event Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="md:col-span-2"><label className={labelClass}>Event Title *</label><input name="title" required placeholder="e.g. Cybersecurity Career Roadmap 2026" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
               <div><label className={labelClass}>Category</label><select name="category" className={inputClass} style={{ borderColor: "var(--border)" }}><option value="">Select</option><option>Career Guidance</option><option>Resume Review</option><option>Interview Prep</option><option>Skill Workshop</option><option>Industry Insights</option><option>Q&A Session</option><option>Hackathon</option><option>Other</option></select></div>
@@ -86,7 +86,7 @@ export default function CreateEventPage() {
           <div><label className={labelClass}>Benefits for Participants</label><textarea name="benefits" placeholder="What will attendees learn or gain?" rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
 
           {/* Date & Time */}
-          <div><h2 className={`${syne} font-bold text-base mb-4`}>Schedule</h2>
+          <div><h2 className={`${heading} font-bold text-base mb-4`}>Schedule</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <div><label className={labelClass}>Start Date & Time *</label><input name="date" type="datetime-local" required className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
               <div><label className={labelClass}>End Date & Time</label><input name="endDate" type="datetime-local" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
@@ -95,7 +95,7 @@ export default function CreateEventPage() {
           </div>
 
           {/* Type & Location */}
-          <div><h2 className={`${syne} font-bold text-base mb-4`}>Format</h2>
+          <div><h2 className={`${heading} font-bold text-base mb-4`}>Format</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div><label className={labelClass}>Event Type *</label><select name="eventType" required className={inputClass} style={{ borderColor: "var(--border)" }}><option value="VIRTUAL">Virtual</option><option value="PHYSICAL">Physical</option><option value="HYBRID">Hybrid</option></select></div>
               <div><label className={labelClass}>Location (if physical/hybrid)</label><input name="location" placeholder="e.g. Bangalore, IIT Campus" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
@@ -103,17 +103,17 @@ export default function CreateEventPage() {
           </div>
 
           {/* Pricing */}
-          <div><h2 className={`${syne} font-bold text-base mb-4`}>Pricing</h2>
+          <div><h2 className={`${heading} font-bold text-base mb-4`}>Pricing</h2>
             <div className="flex gap-3 mb-4">
               {["FREE", "PAID"].map((p) => (
-                <button key={p} type="button" onClick={() => setPricing(p)} className={`px-5 py-2.5 rounded-xl text-sm ${syne} font-bold`} style={{ background: pricing === p ? "var(--ink)" : "white", color: pricing === p ? "var(--primary)" : "var(--muted)", border: pricing === p ? "none" : "1px solid var(--border)" }}>{p === "FREE" ? "Free Event" : "Paid Event"}</button>
+                <button key={p} type="button" onClick={() => setPricing(p)} className={`px-5 py-2.5 rounded-xl text-sm ${heading} font-bold`} style={{ background: pricing === p ? "var(--ink)" : "white", color: pricing === p ? "var(--primary)" : "var(--muted)", border: pricing === p ? "none" : "1px solid var(--border)" }}>{p === "FREE" ? "Free Event" : "Paid Event"}</button>
               ))}
             </div>
             {pricing === "PAID" && <div><label className={labelClass}>Price (₹) *</label><input name="price" type="number" min="1" placeholder="e.g. 499" className={inputClass} style={{ borderColor: "var(--border)" }} /><p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Only paid participants will see the joining link</p></div>}
           </div>
 
           {/* Capacity */}
-          <div><h2 className={`${syne} font-bold text-base mb-4`}>Capacity</h2>
+          <div><h2 className={`${heading} font-bold text-base mb-4`}>Capacity</h2>
             <div className="grid grid-cols-2 gap-5">
               <div><label className={labelClass}>Min Participants</label><input name="minParticipants" type="number" min="1" defaultValue="1" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
               <div><label className={labelClass}>Max Participants</label><input name="maxParticipants" type="number" min="1" defaultValue="100" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
@@ -121,18 +121,18 @@ export default function CreateEventPage() {
           </div>
 
           {/* Join link */}
-          <div><h2 className={`${syne} font-bold text-base mb-4`}>Joining Details</h2>
+          <div><h2 className={`${heading} font-bold text-base mb-4`}>Joining Details</h2>
             <div className="space-y-4">
               <div><label className={labelClass}>Meeting Link (Zoom/Google Meet/Teams)</label><input name="joinLink" type="url" placeholder="https://zoom.us/j/..." className={inputClass} style={{ borderColor: "var(--border)" }} /><p className="text-xs mt-1" style={{ color: "var(--muted)" }}>{pricing === "PAID" ? "This link will only be visible to paid participants" : "This link will be visible to all registered participants"}</p></div>
               <div><label className={labelClass}>Joining Instructions</label><textarea name="joinInstructions" placeholder="Any special instructions for joining..." rows={2} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
             </div>
           </div>
 
-          <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(99,102,241,0.2)" }}>
-            <strong className={syne}>Approval:</strong> Verified mentors&apos; events are auto-approved. Unverified mentors&apos; events require admin approval before they go live.
+          <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(10,191,188,0.2)" }}>
+            <strong className={heading}>Approval:</strong> Verified mentors&apos; events are auto-approved. Unverified mentors&apos; events require admin approval before they go live.
           </div>
 
-          <button type="submit" disabled={saving} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Creating..." : "Create Event"}</button>
+          <button type="submit" disabled={saving} className={`px-8 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Creating..." : "Create Event"}</button>
         </form>
       </div>
     </div>

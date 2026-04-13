@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface MockStat {
   id: string; userId: string; userName: string; companyName: string;
@@ -30,7 +30,7 @@ export default function MockInterviewStats() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className={`${syne} font-bold text-xl`}>Mock Interview Statistics</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Mock Interview Statistics</h2>
         <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{interviews.length} total sessions</p>
       </div>
 
@@ -42,7 +42,7 @@ export default function MockInterviewStats() {
           { label: "In Progress", value: interviews.filter((i) => i.status === "IN_PROGRESS").length, color: "#8b5cf6" },
         ].map((s) => (
           <div key={s.label} className="rounded-xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
-            <div className={`${syne} text-xl font-bold`} style={{ color: s.color }}>{s.value}</div>
+            <div className={`${heading} text-xl font-bold`} style={{ color: s.color }}>{s.value}</div>
             <div className="text-[10px]" style={{ color: "var(--muted)" }}>{s.label}</div>
           </div>
         ))}
@@ -51,7 +51,7 @@ export default function MockInterviewStats() {
       {/* Popular Companies */}
       {topCompanies.length > 0 && (
         <div className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
-          <h3 className={`${syne} text-sm font-bold mb-3`}>Most Practiced Companies</h3>
+          <h3 className={`${heading} text-sm font-bold mb-3`}>Most Practiced Companies</h3>
           <div className="space-y-2">
             {topCompanies.map(([name, count]) => (
               <div key={name} className="flex items-center gap-3">
@@ -69,7 +69,7 @@ export default function MockInterviewStats() {
       {/* Recent Sessions */}
       <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: "var(--border)" }}>
         <div className="px-4 py-3 border-b" style={{ borderColor: "var(--border)" }}>
-          <h3 className={`${syne} text-sm font-bold`}>Recent Sessions</h3>
+          <h3 className={`${heading} text-sm font-bold`}>Recent Sessions</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">

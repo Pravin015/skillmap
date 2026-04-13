@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Competition { id: string; title: string; slug: string; type: string; status: string; companyName: string | null; difficulty: string; startDate: string; endDate: string; _count: { participants: number; submissions: number } }
 
@@ -37,7 +37,7 @@ export default function CompetitionsTab() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className={`${syne} font-bold text-xl`}>Competitions</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Competitions</h2>
         <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{comps.length} total competitions</p>
       </div>
 
@@ -60,7 +60,7 @@ export default function CompetitionsTab() {
             <div key={c.id} className="rounded-xl border bg-white p-4 flex items-center gap-3" style={{ borderColor: "var(--border)" }}>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`${syne} text-sm font-bold`} style={{ color: "var(--ink)" }}>{c.title}</span>
+                  <span className={`${heading} text-sm font-bold`} style={{ color: "var(--ink)" }}>{c.title}</span>
                   <span className="rounded-full px-2 py-0.5 text-[9px] font-medium" style={{ background: `${statusColors[c.status]}15`, color: statusColors[c.status] }}>{c.status}</span>
                   <span className="text-[10px]" style={{ color: "var(--muted)" }}>{c.type}</span>
                 </div>

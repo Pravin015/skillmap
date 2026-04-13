@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Application {
   id: string;
@@ -114,7 +114,7 @@ export default function CandidatePipeline() {
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className={`${syne} font-bold text-xl`}>Candidate Pipeline</h2>
+          <h2 className={`${heading} font-bold text-xl`}>Candidate Pipeline</h2>
           <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{filtered.length} candidates across {STAGES.length} stages</p>
         </div>
 
@@ -146,7 +146,7 @@ export default function CandidatePipeline() {
             {STAGES.map((s) => <option key={s} value={s}>{s}</option>)}
             <option value="REJECTED">REJECTED</option>
           </select>
-          <button onClick={bulkMove} disabled={!bulkStatus} className={`${syne} text-xs font-bold px-3 py-1 rounded-lg disabled:opacity-40`} style={{ background: "var(--primary)", color: "white" }}>
+          <button onClick={bulkMove} disabled={!bulkStatus} className={`${heading} text-xs font-bold px-3 py-1 rounded-lg disabled:opacity-40`} style={{ background: "var(--primary)", color: "white" }}>
             Move
           </button>
           <button onClick={() => setSelectedIds(new Set())} className="text-xs" style={{ color: "var(--muted)" }}>Clear</button>
@@ -162,7 +162,7 @@ export default function CandidatePipeline() {
               {/* Stage Header */}
               <div className="flex items-center gap-2 mb-2 px-1">
                 <div className="w-2 h-2 rounded-full" style={{ background: stageColors[stage] }} />
-                <span className={`${syne} text-xs font-bold`} style={{ color: "var(--ink)" }}>{stage}</span>
+                <span className={`${heading} text-xs font-bold`} style={{ color: "var(--ink)" }}>{stage}</span>
                 <span className="text-[10px] rounded-full px-1.5" style={{ background: "var(--surface)", color: "var(--muted)" }}>{stageApps.length}</span>
               </div>
 
@@ -187,13 +187,13 @@ export default function CandidatePipeline() {
                         onClick={(e) => e.stopPropagation()}
                       />
                       <div className="flex-1 min-w-0" onClick={() => openReport(app)}>
-                        <div className={`${syne} text-xs font-bold truncate`} style={{ color: "var(--ink)" }}>{app.user.name}</div>
+                        <div className={`${heading} text-xs font-bold truncate`} style={{ color: "var(--ink)" }}>{app.user.name}</div>
                         <div className="text-[10px] truncate" style={{ color: "var(--muted)" }}>{app.user.email}</div>
                         <div className="text-[10px] mt-1" style={{ color: "var(--muted)" }}>{app.job.title}</div>
                       </div>
                       <div className="shrink-0">
                         <div
-                          className={`${syne} text-[10px] font-bold px-1.5 py-0.5 rounded`}
+                          className={`${heading} text-[10px] font-bold px-1.5 py-0.5 rounded`}
                           style={{ background: app.scoreMatch >= 70 ? "#10b98115" : app.scoreMatch >= 40 ? "#f59e0b15" : "#ef444415", color: app.scoreMatch >= 70 ? "#10b981" : app.scoreMatch >= 40 ? "#f59e0b" : "#ef4444" }}
                         >
                           {app.scoreMatch}%
@@ -236,7 +236,7 @@ export default function CandidatePipeline() {
             {/* Panel Header */}
             <div className="sticky top-0 z-10 border-b p-4 flex items-center justify-between" style={{ background: "white", borderColor: "var(--border)" }}>
               <div>
-                <h3 className={`${syne} text-base font-bold`} style={{ color: "var(--ink)" }}>{selectedApp.user.name}</h3>
+                <h3 className={`${heading} text-base font-bold`} style={{ color: "var(--ink)" }}>{selectedApp.user.name}</h3>
                 <p className="text-xs" style={{ color: "var(--muted)" }}>{selectedApp.user.email}</p>
               </div>
               <button onClick={() => setSelectedApp(null)} className="text-xl" style={{ color: "var(--muted)" }}>×</button>
@@ -267,7 +267,7 @@ export default function CandidatePipeline() {
                 <>
                   {/* Profile */}
                   <div className="rounded-xl border p-4" style={{ borderColor: "var(--border)" }}>
-                    <h4 className={`${syne} text-xs font-bold mb-2`}>Profile</h4>
+                    <h4 className={`${heading} text-xs font-bold mb-2`}>Profile</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs" style={{ color: "var(--muted)" }}>
                       {report.user.profile?.collegeName && <div><strong>College:</strong> {report.user.profile.collegeName}</div>}
                       {report.user.phone && <div><strong>Phone:</strong> {report.user.phone}</div>}
@@ -289,7 +289,7 @@ export default function CandidatePipeline() {
 
                   {/* Assessment Scores */}
                   <div className="rounded-xl border p-4" style={{ borderColor: "var(--border)" }}>
-                    <h4 className={`${syne} text-xs font-bold mb-2`}>Assessment Summary</h4>
+                    <h4 className={`${heading} text-xs font-bold mb-2`}>Assessment Summary</h4>
                     <div className="grid grid-cols-3 gap-2">
                       {[
                         { label: "Profile Score", value: report.summary.profileScore, max: 100 },
@@ -297,7 +297,7 @@ export default function CandidatePipeline() {
                         { label: "Mock Interview", value: report.summary.mockInterviewAvg, max: 100 },
                       ].map((s) => (
                         <div key={s.label} className="text-center rounded-lg p-2" style={{ background: "var(--surface)" }}>
-                          <div className={`${syne} text-lg font-bold`} style={{ color: s.value != null ? (s.value >= 70 ? "#10b981" : s.value >= 40 ? "#f59e0b" : "#ef4444") : "var(--muted)" }}>
+                          <div className={`${heading} text-lg font-bold`} style={{ color: s.value != null ? (s.value >= 70 ? "#10b981" : s.value >= 40 ? "#f59e0b" : "#ef4444") : "var(--muted)" }}>
                             {s.value != null ? s.value : "—"}
                           </div>
                           <div className="text-[9px]" style={{ color: "var(--muted)" }}>{s.label}</div>
@@ -313,7 +313,7 @@ export default function CandidatePipeline() {
                   {/* Lab Results */}
                   {report.labAttempts.length > 0 && (
                     <div className="rounded-xl border p-4" style={{ borderColor: "var(--border)" }}>
-                      <h4 className={`${syne} text-xs font-bold mb-2`}>Lab Assessments</h4>
+                      <h4 className={`${heading} text-xs font-bold mb-2`}>Lab Assessments</h4>
                       {report.labAttempts.map((l, i) => (
                         <div key={i} className="flex items-center justify-between py-1.5 border-b last:border-0 text-xs" style={{ borderColor: "var(--border)" }}>
                           <span style={{ color: "var(--ink)" }}>{l.lab}</span>
@@ -326,7 +326,7 @@ export default function CandidatePipeline() {
                   {/* Mock Interviews */}
                   {report.mockInterviews.length > 0 && (
                     <div className="rounded-xl border p-4" style={{ borderColor: "var(--border)" }}>
-                      <h4 className={`${syne} text-xs font-bold mb-2`}>Mock Interview Scores</h4>
+                      <h4 className={`${heading} text-xs font-bold mb-2`}>Mock Interview Scores</h4>
                       {report.mockInterviews.map((m, i) => (
                         <div key={i} className="flex items-center justify-between py-1.5 border-b last:border-0 text-xs" style={{ borderColor: "var(--border)" }}>
                           <span style={{ color: "var(--ink)" }}>{m.company} — {m.type}</span>
@@ -340,7 +340,7 @@ export default function CandidatePipeline() {
 
               {/* Notes */}
               <div className="rounded-xl border p-4" style={{ borderColor: "var(--border)" }}>
-                <h4 className={`${syne} text-xs font-bold mb-2`}>Notes</h4>
+                <h4 className={`${heading} text-xs font-bold mb-2`}>Notes</h4>
                 <div className="flex gap-2 mb-3">
                   <input
                     type="text"
@@ -351,7 +351,7 @@ export default function CandidatePipeline() {
                     className="flex-1 rounded-lg border px-3 py-2 text-xs outline-none"
                     style={{ borderColor: "var(--border)" }}
                   />
-                  <button onClick={addNote} className={`${syne} text-xs font-bold px-3 py-2 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>Add</button>
+                  <button onClick={addNote} className={`${heading} text-xs font-bold px-3 py-2 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>Add</button>
                 </div>
                 {notes.length === 0 && <p className="text-[10px] text-center py-2" style={{ color: "var(--muted)" }}>No notes yet</p>}
                 {notes.map((n) => (

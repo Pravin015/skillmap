@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, use } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface LeaderboardEntry {
   rank: number; userId: string; name: string; email: string; college: string;
@@ -31,7 +31,7 @@ export default function LeaderboardPage({ params }: { params: Promise<{ slug: st
       <section style={{ background: "var(--ink)" }}>
         <div className="mx-auto max-w-4xl px-4 py-10">
           <Link href={`/competitions/${slug}`} className="text-xs no-underline mb-3 inline-block" style={{ color: "rgba(255,255,255,0.5)" }}>← Back to competition</Link>
-          <h1 className={`${syne} text-2xl font-bold text-white`}>🏅 Leaderboard</h1>
+          <h1 className={`${heading} text-2xl font-bold text-white`}>🏅 Leaderboard</h1>
           <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{competition?.title}</p>
         </div>
       </section>
@@ -46,10 +46,10 @@ export default function LeaderboardPage({ params }: { params: Promise<{ slug: st
               const heights = [160, 200, 130];
               return (
                 <div key={entry.userId} className="text-center">
-                  <div className={`${syne} font-bold text-sm mb-2`} style={{ color: "var(--ink)" }}>{entry.name}</div>
+                  <div className={`${heading} font-bold text-sm mb-2`} style={{ color: "var(--ink)" }}>{entry.name}</div>
                   <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>{entry.score} pts</div>
                   <div className="rounded-t-xl flex items-end justify-center pb-3" style={{ background: podiumColors[idx], width: 100, height: heights[idx] }}>
-                    <span className={`${syne} text-2xl font-extrabold text-white`}>{idx + 1}</span>
+                    <span className={`${heading} text-2xl font-extrabold text-white`}>{idx + 1}</span>
                   </div>
                 </div>
               );
@@ -78,17 +78,17 @@ export default function LeaderboardPage({ params }: { params: Promise<{ slug: st
                 {leaderboard.map((entry) => (
                   <tr key={entry.userId} className={`hover:bg-gray-50 ${entry.rank <= 3 ? "font-medium" : ""}`}>
                     <td className="px-4 py-3">
-                      <span className={`${syne} text-sm font-bold`} style={{ color: entry.rank <= 3 ? podiumColors[entry.rank - 1] : "var(--muted)" }}>
+                      <span className={`${heading} text-sm font-bold`} style={{ color: entry.rank <= 3 ? podiumColors[entry.rank - 1] : "var(--muted)" }}>
                         {entry.rank <= 3 ? ["🥇", "🥈", "🥉"][entry.rank - 1] : `#${entry.rank}`}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className={`${syne} text-sm font-bold`} style={{ color: "var(--ink)" }}>{entry.name}</div>
+                      <div className={`${heading} text-sm font-bold`} style={{ color: "var(--ink)" }}>{entry.name}</div>
                       <div className="text-[10px]" style={{ color: "var(--muted)" }}>{entry.email}</div>
                     </td>
                     <td className="px-4 py-3 text-xs hidden sm:table-cell" style={{ color: "var(--muted)" }}>{entry.college || "—"}</td>
                     <td className="px-4 py-3">
-                      <span className={`${syne} text-sm font-bold`} style={{ color: entry.score >= 70 ? "#10b981" : entry.score >= 40 ? "#f59e0b" : "#ef4444" }}>{entry.score}</span>
+                      <span className={`${heading} text-sm font-bold`} style={{ color: entry.score >= 70 ? "#10b981" : entry.score >= 40 ? "#f59e0b" : "#ef4444" }}>{entry.score}</span>
                     </td>
                     <td className="px-4 py-3 text-xs hidden md:table-cell" style={{ color: "var(--muted)" }}>{new Date(entry.submittedAt).toLocaleDateString()}</td>
                   </tr>

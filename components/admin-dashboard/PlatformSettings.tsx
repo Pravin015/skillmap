@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 export default function PlatformSettings() {
   const [dbStatus, setDbStatus] = useState<"checking" | "online" | "offline">("checking");
@@ -26,13 +26,13 @@ export default function PlatformSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${syne} font-bold text-xl`}>Platform Settings</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Platform Settings</h2>
         <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>System configuration and health monitoring</p>
       </div>
 
       {/* Platform Info */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-4`}>Platform Information</h3>
+        <h3 className={`${heading} font-bold text-base mb-4`}>Platform Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium block mb-1" style={{ color: "var(--muted)" }}>Platform Name</label>
@@ -55,7 +55,7 @@ export default function PlatformSettings() {
 
       {/* Health Status */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-4`}>System Health</h3>
+        <h3 className={`${heading} font-bold text-base mb-4`}>System Health</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {[
             { label: "Database (PostgreSQL)", status: dbStatus === "online" ? "Connected" : dbStatus === "checking" ? "Checking..." : "Offline", ok: dbStatus === "online" },
@@ -78,18 +78,18 @@ export default function PlatformSettings() {
 
       {/* Quick Stats */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-4`}>Database Stats</h3>
+        <h3 className={`${heading} font-bold text-base mb-4`}>Database Stats</h3>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
-            <div className={`${syne} text-2xl font-bold`} style={{ color: "var(--ink)" }}>{userCount}</div>
+            <div className={`${heading} text-2xl font-bold`} style={{ color: "var(--ink)" }}>{userCount}</div>
             <div className="text-[10px]" style={{ color: "var(--muted)" }}>Total Users</div>
           </div>
           <div className="text-center">
-            <div className={`${syne} text-2xl font-bold`} style={{ color: "var(--ink)" }}>{jobCount}</div>
+            <div className={`${heading} text-2xl font-bold`} style={{ color: "var(--ink)" }}>{jobCount}</div>
             <div className="text-[10px]" style={{ color: "var(--muted)" }}>Job Posts</div>
           </div>
           <div className="text-center">
-            <div className={`${syne} text-2xl font-bold`} style={{ color: "var(--ink)" }}>{appCount}</div>
+            <div className={`${heading} text-2xl font-bold`} style={{ color: "var(--ink)" }}>{appCount}</div>
             <div className="text-[10px]" style={{ color: "var(--muted)" }}>Applications</div>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function PlatformSettings() {
 
       {/* Environment */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-4`}>Environment Variables Status</h3>
+        <h3 className={`${heading} font-bold text-base mb-4`}>Environment Variables Status</h3>
         <div className="space-y-2">
           {[
             { key: "DATABASE_URL", desc: "PostgreSQL connection" },

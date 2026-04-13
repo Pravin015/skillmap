@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const statusBadge: Record<string, string> = {
   ACTIVE: "bg-green-100 text-green-700", CLOSED: "bg-gray-100 text-gray-700",
@@ -48,31 +48,31 @@ export default function MyJobPosts({ onNavigate }: { onNavigate: (tab: string) =
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className={`${syne} font-bold text-xl`}>My Job Posts</h2>
+          <h2 className={`${heading} font-bold text-xl`}>My Job Posts</h2>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{jobs.length} job{jobs.length !== 1 ? "s" : ""} posted</p>
         </div>
-        <button onClick={() => onNavigate("create-job")} className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>+ New Post</button>
+        <button onClick={() => onNavigate("create-job")} className={`px-4 py-2.5 rounded-xl ${heading} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>+ New Post</button>
       </div>
 
       {jobs.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-4xl mb-3">📝</div>
-          <p className={`${syne} font-bold text-base mb-1`}>No job posts yet</p>
+          <p className={`${heading} font-bold text-base mb-1`}>No job posts yet</p>
           <p className="text-sm" style={{ color: "var(--muted)" }}>Create your first job posting to start receiving applications</p>
-          <button onClick={() => onNavigate("create-job")} className={`mt-3 px-4 py-2 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>Create job post</button>
+          <button onClick={() => onNavigate("create-job")} className={`mt-3 px-4 py-2 rounded-lg ${heading} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>Create job post</button>
         </div>
       ) : (
         <div className="space-y-3">
           {jobs.map((job) => (
             <div key={job.id} className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
               <div className="flex items-center gap-4 flex-wrap">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${syne} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>{job.company.charAt(0)}</div>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${heading} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>{job.company.charAt(0)}</div>
                 <div className="flex-1 min-w-0">
-                  <div className={`${syne} font-bold`}>{job.title}</div>
+                  <div className={`${heading} font-bold`}>{job.title}</div>
                   <div className="text-xs" style={{ color: "var(--muted)" }}>{job.company} · {job.location} · {job.workMode} · {job.experienceLevel}</div>
                 </div>
                 <div className="text-center shrink-0">
-                  <div className={`${syne} text-lg font-extrabold`}>{job._count.applications}</div>
+                  <div className={`${heading} text-lg font-extrabold`}>{job._count.applications}</div>
                   <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Applications</div>
                 </div>
                 <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full shrink-0 ${statusBadge[job.status] || ""}`}>{job.status}</span>

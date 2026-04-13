@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const NTT_DOMAINS = ["@nttdata.com", "@ntt.com", "@ntt.in"];
 
@@ -100,7 +100,7 @@ export default function NTTUsersTab({ users }: { users: User[] }) {
             NTT
           </div>
           <div>
-            <h2 className={`${syne} font-bold text-xl`}>NTT Users</h2>
+            <h2 className={`${heading} font-bold text-xl`}>NTT Users</h2>
             <p className="text-xs" style={{ color: "var(--muted)" }}>
               Manage users from @nttdata.com, @ntt.com, @ntt.in
             </p>
@@ -111,12 +111,12 @@ export default function NTTUsersTab({ users }: { users: User[] }) {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="rounded-xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
-          <div className={`${syne} text-2xl font-bold`} style={{ color: "#0072C6" }}>{nttUsers.length}</div>
+          <div className={`${heading} text-2xl font-bold`} style={{ color: "#0072C6" }}>{nttUsers.length}</div>
           <div className="text-xs" style={{ color: "var(--muted)" }}>Total NTT Users</div>
         </div>
         {domainBreakdown.map((d) => (
           <div key={d.domain} className="rounded-xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
-            <div className={`${syne} text-2xl font-bold`} style={{ color: "var(--ink)" }}>{d.count}</div>
+            <div className={`${heading} text-2xl font-bold`} style={{ color: "var(--ink)" }}>{d.count}</div>
             <div className="text-xs" style={{ color: "var(--muted)" }}>{d.domain}</div>
           </div>
         ))}
@@ -162,7 +162,7 @@ export default function NTTUsersTab({ users }: { users: User[] }) {
       {displayed.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-4xl mb-3">🏢</div>
-          <p className={`${syne} font-bold text-base mb-1`}>No NTT users found</p>
+          <p className={`${heading} font-bold text-base mb-1`}>No NTT users found</p>
           <p className="text-sm" style={{ color: "var(--muted)" }}>
             Users signing up with @nttdata.com, @ntt.com, or @ntt.in emails will appear here.
           </p>
@@ -186,7 +186,7 @@ export default function NTTUsersTab({ users }: { users: User[] }) {
                   return (
                     <tr key={u.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
-                        <div className={`${syne} font-bold text-sm`}>{u.name}</div>
+                        <div className={`${heading} font-bold text-sm`}>{u.name}</div>
                         <div className="text-xs" style={{ color: "var(--muted)" }}>{u.email}</div>
                         {u.organisation && <div className="text-[10px]" style={{ color: "var(--muted)" }}>{u.organisation}</div>}
                       </td>

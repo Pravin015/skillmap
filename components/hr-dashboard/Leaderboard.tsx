@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Competition { id: string; title: string; slug: string; type: string; status: string; _count: { participants: number; submissions: number } }
 
@@ -27,7 +27,7 @@ export default function Leaderboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${syne} font-bold text-xl`}>Competition Leaderboards</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Competition Leaderboards</h2>
         <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>View rankings for your competitions</p>
       </div>
 
@@ -65,10 +65,10 @@ export default function Leaderboard() {
                 <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
                   {leaderboard.map((e) => (
                     <tr key={e.rank} className="hover:bg-gray-50">
-                      <td className="px-4 py-3"><span className={`${syne} text-sm font-bold`} style={{ color: e.rank <= 3 ? ["#f59e0b", "#94a3b8", "#cd7f32"][e.rank - 1] : "var(--muted)" }}>{e.rank <= 3 ? ["🥇", "🥈", "🥉"][e.rank - 1] : `#${e.rank}`}</span></td>
-                      <td className="px-4 py-3"><span className={`${syne} text-sm font-bold`} style={{ color: "var(--ink)" }}>{e.name}</span></td>
+                      <td className="px-4 py-3"><span className={`${heading} text-sm font-bold`} style={{ color: e.rank <= 3 ? ["#f59e0b", "#94a3b8", "#cd7f32"][e.rank - 1] : "var(--muted)" }}>{e.rank <= 3 ? ["🥇", "🥈", "🥉"][e.rank - 1] : `#${e.rank}`}</span></td>
+                      <td className="px-4 py-3"><span className={`${heading} text-sm font-bold`} style={{ color: "var(--ink)" }}>{e.name}</span></td>
                       <td className="px-4 py-3 text-xs hidden sm:table-cell" style={{ color: "var(--muted)" }}>{e.college || "—"}</td>
-                      <td className="px-4 py-3"><span className={`${syne} text-sm font-bold`} style={{ color: e.score >= 70 ? "#10b981" : "#f59e0b" }}>{e.score}</span></td>
+                      <td className="px-4 py-3"><span className={`${heading} text-sm font-bold`} style={{ color: e.score >= 70 ? "#10b981" : "#f59e0b" }}>{e.score}</span></td>
                     </tr>
                   ))}
                 </tbody>

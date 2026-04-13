@@ -4,9 +4,9 @@ import FormWrapper from "@/components/FormWrapper";
 import { getOfficialEmailError } from "@/lib/email-validation";
 import { submitForm } from "@/lib/submit-form";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
-const labelClass = `block text-sm font-medium mb-1.5 ${syne}`;
+const labelClass = `block text-sm font-medium mb-1.5 ${heading}`;
 
 export default function InstitutionOnboardingForm() {
   const [submitted, setSubmitted] = useState(false);
@@ -20,7 +20,7 @@ export default function InstitutionOnboardingForm() {
     <FormWrapper title="Institution Onboarding" subtitle="Register your college, university, or training institute on SkillMap. No public signup — our team will verify and activate your account." submitted={submitted} successMessage="Your institution registration is under review. We will verify through your official email domain and activate your account within 2-3 business days. You'll receive a confirmation email once approved.">
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(139,92,246,0.05)", borderColor: "rgba(139,92,246,0.2)" }}>
-          <strong className={`${syne} text-purple-700`}>Manual Onboarding</strong>
+          <strong className={`${heading} text-purple-700`}>Manual Onboarding</strong>
           <p className="mt-1" style={{ color: "var(--muted)" }}>Institution accounts are verified manually. Official email required. No self-signup.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -32,7 +32,7 @@ export default function InstitutionOnboardingForm() {
           <div><label className={labelClass}>Departments / Streams</label><input type="text" placeholder="e.g. CSE, ECE, MBA (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
         </div>
         <hr style={{ borderColor: "var(--border)" }} />
-        <h3 className={`${syne} font-bold text-base`}>Contact Person</h3>
+        <h3 className={`${heading} font-bold text-base`}>Contact Person</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div><label className={labelClass}>Full Name *</label><input type="text" required placeholder="Placement officer / Dean" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
           <div><label className={labelClass}>Designation *</label><input type="text" required placeholder="e.g. Head of Placements" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
@@ -43,14 +43,14 @@ export default function InstitutionOnboardingForm() {
           <div><label className={labelClass}>Phone *</label><input type="tel" required placeholder="+91 9876543210" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
         </div>
         <hr style={{ borderColor: "var(--border)" }} />
-        <h3 className={`${syne} font-bold text-base`}>Placement Details</h3>
+        <h3 className={`${heading} font-bold text-base`}>Placement Details</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div><label className={labelClass}>Current Placement Rate</label><select className={inputClass} style={{ borderColor: "var(--border)" }}><option value="">Select</option><option>Below 30%</option><option>30–50%</option><option>50–70%</option><option>70–90%</option><option>90%+</option></select></div>
           <div><label className={labelClass}>Top Recruiters</label><input type="text" placeholder="e.g. TCS, Infosys, Wipro" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
         </div>
         <div><label className={labelClass}>What do you expect from SkillMap?</label><textarea placeholder="How can we help improve your placement outcomes?" rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
         <label className="flex items-start gap-2 text-sm cursor-pointer"><input type="checkbox" required className="mt-1 accent-[var(--ink)]" /><span style={{ color: "var(--muted)" }}>I confirm I am authorised to register this institution and the information provided is accurate. I understand the account will be activated only after verification.</span></label>
-        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit for Review</button>
+        <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit for Review</button>
       </form>
     </FormWrapper>
   );

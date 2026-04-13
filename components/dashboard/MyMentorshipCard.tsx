@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const statusBadge: Record<string, string> = { REQUESTED: "bg-yellow-100 text-yellow-700", ACCEPTED: "bg-green-100 text-green-700", REJECTED: "bg-red-100 text-red-700", COMPLETED: "bg-blue-100 text-blue-700", CANCELLED: "bg-gray-100 text-gray-700" };
 
@@ -36,15 +36,15 @@ export default function MyMentorshipCard() {
   return (
     <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between mb-2">
-        <h3 className={`${syne} font-bold text-base`}>My Mentorship</h3>
-        <span className={`${syne} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: sessions.length > 0 ? "var(--ink)" : "var(--border)", color: sessions.length > 0 ? "var(--primary)" : "var(--muted)" }}>{sessions.length}</span>
+        <h3 className={`${heading} font-bold text-base`}>My Mentorship</h3>
+        <span className={`${heading} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: sessions.length > 0 ? "var(--ink)" : "var(--border)", color: sessions.length > 0 ? "var(--primary)" : "var(--muted)" }}>{sessions.length}</span>
       </div>
       <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>Your booked sessions with mentors</p>
 
       {sessions.length === 0 ? (
         <div className="rounded-xl border-2 border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-3xl mb-3">🧑‍🏫</div>
-          <p className={`${syne} font-bold text-sm mb-1`}>No sessions yet</p>
+          <p className={`${heading} font-bold text-sm mb-1`}>No sessions yet</p>
           <p className="text-xs" style={{ color: "var(--muted)" }}>Browse mentors and book a session to get started</p>
         </div>
       ) : (
@@ -52,7 +52,7 @@ export default function MyMentorshipCard() {
           {/* Upcoming */}
           {upcoming.length > 0 && (
             <div>
-              <div className={`${syne} text-xs font-bold mb-2`} style={{ color: "var(--muted)" }}>UPCOMING</div>
+              <div className={`${heading} text-xs font-bold mb-2`} style={{ color: "var(--muted)" }}>UPCOMING</div>
               {upcoming.map((s) => (
                 <SessionCard key={s.id} s={s} onRate={() => setRatingSession(s.id)} />
               ))}
@@ -61,14 +61,14 @@ export default function MyMentorshipCard() {
           {/* Pending */}
           {pending.length > 0 && (
             <div>
-              <div className={`${syne} text-xs font-bold mb-2`} style={{ color: "var(--muted)" }}>PENDING RESPONSE</div>
+              <div className={`${heading} text-xs font-bold mb-2`} style={{ color: "var(--muted)" }}>PENDING RESPONSE</div>
               {pending.map((s) => <SessionCard key={s.id} s={s} />)}
             </div>
           )}
           {/* Past */}
           {past.length > 0 && (
             <div>
-              <div className={`${syne} text-xs font-bold mb-2`} style={{ color: "var(--muted)" }}>PAST</div>
+              <div className={`${heading} text-xs font-bold mb-2`} style={{ color: "var(--muted)" }}>PAST</div>
               {past.map((s) => <SessionCard key={s.id} s={s} onRate={!s.rating ? () => setRatingSession(s.id) : undefined} />)}
             </div>
           )}
@@ -78,7 +78,7 @@ export default function MyMentorshipCard() {
       {/* Rating modal */}
       {ratingSession && (
         <div className="mt-4 rounded-xl border p-4" style={{ borderColor: "var(--border)" }}>
-          <div className={`${syne} font-bold text-sm mb-2`}>Rate this session</div>
+          <div className={`${heading} font-bold text-sm mb-2`}>Rate this session</div>
           <div className="flex gap-2 mb-2">
             {[1, 2, 3, 4, 5].map((v) => (
               <button key={v} onClick={() => setRatingValue(v)} className="text-xl" style={{ color: v <= ratingValue ? "#f59e0b" : "var(--border)" }}>★</button>
@@ -86,7 +86,7 @@ export default function MyMentorshipCard() {
           </div>
           <textarea value={review} onChange={(e) => setReview(e.target.value)} placeholder="Write a review (optional)" rows={2} className="w-full rounded-lg border px-3 py-2 text-sm resize-none mb-2" style={{ borderColor: "var(--border)" }} />
           <div className="flex gap-2">
-            <button onClick={() => submitRating(ratingSession)} className={`px-4 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>Submit</button>
+            <button onClick={() => submitRating(ratingSession)} className={`px-4 py-1.5 rounded-lg ${heading} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>Submit</button>
             <button onClick={() => setRatingSession(null)} className="text-xs" style={{ color: "var(--muted)" }}>Cancel</button>
           </div>
         </div>
@@ -101,11 +101,11 @@ function SessionCard({ s, onRate }: { s: Session; onRate?: () => void }) {
       {s.mentor?.profileImage ? (
         <img src={s.mentor.profileImage} alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
       ) : (
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-[family-name:var(--font-syne)] font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>{s.mentor?.name?.charAt(0) || "M"}</div>
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-[family-name:var(--font-heading)] font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>{s.mentor?.name?.charAt(0) || "M"}</div>
       )}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className={`font-[family-name:var(--font-syne)] font-bold text-sm`}>{s.mentor?.name || "Mentor"}</span>
+          <span className={`font-[family-name:var(--font-heading)] font-bold text-sm`}>{s.mentor?.name || "Mentor"}</span>
           <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${statusBadge[s.status]}`}>{s.status}</span>
           <span className={`text-[0.6rem] px-2 py-0.5 rounded-full ${s.sessionType === "GROUP" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"}`}>{s.sessionType === "GROUP" ? "Group" : "1-on-1"}</span>
         </div>

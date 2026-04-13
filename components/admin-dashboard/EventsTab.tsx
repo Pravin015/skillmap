@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const statusBadge: Record<string, string> = {
   APPROVED: "bg-green-100 text-green-700", PENDING_APPROVAL: "bg-yellow-100 text-yellow-700",
@@ -48,36 +48,36 @@ export default function EventsTab() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between"><div><h2 className={`${syne} font-bold text-xl`}>Events Management</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{events.length} events · {events.filter((e) => e.status === "PENDING_APPROVAL").length} pending approval</p></div>
-        <Link href="/events/create" className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>+ Create</Link>
+      <div className="flex items-center justify-between"><div><h2 className={`${heading} font-bold text-xl`}>Events Management</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{events.length} events · {events.filter((e) => e.status === "PENDING_APPROVAL").length} pending approval</p></div>
+        <Link href="/events/create" className={`px-4 py-2.5 rounded-xl ${heading} font-bold text-sm no-underline`} style={{ background: "var(--primary)", color: "white" }}>+ Create</Link>
       </div>
 
       <div className="flex gap-2 flex-wrap">
         {["ALL", "PENDING_APPROVAL", "APPROVED", "REJECTED", "CANCELLED"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
+          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-xl text-xs ${heading} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
             {s === "ALL" ? "All" : s.replace("_", " ")} ({s === "ALL" ? events.length : events.filter((e) => e.status === s).length})
           </button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}><div className="text-4xl mb-3">🎤</div><p className={`${syne} font-bold text-base`}>No events</p></div>
+        <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}><div className="text-4xl mb-3">🎤</div><p className={`${heading} font-bold text-base`}>No events</p></div>
       ) : (
         <div className="space-y-3">
           {filtered.map((e) => (
             <div key={e.id} className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2"><span className={`${syne} font-bold`}>{e.title}</span><span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${statusBadge[e.status] || ""}`}>{e.status.replace("_", " ")}</span></div>
+                  <div className="flex items-center gap-2"><span className={`${heading} font-bold`}>{e.title}</span><span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${statusBadge[e.status] || ""}`}>{e.status.replace("_", " ")}</span></div>
                   <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>by {e.createdBy.name} · {new Date(e.date).toLocaleDateString()} · {e.eventType} · {e.pricing === "FREE" ? "Free" : `₹${(e.price || 0) / 100}`} · {e._count.registrations}/{e.maxParticipants} registered</div>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   {e.status === "PENDING_APPROVAL" && (
-                    <><button onClick={() => handleAction(e.id, "approve")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Approve</button>
+                    <><button onClick={() => handleAction(e.id, "approve")} className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Approve</button>
                     <button onClick={() => handleAction(e.id, "reject", "Does not meet guidelines")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Reject</button></>
                   )}
                   {e.status === "APPROVED" && <button onClick={() => handleAction(e.id, "cancel")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Cancel</button>}
-                  <button onClick={() => showAttendees(e.id)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Attendees</button>
+                  <button onClick={() => showAttendees(e.id)} className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Attendees</button>
                   <Link href={`/events/${e.id}`} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border no-underline hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>View</Link>
                 </div>
               </div>
@@ -92,7 +92,7 @@ export default function EventsTab() {
           <div className="fixed inset-0 z-50 bg-black/30" onClick={() => setAttendeesPopup(null)} />
           <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-50 max-w-2xl mx-auto rounded-2xl border bg-white shadow-xl overflow-hidden" style={{ borderColor: "var(--border)" }}>
             <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: "var(--border)" }}>
-              <div><h3 className={`${syne} font-bold text-base`}>Event Attendees</h3><p className="text-xs" style={{ color: "var(--muted)" }}>{attendees.length} registered</p></div>
+              <div><h3 className={`${heading} font-bold text-base`}>Event Attendees</h3><p className="text-xs" style={{ color: "var(--muted)" }}>{attendees.length} registered</p></div>
               <button onClick={() => setAttendeesPopup(null)} className="text-xl" style={{ color: "var(--muted)" }}>✕</button>
             </div>
             <div className="max-h-96 overflow-y-auto">
@@ -105,7 +105,7 @@ export default function EventsTab() {
                     {attendees.map((a, i) => (
                       <tr key={a.registrationId} className="text-sm hover:bg-gray-50">
                         <td className="px-6 py-2.5" style={{ color: "var(--muted)" }}>{i + 1}</td>
-                        <td className={`px-3 py-2.5 ${syne} font-bold`}>{a.name}</td>
+                        <td className={`px-3 py-2.5 ${heading} font-bold`}>{a.name}</td>
                         <td className="px-3 py-2.5" style={{ color: "var(--muted)" }}>{a.college} · {a.level}</td>
                         <td className="px-3 py-2.5" style={{ color: "var(--muted)" }}>{a.domain}</td>
                         <td className="px-3 py-2.5"><span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${a.paid ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>{a.paid ? "Paid" : "Unpaid"}</span></td>

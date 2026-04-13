@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface User { id: string; name: string; email: string; role: string; organisation: string | null; createdAt: string }
 
@@ -38,7 +38,7 @@ export default function HRsTab({ users, onRefresh }: { users: User[]; onRefresh?
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className={`${syne} font-bold text-xl`}>All HR Accounts</h2>
+          <h2 className={`${heading} font-bold text-xl`}>All HR Accounts</h2>
           <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{hrs.length} HRs across {orgCounts.size} organisations</p>
         </div>
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name, email, or org..." className="rounded-xl border px-3 py-2 text-xs outline-none w-56" style={{ borderColor: "var(--border)" }} />
@@ -49,7 +49,7 @@ export default function HRsTab({ users, onRefresh }: { users: User[]; onRefresh?
       {filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-4xl mb-3">👥</div>
-          <p className={`${syne} font-bold text-base mb-1`}>{search ? "No HRs match your search" : "No HR accounts yet"}</p>
+          <p className={`${heading} font-bold text-base mb-1`}>{search ? "No HRs match your search" : "No HR accounts yet"}</p>
         </div>
       ) : (
         <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: "var(--border)" }}>
@@ -67,7 +67,7 @@ export default function HRsTab({ users, onRefresh }: { users: User[]; onRefresh?
                 {filtered.map((h) => (
                   <tr key={h.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3">
-                      <div className={`${syne} font-bold text-sm`}>{h.name}</div>
+                      <div className={`${heading} font-bold text-sm`}>{h.name}</div>
                       <div className="text-xs" style={{ color: "var(--muted)" }}>{h.email}</div>
                     </td>
                     <td className="px-4 py-3 text-sm">{h.organisation || "—"}</td>

@@ -4,7 +4,7 @@ import { useState, use } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 export default function SubmitPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -35,7 +35,7 @@ export default function SubmitPage({ params }: { params: Promise<{ slug: string 
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
       <div className="mx-auto max-w-2xl px-4 py-12">
-        <h1 className={`${syne} text-xl font-bold mb-6`} style={{ color: "var(--ink)" }}>Submit Your Solution</h1>
+        <h1 className={`${heading} text-xl font-bold mb-6`} style={{ color: "var(--ink)" }}>Submit Your Solution</h1>
 
         {msg && <div className="rounded-xl p-3 mb-4 text-sm" style={{ background: "#fef2f2", color: "#ef4444" }}>{msg}</div>}
 
@@ -51,7 +51,7 @@ export default function SubmitPage({ params }: { params: Promise<{ slug: string 
             <textarea value={submissionText} onChange={(e) => setSubmissionText(e.target.value)} placeholder="Describe your approach, key decisions, and solution..." rows={8} className="w-full rounded-xl border px-4 py-3 text-sm outline-none" style={{ borderColor: "var(--border)" }} />
           </div>
 
-          <button type="submit" disabled={submitting} className={`w-full rounded-xl py-3 text-sm font-bold transition-all disabled:opacity-50 ${syne}`} style={{ background: "var(--primary)", color: "white" }}>
+          <button type="submit" disabled={submitting} className={`w-full rounded-xl py-3 text-sm font-bold transition-all disabled:opacity-50 ${heading}`} style={{ background: "var(--primary)", color: "white" }}>
             {submitting ? "Submitting..." : "Submit Solution"}
           </button>
         </form>

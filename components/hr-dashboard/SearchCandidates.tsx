@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Candidate {
   profileNumber: string;
@@ -43,14 +43,14 @@ export default function SearchCandidates() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${syne} font-bold text-xl`}>Search Candidates</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Search Candidates</h2>
         <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Find candidates by skills, domain, or college</p>
       </div>
 
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
         <div className="flex gap-3">
           <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Search by name, email, skills, college, company..." className="flex-1 rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)]" style={{ borderColor: "var(--border)" }} />
-          <button onClick={handleSearch} disabled={loading} className={`px-5 py-3 rounded-xl ${syne} font-bold text-sm shrink-0 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
+          <button onClick={handleSearch} disabled={loading} className={`px-5 py-3 rounded-xl ${heading} font-bold text-sm shrink-0 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
             {loading ? "Searching..." : "Search"}
           </button>
         </div>
@@ -74,18 +74,18 @@ export default function SearchCandidates() {
           {candidates.length === 0 ? (
             <div className="p-12 text-center">
               <div className="text-3xl mb-3">🔍</div>
-              <p className={`${syne} font-bold text-sm mb-1`}>No candidates found</p>
+              <p className={`${heading} font-bold text-sm mb-1`}>No candidates found</p>
               <p className="text-xs" style={{ color: "var(--muted)" }}>Try different search terms or filters</p>
             </div>
           ) : (
             <div className="divide-y" style={{ borderColor: "var(--border)" }}>
               {candidates.map((c) => (
                 <div key={c.profileNumber} className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${syne} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${heading} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>
                     {c.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className={`${syne} font-bold text-sm`}>{c.user.name}</div>
+                    <div className={`${heading} font-bold text-sm`}>{c.user.name}</div>
                     <div className="text-xs" style={{ color: "var(--muted)" }}>
                       {c.collegeName || "—"} · {c.user.degree || "—"} · {c.user.gradYear || "—"}
                     </div>
@@ -99,14 +99,14 @@ export default function SearchCandidates() {
                     )}
                   </div>
                   <div className="text-center shrink-0">
-                    <div className={`${syne} text-lg font-extrabold`} style={{ color: scoreColor(c.profileScore) }}>{c.profileScore}</div>
+                    <div className={`${heading} text-lg font-extrabold`} style={{ color: scoreColor(c.profileScore) }}>{c.profileScore}</div>
                     <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Score</div>
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <span className="text-[0.6rem] font-bold px-2 py-0.5 rounded-full" style={{ background: c.experienceLevel === "FRESHER" ? "var(--primary)" : "rgba(139,92,246,0.1)", color: c.experienceLevel === "FRESHER" ? "var(--ink)" : "#7c3aed" }}>
                       {c.experienceLevel === "FRESHER" ? "Fresher" : "Experienced"}
                     </span>
-                    <Link href={`/profile/${c.profileNumber}`} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--primary)", color: "white" }}>View</Link>
+                    <Link href={`/profile/${c.profileNumber}`} className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--primary)", color: "white" }}>View</Link>
                   </div>
                 </div>
               ))}
@@ -118,7 +118,7 @@ export default function SearchCandidates() {
       {!searched && (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-4xl mb-3">🔍</div>
-          <p className={`${syne} font-bold text-base mb-1`}>Search for candidates</p>
+          <p className={`${heading} font-bold text-base mb-1`}>Search for candidates</p>
           <p className="text-sm max-w-md mx-auto" style={{ color: "var(--muted)" }}>Use the search bar above to find candidates. Results show profile scores for easy shortlisting.</p>
         </div>
       )}

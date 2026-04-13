@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Step {
   id: string;
@@ -276,10 +276,10 @@ export default function StudentGuidePage() {
       {/* Header */}
       <section className="py-12 px-4 md:px-8" style={{ background: "var(--ink)" }}>
         <div className="max-w-4xl mx-auto">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-xs font-bold tracking-[0.1em] uppercase ${syne}`} style={{ background: "var(--primary-light)", color: "var(--primary)", border: "1px solid rgba(99,102,241,0.2)" }}>
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-xs font-bold tracking-[0.1em] uppercase ${heading}`} style={{ background: "var(--primary-light)", color: "var(--primary)", border: "1px solid rgba(10,191,188,0.2)" }}>
             🎓 Student Guide
           </div>
-          <h1 className={`${syne} font-extrabold text-3xl md:text-4xl text-white mb-3`}>Student Onboarding Guide</h1>
+          <h1 className={`${heading} font-extrabold text-3xl md:text-4xl text-white mb-3`}>Student Onboarding Guide</h1>
           <p className="text-base" style={{ color: "rgba(255,255,255,0.5)" }}>Step-by-step walkthrough of everything you can do on SkillMap. Follow along to test each feature.</p>
         </div>
       </section>
@@ -292,9 +292,9 @@ export default function StudentGuidePage() {
             return (
               <div key={step.id} className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: isOpen ? "var(--ink)" : "var(--border)" }}>
                 <button onClick={() => setOpenStep(isOpen ? null : step.id)} className="w-full flex items-center gap-4 p-5 text-left">
-                  <span className={`${syne} text-3xl font-extrabold shrink-0`} style={{ color: isOpen ? "var(--primary)" : "var(--border)", background: isOpen ? "var(--ink)" : "transparent", padding: isOpen ? "4px 12px" : "0", borderRadius: "12px" }}>{step.num}</span>
+                  <span className={`${heading} text-3xl font-extrabold shrink-0`} style={{ color: isOpen ? "var(--primary)" : "var(--border)", background: isOpen ? "var(--ink)" : "transparent", padding: isOpen ? "4px 12px" : "0", borderRadius: "12px" }}>{step.num}</span>
                   <div className="flex-1">
-                    <h3 className={`${syne} font-bold text-base`} style={{ color: "var(--ink)" }}>{step.title}</h3>
+                    <h3 className={`${heading} font-bold text-base`} style={{ color: "var(--ink)" }}>{step.title}</h3>
                     <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{step.desc}</p>
                   </div>
                   <svg className={`w-5 h-5 shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ color: "var(--muted)" }}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
@@ -305,7 +305,7 @@ export default function StudentGuidePage() {
                     {/* Action buttons */}
                     <div className="flex gap-2 flex-wrap mb-5">
                       {step.actions.map((a) => (
-                        <Link key={a.href} href={a.href} target="_blank" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline transition-transform hover:-translate-y-0.5`} style={{ background: a.primary ? "var(--ink)" : "white", color: a.primary ? "var(--primary)" : "var(--ink)", border: a.primary ? "none" : "1px solid var(--border)" }}>
+                        <Link key={a.href} href={a.href} target="_blank" className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs no-underline transition-transform hover:-translate-y-0.5`} style={{ background: a.primary ? "var(--ink)" : "white", color: a.primary ? "var(--primary)" : "var(--ink)", border: a.primary ? "none" : "1px solid var(--border)" }}>
                           {a.label} ↗
                         </Link>
                       ))}
@@ -313,7 +313,7 @@ export default function StudentGuidePage() {
 
                     {/* Features */}
                     <div className="mb-5">
-                      <h4 className={`${syne} font-bold text-sm mb-2`}>What you can do:</h4>
+                      <h4 className={`${heading} font-bold text-sm mb-2`}>What you can do:</h4>
                       <div className="space-y-1.5">
                         {step.features.map((f, i) => (
                           <div key={i} className="flex gap-2 text-sm">
@@ -325,8 +325,8 @@ export default function StudentGuidePage() {
                     </div>
 
                     {/* Test checklist */}
-                    <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(99,102,241,0.2)", background: "rgba(232,255,71,0.03)" }}>
-                      <h4 className={`${syne} font-bold text-sm mb-2`}>🧪 Test checklist:</h4>
+                    <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(10,191,188,0.2)", background: "rgba(232,255,71,0.03)" }}>
+                      <h4 className={`${heading} font-bold text-sm mb-2`}>🧪 Test checklist:</h4>
                       <div className="space-y-1.5">
                         {step.testChecklist.map((t, i) => (
                           <label key={i} className="flex gap-2 text-sm cursor-pointer items-start">
@@ -347,7 +347,7 @@ export default function StudentGuidePage() {
       {/* Quick links */}
       <section className="py-8 px-4 md:px-8 border-t" style={{ borderColor: "var(--border)" }}>
         <div className="max-w-4xl mx-auto">
-          <h2 className={`${syne} font-bold text-lg mb-4`}>Quick Links</h2>
+          <h2 className={`${heading} font-bold text-lg mb-4`}>Quick Links</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { label: "Sign Up", href: "/auth/signup?role=STUDENT", icon: "📝" },
@@ -365,7 +365,7 @@ export default function StudentGuidePage() {
             ].map((l) => (
               <Link key={l.href} href={l.href} target="_blank" className="flex items-center gap-2 p-3 rounded-xl border no-underline transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
                 <span className="text-lg">{l.icon}</span>
-                <span className={`${syne} font-bold text-xs`}>{l.label}</span>
+                <span className={`${heading} font-bold text-xs`}>{l.label}</span>
               </Link>
             ))}
           </div>

@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--ink)]";
 
 const roles = [
@@ -77,7 +77,7 @@ function LoginInner() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className={`${syne} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>Welcome back</h1>
+          <h1 className={`${heading} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>Welcome back</h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>Sign in to your SkillMap account</p>
         </div>
 
@@ -87,7 +87,7 @@ function LoginInner() {
             <button
               key={role.key}
               onClick={() => { setActiveRole(role.key); setError(""); }}
-              className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-bold transition-all sm:text-sm ${syne}`}
+              className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-bold transition-all sm:text-sm ${heading}`}
               style={{
                 background: activeRole === role.key ? "var(--ink)" : "transparent",
                 color: activeRole === role.key ? "var(--primary)" : "var(--muted)",
@@ -110,7 +110,7 @@ function LoginInner() {
 
           <div className="space-y-4">
             <div>
-              <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Email</label>
+              <label className={`block text-sm font-medium mb-1.5 ${heading}`}>Email</label>
               <input
                 type="email"
                 value={email}
@@ -122,7 +122,7 @@ function LoginInner() {
               />
             </div>
             <div>
-              <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Password</label>
+              <label className={`block text-sm font-medium mb-1.5 ${heading}`}>Password</label>
               <input
                 type="password"
                 value={password}
@@ -139,7 +139,7 @@ function LoginInner() {
           <button
             type="submit"
             disabled={loading}
-            className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`}
+            className={`mt-6 w-full py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`}
             style={{ background: "var(--primary)", color: "white" }}
           >
             {loading ? "Signing in..." : "Sign in"}
@@ -147,7 +147,7 @@ function LoginInner() {
 
           <p className="mt-4 text-center text-sm" style={{ color: "var(--muted)" }}>
             Don&apos;t have an account?{" "}
-            <Link href={`/auth/signup?role=${activeRole}`} className={`font-bold no-underline ${syne}`} style={{ color: "var(--ink)" }}>
+            <Link href={`/auth/signup?role=${activeRole}`} className={`font-bold no-underline ${heading}`} style={{ color: "var(--ink)" }}>
               Sign up
             </Link>
           </p>

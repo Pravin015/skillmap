@@ -2,7 +2,7 @@
 import { useState, useCallback } from "react";
 import Cropper, { Area } from "react-easy-crop";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Props {
   onCropped: (base64: string) => void;
@@ -51,7 +51,7 @@ export default function PhotoCropper({ onCropped, onCancel, imageSrc }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.7)" }}>
       <div className="w-full max-w-md mx-4 rounded-2xl bg-white overflow-hidden" style={{ border: "1px solid var(--border)" }}>
         <div className="px-5 py-4 border-b" style={{ borderColor: "var(--border)" }}>
-          <h3 className={`${syne} font-bold text-base`}>Adjust Photo</h3>
+          <h3 className={`${heading} font-bold text-base`}>Adjust Photo</h3>
           <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Drag to reposition, scroll to zoom</p>
         </div>
 
@@ -77,8 +77,8 @@ export default function PhotoCropper({ onCropped, onCancel, imageSrc }: Props) {
         </div>
 
         <div className="flex gap-3 px-5 pb-5">
-          <button onClick={handleSave} className={`flex-1 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Save Photo</button>
-          <button onClick={onCancel} className={`flex-1 py-2.5 rounded-xl ${syne} font-bold text-sm border`} style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Cancel</button>
+          <button onClick={handleSave} className={`flex-1 py-2.5 rounded-xl ${heading} font-bold text-sm`} style={{ background: "var(--ink)", color: "var(--accent)" }}>Save Photo</button>
+          <button onClick={onCancel} className={`flex-1 py-2.5 rounded-xl ${heading} font-bold text-sm border`} style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Cancel</button>
         </div>
       </div>
     </div>

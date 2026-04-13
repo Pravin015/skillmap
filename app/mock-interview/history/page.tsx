@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface InterviewHistory {
   id: string;
@@ -80,7 +80,7 @@ export default function HistoryPage() {
           <Link href="/mock-interview" className="text-xs no-underline mb-3 inline-block" style={{ color: "rgba(255,255,255,0.5)" }}>
             ← Back to Mock Interviews
           </Link>
-          <h1 className={`${syne} text-xl md:text-2xl font-bold text-white mb-4`}>Interview History</h1>
+          <h1 className={`${heading} text-xl md:text-2xl font-bold text-white mb-4`}>Interview History</h1>
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -91,7 +91,7 @@ export default function HistoryPage() {
               { label: "Best Score", value: `${stats.bestScore}/100` },
             ].map((s) => (
               <div key={s.label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.08)" }}>
-                <div className={`${syne} text-lg font-bold text-white`}>{s.value}</div>
+                <div className={`${heading} text-lg font-bold text-white`}>{s.value}</div>
                 <div className="text-[10px]" style={{ color: "rgba(255,255,255,0.5)" }}>{s.label}</div>
               </div>
             ))}
@@ -161,7 +161,7 @@ export default function HistoryPage() {
                     </div>
                     {interview.score != null && (
                       <div className="text-right shrink-0">
-                        <div className={`${syne} text-lg font-bold`} style={{ color: interview.score >= 70 ? "#10b981" : interview.score >= 40 ? "#f59e0b" : "#ef4444" }}>
+                        <div className={`${heading} text-lg font-bold`} style={{ color: interview.score >= 70 ? "#10b981" : interview.score >= 40 ? "#f59e0b" : "#ef4444" }}>
                           {interview.score}
                         </div>
                         <div className="text-[10px]" style={{ color: "var(--muted)" }}>/100</div>

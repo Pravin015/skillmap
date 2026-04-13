@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 export default function BulkNotificationsTab() {
   const [targetRole, setTargetRole] = useState("ALL");
@@ -38,7 +38,7 @@ export default function BulkNotificationsTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${syne} font-bold text-xl`}>Send Bulk Notification</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Send Bulk Notification</h2>
         <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Broadcast announcements to all users or specific roles</p>
       </div>
 
@@ -79,14 +79,14 @@ export default function BulkNotificationsTab() {
           <span className="text-xs" style={{ color: "var(--ink)" }}>Also send as email to all recipients</span>
         </label>
 
-        <button type="submit" disabled={sending || !title.trim() || !message.trim()} className={`${syne} rounded-xl px-6 py-2.5 text-sm font-bold transition-all disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
+        <button type="submit" disabled={sending || !title.trim() || !message.trim()} className={`${heading} rounded-xl px-6 py-2.5 text-sm font-bold transition-all disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
           {sending ? "Sending..." : `📢 Send to ${targetRole === "ALL" ? "Everyone" : targetRole + "s"}`}
         </button>
       </form>
 
       {/* Templates */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} text-sm font-bold mb-3`}>Quick Templates</h3>
+        <h3 className={`${heading} text-sm font-bold mb-3`}>Quick Templates</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {[
             { title: "New Feature Launch", msg: "We've just launched a new feature on SkillMap! Check it out in your dashboard.", role: "ALL" },

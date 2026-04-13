@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--ink)]";
 
 const roles = [
@@ -160,7 +160,7 @@ function SignupInner() {
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className={`${syne} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>
+          <h1 className={`${heading} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>
             {step === 1 ? "Create your account" : "Complete your profile"}
           </h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>
@@ -181,7 +181,7 @@ function SignupInner() {
             <div className="mb-6 flex rounded-xl border p-1" style={{ borderColor: "var(--border)", background: "white" }}>
               {roles.map((role) => (
                 <button key={role.key} onClick={() => { setActiveRole(role.key); setError(""); }}
-                  className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-bold transition-all sm:text-sm ${syne}`}
+                  className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-bold transition-all sm:text-sm ${heading}`}
                   style={{ background: activeRole === role.key ? "var(--ink)" : "transparent", color: activeRole === role.key ? "var(--primary)" : "var(--muted)" }}>
                   {role.label}
                 </button>
@@ -191,7 +191,7 @@ function SignupInner() {
             {/* HR notice */}
             {initialRole === "HR" && (
               <div className="rounded-xl p-4 text-sm border mb-6" style={{ background: "rgba(239,68,68,0.05)", borderColor: "rgba(239,68,68,0.2)" }}>
-                <strong className={syne}>HR accounts are managed by organisations.</strong>
+                <strong className={heading}>HR accounts are managed by organisations.</strong>
                 <p className="mt-1" style={{ color: "var(--muted)" }}>Ask your company admin to create your account from the Company Dashboard.</p>
               </div>
             )}
@@ -204,25 +204,25 @@ function SignupInner() {
               <div className="space-y-4">
                 {activeRole === "STUDENT" && (
                   <>
-                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Full name *</label>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Full name *</label>
                       <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Your full name" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
-                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Email *</label>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Email *</label>
                       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@example.com" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
-                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Phone *</label>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Phone *</label>
                       <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="+91 9876543210" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
-                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Password *</label>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Password *</label>
                       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} placeholder="Min. 6 characters" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
                   </>
                 )}
                 {activeRole === "ORG" && (
                   <>
-                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Organisation name *</label>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Organisation name *</label>
                       <input type="text" value={organisation} onChange={(e) => setOrganisation(e.target.value)} required placeholder="Company / Institute name" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
-                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Admin email *</label>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Admin email *</label>
                       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="admin@company.com" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
-                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Phone *</label>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Phone *</label>
                       <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="+91 9876543210" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
-                    <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Password *</label>
+                    <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Password *</label>
                       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} placeholder="Min. 6 characters" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
                   </>
                 )}
@@ -230,8 +230,8 @@ function SignupInner() {
 
               {/* OTP Section */}
               {otpSent && !otpVerified && (
-                <div className="mt-4 rounded-xl p-4 border" style={{ background: "rgba(232,255,71,0.05)", borderColor: "rgba(99,102,241,0.2)" }}>
-                  <p className={`${syne} font-bold text-sm mb-2`}>Enter verification code</p>
+                <div className="mt-4 rounded-xl p-4 border" style={{ background: "rgba(232,255,71,0.05)", borderColor: "rgba(10,191,188,0.2)" }}>
+                  <p className={`${heading} font-bold text-sm mb-2`}>Enter verification code</p>
                   <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>We sent a 6-digit code to <strong>{email}</strong></p>
                   <input type="text" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="Enter 6-digit code" maxLength={6} className={`${inputClass} text-center text-lg tracking-[0.3em] font-bold`} style={{ borderColor: "var(--border)" }} />
                   <button type="button" onClick={handleSendOTP} className="text-xs mt-2 block" style={{ color: "var(--muted)" }}>Didn&apos;t receive? Resend</button>
@@ -243,13 +243,13 @@ function SignupInner() {
                 </div>
               )}
 
-              <button type="submit" disabled={loading} className={`mt-4 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
+              <button type="submit" disabled={loading} className={`mt-4 w-full py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
                 {loading ? "Please wait..." : !otpSent ? "Send verification code" : !otpVerified ? "Verify & continue" : activeRole === "STUDENT" ? "Create account →" : "Create account"}
               </button>
 
               <p className="mt-4 text-center text-sm" style={{ color: "var(--muted)" }}>
                 Already have an account?{" "}
-                <Link href={`/auth/login?role=${activeRole}`} className={`font-bold no-underline ${syne}`} style={{ color: "var(--ink)" }}>Sign in</Link>
+                <Link href={`/auth/login?role=${activeRole}`} className={`font-bold no-underline ${heading}`} style={{ color: "var(--ink)" }}>Sign in</Link>
               </p>
             </form>
           </>
@@ -264,14 +264,14 @@ function SignupInner() {
             <div className="space-y-4">
               {/* Photo upload */}
               <div>
-                <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Profile Photo *</label>
+                <label className={`block text-sm font-medium mb-1.5 ${heading}`}>Profile Photo *</label>
                 <div className="flex items-center gap-4">
                   {profilePhoto ? (
                     <img src={profilePhoto} alt="" className="w-16 h-16 rounded-2xl object-cover" />
                   ) : (
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>📷</div>
                   )}
-                  <label className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
+                  <label className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
                     {profilePhoto ? "Change photo" : "Upload photo"}
                     <input type="file" accept="image/*" className="hidden" required={!profilePhoto} onChange={(e) => {
                       const f = e.target.files?.[0]; if (!f) return;
@@ -285,45 +285,45 @@ function SignupInner() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>College / University *</label>
+                <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>College / University *</label>
                   <input type="text" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} required placeholder="e.g. IIT Bombay" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
-                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Degree *</label>
+                <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Degree *</label>
                   <select value={degree} onChange={(e) => setDegree(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }}>
                     <option value="">Select</option>{degrees.map((d) => <option key={d} value={d}>{d}</option>)}
                   </select></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Graduation Year *</label>
+                <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Graduation Year *</label>
                   <select value={gradYear} onChange={(e) => setGradYear(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }}>
                     <option value="">Select</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option>
                   </select></div>
-                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Experience Level *</label>
+                <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Experience Level *</label>
                   <select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}>
                     <option value="FRESHER">Fresher</option><option value="EXPERIENCED">Experienced</option>
                   </select></div>
               </div>
-              <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Field of Interest *</label>
+              <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Field of Interest *</label>
                 <select value={fieldOfInterest} onChange={(e) => setFieldOfInterest(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }}>
                   <option value="">Select your domain</option>
                   <option>Software Development</option><option>Cybersecurity</option><option>Cloud & DevOps</option><option>Data & Analytics</option><option>Consulting & Finance</option><option>Product Management</option><option>Other</option>
                 </select></div>
-              <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Skills *</label>
+              <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Skills *</label>
                 <input type="text" value={skills} onChange={(e) => setSkills(e.target.value)} required placeholder="Python, SQL, AWS (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
-              <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>Short Bio</label>
+              <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>Short Bio</label>
                 <textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell recruiters about yourself in 2-3 sentences..." rows={2} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>LinkedIn</label>
+                <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>LinkedIn</label>
                   <input type="url" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} placeholder="linkedin.com/in/..." className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
-                <div><label className={`block text-sm font-medium mb-1.5 ${syne}`}>GitHub</label>
+                <div><label className={`block text-sm font-medium mb-1.5 ${heading}`}>GitHub</label>
                   <input type="url" value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} placeholder="github.com/..." className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
+            <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
               {loading ? "Saving..." : "Complete & Go to Dashboard →"}
             </button>
 
-            <button type="button" onClick={() => { window.location.href = "/dashboard"; }} className={`mt-2 w-full py-2.5 rounded-xl text-sm ${syne} font-medium`} style={{ color: "var(--muted)" }}>
+            <button type="button" onClick={() => { window.location.href = "/dashboard"; }} className={`mt-2 w-full py-2.5 rounded-xl text-sm ${heading} font-medium`} style={{ color: "var(--muted)" }}>
               Skip for now
             </button>
           </form>

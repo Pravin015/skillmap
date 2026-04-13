@@ -6,7 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import NotificationBell from "./NotificationBell";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface DropdownItem {
   href: string;
@@ -105,7 +105,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 no-underline shrink-0" onClick={() => setMobileNav(false)}>
           <div className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white" style={{ background: "var(--primary)" }}>S</div>
-          <span className={`${syne} text-lg font-extrabold`} style={{ color: "var(--ink)" }}>
+          <span className={`${heading} text-lg font-extrabold`} style={{ color: "var(--ink)" }}>
             Skill<span className="text-white px-1 py-0.5 rounded" style={{ background: "var(--primary)" }}>Map</span>
           </span>
         </Link>

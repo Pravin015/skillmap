@@ -4,9 +4,9 @@ import FormWrapper from "@/components/FormWrapper";
 import { getOfficialEmailError } from "@/lib/email-validation";
 import { submitForm } from "@/lib/submit-form";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
-const labelClass = `block text-sm font-medium mb-1.5 ${syne}`;
+const labelClass = `block text-sm font-medium mb-1.5 ${heading}`;
 
 export default function MentorOnboardingForm() {
   const [submitted, setSubmitted] = useState(false);
@@ -51,8 +51,8 @@ export default function MentorOnboardingForm() {
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Notice */}
-        <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(99,102,241,0.3)" }}>
-          <strong className={syne}>Official email required</strong> — We verify all mentors through their company email. Personal emails (Gmail, Yahoo, etc.) are not accepted.
+        <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(10,191,188,0.3)" }}>
+          <strong className={heading}>Official email required</strong> — We verify all mentors through their company email. Personal emails (Gmail, Yahoo, etc.) are not accepted.
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -116,7 +116,7 @@ export default function MentorOnboardingForm() {
             >
               <input type="radio" name="compensation" value="paid" required checked={compensation === "paid"} onChange={() => setCompensation("paid")} className="mt-1 accent-[var(--ink)]" />
               <div>
-                <div className={`${syne} font-bold text-sm`}>Paid Mentorship</div>
+                <div className={`${heading} font-bold text-sm`}>Paid Mentorship</div>
                 <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>You will be compensated for each session. Rates are set by SkillMap based on experience level.</div>
               </div>
             </label>
@@ -126,7 +126,7 @@ export default function MentorOnboardingForm() {
             >
               <input type="radio" name="compensation" value="volunteer" checked={compensation === "volunteer"} onChange={() => setCompensation("volunteer")} className="mt-1 accent-[var(--ink)]" />
               <div>
-                <div className={`${syne} font-bold text-sm`}>Volunteer (Free)</div>
+                <div className={`${heading} font-bold text-sm`}>Volunteer (Free)</div>
                 <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Contribute your time to help students. You&apos;ll receive recognition badges and a mentor profile on SkillMap.</div>
               </div>
             </label>
@@ -155,7 +155,7 @@ export default function MentorOnboardingForm() {
           <textarea placeholder="Tell us your motivation..." rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} />
         </div>
 
-        <button type="submit" className={`px-6 py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Application</button>
+        <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Application</button>
       </form>
     </FormWrapper>
   );

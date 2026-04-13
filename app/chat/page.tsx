@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { UserProfile, ChatMessage } from "@/lib/types";
 import { companies, jobs, getCompany } from "@/lib/data";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const quickPrompts = [
   "What should I focus on first?",
@@ -106,7 +106,7 @@ function ChatInner() {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ background: "var(--primary)", color: "white" }}>✦</div>
           <div>
-            <h1 className={`${syne} font-bold text-base`} style={{ color: "var(--ink)" }}>AI Career Advisor</h1>
+            <h1 className={`${heading} font-bold text-base`} style={{ color: "var(--ink)" }}>AI Career Advisor</h1>
             {profile && <p className="text-xs" style={{ color: "var(--muted)" }}>Personalised for {profile.name} · {profile.domain}</p>}
           </div>
         </div>
@@ -117,11 +117,11 @@ function ChatInner() {
         {messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center text-center">
             <div className="mb-4 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl" style={{ background: "var(--primary)", color: "white" }}>✦</div>
-            <h2 className={`${syne} font-bold text-lg mb-2`} style={{ color: "var(--ink)" }}>Your AI career advisor</h2>
+            <h2 className={`${heading} font-bold text-lg mb-2`} style={{ color: "var(--ink)" }}>Your AI career advisor</h2>
             <p className="mb-8 max-w-md text-sm" style={{ color: "var(--muted)" }}>Ask anything about your career path, skill preparation, or interview strategy. I have your profile context loaded.</p>
             <div className="flex flex-wrap justify-center gap-2">
               {quickPrompts.map((prompt) => (
-                <button key={prompt} onClick={() => sendMessage(prompt)} className={`rounded-xl border px-4 py-2.5 text-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${syne} font-medium`} style={{ borderColor: "var(--border)", color: "var(--ink)", background: "white" }}>
+                <button key={prompt} onClick={() => sendMessage(prompt)} className={`rounded-xl border px-4 py-2.5 text-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${heading} font-medium`} style={{ borderColor: "var(--border)", color: "var(--ink)", background: "white" }}>
                   {prompt}
                 </button>
               ))}

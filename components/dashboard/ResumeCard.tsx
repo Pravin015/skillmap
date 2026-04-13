@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 export default function ResumeCard() {
   const [resumeName, setResumeName] = useState<string | null>(null);
@@ -56,19 +56,19 @@ export default function ResumeCard() {
 
   return (
     <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-      <h3 className={`${syne} font-bold text-base mb-1`}>Resume</h3>
+      <h3 className={`${heading} font-bold text-base mb-1`}>Resume</h3>
       <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Upload your latest resume (PDF, max 5MB)</p>
 
       {resumeName ? (
         <div className="rounded-xl border p-4 flex items-center gap-3" style={{ borderColor: "var(--border)", background: "rgba(232,255,71,0.05)" }}>
           <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg" style={{ background: "var(--primary)", color: "white" }}>📄</div>
           <div className="flex-1 min-w-0">
-            <div className={`${syne} font-bold text-sm truncate`}>{resumeName}</div>
+            <div className={`${heading} font-bold text-sm truncate`}>{resumeName}</div>
             <div className="text-xs" style={{ color: "var(--muted)" }}>Uploaded successfully</div>
           </div>
           <div className="flex gap-2 shrink-0">
             <button onClick={viewResume} className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors hover:bg-gray-100" style={{ color: "var(--ink)" }}>View</button>
-            <button onClick={() => fileRef.current?.click()} className={`text-xs ${syne} font-bold px-3 py-1.5 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>Update</button>
+            <button onClick={() => fileRef.current?.click()} className={`text-xs ${heading} font-bold px-3 py-1.5 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>Update</button>
             <button onClick={removeResume} className="text-xs font-medium px-2 py-1.5 rounded-lg text-red-500 hover:bg-red-50">✕</button>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function ResumeCard() {
           onDrop={handleDrop}
         >
           <div className="text-3xl mb-2">📎</div>
-          <p className={`${syne} font-bold text-sm mb-1`}>Drop your resume here</p>
+          <p className={`${heading} font-bold text-sm mb-1`}>Drop your resume here</p>
           <p className="text-xs" style={{ color: "var(--muted)" }}>or click to browse · PDF only · Max 5MB</p>
         </div>
       )}

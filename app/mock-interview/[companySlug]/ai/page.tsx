@@ -6,7 +6,7 @@ import { useState, useEffect, useRef, use, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import ProctoringGuard from "@/components/ProctoringGuard";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Message {
   role: "ai" | "user";
@@ -215,7 +215,7 @@ function AIInterviewContent({ companySlug }: { companySlug: string }) {
           <div className="rounded-2xl border bg-white p-8" style={{ borderColor: "var(--border)" }}>
             <div className="text-center mb-6">
               <div className="text-4xl mb-3">🤖</div>
-              <h1 className={`${syne} text-xl font-bold mb-1`} style={{ color: "var(--ink)" }}>
+              <h1 className={`${heading} text-xl font-bold mb-1`} style={{ color: "var(--ink)" }}>
                 AI Interview — {companyName}
               </h1>
               <p className="text-xs" style={{ color: "var(--muted)" }}>
@@ -273,7 +273,7 @@ function AIInterviewContent({ companySlug }: { companySlug: string }) {
         <div className="mx-auto max-w-2xl px-4 py-8">
           <div className="rounded-2xl border bg-white p-6 md:p-8 text-center" style={{ borderColor: "var(--border)" }}>
             <div className="text-4xl mb-3">{score >= 70 ? "🎉" : score >= 40 ? "👍" : "💪"}</div>
-            <h1 className={`${syne} text-xl font-bold mb-1`} style={{ color: "var(--ink)" }}>
+            <h1 className={`${heading} text-xl font-bold mb-1`} style={{ color: "var(--ink)" }}>
               Interview Complete!
             </h1>
             <p className="text-sm mb-6" style={{ color: "var(--muted)" }}>
@@ -293,7 +293,7 @@ function AIInterviewContent({ companySlug }: { companySlug: string }) {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className={`${syne} text-2xl font-bold`} style={{ color: "var(--ink)" }}>{score}</span>
+                <span className={`${heading} text-2xl font-bold`} style={{ color: "var(--ink)" }}>{score}</span>
                 <span className="text-[10px]" style={{ color: "var(--muted)" }}>out of 100</span>
               </div>
             </div>
@@ -380,7 +380,7 @@ function AIInterviewContent({ companySlug }: { companySlug: string }) {
             ← Exit
           </Link>
           <div>
-            <h2 className={`${syne} text-sm font-bold`} style={{ color: "var(--ink)" }}>{companyName}</h2>
+            <h2 className={`${heading} text-sm font-bold`} style={{ color: "var(--ink)" }}>{companyName}</h2>
             <div className="flex gap-2 text-[10px]" style={{ color: "var(--muted)" }}>
               <span>{interviewType.replace("_", " ")}</span>
               <span>·</span>

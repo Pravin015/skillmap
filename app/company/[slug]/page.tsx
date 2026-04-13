@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface CompanyData {
   profile: {
@@ -46,7 +46,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ slug:
       <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}>
         <div className="text-center">
           <div className="text-4xl mb-3">🏢</div>
-          <p className={`${syne} font-bold text-base mb-1`}>Company not found</p>
+          <p className={`${heading} font-bold text-base mb-1`}>Company not found</p>
           <Link href="/companies" className="text-sm underline" style={{ color: "var(--muted)" }}>Browse all companies</Link>
         </div>
       </div>
@@ -70,7 +70,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ slug:
             )}
             <div>
               <div className="flex items-center gap-2">
-                <h1 className={`${syne} text-2xl md:text-3xl font-bold text-white`}>{profile.name}</h1>
+                <h1 className={`${heading} text-2xl md:text-3xl font-bold text-white`}>{profile.name}</h1>
                 {profile.isVerified && (
                   <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#10b98130", color: "#10b981" }}>Verified</span>
                 )}
@@ -100,7 +100,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ slug:
             { num: stats.totalHired, label: "People Hired" },
           ].map((s) => (
             <div key={s.label}>
-              <div className={`${syne} text-xl font-bold`} style={{ color: "var(--ink)" }}>{s.num}</div>
+              <div className={`${heading} text-xl font-bold`} style={{ color: "var(--ink)" }}>{s.num}</div>
               <div className="text-xs" style={{ color: "var(--muted)" }}>{s.label}</div>
             </div>
           ))}
@@ -113,13 +113,13 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ slug:
           <div className="lg:col-span-1 space-y-4">
             {profile.about && (
               <div className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
-                <h3 className={`${syne} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>About</h3>
+                <h3 className={`${heading} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>About</h3>
                 <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{profile.about}</p>
               </div>
             )}
             {profile.culture && (
               <div className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
-                <h3 className={`${syne} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>Culture</h3>
+                <h3 className={`${heading} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>Culture</h3>
                 <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{profile.culture}</p>
               </div>
             )}
@@ -127,7 +127,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ slug:
 
           {/* Right — Open Roles */}
           <div className="lg:col-span-2">
-            <h2 className={`${syne} text-lg font-bold mb-4`} style={{ color: "var(--ink)" }}>
+            <h2 className={`${heading} text-lg font-bold mb-4`} style={{ color: "var(--ink)" }}>
               Open Roles ({jobs.length})
             </h2>
             {jobs.length === 0 ? (
@@ -144,7 +144,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ slug:
                     style={{ borderColor: "var(--border)" }}
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className={`${syne} text-sm font-bold`} style={{ color: "var(--ink)" }}>{job.title}</h3>
+                      <h3 className={`${heading} text-sm font-bold`} style={{ color: "var(--ink)" }}>{job.title}</h3>
                       {job.salaryMin && (
                         <span className="text-xs font-medium shrink-0 ml-2" style={{ color: "var(--ink)" }}>
                           {job.salaryMin}–{job.salaryMax} LPA

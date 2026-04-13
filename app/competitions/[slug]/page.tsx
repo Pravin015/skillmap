@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Competition {
   id: string; title: string; slug: string; description: string; rules: string | null;
@@ -72,7 +72,7 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
             <span className="rounded-full px-2 py-0.5 text-[10px]" style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)" }}>{typeLabels[comp.type] || comp.type}</span>
             {comp.hiringEnabled && <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#10b98120", color: "#10b981" }}>🎯 Hiring</span>}
           </div>
-          <h1 className={`${syne} text-2xl md:text-3xl font-bold text-white mb-2`}>{comp.title}</h1>
+          <h1 className={`${heading} text-2xl md:text-3xl font-bold text-white mb-2`}>{comp.title}</h1>
           {comp.companyName && <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>Hosted by <strong className="text-white">{comp.companyName}</strong></p>}
         </div>
       </section>
@@ -83,20 +83,20 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
           <div className="lg:col-span-2 space-y-4">
             {/* Description */}
             <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-              <h2 className={`${syne} text-sm font-bold mb-3`}>About this Competition</h2>
+              <h2 className={`${heading} text-sm font-bold mb-3`}>About this Competition</h2>
               <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--muted)" }}>{comp.description}</p>
             </div>
 
             {comp.rules && (
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${syne} text-sm font-bold mb-3`}>Rules</h2>
+                <h2 className={`${heading} text-sm font-bold mb-3`}>Rules</h2>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--muted)" }}>{comp.rules}</p>
               </div>
             )}
 
             {comp.prizes && (
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${syne} text-sm font-bold mb-3`}>🎁 Prizes</h2>
+                <h2 className={`${heading} text-sm font-bold mb-3`}>🎁 Prizes</h2>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--muted)" }}>{comp.prizes}</p>
               </div>
             )}
@@ -105,7 +105,7 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
             {(comp.status === "LIVE" || comp.status === "JUDGING" || comp.status === "COMPLETED") && (
               <Link href={`/competitions/${slug}/leaderboard`} className="block rounded-2xl border bg-white p-6 text-center transition-all hover:shadow-md no-underline" style={{ borderColor: "var(--primary)" }}>
                 <span className="text-2xl mb-2 block">🏅</span>
-                <span className={`${syne} text-sm font-bold`} style={{ color: "var(--ink)" }}>View Leaderboard</span>
+                <span className={`${heading} text-sm font-bold`} style={{ color: "var(--ink)" }}>View Leaderboard</span>
                 <span className="block text-xs mt-1" style={{ color: "var(--muted)" }}>{comp._count.submissions} submissions</span>
               </Link>
             )}
@@ -118,12 +118,12 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
               {msg && <div className="rounded-xl p-3 mb-3 text-xs" style={{ background: msg.includes("Success") ? "#10b98115" : "#f59e0b15", color: msg.includes("Success") ? "#10b981" : "#f59e0b" }}>{msg}</div>}
 
               {!isRegistered && isActive && (
-                <button onClick={handleRegister} disabled={registering} className={`w-full rounded-xl py-3 text-sm font-bold transition-all disabled:opacity-50 ${syne}`} style={{ background: "var(--primary)", color: "white" }}>
+                <button onClick={handleRegister} disabled={registering} className={`w-full rounded-xl py-3 text-sm font-bold transition-all disabled:opacity-50 ${heading}`} style={{ background: "var(--primary)", color: "white" }}>
                   {registering ? "Registering..." : comp.entryFee ? `Register (₹${comp.entryFee / 100})` : "Register — Free"}
                 </button>
               )}
               {isRegistered && !hasSubmitted && canSubmit && (
-                <Link href={comp.labTemplateId ? `/labs/${comp.labTemplateId}` : `/competitions/${slug}/submit`} className={`block w-full rounded-xl py-3 text-sm font-bold text-center no-underline ${syne}`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
+                <Link href={comp.labTemplateId ? `/labs/${comp.labTemplateId}` : `/competitions/${slug}/submit`} className={`block w-full rounded-xl py-3 text-sm font-bold text-center no-underline ${heading}`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
                   {comp.labTemplateId ? "Start Assessment" : "Submit Solution"}
                 </Link>
               )}
@@ -137,7 +137,7 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
 
             {/* Info */}
             <div className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
-              <h3 className={`${syne} text-xs font-bold mb-3`}>Details</h3>
+              <h3 className={`${heading} text-xs font-bold mb-3`}>Details</h3>
               <div className="space-y-2 text-xs" style={{ color: "var(--muted)" }}>
                 <div className="flex justify-between"><span>Type</span><strong style={{ color: "var(--ink)" }}>{typeLabels[comp.type]}</strong></div>
                 <div className="flex justify-between"><span>Difficulty</span><strong style={{ color: "var(--ink)" }}>{comp.difficulty}</strong></div>

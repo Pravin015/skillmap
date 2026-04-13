@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const statusBadge: Record<string, string> = {
   VERIFIED: "bg-green-100 text-green-700",
@@ -49,13 +49,13 @@ export default function MentorsTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${syne} font-bold text-xl`}>Mentor Management</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Mentor Management</h2>
         <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Review, verify, and manage mentor accounts</p>
       </div>
 
       <div className="flex gap-2 flex-wrap">
         {["ALL", "PENDING", "VERIFIED", "UNVERIFIED", "SUSPENDED"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`px-4 py-2 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
+          <button key={s} onClick={() => setFilter(s)} className={`px-4 py-2 rounded-xl text-xs ${heading} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
             {s === "ALL" ? "All" : s} ({s === "ALL" ? mentors.length : mentors.filter((m) => m.status === s).length})
           </button>
         ))}
@@ -64,7 +64,7 @@ export default function MentorsTab() {
       {filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-4xl mb-3">🧑‍🏫</div>
-          <p className={`${syne} font-bold text-base mb-1`}>No mentors {filter !== "ALL" ? `with status "${filter}"` : "registered"}</p>
+          <p className={`${heading} font-bold text-base mb-1`}>No mentors {filter !== "ALL" ? `with status "${filter}"` : "registered"}</p>
           <p className="text-sm" style={{ color: "var(--muted)" }}>Mentors will appear here after onboarding</p>
         </div>
       ) : (
@@ -72,12 +72,12 @@ export default function MentorsTab() {
           {filtered.map((m) => (
             <div key={m.id} className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
               <div className="flex items-center gap-4 flex-wrap">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${syne} font-bold text-sm text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${heading} font-bold text-sm text-white shrink-0`} style={{ background: "var(--ink)" }}>
                   {m.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className={`${syne} font-bold`}>{m.user.name}</span>
+                    <span className={`${heading} font-bold`}>{m.user.name}</span>
                     <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${statusBadge[m.status] || ""}`}>{m.status}</span>
                     <span className="text-[0.6rem] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">{m.compensation}</span>
                   </div>
@@ -95,7 +95,7 @@ export default function MentorsTab() {
                 </div>
                 <div className="flex gap-2 shrink-0">
                   {m.status !== "VERIFIED" && (
-                    <button onClick={() => updateStatus(m.id, "VERIFIED")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Verify</button>
+                    <button onClick={() => updateStatus(m.id, "VERIFIED")} className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Verify</button>
                   )}
                   {m.status !== "SUSPENDED" && m.status !== "UNVERIFIED" && (
                     <button onClick={() => updateStatus(m.id, "SUSPENDED")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Suspend</button>

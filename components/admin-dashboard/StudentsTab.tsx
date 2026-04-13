@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface User { id: string; name: string; email: string; role: string; organisation: string | null; createdAt: string }
 
@@ -35,7 +35,7 @@ export default function StudentsTab({ users, onRefresh }: { users: User[]; onRef
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className={`${syne} font-bold text-xl`}>All Students</h2>
+          <h2 className={`${heading} font-bold text-xl`}>All Students</h2>
           <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{students.length} registered students</p>
         </div>
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search students..." className="rounded-xl border px-3 py-2 text-xs outline-none w-48" style={{ borderColor: "var(--border)" }} />
@@ -46,7 +46,7 @@ export default function StudentsTab({ users, onRefresh }: { users: User[]; onRef
       {filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-4xl mb-3">🎓</div>
-          <p className={`${syne} font-bold text-base mb-1`}>{search ? "No students match your search" : "No students yet"}</p>
+          <p className={`${heading} font-bold text-base mb-1`}>{search ? "No students match your search" : "No students yet"}</p>
         </div>
       ) : (
         <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: "var(--border)" }}>
@@ -63,13 +63,13 @@ export default function StudentsTab({ users, onRefresh }: { users: User[]; onRef
                 {filtered.map((s) => (
                   <tr key={s.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3">
-                      <div className={`${syne} font-bold text-sm`}>{s.name}</div>
+                      <div className={`${heading} font-bold text-sm`}>{s.name}</div>
                       <div className="text-xs" style={{ color: "var(--muted)" }}>{s.email}</div>
                     </td>
                     <td className="px-4 py-3 text-xs hidden sm:table-cell" style={{ color: "var(--muted)" }}>{new Date(s.createdAt).toLocaleDateString()}</td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1.5">
-                        <a href={`/profile/${s.id}`} target="_blank" className={`text-[10px] ${syne} font-bold no-underline px-2 py-1 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>View ↗</a>
+                        <a href={`/profile/${s.id}`} target="_blank" className={`text-[10px] ${heading} font-bold no-underline px-2 py-1 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>View ↗</a>
                         <button onClick={() => resetPassword(s.id, s.name)} className="text-[10px] px-2 py-1 rounded-lg border hover:bg-gray-100" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Reset Pwd</button>
                         <button onClick={() => deleteUser(s.id, s.name)} className="text-[10px] px-2 py-1 rounded-lg border hover:bg-red-50" style={{ borderColor: "var(--border)", color: "#ef4444" }}>Delete</button>
                       </div>

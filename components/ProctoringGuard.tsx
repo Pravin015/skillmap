@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface ProctoringGuardProps {
   sessionId: string;
@@ -231,7 +231,7 @@ export default function ProctoringGuard({
         <div className="max-w-md w-full mx-4 rounded-2xl bg-white p-8">
           <div className="text-center mb-6">
             <div className="text-4xl mb-3">🛡️</div>
-            <h2 className={`${syne} text-xl font-bold mb-2`} style={{ color: "var(--ink)" }}>Proctored Assessment</h2>
+            <h2 className={`${heading} text-xl font-bold mb-2`} style={{ color: "var(--ink)" }}>Proctored Assessment</h2>
             <p className="text-sm" style={{ color: "var(--muted)" }}>
               This {sessionType === "LAB" ? "assessment" : "interview"} is proctored. The following will be monitored:
             </p>
@@ -263,7 +263,7 @@ export default function ProctoringGuard({
 
           <button
             onClick={startProctoring}
-            className={`w-full rounded-xl py-3 text-sm font-bold transition-all ${syne}`}
+            className={`w-full rounded-xl py-3 text-sm font-bold transition-all ${heading}`}
             style={{ background: "var(--primary)", color: "white" }}
           >
             I Understand — Start {sessionType === "LAB" ? "Assessment" : "Interview"}
@@ -302,11 +302,11 @@ export default function ProctoringGuard({
         <div className="fixed inset-0 z-[90] flex items-center justify-center" style={{ background: "rgba(0,0,0,0.85)" }}>
           <div className="text-center text-white max-w-sm mx-4">
             <div className="text-4xl mb-3">🖥️</div>
-            <h3 className={`${syne} text-lg font-bold mb-2`}>Fullscreen Required</h3>
+            <h3 className={`${heading} text-lg font-bold mb-2`}>Fullscreen Required</h3>
             <p className="text-sm mb-4 opacity-70">You exited fullscreen mode. Please return to fullscreen to continue.</p>
             <button
               onClick={() => document.documentElement.requestFullscreen().catch(() => {})}
-              className={`${syne} rounded-xl px-6 py-3 text-sm font-bold`}
+              className={`${heading} rounded-xl px-6 py-3 text-sm font-bold`}
               style={{ background: "white", color: "var(--primary)" }}
             >
               Return to Fullscreen

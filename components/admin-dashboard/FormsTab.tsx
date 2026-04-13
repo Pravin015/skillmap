@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const statusBadge: Record<string, string> = {
   PENDING: "bg-yellow-100 text-yellow-700", REVIEWED: "bg-blue-100 text-blue-700",
@@ -90,19 +90,19 @@ export default function FormsTab() {
 
   return (
     <div className="space-y-6">
-      <div><h2 className={`${syne} font-bold text-xl`}>Form Submissions</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{counts.pending || 0} pending review</p></div>
+      <div><h2 className={`${heading} font-bold text-xl`}>Form Submissions</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{counts.pending || 0} pending review</p></div>
 
       {/* Count cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {Object.entries(formLabels).map(([key, { label, icon }]) => (
           <button key={key} onClick={() => setFilter(key)} className="rounded-xl border bg-white p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ borderColor: filter === key ? "var(--ink)" : "var(--border)" }}>
-            <div className="flex items-center justify-between mb-2"><span className="text-xl">{icon}</span><span className={`${syne} text-xs font-bold px-2 py-0.5 rounded-full`} style={{ background: (counts[key] || 0) > 0 ? "var(--primary)" : "var(--border)", color: (counts[key] || 0) > 0 ? "var(--ink)" : "var(--muted)" }}>{counts[key] || 0}</span></div>
-            <div className={`${syne} font-bold text-xs`}>{label}</div>
+            <div className="flex items-center justify-between mb-2"><span className="text-xl">{icon}</span><span className={`${heading} text-xs font-bold px-2 py-0.5 rounded-full`} style={{ background: (counts[key] || 0) > 0 ? "var(--primary)" : "var(--border)", color: (counts[key] || 0) > 0 ? "var(--ink)" : "var(--muted)" }}>{counts[key] || 0}</span></div>
+            <div className={`${heading} font-bold text-xs`}>{label}</div>
           </button>
         ))}
         <button onClick={() => setFilter("ALL")} className="rounded-xl border bg-white p-4 text-left transition-all hover:-translate-y-0.5" style={{ borderColor: filter === "ALL" ? "var(--ink)" : "var(--border)" }}>
           <div className="text-xl mb-2">📋</div>
-          <div className={`${syne} font-bold text-xs`}>All ({submissions.length})</div>
+          <div className={`${heading} font-bold text-xs`}>All ({submissions.length})</div>
         </button>
       </div>
 
@@ -110,7 +110,7 @@ export default function FormsTab() {
       {filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-4xl mb-3">📋</div>
-          <p className={`${syne} font-bold text-base mb-1`}>No submissions</p>
+          <p className={`${heading} font-bold text-base mb-1`}>No submissions</p>
           <p className="text-sm" style={{ color: "var(--muted)" }}>Form submissions will appear here when users submit forms</p>
         </div>
       ) : (
@@ -126,7 +126,7 @@ export default function FormsTab() {
                 <button onClick={() => setExpanded(isExpanded ? null : s.id)} className="w-full flex items-center gap-4 p-5 text-left">
                   <span className="text-xl">{info.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <div className={`${syne} font-bold text-sm`}>{s.name}</div>
+                    <div className={`${heading} font-bold text-sm`}>{s.name}</div>
                     <div className="text-xs" style={{ color: "var(--muted)" }}>{info.label} · {s.email} · {new Date(s.createdAt).toLocaleDateString()}</div>
                   </div>
                   <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full shrink-0 ${statusBadge[s.status] || ""}`}>{s.status}</span>
@@ -141,12 +141,12 @@ export default function FormsTab() {
                     <div className="flex gap-2 flex-wrap">
                       {s.status === "PENDING" && (
                         <>
-                          <button onClick={() => updateStatus(s.id, "APPROVED")} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Approve</button>
+                          <button onClick={() => updateStatus(s.id, "APPROVED")} className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-[0.7rem]`} style={{ background: "var(--primary)", color: "white" }}>Approve</button>
                           <button onClick={() => updateStatus(s.id, "REJECTED")} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium text-red-500 border border-red-200 hover:bg-red-50">Reject</button>
                         </>
                       )}
                       {(s.type === "MENTOR_ONBOARDING" || s.type === "COMPANY_ONBOARDING" || s.type === "INSTITUTION_ONBOARDING") && s.status !== "REJECTED" && (
-                        <button onClick={() => createAccountFromForm(s)} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] bg-green-100 text-green-700 hover:bg-green-200`}>
+                        <button onClick={() => createAccountFromForm(s)} className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-[0.7rem] bg-green-100 text-green-700 hover:bg-green-200`}>
                           Create Account →
                         </button>
                       )}

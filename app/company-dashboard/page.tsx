@@ -10,7 +10,7 @@ import HiringAnalytics from "@/components/company-dashboard/HiringAnalytics";
 import CompanySettings from "@/components/company-dashboard/CompanySettings";
 import CompanyProfileEditor from "@/components/company-dashboard/CompanyProfileEditor";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const sidebarItems = [
   { id: "overview", label: "Overview", icon: "📊" },
@@ -81,7 +81,7 @@ export default function CompanyDashboardPage() {
       {/* Sidebar */}
       <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] py-6 px-3" style={{ borderColor: "var(--border)", background: "white" }}>
         <div className="mb-6 px-3">
-          <div className={`${syne} font-bold text-sm`} style={{ color: "var(--ink)" }}>Company Dashboard</div>
+          <div className={`${heading} font-bold text-sm`} style={{ color: "var(--ink)" }}>Company Dashboard</div>
           <div className="text-xs mt-0.5 truncate" style={{ color: "var(--muted)" }}>{orgName}</div>
         </div>
         <nav className="flex flex-col gap-0.5 flex-1">
@@ -97,12 +97,12 @@ export default function CompanyDashboardPage() {
               }}
             >
               <span className="text-base">{item.icon}</span>
-              <span className={syne}>{item.label}</span>
+              <span className={heading}>{item.label}</span>
             </button>
           ))}
         </nav>
         <div className="px-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
-          <div className={`${syne} font-bold text-xs truncate`}>{session?.user?.name}</div>
+          <div className={`${heading} font-bold text-xs truncate`}>{session?.user?.name}</div>
           <div className="text-[0.65rem]" style={{ color: "var(--muted)" }}>Organisation Admin</div>
         </div>
       </aside>
@@ -113,7 +113,7 @@ export default function CompanyDashboardPage() {
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] transition-colors ${syne}`}
+            className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] transition-colors ${heading}`}
             style={{
               background: activeTab === item.id ? "var(--primary-light)" : "transparent",
               color: activeTab === item.id ? "var(--primary)" : "var(--muted)",

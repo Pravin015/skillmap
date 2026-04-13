@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const footerLinks = [
   {
@@ -52,7 +52,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className={`${syne} text-lg font-extrabold text-white no-underline flex items-center gap-2 mb-3`}>
+            <Link href="/" className={`${heading} text-lg font-extrabold text-white no-underline flex items-center gap-2 mb-3`}>
               <span className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold" style={{ background: "var(--primary)", color: "white" }}>S</span>
               SkillMap
             </Link>

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
 
 interface HR { id: string; name: string; email: string; phone: string | null; createdAt: string }
@@ -66,10 +66,10 @@ export default function ManageHR({ hrs, onRefresh }: Props) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className={`${syne} font-bold text-xl`}>Manage HR Accounts</h2>
+          <h2 className={`${heading} font-bold text-xl`}>Manage HR Accounts</h2>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Add, remove, or reset passwords for your HR team</p>
         </div>
-        <button onClick={() => setShowAdd(!showAdd)} className={`px-4 py-2.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>
+        <button onClick={() => setShowAdd(!showAdd)} className={`px-4 py-2.5 rounded-xl ${heading} font-bold text-sm`} style={{ background: "var(--primary)", color: "white" }}>
           {showAdd ? "Cancel" : "+ Add HR"}
         </button>
       </div>
@@ -77,7 +77,7 @@ export default function ManageHR({ hrs, onRefresh }: Props) {
       {/* Add HR form */}
       {showAdd && (
         <form onSubmit={handleAdd} className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-          <h3 className={`${syne} font-bold text-base mb-4`}>Add New HR</h3>
+          <h3 className={`${heading} font-bold text-base mb-4`}>Add New HR</h3>
 
           {message && (
             <div className={`rounded-xl p-3 text-sm mb-4 ${message.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
@@ -86,7 +86,7 @@ export default function ManageHR({ hrs, onRefresh }: Props) {
           )}
           {tempPassword && (
             <div className="rounded-xl p-4 mb-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(232,255,71,0.3)" }}>
-              <div className={`${syne} font-bold text-sm mb-1`}>Temporary Password (share with HR)</div>
+              <div className={`${heading} font-bold text-sm mb-1`}>Temporary Password (share with HR)</div>
               <code className="text-base font-mono font-bold select-all">{tempPassword}</code>
               <p className="text-xs mt-2" style={{ color: "var(--muted)" }}>This password is shown only once. Copy it now and share it securely with the HR.</p>
             </div>
@@ -94,20 +94,20 @@ export default function ManageHR({ hrs, onRefresh }: Props) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Full Name *</label>
+              <label className={`block text-sm font-medium mb-1.5 ${heading}`}>Full Name *</label>
               <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="HR's full name" className={inputClass} style={{ borderColor: "var(--border)" }} />
             </div>
             <div>
-              <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Email *</label>
+              <label className={`block text-sm font-medium mb-1.5 ${heading}`}>Email *</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="hr@company.com" className={inputClass} style={{ borderColor: "var(--border)" }} />
             </div>
             <div>
-              <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Phone</label>
+              <label className={`block text-sm font-medium mb-1.5 ${heading}`}>Phone</label>
               <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 9876543210" className={inputClass} style={{ borderColor: "var(--border)" }} />
             </div>
           </div>
           <p className="text-xs mt-3" style={{ color: "var(--muted)" }}>A temporary password will be generated. Share it with the HR so they can log in.</p>
-          <button type="submit" disabled={saving} className={`mt-4 px-5 py-2.5 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
+          <button type="submit" disabled={saving} className={`mt-4 px-5 py-2.5 rounded-xl ${heading} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
             {saving ? "Creating..." : "Create HR Account"}
           </button>
         </form>
@@ -116,25 +116,25 @@ export default function ManageHR({ hrs, onRefresh }: Props) {
       {/* HR list */}
       <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: "var(--border)" }}>
         <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
-          <h3 className={`${syne} font-bold`}>Your HR Team</h3>
-          <span className={`${syne} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>{hrs.length}</span>
+          <h3 className={`${heading} font-bold`}>Your HR Team</h3>
+          <span className={`${heading} text-xs font-bold px-2 py-1 rounded-lg`} style={{ background: "var(--primary)", color: "white" }}>{hrs.length}</span>
         </div>
 
         {hrs.length === 0 ? (
           <div className="p-12 text-center">
             <div className="text-4xl mb-3">👥</div>
-            <p className={`${syne} font-bold text-base mb-1`}>No HR accounts yet</p>
+            <p className={`${heading} font-bold text-base mb-1`}>No HR accounts yet</p>
             <p className="text-sm" style={{ color: "var(--muted)" }}>Add your first HR to start managing job posts and candidates</p>
           </div>
         ) : (
           <div className="divide-y" style={{ borderColor: "var(--border)" }}>
             {hrs.map((hr) => (
               <div key={hr.id} className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${syne} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${heading} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>
                   {hr.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className={`${syne} font-bold text-sm`}>{hr.name}</div>
+                  <div className={`${heading} font-bold text-sm`}>{hr.name}</div>
                   <div className="text-xs" style={{ color: "var(--muted)" }}>{hr.email}</div>
                 </div>
                 <div className="text-xs hidden sm:block" style={{ color: "var(--muted)" }}>

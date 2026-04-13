@@ -4,9 +4,9 @@ import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
-const labelClass = `block text-sm font-medium mb-1.5 ${syne}`;
+const labelClass = `block text-sm font-medium mb-1.5 ${heading}`;
 
 interface Exp { company: string; role: string; startDate: string; endDate: string; description: string; current: boolean }
 interface Cert { title: string; issuer: string; issueDate: string; imageUrl: string }
@@ -140,11 +140,11 @@ export default function ProfileEditPage() {
     <div className="min-h-[calc(100vh-4rem)] py-8 px-4 md:px-8" style={{ background: "var(--surface)" }}>
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <div><h1 className={`${syne} font-extrabold text-2xl`}>Edit {roleLabel} Profile</h1>
-            {profileNumber && <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>ID: <span className={`${syne} font-bold`}>{profileNumber}</span></p>}</div>
+          <div><h1 className={`${heading} font-extrabold text-2xl`}>Edit {roleLabel} Profile</h1>
+            {profileNumber && <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>ID: <span className={`${heading} font-bold`}>{profileNumber}</span></p>}</div>
           <div className="flex gap-2">
-            {profileNumber && <button onClick={() => router.push(`/profile/${profileNumber}`)} className={`px-3 py-2 rounded-xl ${syne} font-bold text-xs border hover:bg-gray-50`} style={{ borderColor: "var(--border)" }}>View profile</button>}
-            <a href="/settings" className={`px-3 py-2 rounded-xl ${syne} font-bold text-xs border no-underline hover:bg-gray-50`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Settings</a>
+            {profileNumber && <button onClick={() => router.push(`/profile/${profileNumber}`)} className={`px-3 py-2 rounded-xl ${heading} font-bold text-xs border hover:bg-gray-50`} style={{ borderColor: "var(--border)" }}>View profile</button>}
+            <a href="/settings" className={`px-3 py-2 rounded-xl ${heading} font-bold text-xs border no-underline hover:bg-gray-50`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Settings</a>
           </div>
         </div>
 
@@ -153,17 +153,17 @@ export default function ProfileEditPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Photo */}
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-4`}>Profile Photo</h2>
+            <h2 className={`${heading} font-bold text-base mb-4`}>Profile Photo</h2>
             <div className="flex items-center gap-4">
-              {profileImage ? <img src={profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover" /> : <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${syne} font-extrabold text-2xl text-white`} style={{ background: "var(--ink)" }}>{name.charAt(0)?.toUpperCase()}</div>}
-              <div><button type="button" onClick={() => fileRef.current?.click()} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>{profileImage ? "Change" : "Upload"}</button><p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Max 500KB</p></div>
+              {profileImage ? <img src={profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover" /> : <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${heading} font-extrabold text-2xl text-white`} style={{ background: "var(--ink)" }}>{name.charAt(0)?.toUpperCase()}</div>}
+              <div><button type="button" onClick={() => fileRef.current?.click()} className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>{profileImage ? "Change" : "Upload"}</button><p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Max 500KB</p></div>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
             </div>
           </div>
 
           {/* Basic — all roles */}
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-            <h2 className={`${syne} font-bold text-base mb-4`}>Basic Information</h2>
+            <h2 className={`${heading} font-bold text-base mb-4`}>Basic Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div><label className={labelClass}>Full Name *</label><input type="text" value={name} onChange={(e) => setName(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
               <div><label className={labelClass}>Phone</label><input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
@@ -175,7 +175,7 @@ export default function ProfileEditPage() {
           {userRole === "STUDENT" && (
             <>
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${syne} font-bold text-base mb-4`}>Education & Domain</h2>
+                <h2 className={`${heading} font-bold text-base mb-4`}>Education & Domain</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div><label className={labelClass}>College</label><input value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
                   <div><label className={labelClass}>Level</label><select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}><option value="FRESHER">Fresher</option><option value="EXPERIENCED">Experienced</option></select></div>
@@ -185,14 +185,14 @@ export default function ProfileEditPage() {
                 <div className="mt-4"><label className={labelClass}>Bio</label><textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={2} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
               </div>
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${syne} font-bold text-base mb-4`}>Academic</h2>
+                <h2 className={`${heading} font-bold text-base mb-4`}>Academic</h2>
                 <div className="grid grid-cols-2 gap-5">
                   <div><label className={labelClass}>Type</label><select value={academicType} onChange={(e) => setAcademicType(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}><option>CGPA</option><option>Percentage</option><option>GPA</option></select></div>
                   <div><label className={labelClass}>Score</label><input value={academicScore} onChange={(e) => setAcademicScore(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
                 </div>
               </div>
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${syne} font-bold text-base mb-4`}>Preferences</h2>
+                <h2 className={`${heading} font-bold text-base mb-4`}>Preferences</h2>
                 <div className="grid grid-cols-2 gap-5">
                   <div><label className={labelClass}>Salary Min (LPA)</label><input type="number" value={salaryMin} onChange={(e) => setSalaryMin(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
                   <div><label className={labelClass}>Salary Max (LPA)</label><input type="number" value={salaryMax} onChange={(e) => setSalaryMax(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
@@ -201,7 +201,7 @@ export default function ProfileEditPage() {
                 </div>
               </div>
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${syne} font-bold text-base mb-4`}>Links</h2>
+                <h2 className={`${heading} font-bold text-base mb-4`}>Links</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div><label className={labelClass}>GitHub</label><input type="url" value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
                   <div><label className={labelClass}>LinkedIn</label><input type="url" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
@@ -210,7 +210,7 @@ export default function ProfileEditPage() {
               </div>
               {experienceLevel === "EXPERIENCED" && (
                 <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                  <div className="flex items-center justify-between mb-4"><h2 className={`${syne} font-bold text-base`}>Experience</h2><button type="button" onClick={addExp} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>+ Add</button></div>
+                  <div className="flex items-center justify-between mb-4"><h2 className={`${heading} font-bold text-base`}>Experience</h2><button type="button" onClick={addExp} className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>+ Add</button></div>
                   {experiences.length === 0 ? <p className="text-sm text-center py-4" style={{ color: "var(--muted)" }}>None added</p> : <div className="space-y-3">{experiences.map((x, i) => (
                     <div key={i} className="rounded-xl border p-4 relative" style={{ borderColor: "var(--border)" }}>
                       <button type="button" onClick={() => rmExp(i)} className="absolute top-2 right-2 text-red-400 text-sm">✕</button>
@@ -221,7 +221,7 @@ export default function ProfileEditPage() {
                 </div>
               )}
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <div className="flex items-center justify-between mb-4"><h2 className={`${syne} font-bold text-base`}>Certifications</h2><button type="button" onClick={addCert} className={`px-3 py-1.5 rounded-lg ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>+ Add</button></div>
+                <div className="flex items-center justify-between mb-4"><h2 className={`${heading} font-bold text-base`}>Certifications</h2><button type="button" onClick={addCert} className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>+ Add</button></div>
                 {certifications.length === 0 ? <p className="text-sm text-center py-4" style={{ color: "var(--muted)" }}>None added</p> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{certifications.map((c, i) => (
                   <div key={i} className="rounded-xl border p-4 relative" style={{ borderColor: "var(--border)" }}>
                     <button type="button" onClick={() => rmCert(i)} className="absolute top-2 right-2 text-red-400 text-sm">✕</button>
@@ -238,8 +238,8 @@ export default function ProfileEditPage() {
           {userRole === "MENTOR" && (
             <>
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${syne} font-bold text-base mb-4`}>Mentor Profile</h2>
-                {mentorNumber && <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Mentor ID: <span className={`${syne} font-bold`}>{mentorNumber}</span></p>}
+                <h2 className={`${heading} font-bold text-base mb-4`}>Mentor Profile</h2>
+                {mentorNumber && <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Mentor ID: <span className={`${heading} font-bold`}>{mentorNumber}</span></p>}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="md:col-span-2"><label className={labelClass}>Headline</label><input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. Senior Cybersecurity Analyst at TCS" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
                   <div><label className={labelClass}>Current Company *</label><input value={currentCompany} onChange={(e) => setCurrentCompany(e.target.value)} required className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
@@ -250,7 +250,7 @@ export default function ProfileEditPage() {
                 <div className="mt-4"><label className={labelClass}>Bio</label><textarea value={mentorBio} onChange={(e) => setMentorBio(e.target.value)} placeholder="Tell students about your experience..." rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
               </div>
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${syne} font-bold text-base mb-4`}>Expertise & Topics</h2>
+                <h2 className={`${heading} font-bold text-base mb-4`}>Expertise & Topics</h2>
                 <div className="space-y-4">
                   <div><label className={labelClass}>Areas of Expertise</label><input value={areaOfExpertise} onChange={(e) => setAreaOfExpertise(e.target.value)} placeholder="Cybersecurity, Cloud, Data (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
                   <div><label className={labelClass}>Topics I Can Help With</label><input value={mentorTopics} onChange={(e) => setMentorTopics(e.target.value)} placeholder="Interview prep, Resume review, Career switch (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
@@ -258,7 +258,7 @@ export default function ProfileEditPage() {
                 </div>
               </div>
               <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${syne} font-bold text-base mb-4`}>Session Pricing</h2>
+                <h2 className={`${heading} font-bold text-base mb-4`}>Session Pricing</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div><label className={labelClass}>Compensation Type</label><select value={compensation} onChange={(e) => setCompensation(e.target.value)} className={inputClass} style={{ borderColor: "var(--border)" }}><option value="PAID">Paid</option><option value="VOLUNTEER">Volunteer (Free)</option></select></div>
                   <div><label className={labelClass}>Availability</label><input value={availability} onChange={(e) => setAvailability(e.target.value)} placeholder="e.g. 5 hours/week" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
@@ -276,7 +276,7 @@ export default function ProfileEditPage() {
           {/* Non-student role info */}
           {userRole && userRole !== "STUDENT" && (
             <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-              <h2 className={`${syne} font-bold text-base mb-3`}>Your Role: {roleLabel}</h2>
+              <h2 className={`${heading} font-bold text-base mb-3`}>Your Role: {roleLabel}</h2>
               <p className="text-sm mb-4" style={{ color: "var(--muted)" }}>
                 {userRole === "HR" && "Manage job posts and candidates from the HR Panel."}
                 {userRole === "ORG" && "Manage HR accounts and hiring from the Company Dashboard."}
@@ -284,15 +284,15 @@ export default function ProfileEditPage() {
                 {userRole === "ADMIN" && "Full platform control from the Admin Panel."}
               </p>
               <div className="flex gap-2 flex-wrap">
-                {userRole === "HR" && <a href="/hr-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>HR Panel</a>}
-                {userRole === "ORG" && <a href="/company-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Company Dashboard</a>}
-                {userRole === "INSTITUTION" && <a href="/institution-dashboard" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Institution Dashboard</a>}
-                {userRole === "ADMIN" && <a href="/admin" className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Admin Panel</a>}
+                {userRole === "HR" && <a href="/hr-dashboard" className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>HR Panel</a>}
+                {userRole === "ORG" && <a href="/company-dashboard" className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Company Dashboard</a>}
+                {userRole === "INSTITUTION" && <a href="/institution-dashboard" className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Institution Dashboard</a>}
+                {userRole === "ADMIN" && <a href="/admin" className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs no-underline`} style={{ background: "var(--primary)", color: "white" }}>Admin Panel</a>}
               </div>
             </div>
           )}
 
-          <button type="submit" disabled={saving} className={`px-8 py-3 rounded-xl ${syne} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Saving..." : "Save Profile"}</button>
+          <button type="submit" disabled={saving} className={`px-8 py-3 rounded-xl ${heading} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Saving..." : "Save Profile"}</button>
         </form>
       </div>
     </div>

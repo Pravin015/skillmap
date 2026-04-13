@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const statusColors: Record<string, string> = {
   APPLIED: "bg-blue-100 text-blue-700",
@@ -59,13 +59,13 @@ export default function ReceivedApplications() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${syne} font-bold text-xl`}>Received Applications</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Received Applications</h2>
         <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{apps.length} total applications</p>
       </div>
 
       <div className="flex gap-2 flex-wrap">
         {["ALL", "APPLIED", "SCREENING", "INTERVIEW", "ASSESSMENT", "OFFER", "HIRED", "REJECTED"].map((s) => (
-          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-xl text-xs ${syne} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
+          <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-xl text-xs ${heading} font-bold`} style={{ background: filter === s ? "var(--ink)" : "white", color: filter === s ? "var(--primary)" : "var(--muted)", border: filter === s ? "none" : "1px solid var(--border)" }}>
             {s === "ALL" ? "All" : s} ({s === "ALL" ? apps.length : apps.filter((a) => a.status === s).length})
           </button>
         ))}
@@ -74,7 +74,7 @@ export default function ReceivedApplications() {
       {filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}>
           <div className="text-4xl mb-3">📩</div>
-          <p className={`${syne} font-bold text-base mb-1`}>No applications {filter !== "ALL" ? `with status "${filter}"` : "received yet"}</p>
+          <p className={`${heading} font-bold text-base mb-1`}>No applications {filter !== "ALL" ? `with status "${filter}"` : "received yet"}</p>
           <p className="text-sm" style={{ color: "var(--muted)" }}>Applications will appear here when candidates apply to your job posts</p>
         </div>
       ) : (
@@ -82,11 +82,11 @@ export default function ReceivedApplications() {
           {filtered.map((app) => (
             <div key={app.id} className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
               <div className="flex items-center gap-4 flex-wrap">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${syne} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${heading} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>
                   {app.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className={`${syne} font-bold text-sm`}>{app.user.name}</div>
+                  <div className={`${heading} font-bold text-sm`}>{app.user.name}</div>
                   <div className="text-xs" style={{ color: "var(--muted)" }}>
                     Applied for: {app.job.title} · {app.user.profile?.collegeName || "—"}
                   </div>
@@ -99,7 +99,7 @@ export default function ReceivedApplications() {
                   )}
                 </div>
                 <div className="text-center shrink-0">
-                  <div className={`${syne} text-lg font-extrabold`} style={{ color: scoreColor(app.scoreMatch) }}>{app.scoreMatch}%</div>
+                  <div className={`${heading} text-lg font-extrabold`} style={{ color: scoreColor(app.scoreMatch) }}>{app.scoreMatch}%</div>
                   <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Match</div>
                 </div>
                 <div className="shrink-0">
@@ -108,7 +108,7 @@ export default function ReceivedApplications() {
                   </select>
                 </div>
                 {app.user.profile?.profileNumber ? (
-                  <a href={`/profile/${app.user.profile.profileNumber}`} target="_blank" rel="noopener noreferrer" className={`shrink-0 px-3 py-1.5 rounded-lg ${syne} font-bold text-[0.7rem] no-underline cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
+                  <a href={`/profile/${app.user.profile.profileNumber}`} target="_blank" rel="noopener noreferrer" className={`shrink-0 px-3 py-1.5 rounded-lg ${heading} font-bold text-[0.7rem] no-underline cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
                     View Profile ↗
                   </a>
                 ) : (

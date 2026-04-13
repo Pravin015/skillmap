@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Notif { id: string; type: string; title: string; message: string; read: boolean; emailSent: boolean; createdAt: string }
 
@@ -32,11 +32,11 @@ export default function NotificationsPage() {
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className={`${syne} font-extrabold text-2xl`}>Notifications</h1>
+            <h1 className={`${heading} font-extrabold text-2xl`}>Notifications</h1>
             <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{unread} unread</p>
           </div>
           {unread > 0 && (
-            <button onClick={markAllRead} className={`px-4 py-2 rounded-xl ${syne} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>Mark all read</button>
+            <button onClick={markAllRead} className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>Mark all read</button>
           )}
         </div>
 
@@ -45,7 +45,7 @@ export default function NotificationsPage() {
         ) : notifications.length === 0 ? (
           <div className="rounded-2xl border bg-white p-16 text-center" style={{ borderColor: "var(--border)" }}>
             <div className="text-5xl mb-4">🔔</div>
-            <p className={`${syne} font-bold text-lg mb-2`}>No notifications</p>
+            <p className={`${heading} font-bold text-lg mb-2`}>No notifications</p>
             <p className="text-sm" style={{ color: "var(--muted)" }}>You&apos;ll see updates about your applications, jobs, and events here</p>
           </div>
         ) : (
@@ -55,7 +55,7 @@ export default function NotificationsPage() {
                 <div className="flex items-start gap-3">
                   {!n.read && <div className="w-2 h-2 rounded-full shrink-0 mt-1.5" style={{ background: "var(--primary)" }} />}
                   <div className="flex-1">
-                    <div className={`${syne} text-sm ${n.read ? "font-medium" : "font-bold"}`} style={{ color: "var(--ink)" }}>{n.title}</div>
+                    <div className={`${heading} text-sm ${n.read ? "font-medium" : "font-bold"}`} style={{ color: "var(--ink)" }}>{n.title}</div>
                     <p className="text-sm mt-1 leading-relaxed" style={{ color: "var(--muted)" }}>{n.message}</p>
                     <div className="flex items-center gap-3 mt-2 text-[0.65rem]" style={{ color: "var(--border)" }}>
                       <span>{new Date(n.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>

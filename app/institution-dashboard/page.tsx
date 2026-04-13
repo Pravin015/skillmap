@@ -9,7 +9,7 @@ import SearchCompanies from "@/components/institution-dashboard/SearchCompanies"
 import InstitutionAnalytics from "@/components/institution-dashboard/InstitutionAnalytics";
 import InstitutionSettings from "@/components/institution-dashboard/InstitutionSettings";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const tabs = [
   { id: "overview", label: "Overview", icon: "📊" },
   { id: "students", label: "Students", icon: "🎓" },
@@ -56,18 +56,18 @@ export default function InstitutionDashboardPage() {
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
       <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] py-6 px-3" style={{ borderColor: "var(--border)", background: "white" }}>
-        <div className="mb-6 px-3"><div className={`${syne} font-bold text-sm`} style={{ color: "var(--ink)" }}>Institution</div><div className="text-xs mt-0.5 truncate" style={{ color: "var(--muted)" }}>{orgName}</div></div>
+        <div className="mb-6 px-3"><div className={`${heading} font-bold text-sm`} style={{ color: "var(--ink)" }}>Institution</div><div className="text-xs mt-0.5 truncate" style={{ color: "var(--muted)" }}>{orgName}</div></div>
         <nav className="flex flex-col gap-0.5 flex-1">
           {tabs.map((t) => (
             <button key={t.id} onClick={() => setActiveTab(t.id)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition-colors" style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--primary)" : "var(--muted)", fontWeight: activeTab === t.id ? 700 : 400 }}>
-              <span className="text-base">{t.icon}</span><span className={syne}>{t.label}</span>
+              <span className="text-base">{t.icon}</span><span className={heading}>{t.label}</span>
             </button>
           ))}
         </nav>
-        <div className="px-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}><div className={`${syne} font-bold text-xs truncate`}>{session?.user?.name}</div><div className="text-[0.65rem]" style={{ color: "var(--muted)" }}>Institution Admin</div></div>
+        <div className="px-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}><div className={`${heading} font-bold text-xs truncate`}>{session?.user?.name}</div><div className="text-[0.65rem]" style={{ color: "var(--muted)" }}>Institution Admin</div></div>
       </aside>
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 overflow-x-auto border-t flex gap-0.5 px-2 py-2" style={{ background: "white", borderColor: "var(--border)" }}>
-        {tabs.map((t) => (<button key={t.id} onClick={() => setActiveTab(t.id)} className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] ${syne}`} style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--primary)" : "var(--muted)" }}><span className="text-sm">{t.icon}</span>{t.label}</button>))}
+        {tabs.map((t) => (<button key={t.id} onClick={() => setActiveTab(t.id)} className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] ${heading}`} style={{ background: activeTab === t.id ? "var(--ink)" : "transparent", color: activeTab === t.id ? "var(--primary)" : "var(--muted)" }}><span className="text-sm">{t.icon}</span>{t.label}</button>))}
       </div>
       <div className="flex-1 px-4 md:px-8 py-8 pb-24 lg:pb-8 max-w-5xl">{renderTab()}</div>
     </div>

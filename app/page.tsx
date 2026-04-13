@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 const logoCompanies = ["Google", "Amazon", "TCS", "Infosys", "Wipro", "Deloitte", "KPMG", "Flipkart", "Microsoft", "Razorpay"];
 
@@ -72,7 +72,7 @@ export default function Home() {
             India&apos;s #1 Job-Readiness Platform
           </div>
 
-          <h1 className={`${syne} font-extrabold leading-tight tracking-tight mb-5 animate-fade-up-1`} style={{ fontSize: "clamp(2.2rem, 5vw, 3.5rem)", color: "var(--ink)" }}>
+          <h1 className={`${heading} font-extrabold leading-tight tracking-tight mb-5 animate-fade-up-1`} style={{ fontSize: "clamp(2.2rem, 5vw, 3.5rem)", color: "var(--ink)" }}>
             Your Career <span style={{ color: "var(--primary)" }}>Starts</span> Here
           </h1>
 
@@ -114,7 +114,7 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-x-10 gap-y-3">
             {logoCompanies.map((name) => (
-              <span key={name} className={`${syne} text-sm font-bold`} style={{ color: "var(--border)" }}>
+              <span key={name} className={`${heading} text-sm font-bold`} style={{ color: "var(--border)" }}>
                 {name}
               </span>
             ))}
@@ -131,7 +131,7 @@ export default function Home() {
             { num: "6", label: "Role Dashboards", desc: "Student, HR, Mentor, Company, Institution, Admin" },
           ].map((s) => (
             <div key={s.label} className="card-elevated text-center">
-              <div className={`${syne} text-2xl md:text-3xl font-extrabold mb-1`} style={{ color: "var(--primary)" }}>{s.num}</div>
+              <div className={`${heading} text-2xl md:text-3xl font-extrabold mb-1`} style={{ color: "var(--primary)" }}>{s.num}</div>
               <div className="text-xs font-semibold mb-0.5" style={{ color: "var(--ink)" }}>{s.label}</div>
               <div className="text-[10px] hidden md:block" style={{ color: "var(--muted)" }}>{s.desc}</div>
             </div>
@@ -144,7 +144,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <div className="section-eyebrow justify-center">Features</div>
-            <h2 className={`${syne} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>
+            <h2 className={`${heading} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>
               Everything You Need to Get Hired
             </h2>
             <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>Full-stack career readiness platform for Indian graduates</p>
@@ -167,7 +167,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <div className="section-eyebrow justify-center">How it works</div>
-            <h2 className={`${syne} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>
+            <h2 className={`${heading} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>
               From Confused to Hired
             </h2>
           </div>
@@ -175,9 +175,9 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {howSteps.map((s) => (
               <div key={s.num} className="card-elevated relative" style={{ padding: "28px 20px" }}>
-                <div className={`${syne} text-4xl font-extrabold absolute top-3 right-4`} style={{ color: "var(--primary)", opacity: 0.08 }}>{s.num}</div>
-                <div className={`${syne} text-xs font-bold mb-3 inline-block px-2 py-0.5 rounded`} style={{ background: "var(--primary-light)", color: "var(--primary)" }}>Step {s.num}</div>
-                <h3 className={`${syne} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>{s.title}</h3>
+                <div className={`${heading} text-4xl font-extrabold absolute top-3 right-4`} style={{ color: "var(--primary)", opacity: 0.08 }}>{s.num}</div>
+                <div className={`${heading} text-xs font-bold mb-3 inline-block px-2 py-0.5 rounded`} style={{ background: "var(--primary-light)", color: "var(--primary)" }}>Step {s.num}</div>
+                <h3 className={`${heading} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>{s.title}</h3>
                 <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{s.desc}</p>
               </div>
             ))}
@@ -190,7 +190,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <div className="section-eyebrow justify-center">Why SkillMap</div>
-            <h2 className={`${syne} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>
+            <h2 className={`${heading} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>
               Not a Job Board. A Readiness Engine.
             </h2>
             <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>What competitors don&apos;t offer — we include for free</p>
@@ -199,7 +199,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {whyUs.map((d) => (
               <div key={d.title} className="card-elevated" style={{ borderLeft: "3px solid var(--primary)" }}>
-                <h3 className={`${syne} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>{d.title}</h3>
+                <h3 className={`${heading} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>{d.title}</h3>
                 <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{d.desc}</p>
               </div>
             ))}
@@ -212,7 +212,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <div className="section-eyebrow justify-center">Success Stories</div>
-            <h2 className={`${syne} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>
+            <h2 className={`${heading} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>
               Real Results. Real People.
             </h2>
           </div>
@@ -240,7 +240,7 @@ export default function Home() {
       {/* ═══ FAQ ═══ */}
       <section className="px-4 py-16" style={{ background: "var(--surface-alt)" }}>
         <div className="max-w-2xl mx-auto">
-          <h2 className={`${syne} font-extrabold text-2xl text-center mb-8`} style={{ color: "var(--ink)" }}>
+          <h2 className={`${heading} font-extrabold text-2xl text-center mb-8`} style={{ color: "var(--ink)" }}>
             Frequently Asked Questions
           </h2>
 
@@ -266,7 +266,7 @@ export default function Home() {
       {/* ═══ FINAL CTA ═══ */}
       <section className="px-4 py-20" style={{ background: "var(--primary)" }}>
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className={`${syne} font-extrabold text-xl md:text-2xl text-white mb-3`}>
+          <h2 className={`${heading} font-extrabold text-xl md:text-2xl text-white mb-3`}>
             Your Dream Company is Hiring Right Now
           </h2>
           <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.7)" }}>

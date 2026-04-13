@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 export default function CompanyProfileEditor() {
   const [name, setName] = useState("");
@@ -65,11 +65,11 @@ export default function CompanyProfileEditor() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className={`${syne} font-bold text-xl`}>Company Profile</h2>
+          <h2 className={`${heading} font-bold text-xl`}>Company Profile</h2>
           <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>This is your public company page visible to candidates</p>
         </div>
         {profileSlug && (
-          <a href={`/company/${profileSlug}`} target="_blank" className={`${syne} text-xs font-bold px-3 py-1.5 rounded-lg no-underline`} style={{ background: "var(--primary)", color: "white" }}>
+          <a href={`/company/${profileSlug}`} target="_blank" className={`${heading} text-xs font-bold px-3 py-1.5 rounded-lg no-underline`} style={{ background: "var(--primary)", color: "white" }}>
             View Public Page ↗
           </a>
         )}
@@ -133,7 +133,7 @@ export default function CompanyProfileEditor() {
           <textarea value={culture} onChange={(e) => setCulture(e.target.value)} rows={3} placeholder="Describe your work environment, values, benefits, and what it's like working at your company..." className="w-full rounded-xl border px-4 py-2.5 text-sm outline-none" style={{ borderColor: "var(--border)" }} />
         </div>
 
-        <button type="submit" disabled={saving} className={`${syne} rounded-xl px-6 py-2.5 text-sm font-bold transition-all disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
+        <button type="submit" disabled={saving} className={`${heading} rounded-xl px-6 py-2.5 text-sm font-bold transition-all disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
           {saving ? "Saving..." : "Save Profile"}
         </button>
       </form>

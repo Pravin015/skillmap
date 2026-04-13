@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Payment {
   id: string; userName: string; userEmail: string; amount: number;
@@ -31,7 +31,7 @@ export default function PaymentsTab() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className={`${syne} font-bold text-xl`}>Payments & Revenue</h2>
+        <h2 className={`${heading} font-bold text-xl`}>Payments & Revenue</h2>
         <p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>{payments.length} total transactions</p>
       </div>
 
@@ -43,7 +43,7 @@ export default function PaymentsTab() {
           { label: "Failed", value: payments.filter((p) => p.status === "FAILED").length, color: "#ef4444" },
         ].map((s) => (
           <div key={s.label} className="rounded-xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
-            <div className={`${syne} text-xl font-bold`} style={{ color: s.color }}>{s.value}</div>
+            <div className={`${heading} text-xl font-bold`} style={{ color: s.color }}>{s.value}</div>
             <div className="text-[10px]" style={{ color: "var(--muted)" }}>{s.label}</div>
           </div>
         ))}
@@ -83,7 +83,7 @@ export default function PaymentsTab() {
                       <div className="text-[10px]" style={{ color: "var(--muted)" }}>{p.userEmail}</div>
                     </td>
                     <td className="px-4 py-2">
-                      <span className={`${syne} text-sm font-bold`}>₹{(p.amount / 100).toLocaleString()}</span>
+                      <span className={`${heading} text-sm font-bold`}>₹{(p.amount / 100).toLocaleString()}</span>
                     </td>
                     <td className="px-4 py-2 text-xs" style={{ color: "var(--muted)" }}>{p.plan}</td>
                     <td className="px-4 py-2 text-[10px] hidden sm:table-cell" style={{ color: "var(--muted)" }}>{p.description || "—"}</td>

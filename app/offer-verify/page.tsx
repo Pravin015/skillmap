@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Parameter {
   score: number;
@@ -189,7 +189,7 @@ export default function OfferVerifyPage() {
           <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold mb-4" style={{ background: "rgba(239,68,68,0.2)", color: "#fca5a5" }}>
             <span>🛡️</span> Protect Yourself from Fraud
           </div>
-          <h1 className={`${syne} text-2xl md:text-4xl font-extrabold text-white mb-3`}>
+          <h1 className={`${heading} text-2xl md:text-4xl font-extrabold text-white mb-3`}>
             Fake Offer Letter Detector
           </h1>
           <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.6)" }}>
@@ -204,7 +204,7 @@ export default function OfferVerifyPage() {
               { num: "20", label: "parameters we check" },
             ].map((s) => (
               <div key={s.label} className="rounded-xl px-4 py-2" style={{ background: "rgba(255,255,255,0.06)" }}>
-                <div className={`${syne} text-lg font-bold text-white`}>{s.num}</div>
+                <div className={`${heading} text-lg font-bold text-white`}>{s.num}</div>
                 <div className="text-[10px]" style={{ color: "rgba(255,255,255,0.4)" }}>{s.label}</div>
               </div>
             ))}
@@ -217,7 +217,7 @@ export default function OfferVerifyPage() {
           /* ═══ INPUT FORM ═══ */
           <form onSubmit={handleSubmit}>
             <div className="rounded-2xl border bg-white p-6 md:p-8" style={{ borderColor: "var(--border)" }}>
-              <h2 className={`${syne} text-lg font-bold mb-6`} style={{ color: "var(--ink)" }}>
+              <h2 className={`${heading} text-lg font-bold mb-6`} style={{ color: "var(--ink)" }}>
                 Submit Offer Letter for Verification
               </h2>
 
@@ -258,7 +258,7 @@ export default function OfferVerifyPage() {
                   <button
                     type="button"
                     onClick={() => setInputMode("upload")}
-                    className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${syne}`}
+                    className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${heading}`}
                     style={{
                       background: inputMode === "upload" ? "var(--ink)" : "transparent",
                       color: inputMode === "upload" ? "var(--primary)" : "var(--muted)",
@@ -269,7 +269,7 @@ export default function OfferVerifyPage() {
                   <button
                     type="button"
                     onClick={() => setInputMode("paste")}
-                    className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${syne}`}
+                    className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${heading}`}
                     style={{
                       background: inputMode === "paste" ? "var(--ink)" : "transparent",
                       color: inputMode === "paste" ? "var(--primary)" : "var(--muted)",
@@ -285,7 +285,7 @@ export default function OfferVerifyPage() {
                     {!fileData ? (
                       <label className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 cursor-pointer transition-all hover:border-[var(--ink)] hover:bg-gray-50" style={{ borderColor: "var(--border)" }}>
                         <div className="text-3xl mb-2">📄</div>
-                        <p className={`${syne} text-sm font-bold mb-1`} style={{ color: "var(--ink)" }}>
+                        <p className={`${heading} text-sm font-bold mb-1`} style={{ color: "var(--ink)" }}>
                           Drop your offer letter here
                         </p>
                         <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>
@@ -310,7 +310,7 @@ export default function OfferVerifyPage() {
                           {fileType.includes("pdf") ? "📑" : "🖼️"}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`${syne} text-sm font-bold truncate`} style={{ color: "var(--ink)" }}>{fileName}</p>
+                          <p className={`${heading} text-sm font-bold truncate`} style={{ color: "var(--ink)" }}>{fileName}</p>
                           <p className="text-[10px]" style={{ color: "var(--muted)" }}>
                             {fileType.includes("pdf") ? "PDF Document" : "Image"} — Ready for analysis
                           </p>
@@ -379,7 +379,7 @@ Regards,
               <button
                 type="submit"
                 disabled={loading || !companyName.trim() || (inputMode === "paste" && offerText.length < 50) || (inputMode === "upload" && !fileData)}
-                className={`w-full rounded-xl px-6 py-3.5 text-sm font-bold transition-all disabled:opacity-50 ${syne}`}
+                className={`w-full rounded-xl px-6 py-3.5 text-sm font-bold transition-all disabled:opacity-50 ${heading}`}
                 style={{ background: "var(--primary)", color: "white" }}
               >
                 {loading ? (
@@ -395,7 +395,7 @@ Regards,
 
             {/* Common Scam Warning */}
             <div className="rounded-2xl border bg-white p-6 mt-6" style={{ borderColor: "var(--border)" }}>
-              <h3 className={`${syne} text-sm font-bold mb-3`} style={{ color: "#ef4444" }}>⚠️ Common Job Scam Red Flags</h3>
+              <h3 className={`${heading} text-sm font-bold mb-3`} style={{ color: "#ef4444" }}>⚠️ Common Job Scam Red Flags</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {[
                   "Asking for money before joining (registration fee, training fee, security deposit)",
@@ -437,14 +437,14 @@ Regards,
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className={`${syne} text-3xl font-extrabold`} style={{ color: verdictConfig[result.verdict]?.color }}>{result.trustScore}</span>
+                  <span className={`${heading} text-3xl font-extrabold`} style={{ color: verdictConfig[result.verdict]?.color }}>{result.trustScore}</span>
                   <span className="text-[10px]" style={{ color: "var(--muted)" }}>Trust Score</span>
                 </div>
               </div>
 
               {/* Verdict Badge */}
               <div
-                className={`inline-flex items-center gap-2 rounded-full px-5 py-2 ${syne} font-bold text-sm mb-4`}
+                className={`inline-flex items-center gap-2 rounded-full px-5 py-2 ${heading} font-bold text-sm mb-4`}
                 style={{ background: verdictConfig[result.verdict]?.bg, color: verdictConfig[result.verdict]?.color }}
               >
                 {verdictConfig[result.verdict]?.label || result.verdict}
@@ -467,7 +467,7 @@ Regards,
                 background: verdictConfig[result.verdict]?.bg,
               }}
             >
-              <h3 className={`${syne} text-sm font-bold mb-1`} style={{ color: verdictConfig[result.verdict]?.color }}>
+              <h3 className={`${heading} text-sm font-bold mb-1`} style={{ color: verdictConfig[result.verdict]?.color }}>
                 💡 Recommendation
               </h3>
               <p className="text-sm leading-relaxed" style={{ color: "var(--ink)" }}>
@@ -479,7 +479,7 @@ Regards,
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {result.redFlags.length > 0 && (
                 <div className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
-                  <h3 className={`${syne} text-sm font-bold mb-3`} style={{ color: "#ef4444" }}>🚩 Red Flags Found ({result.redFlags.length})</h3>
+                  <h3 className={`${heading} text-sm font-bold mb-3`} style={{ color: "#ef4444" }}>🚩 Red Flags Found ({result.redFlags.length})</h3>
                   <div className="space-y-2">
                     {result.redFlags.map((flag, i) => (
                       <div key={i} className="flex items-start gap-2 text-xs" style={{ color: "var(--ink)" }}>
@@ -492,7 +492,7 @@ Regards,
               )}
               {result.greenFlags.length > 0 && (
                 <div className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
-                  <h3 className={`${syne} text-sm font-bold mb-3`} style={{ color: "#10b981" }}>✅ Positive Signals ({result.greenFlags.length})</h3>
+                  <h3 className={`${heading} text-sm font-bold mb-3`} style={{ color: "#10b981" }}>✅ Positive Signals ({result.greenFlags.length})</h3>
                   <div className="space-y-2">
                     {result.greenFlags.map((flag, i) => (
                       <div key={i} className="flex items-start gap-2 text-xs" style={{ color: "var(--ink)" }}>
@@ -507,7 +507,7 @@ Regards,
 
             {/* Parameter Scores */}
             <div className="rounded-2xl border bg-white p-5 md:p-6" style={{ borderColor: "var(--border)" }}>
-              <h3 className={`${syne} text-sm font-bold mb-4`} style={{ color: "var(--ink)" }}>
+              <h3 className={`${heading} text-sm font-bold mb-4`} style={{ color: "var(--ink)" }}>
                 📊 Detailed Parameter Analysis (20 checks)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--ink)]";
 
 export default function ChangePasswordPage() {
@@ -38,7 +38,7 @@ export default function ChangePasswordPage() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="text-4xl mb-4">🔐</div>
-          <h1 className={`${syne} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>Set Your Password</h1>
+          <h1 className={`${heading} font-extrabold text-2xl`} style={{ color: "var(--ink)" }}>Set Your Password</h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>
             Welcome{session?.user?.name ? `, ${session.user.name}` : ""}! Please set a new password for your account.
           </p>
@@ -51,16 +51,16 @@ export default function ChangePasswordPage() {
 
           <div className="space-y-4">
             <div>
-              <label className={`block text-sm font-medium mb-1.5 ${syne}`}>New Password *</label>
+              <label className={`block text-sm font-medium mb-1.5 ${heading}`}>New Password *</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} placeholder="Min. 6 characters" className={inputClass} style={{ borderColor: "var(--border)" }} />
             </div>
             <div>
-              <label className={`block text-sm font-medium mb-1.5 ${syne}`}>Confirm Password *</label>
+              <label className={`block text-sm font-medium mb-1.5 ${heading}`}>Confirm Password *</label>
               <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required placeholder="Re-enter password" className={inputClass} style={{ borderColor: "var(--border)" }} />
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
+          <button type="submit" disabled={loading} className={`mt-6 w-full py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
             {loading ? "Saving..." : "Set Password & Continue"}
           </button>
         </form>

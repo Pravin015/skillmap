@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 interface Stats { total: number; students: number; hr: number; org: number; admin: number; institutions?: number; mentors?: number }
 interface PlatformStats { jobs: number; applications: number; events: number; labs: number; blogs: number; mockInterviews: number; offerChecks: number }
@@ -45,13 +45,13 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
   return (
     <div className="space-y-6">
       <div>
-        <h2 className={`${syne} font-extrabold text-xl`}>Platform Overview</h2>
+        <h2 className={`${heading} font-extrabold text-xl`}>Platform Overview</h2>
         <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>SkillMap admin control panel</p>
       </div>
 
       {/* User Stats */}
       <div>
-        <h3 className={`${syne} font-bold text-sm mb-3`} style={{ color: "var(--muted)" }}>USERS</h3>
+        <h3 className={`${heading} font-bold text-sm mb-3`} style={{ color: "var(--muted)" }}>USERS</h3>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
           {userCards.map((c) => (
             <button key={c.label} onClick={() => onNavigate(c.tab)} className="rounded-2xl border bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ borderColor: "var(--border)" }}>
@@ -59,7 +59,7 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
                 <span className="text-2xl">{c.icon}</span>
                 <div className="w-8 h-1 rounded-full" style={{ background: c.color }} />
               </div>
-              <div className={`${syne} text-2xl font-extrabold`}>{c.value}</div>
+              <div className={`${heading} text-2xl font-extrabold`}>{c.value}</div>
               <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{c.label}</div>
             </button>
           ))}
@@ -68,12 +68,12 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
 
       {/* Content Stats */}
       <div>
-        <h3 className={`${syne} font-bold text-sm mb-3`} style={{ color: "var(--muted)" }}>CONTENT</h3>
+        <h3 className={`${heading} font-bold text-sm mb-3`} style={{ color: "var(--muted)" }}>CONTENT</h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {contentCards.map((c) => (
             <button key={c.label} onClick={() => onNavigate(c.tab)} className="rounded-xl border bg-white p-4 text-left transition-all hover:shadow-sm" style={{ borderColor: "var(--border)" }}>
               <span className="text-lg">{c.icon}</span>
-              <div className={`${syne} text-lg font-bold mt-1`}>{c.value}</div>
+              <div className={`${heading} text-lg font-bold mt-1`}>{c.value}</div>
               <div className="text-[10px]" style={{ color: "var(--muted)" }}>{c.label}</div>
             </button>
           ))}
@@ -82,7 +82,7 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
 
       {/* Quick Actions */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-4`}>Quick Actions</h3>
+        <h3 className={`${heading} font-bold text-base mb-4`}>Quick Actions</h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { label: "Manage Users", icon: "👤", tab: "users" },
@@ -96,7 +96,7 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
           ].map((a) => (
             <button key={a.label} onClick={() => onNavigate(a.tab)} className="rounded-xl border p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ borderColor: "var(--border)" }}>
               <div className="text-xl mb-2">{a.icon}</div>
-              <div className={`${syne} font-bold text-xs`}>{a.label}</div>
+              <div className={`${heading} font-bold text-xs`}>{a.label}</div>
             </button>
           ))}
         </div>
@@ -104,7 +104,7 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
 
       {/* CSV Exports */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-2`}>Export Data (CSV)</h3>
+        <h3 className={`${heading} font-bold text-base mb-2`}>Export Data (CSV)</h3>
         <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Download platform data as CSV files</p>
         <div className="flex flex-wrap gap-2">
           {[
@@ -115,7 +115,7 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
             { label: "All Events", type: "events" },
             { label: "Form Submissions", type: "forms" },
           ].map((e) => (
-            <a key={e.type} href={`/api/export?type=${e.type}`} download className={`px-3 py-2 rounded-xl ${syne} font-bold text-xs no-underline border transition-colors hover:bg-gray-50`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
+            <a key={e.type} href={`/api/export?type=${e.type}`} download className={`px-3 py-2 rounded-xl ${heading} font-bold text-xs no-underline border transition-colors hover:bg-gray-50`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
               📥 {e.label}
             </a>
           ))}
@@ -124,7 +124,7 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
 
       {/* System Status — Real */}
       <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-        <h3 className={`${syne} font-bold text-base mb-2`}>System Status</h3>
+        <h3 className={`${heading} font-bold text-base mb-2`}>System Status</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
           {[
             { label: "Database", status: systemStatus.db ? "Connected" : "Checking...", color: systemStatus.db ? "#22c55e" : "#f59e0b" },

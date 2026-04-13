@@ -1,7 +1,7 @@
 import LegalPage from "@/components/LegalPage";
 import Link from "next/link";
 
-const syne = "font-[family-name:var(--font-syne)]";
+const heading = "font-[family-name:var(--font-heading)]";
 
 export default function AboutPage() {
   return (
@@ -45,8 +45,8 @@ export default function AboutPage() {
       <p><strong>Location:</strong> India</p>
 
       <div className="mt-8 flex gap-3 flex-wrap">
-        <Link href="/forms/contact" className={`inline-block px-5 py-2.5 rounded-xl text-sm font-bold no-underline ${syne}`} style={{ background: "var(--primary)", color: "white" }}>Contact us</Link>
-        <Link href="/forms/partner" className={`inline-block px-5 py-2.5 rounded-xl text-sm font-bold no-underline border ${syne}`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Partner with us</Link>
+        <Link href="/forms/contact" className={`inline-block px-5 py-2.5 rounded-xl text-sm font-bold no-underline ${heading}`} style={{ background: "var(--primary)", color: "white" }}>Contact us</Link>
+        <Link href="/forms/partner" className={`inline-block px-5 py-2.5 rounded-xl text-sm font-bold no-underline border ${heading}`} style={{ borderColor: "var(--border)", color: "var(--ink)" }}>Partner with us</Link>
       </div>
     </LegalPage>
   );
