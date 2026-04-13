@@ -3,82 +3,94 @@ import Link from "next/link";
 const syne = "font-[family-name:var(--font-syne)]";
 
 const benefits = [
-  { icon: "🎓", title: "Bulk student management", desc: "Add students with auto-generated passwords. Their profiles are linked to your institution automatically. Search, view profiles, and remove students from one dashboard." },
-  { icon: "📊", title: "Placement tracking", desc: "See your students' profile scores, application counts, and domain interests. Track who's applying where and monitor placement pipeline stages." },
-  { icon: "🏢", title: "Browse all companies", desc: "See every company on SkillMap with their HR count and active job postings. Connect directly with hiring teams for campus partnerships." },
-  { icon: "🤖", title: "AI + mentor access for students", desc: "Every enrolled student gets access to AI career advisor, verified mentor sessions, and domain-specific course recommendations." },
-  { icon: "🧪", title: "Lab assessments", desc: "Students can practice with timed MCQ lab assessments. When they apply for jobs with lab requirements, they're already prepared." },
-  { icon: "🛡️", title: "Verified & secure", desc: "Official email verification. Manual admin approval. Students scoped to your institution only — you never see another institution's data." },
+  { title: "Bulk Student Management", desc: "Onboard students in batches. Track each student's profile completion, skills, and placement status." },
+  { title: "Placement Tracking", desc: "See which students are placed, at which companies, and at what CTC. Real-time placement analytics." },
+  { title: "Company Access", desc: "Browse all registered companies, view their open roles, and connect your students with the right employers." },
+  { title: "AI + Mentor Access", desc: "Students get free AI career advising and can book mentor sessions — included with institution enrollment." },
+  { title: "Lab Assessments", desc: "Students take proctored lab assessments for job applications. Track scores and pass rates institution-wide." },
+  { title: "Verified Status", desc: "Verified institutions get priority listing and trust badges. Manual verification ensures quality." },
 ];
 
 const steps = [
-  { num: "01", title: "Submit onboarding form", desc: "Fill out the institution onboarding form with your official details. No public signup — we verify every institution manually." },
-  { num: "02", title: "Get verified by our team", desc: "We verify your institution through official email domain. Activation within 2-3 business days." },
-  { num: "03", title: "Add your students", desc: "Bulk-add students from your dashboard. Each gets a SkillMap account linked to your institution." },
-  { num: "04", title: "Track & earn", desc: "Monitor placements, track student progress, connect with companies, and earn referral revenue." },
+  { num: "01", title: "Submit Onboarding Form", desc: "Fill out the institution onboarding form with your college details and official email." },
+  { num: "02", title: "Get Verified", desc: "Admin manually verifies your institution. Official email required for verification." },
+  { num: "03", title: "Add Students", desc: "Bulk onboard students. They get accounts with access to jobs, AI advisor, and mentor sessions." },
+  { num: "04", title: "Track & Report", desc: "Monitor student activity, placement rates, and generate reports for your placement cell." },
 ];
 
 export default function ForInstitutionsPage() {
   return (
-    <div className="flex flex-col">
-      <section className="relative overflow-hidden py-24 md:py-32 px-6 md:px-12" style={{ background: "var(--ink)" }}>
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] opacity-10" style={{ background: "#8b5cf6" }} />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[100px] opacity-10" style={{ background: "var(--accent)" }} />
-        <div className="relative max-w-[1100px] mx-auto">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 text-xs font-bold tracking-[0.1em] uppercase ${syne}`} style={{ background: "rgba(232,255,71,0.1)", color: "var(--accent)", border: "1px solid rgba(232,255,71,0.2)" }}>
-            <span className="text-base">🏫</span> For Colleges & Institutions
-          </div>
-          <h1 className={`${syne} font-extrabold text-white leading-[1] tracking-[-0.03em] mb-6`} style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}>
-            Empower your students.<br /><span style={{ color: "var(--accent)" }}>Track their journey.</span>
+    <div style={{ background: "var(--surface)" }}>
+      {/* Hero */}
+      <section className="px-4 pt-24 pb-16 md:pt-32 md:pb-20 text-center" style={{ background: "var(--ink)" }}>
+        <div className="max-w-3xl mx-auto">
+          <div className="section-eyebrow justify-center" style={{ color: "var(--primary)" }}>For Colleges & Institutions</div>
+          <h1 className={`${syne} font-extrabold text-2xl md:text-4xl text-white mb-4 leading-tight`}>
+            Empower Your Students.<br />Track Their Journey.
           </h1>
-          <p className="text-lg font-light max-w-[560px] leading-[1.7] mb-10" style={{ color: "rgba(255,255,255,0.5)" }}>
-            Give your students a competitive edge with AI-powered career prep, skill mapping, and direct company connections — all managed from your institution dashboard.
+          <p className="text-sm md:text-base mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
+            Manage placements, track student progress, and give your students access to AI-powered career tools.
           </p>
-          <div className="flex gap-4 flex-wrap">
-            <Link href="/forms/institution-onboarding" className={`inline-flex items-center gap-2 px-8 py-4 rounded-2xl ${syne} font-bold text-base no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--accent)", color: "var(--ink)" }}>Request onboarding →</Link>
-            <a href="#benefits" className={`inline-flex items-center gap-2 px-8 py-4 rounded-2xl ${syne} font-semibold text-base no-underline border-[1.5px] transition-colors hover:border-[var(--accent)]`} style={{ borderColor: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.7)" }}>See benefits</a>
-          </div>
-          <div className="mt-8 rounded-xl p-3 inline-block border text-sm" style={{ borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.4)" }}>
-            No public signup · Manual onboarding only · Verified institutions
-          </div>
+          <Link href="/forms/institution-onboarding" className="btn-primary no-underline" style={{ padding: "12px 28px" }}>Register Your Institution</Link>
         </div>
       </section>
 
-      <section id="benefits" className="py-24 px-6 md:px-12" style={{ background: "var(--surface)" }}>
-        <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>Why partner with SkillMap</span>
-          <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>Everything your placement cell needs.<br />In one platform.</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Benefits */}
+      <section className="px-4 py-16">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="section-eyebrow justify-center">What You Get</div>
+            <h2 className={`${syne} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>Complete Placement Management</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {benefits.map((b) => (
-              <div key={b.title} className="rounded-2xl border bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-lg" style={{ borderColor: "var(--border)" }}>
-                <div className="text-3xl mb-4">{b.icon}</div>
-                <h3 className={`${syne} font-bold text-base mb-2`}>{b.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{b.desc}</p>
+              <div key={b.title} className="card-elevated">
+                <h3 className={`${syne} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>{b.title}</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{b.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 px-6 md:px-12 bg-white">
-        <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>How it works</span>
-          <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>From onboarding to placements.<br />In 4 steps.</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* How It Works */}
+      <section className="px-4 py-16" style={{ background: "var(--surface-alt)" }}>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="section-eyebrow justify-center">How it works</div>
+            <h2 className={`${syne} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>Get Started in 4 Steps</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {steps.map((s) => (
-              <div key={s.num}><div className={`${syne} text-5xl font-extrabold mb-4 opacity-[0.06]`}>{s.num}</div><h3 className={`${syne} font-bold text-base mb-2`}>{s.title}</h3><p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{s.desc}</p></div>
+              <div key={s.num} className="card-elevated" style={{ padding: "28px 20px" }}>
+                <div className={`${syne} text-xs font-bold mb-3 inline-block px-2 py-0.5 rounded`} style={{ background: "var(--primary-light)", color: "var(--primary)" }}>Step {s.num}</div>
+                <h3 className={`${syne} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>{s.title}</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{s.desc}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 px-6 md:px-12 text-center relative overflow-hidden" style={{ background: "var(--ink2)" }}>
-        <div className="absolute w-[400px] h-[400px] rounded-full blur-[100px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10" style={{ background: "var(--accent)" }} />
-        <div className="relative max-w-[600px] mx-auto">
-          <h2 className={`${syne} font-extrabold text-white tracking-[-0.03em] mb-4`} style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>Your students deserve <span style={{ color: "var(--accent)" }}>better placement support.</span></h2>
-          <p className="text-base mb-8" style={{ color: "rgba(255,255,255,0.5)" }}>Join SkillMap and give them the tools to land their dream jobs.</p>
-          <Link href="/forms/institution-onboarding" className={`inline-flex items-center gap-2 px-8 py-4 rounded-2xl ${syne} font-bold text-base no-underline cta-btn-main`} style={{ background: "var(--accent)", color: "var(--ink)" }}>Request onboarding →</Link>
-          <p className="mt-4 text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>Manual verification · Official email required · Free to get started</p>
+      {/* Info */}
+      <section className="px-4 py-12">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="card-elevated" style={{ borderColor: "var(--primary)", borderLeft: "3px solid var(--primary)" }}>
+            <p className="text-sm" style={{ color: "var(--ink-light)" }}>
+              Manual verification required · Official institution email needed · Free to get started
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="px-4 py-16" style={{ background: "var(--primary)" }}>
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className={`${syne} font-extrabold text-xl md:text-2xl text-white mb-3`}>Ready to Transform Placements?</h2>
+          <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.7)" }}>Join institutions using SkillMap for student career readiness.</p>
+          <Link href="/forms/institution-onboarding" className="inline-block rounded-xl px-8 py-3 text-sm font-semibold no-underline" style={{ background: "white", color: "var(--primary)" }}>
+            Register Institution — Free
+          </Link>
         </div>
       </section>
     </div>

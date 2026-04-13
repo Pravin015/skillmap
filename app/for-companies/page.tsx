@@ -5,106 +5,81 @@ import Link from "next/link";
 const syne = "font-[family-name:var(--font-syne)]";
 
 const benefits = [
-  { icon: "🤖", title: "AI-powered JD matching", desc: "Paste your job description — our Claude AI instantly finds the top 10 matching candidates from our database with match percentages and reasons. Bulk-invite with one click." },
-  { icon: "🧪", title: "Lab assessments for hiring", desc: "Attach timed MCQ lab tests to your job posts. Candidates complete assessments when applying. Auto-graded scores visible in your dashboard." },
-  { icon: "📊", title: "Real-time hiring pipeline", desc: "Track every application through 7 stages — Applied to Hired. Live stats, CSV exports, application scoring with skill-match percentages." },
-  { icon: "👥", title: "Multi-HR team management", desc: "Add HR accounts with auto-generated passwords. Track each HR's job posts and applications. Reset passwords, remove access — all from your dashboard." },
-  { icon: "🔔", title: "Automated notifications", desc: "HR gets notified instantly when candidates apply. High-match alerts (90%+) for top talent. Company admin notified when HR posts jobs." },
-  { icon: "🔒", title: "Verified & secure", desc: "Official email verification. Role-based access control. Rate-limited APIs. Razorpay-secured payments. HTTPS everywhere." },
+  { title: "AI-Powered JD Matching", desc: "Paste a job description — AI finds the best-matching candidates from our database with match percentages." },
+  { title: "Proctored Lab Assessments", desc: "Attach timed MCQ assessments to job postings. Fullscreen proctoring, tab-switch detection, webcam verification." },
+  { title: "Candidate Pipeline (Kanban)", desc: "Visual pipeline: Applied → Screening → Interview → Offer → Hired. Drag-and-drop with notes per candidate." },
+  { title: "Hiring Challenges", desc: "Host hackathons, coding challenges, and quizzes. Students compete, you hire the top performers directly." },
+  { title: "Company Profile Page", desc: "Branded public page with your logo, culture, open roles. Students follow your company for job alerts." },
+  { title: "Multi-HR Management", desc: "Add multiple HR accounts. Each HR posts jobs, tracks applications. Company admin sees all data across HRs." },
 ];
 
-const howItWorks = [
-  { num: "01", title: "Register your company", desc: "Complete the company onboarding form with your official email. Our team verifies and activates your account within 2-3 days." },
-  { num: "02", title: "Add your HR team", desc: "Create HR accounts from your company dashboard. Each HR gets a secure login with a generated password. No separate signup needed." },
-  { num: "03", title: "Post jobs & create challenges", desc: "Your HRs post job openings with exact skill requirements. Create hackathons or quizzes to test candidates before interviews." },
-  { num: "04", title: "Review matched candidates", desc: "See applications sorted by AI-calculated skill match scores. View full profiles, certifications, and project links. Move candidates through your pipeline." },
-];
-
-const plans = [
-  { name: "Starter", price: "Free", period: "", features: ["Up to 3 job posts", "1 HR account", "Basic candidate search", "Application tracking", "Email support"], cta: "Get started free", href: "/forms/company-onboarding" },
-  { name: "Growth", price: "₹4,999", period: "/mo", features: ["Unlimited job posts", "Up to 10 HR accounts", "Advanced candidate search", "Hackathon module", "Hiring analytics", "Priority support", "Custom company branding"], cta: "Start free trial", href: "/forms/company-onboarding", featured: true },
-  { name: "Enterprise", price: "Custom", period: "", features: ["Unlimited everything", "Unlimited HR accounts", "Dedicated account manager", "API access", "White-label option", "Campus hiring tools", "Custom integrations"], cta: "Contact sales", href: "/forms/hire-from-us" },
-];
-
-const logos = [
-  { name: "TCS", bg: "#00b9f2" }, { name: "Infosys", bg: "#007cc3" }, { name: "Wipro", bg: "#9b59b6" },
-  { name: "KPMG", bg: "#00338d" }, { name: "Deloitte", bg: "#86bc25" }, { name: "Google", bg: "#4285f4" },
+const steps = [
+  { num: "01", title: "Register Your Company", desc: "Create an ORG account. Set up your company profile with branding and culture info." },
+  { num: "02", title: "Add Your HR Team", desc: "Invite HR team members. Each gets their own dashboard with job posting and candidate management." },
+  { num: "03", title: "Post Jobs & Challenges", desc: "Post job openings with optional lab assessments. Create hiring challenges to find top talent." },
+  { num: "04", title: "Hire Top Candidates", desc: "Review AI-matched candidates, use the pipeline to track progress, and close hires faster." },
 ];
 
 export default function ForCompaniesPage() {
   return (
-    <div className="flex flex-col">
+    <div style={{ background: "var(--surface)" }}>
       {/* Hero */}
-      <section className="relative overflow-hidden py-24 md:py-32 px-6 md:px-12" style={{ background: "var(--ink)" }}>
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] opacity-10" style={{ background: "var(--accent)" }} />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[100px] opacity-10" style={{ background: "#47c8ff" }} />
-        <div className="relative max-w-[1100px] mx-auto">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 text-xs font-bold tracking-[0.1em] uppercase ${syne}`} style={{ background: "rgba(232,255,71,0.1)", color: "var(--accent)", border: "1px solid rgba(232,255,71,0.2)" }}>
-            <span className="text-base">🏢</span> For Companies & HR Teams
-          </div>
-          <h1 className={`${syne} font-extrabold text-white leading-[1] tracking-[-0.03em] mb-6`} style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}>
-            Stop hiring blind.<br />
-            <span style={{ color: "var(--accent)" }}>Start hiring smart.</span>
+      <section className="px-4 pt-24 pb-16 md:pt-32 md:pb-20 text-center" style={{ background: "var(--ink)" }}>
+        <div className="max-w-3xl mx-auto">
+          <div className="section-eyebrow justify-center" style={{ color: "var(--primary)" }}>For Companies & HR Teams</div>
+          <h1 className={`${syne} font-extrabold text-2xl md:text-4xl text-white mb-4 leading-tight`}>
+            Hire Job-Ready Talent.<br />Not Just Resumes.
           </h1>
-          <p className="text-lg font-light max-w-[560px] leading-[1.7] mb-10" style={{ color: "rgba(255,255,255,0.5)" }}>
-            Access a pool of pre-assessed, skill-mapped graduates who are genuinely ready for your roles. No more resume roulette.
+          <p className="text-sm md:text-base mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
+            AI-powered candidate matching, proctored assessments, and hiring challenges — all in one platform.
           </p>
-          <div className="flex gap-4 flex-wrap">
-            <Link href="/forms/company-onboarding" className={`inline-flex items-center gap-2 px-8 py-4 rounded-2xl ${syne} font-bold text-base no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
-              Register your company →
-            </Link>
-            <Link href="/forms/hire-from-us" className={`inline-flex items-center gap-2 px-8 py-4 rounded-2xl ${syne} font-semibold text-base no-underline border-[1.5px] transition-colors hover:border-[var(--accent)]`} style={{ borderColor: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.7)" }}>
-              Hire from us
-            </Link>
+          <div className="flex justify-center gap-3">
+            <Link href="/auth/signup?role=ORG" className="btn-primary no-underline" style={{ padding: "12px 28px" }}>Register Your Company</Link>
+            <Link href="/forms/hire-from-us" className="btn-outline no-underline" style={{ borderColor: "rgba(255,255,255,0.2)", color: "white", padding: "12px 28px" }}>Hire From Us</Link>
           </div>
         </div>
       </section>
 
-      {/* Trusted by */}
-      <section className="py-10 px-6 border-b" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-        <div className="max-w-[900px] mx-auto flex flex-wrap items-center justify-center gap-6">
-          <span className="text-xs font-medium uppercase tracking-wider mr-4" style={{ color: "var(--muted)" }}>Companies on SkillMap</span>
-          {logos.map((l) => (
-            <div key={l.name} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${syne}`} style={{ borderColor: "var(--border)" }}>
-              <div className="w-6 h-6 rounded flex items-center justify-center text-[0.5rem] font-bold text-white" style={{ background: l.bg }}>{l.name.charAt(0)}</div>
-              <span className="text-xs font-bold">{l.name}</span>
-            </div>
+      {/* Company Logos */}
+      <section className="px-4 py-8 border-b" style={{ borderColor: "var(--border)" }}>
+        <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-x-10 gap-y-3">
+          {["TCS", "Infosys", "Wipro", "KPMG", "Deloitte", "Google", "Flipkart", "Razorpay"].map((c) => (
+            <span key={c} className={`${syne} text-sm font-bold`} style={{ color: "var(--border)" }}>{c}</span>
           ))}
         </div>
       </section>
 
       {/* Benefits */}
-      <section className="py-24 px-6 md:px-12" style={{ background: "var(--surface)" }}>
-        <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>Why SkillMap</span>
-          <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-            Hiring shouldn&apos;t feel<br />like finding a needle in a haystack.
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="px-4 py-16">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="section-eyebrow justify-center">What You Get</div>
+            <h2 className={`${syne} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>End-to-End Hiring Platform</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {benefits.map((b) => (
-              <div key={b.title} className="rounded-2xl border bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-lg" style={{ borderColor: "var(--border)" }}>
-                <div className="text-3xl mb-4">{b.icon}</div>
-                <h3 className={`${syne} font-bold text-base mb-2`}>{b.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{b.desc}</p>
+              <div key={b.title} className="card-elevated">
+                <h3 className={`${syne} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>{b.title}</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{b.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="py-24 px-6 md:px-12 bg-white">
-        <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--muted)" }}>How it works</span>
-          <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-            Live in 4 steps.<br />Hiring in days.
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {howItWorks.map((s) => (
-              <div key={s.num} className="relative">
-                <div className={`${syne} text-5xl font-extrabold mb-4 opacity-[0.06]`}>{s.num}</div>
-                <h3 className={`${syne} font-bold text-base mb-2`}>{s.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{s.desc}</p>
+      {/* How It Works */}
+      <section className="px-4 py-16" style={{ background: "var(--surface-alt)" }}>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="section-eyebrow justify-center">How it works</div>
+            <h2 className={`${syne} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>Start Hiring in 4 Steps</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((s) => (
+              <div key={s.num} className="card-elevated relative" style={{ padding: "28px 20px" }}>
+                <div className={`${syne} text-xs font-bold mb-3 inline-block px-2 py-0.5 rounded`} style={{ background: "var(--primary-light)", color: "var(--primary)" }}>Step {s.num}</div>
+                <h3 className={`${syne} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>{s.title}</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{s.desc}</p>
               </div>
             ))}
           </div>
@@ -112,24 +87,27 @@ export default function ForCompaniesPage() {
       </section>
 
       {/* Pricing */}
-      <section className="py-24 px-6 md:px-12" style={{ background: "var(--ink)", color: "white" }}>
-        <div className="max-w-[1100px] mx-auto">
-          <span className={`${syne} text-xs font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--accent)" }}>Pricing</span>
-          <h2 className={`${syne} font-extrabold tracking-[-0.02em] mb-12`} style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-            Plans that scale<br />with your hiring.
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[900px]">
-            {plans.map((p) => (
-              <div key={p.name} className={`rounded-2xl p-8 border ${p.featured ? "" : ""}`} style={{ background: p.featured ? "var(--accent)" : "rgba(255,255,255,0.05)", borderColor: p.featured ? "var(--accent)" : "rgba(255,255,255,0.1)", color: p.featured ? "var(--ink)" : "white" }}>
-                <div className={`${syne} text-xs font-bold tracking-[0.1em] uppercase mb-6`} style={{ opacity: 0.5 }}>{p.name}</div>
-                <div className={`${syne} text-4xl font-extrabold mb-1`}>{p.price}<span className="text-sm font-normal opacity-50">{p.period}</span></div>
-                <ul className="mt-6 mb-8 space-y-2.5 text-sm">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex gap-2 items-start opacity-80"><span className="opacity-50 shrink-0">→</span>{f}</li>
-                  ))}
+      <section className="px-4 py-16">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className={`${syne} font-extrabold text-2xl md:text-3xl`} style={{ color: "var(--ink)" }}>Simple Pricing</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { name: "Starter", price: "Free", desc: "For small teams getting started", features: ["5 job posts/month", "Basic candidate search", "Application tracking", "Email notifications"], cta: "Get Started", href: "/auth/signup?role=ORG" },
+              { name: "Growth", price: "Rs.4,999/mo", desc: "For growing companies", features: ["Unlimited job posts", "AI JD matching", "Proctored assessments", "Hiring challenges", "Candidate pipeline", "Priority support"], cta: "Start Trial", href: "/auth/signup?role=ORG", featured: true },
+              { name: "Enterprise", price: "Custom", desc: "For large organisations", features: ["Everything in Growth", "Dedicated account manager", "Custom integrations", "SLA guarantee", "White-label option", "API access"], cta: "Contact Us", href: "/forms/hire-from-us" },
+            ].map((plan) => (
+              <div key={plan.name} className={`card-elevated ${plan.featured ? "ring-2" : ""}`} style={{ ...(plan.featured ? { borderColor: "var(--primary)", boxShadow: "0 0 0 2px var(--primary-light)" } : {}) }}>
+                {plan.featured && <div className="text-[10px] font-bold text-center mb-3 px-2 py-1 rounded-full mx-auto w-fit" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>Most Popular</div>}
+                <div className={`${syne} text-lg font-bold mb-1`} style={{ color: "var(--ink)" }}>{plan.name}</div>
+                <div className={`${syne} text-2xl font-extrabold mb-1`} style={{ color: "var(--primary)" }}>{plan.price}</div>
+                <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>{plan.desc}</p>
+                <ul className="space-y-2 mb-6">
+                  {plan.features.map((f) => <li key={f} className="flex items-start gap-2 text-xs" style={{ color: "var(--ink-light)" }}><span style={{ color: "var(--primary)" }}>✓</span> {f}</li>)}
                 </ul>
-                <Link href={p.href} className={`block w-full text-center py-3.5 rounded-xl ${syne} font-bold text-sm no-underline transition-transform hover:-translate-y-0.5`} style={{ background: p.featured ? "var(--ink)" : "rgba(255,255,255,0.1)", color: p.featured ? "var(--accent)" : "white" }}>
-                  {p.cta}
+                <Link href={plan.href} className={`block text-center rounded-xl py-2.5 text-sm font-semibold no-underline ${plan.featured ? "btn-primary" : "btn-outline"}`}>
+                  {plan.cta}
                 </Link>
               </div>
             ))}
@@ -138,15 +116,12 @@ export default function ForCompaniesPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 px-6 md:px-12 text-center" style={{ background: "var(--ink2)" }}>
-        <div className="max-w-[600px] mx-auto relative">
-          <div className="absolute w-[400px] h-[400px] rounded-full blur-[100px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10" style={{ background: "var(--accent)" }} />
-          <h2 className={`relative ${syne} font-extrabold text-white tracking-[-0.03em] mb-4`} style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
-            Ready to hire <span style={{ color: "var(--accent)" }}>smarter</span>?
-          </h2>
-          <p className="relative text-base mb-8" style={{ color: "rgba(255,255,255,0.5)" }}>Register your company and start receiving matched applications today.</p>
-          <Link href="/forms/company-onboarding" className={`relative inline-flex items-center gap-2 px-8 py-4 rounded-2xl ${syne} font-bold text-base no-underline cta-btn-main`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
-            Get started →
+      <section className="px-4 py-16" style={{ background: "var(--primary)" }}>
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className={`${syne} font-extrabold text-xl md:text-2xl text-white mb-3`}>Ready to Hire Smarter?</h2>
+          <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.7)" }}>Join companies using SkillMap to find job-ready talent.</p>
+          <Link href="/auth/signup?role=ORG" className="inline-block rounded-xl px-8 py-3 text-sm font-semibold no-underline" style={{ background: "white", color: "var(--primary)" }}>
+            Register Your Company — Free
           </Link>
         </div>
       </section>

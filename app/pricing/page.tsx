@@ -169,7 +169,7 @@ export default function PricingPage() {
           name: data.name || "",
           email: data.email || "",
         },
-        theme: { color: "#0a0a0f" },
+        theme: { color: "#6366f1" },
         modal: {
           ondismiss: () => setLoading(null),
         },
@@ -190,12 +190,12 @@ export default function PricingPage() {
       {/* Header */}
       <section className="py-16 px-4 md:px-8 text-center" style={{ background: "var(--ink)" }}>
         <div className="max-w-3xl mx-auto">
-          <span className={`${syne} text-[0.7rem] font-bold tracking-[0.15em] uppercase block mb-4`} style={{ color: "var(--accent)" }}>Pricing</span>
+          <div className="section-eyebrow justify-center" style={{ color: "var(--primary)" }}>Pricing</div>
           <h1 className={`${syne} font-extrabold text-3xl md:text-4xl text-white mb-3`}>
-            Start free. Upgrade when ready.
+            Start Free. Upgrade When Ready.
           </h1>
-          <p className="text-base" style={{ color: "rgba(255,255,255,0.5)" }}>
-            No hidden fees. Cancel anytime. Your career investment starts at ₹299/month.
+          <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
+            No hidden fees. Cancel anytime. Your career investment starts at Rs.299/month.
           </p>
         </div>
       </section>
@@ -214,44 +214,43 @@ export default function PricingPage() {
               const isCurrentPlan = (isSubscribed && plan.id === "CAREER_READY") || (!isSubscribed && plan.id === "FREE");
 
               return (
-                <div key={plan.id} className={`rounded-2xl p-8 border ${plan.featured ? "" : ""}`} style={{ background: plan.featured ? "var(--ink)" : "white", borderColor: plan.featured ? "var(--ink)" : "var(--border)", color: plan.featured ? "white" : "var(--ink)" }}>
+                <div key={plan.id} className={`rounded-2xl p-8 border ${plan.featured ? "ring-2" : ""}`} style={{ background: "white", borderColor: plan.featured ? "var(--primary)" : "var(--border)", ...(plan.featured ? { boxShadow: "0 0 0 2px var(--primary-light)" } : {}) }}>
                   {plan.featured && (
-                    <div className={`${syne} text-[0.6rem] font-bold tracking-[0.1em] uppercase mb-4 px-2.5 py-1 rounded-full inline-block`} style={{ background: "var(--accent)", color: "var(--ink)" }}>
-                      Most popular
+                    <div className="text-[10px] font-bold text-center mb-3 px-2.5 py-1 rounded-full inline-block" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>
+                      Most Popular
                     </div>
                   )}
-                  <div className={`${syne} text-xs font-bold tracking-[0.1em] uppercase mb-4`} style={{ opacity: 0.5 }}>{plan.name}</div>
-                  <div className={`${syne} text-4xl font-extrabold mb-1`}>
-                    {plan.price}<span className="text-sm font-normal opacity-50">{plan.period}</span>
+                  <div className={`${syne} text-sm font-bold mb-1`} style={{ color: "var(--ink)" }}>{plan.name}</div>
+                  <div className={`${syne} text-3xl font-extrabold mb-1`} style={{ color: "var(--primary)" }}>
+                    {plan.price}<span className="text-sm font-normal" style={{ color: "var(--muted)" }}>{plan.period}</span>
                   </div>
-                  <p className="text-sm mb-6" style={{ opacity: 0.6 }}>{plan.desc}</p>
+                  <p className="text-xs mb-6" style={{ color: "var(--muted)" }}>{plan.desc}</p>
 
                   <ul className="space-y-2.5 mb-8 text-sm">
                     {plan.features.map((f) => (
-                      <li key={f} className="flex gap-2 items-start" style={{ opacity: 0.8 }}>
-                        <span className="opacity-50 shrink-0">→</span>{f}
+                      <li key={f} className="flex gap-2 items-start text-xs" style={{ color: "var(--ink-light)" }}>
+                        <span style={{ color: "var(--primary)" }}>✓</span>{f}
                       </li>
                     ))}
                   </ul>
 
                   {plan.href ? (
-                    <Link href={plan.href} className={`block w-full text-center py-3.5 rounded-xl ${syne} font-bold text-sm no-underline`} style={{ background: plan.featured ? "var(--accent)" : "var(--border)", color: plan.featured ? "var(--ink)" : "var(--muted)" }}>
+                    <Link href={plan.href} className="block w-full text-center btn-outline no-underline">
                       {plan.cta}
                     </Link>
                   ) : isCurrentPlan ? (
-                    <div className={`w-full text-center py-3.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a" }}>
+                    <div className="w-full text-center py-2.5 rounded-xl text-sm font-semibold" style={{ background: "rgba(16,185,129,0.1)", color: "var(--success)" }}>
                       ✓ Current plan
                     </div>
                   ) : plan.disabled ? (
-                    <div className={`w-full text-center py-3.5 rounded-xl ${syne} font-bold text-sm`} style={{ background: "var(--border)", color: "var(--muted)" }}>
+                    <div className="w-full text-center py-2.5 rounded-xl text-sm font-medium" style={{ background: "var(--surface-alt)", color: "var(--muted)" }}>
                       Free forever
                     </div>
                   ) : (
                     <button
                       onClick={() => handlePurchase(plan.id)}
                       disabled={loading === plan.id}
-                      className={`w-full py-3.5 rounded-xl ${syne} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`}
-                      style={{ background: plan.featured ? "var(--accent)" : "var(--ink)", color: plan.featured ? "var(--ink)" : "var(--accent)" }}
+                      className={`w-full btn-primary disabled:opacity-50`}
                     >
                       {loading === plan.id ? "Processing..." : plan.cta}
                     </button>

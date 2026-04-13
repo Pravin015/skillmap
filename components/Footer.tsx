@@ -1,72 +1,92 @@
+"use client";
+
 import Link from "next/link";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
+const footerLinks = [
+  {
+    title: "Platform",
+    links: [
+      { href: "/jobs", label: "Jobs" },
+      { href: "/competitions", label: "Competitions" },
+      { href: "/events", label: "Events" },
+      { href: "/blog", label: "Blog" },
+      { href: "/companies", label: "Companies" },
+      { href: "/pricing", label: "Pricing" },
+    ],
+  },
+  {
+    title: "Prepare",
+    links: [
+      { href: "/chat", label: "AI Advisor" },
+      { href: "/mock-interview", label: "Mock Interviews" },
+      { href: "/offer-verify", label: "Verify Offer Letter" },
+      { href: "/dashboard", label: "Dashboard" },
+    ],
+  },
+  {
+    title: "For You",
+    links: [
+      { href: "/for-companies", label: "For Companies" },
+      { href: "/for-mentors", label: "For Mentors" },
+      { href: "/for-institutions", label: "For Institutions" },
+      { href: "/forms/hire-from-us", label: "Hire From Us" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { href: "/privacy", label: "Privacy Policy" },
+      { href: "/terms", label: "Terms of Service" },
+      { href: "/refund-policy", label: "Refund Policy" },
+      { href: "/shipping-policy", label: "Shipping Policy" },
+    ],
+  },
+];
+
 export default function Footer() {
   return (
-    <footer className="py-12 px-6 md:px-12" style={{ background: "var(--ink)", color: "rgba(255,255,255,0.4)" }}>
-      <div className="max-w-[1100px] mx-auto">
-        <div className="flex flex-col md:flex-row justify-between gap-10 mb-10">
+    <footer style={{ background: "var(--ink)" }}>
+      <div className="mx-auto max-w-6xl px-4 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
           {/* Brand */}
-          <div className="md:max-w-[250px]">
-            <Link href="/" className={`${syne} font-extrabold text-lg text-white no-underline`}>
-              Skill<span style={{ color: "var(--accent)" }}>Map</span>
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className={`${syne} text-lg font-extrabold text-white no-underline flex items-center gap-2 mb-3`}>
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold" style={{ background: "var(--primary)", color: "white" }}>S</span>
+              SkillMap
             </Link>
-            <p className="text-xs leading-relaxed mt-2">
-              India&apos;s first job-readiness engine. Know what it takes to get hired at your dream company.
+            <p className="text-xs leading-relaxed mb-3" style={{ color: "rgba(255,255,255,0.5)" }}>
+              India&apos;s job-readiness platform. AI-powered career guidance for fresh graduates.
             </p>
-            <p className="text-xs mt-3">
-              <strong style={{ color: "rgba(255,255,255,0.6)" }}>Email:</strong>{" "}
-              <a href="mailto:support@ashpranix.in" className="no-underline hover:text-white transition-colors" style={{ color: "var(--accent)" }}>
-                support@ashpranix.in
-              </a>
-            </p>
+            <a href="mailto:support@ashpranix.in" className="text-xs no-underline" style={{ color: "var(--primary)" }}>
+              support@ashpranix.in
+            </a>
           </div>
 
-          {/* Links */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-sm">
-            <div>
-              <div className={`${syne} font-bold text-xs text-white uppercase tracking-wider mb-3`}>Platform</div>
-              <div className="flex flex-col gap-2">
-                <Link href="/jobs" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Jobs</Link>
-                <Link href="/companies" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Companies</Link>
-                <Link href="/pricing" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Pricing</Link>
-                <Link href="/chat" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>AI Advisor</Link>
-                <Link href="/blog" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Blog</Link>
-              </div>
+          {/* Link columns */}
+          {footerLinks.map((col) => (
+            <div key={col.title}>
+              <h4 className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "rgba(255,255,255,0.4)" }}>
+                {col.title}
+              </h4>
+              <ul className="space-y-2 list-none p-0 m-0">
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-xs no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.6)" }}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div>
-              <div className={`${syne} font-bold text-xs text-white uppercase tracking-wider mb-3`}>For You</div>
-              <div className="flex flex-col gap-2">
-                <Link href="/for-companies" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>For Companies</Link>
-                <Link href="/for-mentors" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>For Mentors</Link>
-                <Link href="/for-institutions" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>For Institutions</Link>
-                <Link href="/forms/hire-from-us" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Hire From Us</Link>
-              </div>
-            </div>
-            <div>
-              <div className={`${syne} font-bold text-xs text-white uppercase tracking-wider mb-3`}>Company</div>
-              <div className="flex flex-col gap-2">
-                <Link href="/about" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>About Us</Link>
-                <Link href="/forms/contact" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Contact Us</Link>
-                <Link href="/forms/partner" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Partner With Us</Link>
-              </div>
-            </div>
-            <div>
-              <div className={`${syne} font-bold text-xs text-white uppercase tracking-wider mb-3`}>Legal</div>
-              <div className="flex flex-col gap-2">
-                <Link href="/privacy" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Privacy Policy</Link>
-                <Link href="/terms" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Terms & Conditions</Link>
-                <Link href="/refund-policy" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Refund Policy</Link>
-                <Link href="/shipping-policy" className="no-underline transition-colors hover:text-white" style={{ color: "rgba(255,255,255,0.4)" }}>Shipping Policy</Link>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
 
-        <div className="border-t pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
-          <span>&copy; 2026 SkillMap. Built for India&apos;s next generation.</span>
-          <span>Payments secured by Razorpay</span>
+        {/* Bottom */}
+        <div className="border-t pt-6 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+          <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.3)" }}>&copy; 2026 SkillMap. Built for India&apos;s next generation.</p>
+          <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.3)" }}>Payments secured by Razorpay</p>
         </div>
       </div>
     </footer>
