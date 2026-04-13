@@ -46,6 +46,7 @@ model User {
   profileViews  ProfileView[]       @relation("ProfileViewer")
   notifications Notification[]
   mockInterviews MockInterview[]
+  companyProfile CompanyProfile?
 }
 
 enum FormType {
@@ -749,4 +750,37 @@ model OfferVerification {
 
   @@index([userId])
   @@index([verdict])
+}
+
+// ═══ EMPLOYER / COMPANY PROFILE ═══
+
+model CompanyProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug        String   @unique
+  name        String
+  logo        String?
+  industry    String?
+  about       String?
+  culture     String?
+  website     String?
+  location    String?
+  size        String?  // "1-50", "50-200", "200-1000", "1000+"
+  founded     String?
+  socialLinks String[] @default([])
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ApplicationNote {
+  id            String   @id @default(cuid())
+  applicationId String
+  authorId      String
+  authorName    String
+  content       String
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId])
 }

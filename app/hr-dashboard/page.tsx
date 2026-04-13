@@ -13,11 +13,13 @@ import CreateHackathon from "@/components/hr-dashboard/CreateHackathon";
 import Leaderboard from "@/components/hr-dashboard/Leaderboard";
 import MyJobPosts from "@/components/hr-dashboard/MyJobPosts";
 import JDMatcher from "@/components/hr-dashboard/JDMatcher";
+import CandidatePipeline from "@/components/hr-dashboard/CandidatePipeline";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
 const sidebarItems = [
   { id: "overview", label: "Overview", icon: "📊" },
+  { id: "pipeline", label: "Pipeline", icon: "📋" },
   { id: "applications", label: "Applications", icon: "📩" },
   { id: "create-job", label: "Create Job", icon: "➕" },
   { id: "my-posts", label: "My Job Posts", icon: "📝" },
@@ -53,6 +55,7 @@ export default function HRDashboardPage() {
   function renderTab() {
     switch (activeTab) {
       case "overview": return <HROverview onNavigate={setActiveTab} />;
+      case "pipeline": return <CandidatePipeline />;
       case "applications": return <ReceivedApplications />;
       case "create-job": return <CreateJobOpening companyName={companyName} />;
       case "my-posts": return <MyJobPosts onNavigate={setActiveTab} />;

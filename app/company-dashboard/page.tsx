@@ -8,6 +8,7 @@ import ManageHR from "@/components/company-dashboard/ManageHR";
 import HRTracker from "@/components/company-dashboard/HRTracker";
 import HiringAnalytics from "@/components/company-dashboard/HiringAnalytics";
 import CompanySettings from "@/components/company-dashboard/CompanySettings";
+import CompanyProfileEditor from "@/components/company-dashboard/CompanyProfileEditor";
 
 const syne = "font-[family-name:var(--font-syne)]";
 
@@ -15,6 +16,7 @@ const sidebarItems = [
   { id: "overview", label: "Overview", icon: "📊" },
   { id: "manage-hr", label: "Manage HR", icon: "👥" },
   { id: "hr-tracker", label: "HR Tracker", icon: "📈" },
+  { id: "profile", label: "Company Profile", icon: "🏢" },
   { id: "analytics", label: "Analytics", icon: "📉" },
   { id: "settings", label: "Settings", icon: "⚙️" },
 ];
@@ -67,6 +69,7 @@ export default function CompanyDashboardPage() {
       case "overview": return <CompanyOverview orgName={orgName} hrCount={hrs.length} onNavigate={setActiveTab} />;
       case "manage-hr": return <ManageHR hrs={hrs} onRefresh={fetchHrs} />;
       case "hr-tracker": return <HRTracker hrs={hrs} />;
+      case "profile": return <CompanyProfileEditor />;
       case "analytics": return <HiringAnalytics hrCount={hrs.length} />;
       case "settings": return <CompanySettings orgName={orgName} />;
       default: return <CompanyOverview orgName={orgName} hrCount={hrs.length} onNavigate={setActiveTab} />;
