@@ -65,77 +65,190 @@ export default function Home() {
     <div style={{ background: "var(--surface)" }}>
 
       {/* ═══ HERO ═══ */}
-      <section className="px-4 pt-24 pb-16 md:pt-32 md:pb-20">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="section-eyebrow animate-fade-up justify-center">
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse-dot" style={{ background: "var(--primary)" }} />
-            India&apos;s #1 Job-Readiness Platform
+      <section
+        className="relative px-4 pt-28 pb-20 md:pt-36 md:pb-24 flex flex-col items-center justify-center text-center"
+        style={{
+          background: "var(--color-bg-dark)",
+          minHeight: "100vh",
+        }}
+      >
+        {/* Subtle radial glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 50% 40%, rgba(10,191,188,0.08) 0%, transparent 70%)" }} />
+
+        <div className="relative max-w-[800px] mx-auto w-full">
+          {/* Eyebrow */}
+          <div
+            className="animate-fade-up inline-flex items-center gap-2 mb-6 mx-auto"
+            style={{
+              background: "rgba(10,191,188,0.1)",
+              border: "1px solid rgba(10,191,188,0.2)",
+              borderRadius: 999,
+              padding: "0.3rem 1rem",
+              fontFamily: "var(--font-heading)",
+              fontSize: "0.7rem",
+              fontWeight: 600,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase" as const,
+              color: "var(--primary)",
+            }}
+          >
+            Free to start · No courses · No gatekeeping
           </div>
 
-          <h1 className={`${heading} font-extrabold leading-tight tracking-tight mb-5 animate-fade-up-1`} style={{ fontSize: "clamp(2.2rem, 5vw, 3.5rem)", color: "var(--ink)" }}>
-            Your Career <span style={{ color: "var(--primary)" }}>Starts</span> Here
+          {/* Headline */}
+          <h1
+            className={`${heading} animate-fade-up-1 font-[800] mb-6`}
+            style={{
+              fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
+              lineHeight: 1.05,
+              letterSpacing: "-0.03em",
+              color: "#FFFFFF",
+            }}
+          >
+            Nobody Told You<br />
+            <span style={{ color: "var(--primary)" }}>What To Learn.</span><br />
+            We Will.
           </h1>
 
-          <p className="text-base md:text-lg max-w-xl mx-auto mb-8 animate-fade-up-2" style={{ color: "var(--muted)", lineHeight: 1.7 }}>
-            Tell us your dream company and role — we&apos;ll build your personalised roadmap with AI-powered guidance, mock interviews, and mentor support.
+          {/* Subheadline */}
+          <p
+            className="animate-fade-up-2 mx-auto mb-10"
+            style={{
+              fontFamily: "var(--font-body)",
+              fontWeight: 400,
+              fontSize: "clamp(1rem, 2vw, 1.2rem)",
+              lineHeight: 1.7,
+              color: "var(--color-text-muted)",
+              maxWidth: 580,
+            }}
+          >
+            Tell us your dream company. Get a week-by-week roadmap, AI mock interviews, and real mentors — built for Indian graduates.
           </p>
 
-          {/* Chat Bar */}
-          <form onSubmit={handleChatSubmit} className="max-w-xl mx-auto mb-5 animate-fade-up-3">
-            <div className="flex items-center gap-2 rounded-2xl border-2 bg-white p-2 transition-all focus-within:border-[var(--primary)]" style={{ borderColor: "var(--border)" }}>
-              <svg className="ml-3 shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          {/* CTA Buttons */}
+          <div className="animate-fade-up-3 flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+            <button
+              onClick={() => {
+                const el = document.getElementById("hero-input");
+                if (el) el.focus();
+                else router.push(session ? "/chat" : "/auth/signup?role=STUDENT");
+              }}
+              className={`${heading} font-semibold transition-all`}
+              style={{
+                background: "var(--primary)",
+                color: "#fff",
+                padding: "0.9rem 2.2rem",
+                fontSize: "1rem",
+                borderRadius: "0.5rem",
+                border: "none",
+                cursor: "pointer",
+                boxShadow: "0 4px 20px rgba(10,191,188,0.35)",
+              }}
+            >
+              Build My Roadmap — It&apos;s Free
+            </button>
+            <a
+              href="#how-section"
+              className="transition-colors"
+              style={{
+                color: "var(--color-text-muted)",
+                fontSize: "0.95rem",
+                fontWeight: 500,
+                textDecoration: "none",
+              }}
+            >
+              See How It Works ↓
+            </a>
+          </div>
+
+          {/* Input Bar */}
+          <form onSubmit={handleChatSubmit} className="max-w-xl mx-auto mb-4 animate-fade-up-3">
+            <div
+              className="flex items-center gap-2 p-2 transition-all"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: "0.625rem",
+              }}
+            >
+              <svg className="ml-3 shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
               <input
+                id="hero-input"
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="I want to join Google as a Software Engineer..."
+                placeholder="I want to join Google as a UX Designer..."
                 className="flex-1 py-3 px-2 text-sm outline-none bg-transparent"
-                style={{ color: "var(--ink)" }}
+                style={{ color: "#FFFFFF" }}
               />
-              <button type="submit" className="btn-primary shrink-0" style={{ borderRadius: 12, padding: "10px 20px" }}>
+              <button
+                type="submit"
+                className="shrink-0 font-semibold transition-all"
+                style={{
+                  background: "var(--primary)",
+                  color: "#fff",
+                  padding: "0.6rem 1.25rem",
+                  fontSize: "0.85rem",
+                  borderRadius: "0.5rem",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
                 Get My Roadmap
               </button>
             </div>
+            <p className="text-center mt-2" style={{ color: "var(--color-text-secondary)", fontSize: "0.75rem" }}>
+              Powered by Claude AI · Personalised for you
+            </p>
           </form>
 
-          <p className="text-xs animate-fade-up-3" style={{ color: "var(--muted)" }}>
-            {session ? "Powered by AI — personalised for you" : (
-              <>Free to start · No credit card · <Link href="/auth/login" className="font-medium no-underline" style={{ color: "var(--primary)" }}>Already have an account?</Link></>
-            )}
-          </p>
-        </div>
-      </section>
+          {/* Social Proof */}
+          <div className="animate-fade-up-3 mb-12">
+            <p className="mb-3" style={{ color: "var(--color-text-secondary)", fontSize: "0.8rem" }}>
+              Trusted by students targeting
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {["TCS", "Infosys", "Google", "Deloitte", "Amazon"].map((c) => (
+                <span
+                  key={c}
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    color: "var(--color-text-muted)",
+                    fontSize: "0.75rem",
+                    borderRadius: 999,
+                    padding: "0.25rem 0.75rem",
+                  }}
+                >
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
 
-      {/* ═══ COMPANY LOGOS ═══ */}
-      <section className="px-4 pb-10">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-center text-[11px] font-medium tracking-wider uppercase mb-5" style={{ color: "var(--muted)" }}>
-            Trusted by students targeting
-          </p>
-          <div className="flex flex-wrap justify-center gap-x-10 gap-y-3">
-            {logoCompanies.map((name) => (
-              <span key={name} className={`${heading} text-sm font-bold`} style={{ color: "var(--border)" }}>
-                {name}
-              </span>
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
+            {[
+              { num: "15+", label: "Companies Mapped", sub: "With real interview Q&A" },
+              { num: "100+", label: "Interview Questions", sub: "Curated by insiders" },
+              { num: "Free", label: "To Start", sub: "No credit card needed" },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="text-center"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: "0.75rem",
+                  padding: "1.25rem 2rem",
+                }}
+              >
+                <div className={`${heading}`} style={{ fontSize: "2rem", fontWeight: 800, color: "var(--primary)" }}>{s.num}</div>
+                <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "#FFFFFF", marginTop: "0.25rem" }}>{s.label}</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)", marginTop: "0.2rem" }}>{s.sub}</div>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ═══ STATS ═══ */}
-      <section className="px-4 pb-16">
-        <div className="max-w-4xl mx-auto grid grid-cols-3 gap-4">
-          {[
-            { num: "15+", label: "Companies Mapped", desc: "With interview Q&A and skill maps" },
-            { num: "100+", label: "Interview Questions", desc: "Curated by industry and difficulty" },
-            { num: "6", label: "Role Dashboards", desc: "Student, HR, Mentor, Company, Institution, Admin" },
-          ].map((s) => (
-            <div key={s.label} className="card-elevated text-center">
-              <div className={`${heading} text-2xl md:text-3xl font-extrabold mb-1`} style={{ color: "var(--primary)" }}>{s.num}</div>
-              <div className="text-xs font-semibold mb-0.5" style={{ color: "var(--ink)" }}>{s.label}</div>
-              <div className="text-[10px] hidden md:block" style={{ color: "var(--muted)" }}>{s.desc}</div>
-            </div>
-          ))}
         </div>
       </section>
 
@@ -163,7 +276,7 @@ export default function Home() {
       </section>
 
       {/* ═══ HOW IT WORKS ═══ */}
-      <section className="px-4 py-16" style={{ background: "var(--surface)" }}>
+      <section id="how-section" className="px-4 py-16" style={{ background: "var(--surface)" }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <div className="section-eyebrow justify-center">How it works</div>
