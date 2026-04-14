@@ -310,39 +310,34 @@ export default function Home() {
             </div>
           </div>
 
-          {/* TIER 2 — Supporting Features */}
+          {/* TIER 2 — USP Cards (Bold Treatment) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Job Matching */}
-            <div style={{ background: "var(--color-bg-subtle)", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "1.5rem" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A6363" strokeWidth="1.5" className="mb-3"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-              <h3 className={heading} style={{ fontSize: "1rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.4rem" }}>Jobs That Match You</h3>
-              <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", lineHeight: 1.6, marginBottom: "0.75rem" }}>AI calculates your skill-match percentage for every job. See only roles relevant to your domain — no spam, no noise.</p>
-              <span style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: 600 }}>Skill match % · One-click apply</span>
-            </div>
-
-            {/* Mentor Sessions */}
-            <div style={{ background: "var(--color-bg-subtle)", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "1.5rem" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A6363" strokeWidth="1.5" className="mb-3"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              <h3 className={heading} style={{ fontSize: "1rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.4rem" }}>Talk to Someone Who&apos;s Been There</h3>
-              <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", lineHeight: 1.6, marginBottom: "0.75rem" }}>Book 1-on-1 sessions with verified professionals from your dream companies. Free or paid from Rs.300.</p>
-              <span style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: 600 }}>Verified mentors · Rated &amp; reviewed</span>
-            </div>
-
-            {/* Offer Verification */}
-            <div style={{ background: "#FFFBF0", border: "1px solid rgba(245,158,11,0.2)", borderRadius: "0.75rem", padding: "1.5rem" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" className="mb-3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-              <h3 className={heading} style={{ fontSize: "1rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.4rem" }}>Is That Offer Real?</h3>
-              <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", lineHeight: 1.6, marginBottom: "0.75rem" }}>Paste any offer letter. Our AI checks 20 fraud parameters and gives a trust score. Rs.1,200 Cr lost to job scams in India last year.</p>
-              <span style={{ fontSize: "0.7rem", color: "var(--accent)", fontWeight: 600 }}>20 fraud checks · Instant verdict</span>
-            </div>
-
-            {/* Lab Assessments */}
-            <div style={{ background: "var(--color-bg-subtle)", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "1.5rem" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A6363" strokeWidth="1.5" className="mb-3"><path d="M9 3h6v5l3 9H6l3-9V3z"/><path d="M6 17h12"/><path d="M10 3v5"/><path d="M14 3v5"/></svg>
-              <h3 className={heading} style={{ fontSize: "1rem", fontWeight: 700, color: "var(--ink)", marginBottom: "0.4rem" }}>Prove Your Skills</h3>
-              <p style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)", lineHeight: 1.6, marginBottom: "0.75rem" }}>Timed, proctored MCQ labs with webcam verification. Results employers actually trust — not self-reported skills.</p>
-              <span style={{ fontSize: "0.7rem", color: "var(--primary)", fontWeight: 600 }}>Proctored · Auto-graded · Shareable</span>
-            </div>
+            {[
+              { icon: "🎯", title: "Jobs That Match You", desc: "AI calculates your skill-match percentage for every job. See only roles relevant to your domain — no spam, no noise.", tag: "Skill match % · One-click apply", stat: "85%", statLabel: "avg match accuracy", color: "#0ABFBC" },
+              { icon: "👨\u200D🏫", title: "Real Mentors, Real Advice", desc: "Book 1-on-1 sessions with verified professionals from your dream companies. Free or paid from Rs.300.", tag: "Verified mentors · Rated & reviewed", stat: "4.8★", statLabel: "avg mentor rating", color: "#0ABFBC" },
+              { icon: "🛡️", title: "Is That Offer Real?", desc: "Paste any offer letter. Our AI checks 20 fraud parameters. Rs.1,200 Cr lost to job scams in India last year.", tag: "20 fraud checks · Instant verdict", stat: "20", statLabel: "fraud parameters", color: "#F59E0B" },
+              { icon: "🧪", title: "Prove Your Skills", desc: "Timed, proctored MCQ labs with webcam verification. Results employers actually trust.", tag: "Proctored · Auto-graded · Shareable", stat: "100%", statLabel: "employer trusted", color: "#0ABFBC" },
+            ].map((f) => (
+              <div key={f.title} className="card-dark animate-on-scroll group" style={{ padding: "1.75rem", borderTop: `2px solid ${f.color}`, position: "relative", overflow: "hidden" }}>
+                {/* Glow effect on hover */}
+                <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "60px", background: `linear-gradient(180deg, ${f.color}08, transparent)`, transition: "opacity 0.3s", opacity: 0.5 }} />
+                <div style={{ position: "relative" }}>
+                  {/* Stat badge — top right */}
+                  <div style={{ position: "absolute", top: 0, right: 0, textAlign: "right" }}>
+                    <div className={heading} style={{ fontSize: "1.5rem", fontWeight: 700, color: f.color, lineHeight: 1 }}>{f.stat}</div>
+                    <div style={{ fontSize: "0.6rem", color: "#4A6363", marginTop: "0.1rem" }}>{f.statLabel}</div>
+                  </div>
+                  {/* Icon */}
+                  <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>{f.icon}</div>
+                  {/* Title */}
+                  <h3 className={heading} style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem", paddingRight: "3rem" }}>{f.title}</h3>
+                  {/* Description */}
+                  <p style={{ fontSize: "0.82rem", color: "#6B8F8F", lineHeight: 1.6, marginBottom: "0.75rem" }}>{f.desc}</p>
+                  {/* Tag */}
+                  <span style={{ fontSize: "0.7rem", color: f.color, fontWeight: 600 }}>{f.tag}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
