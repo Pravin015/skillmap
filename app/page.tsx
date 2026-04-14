@@ -57,6 +57,7 @@ export default function Home() {
   const [stat2, setStat2] = useState(0);
   const [statsVisible, setStatsVisible] = useState(false);
   const statsRef = useRef<HTMLDivElement>(null);
+  const [activeCard, setActiveCard] = useState(0);
 
   // Scroll reveal observer
   useEffect(() => {
@@ -93,6 +94,12 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  // Floating card rotation
+  useEffect(() => {
+    const timer = setInterval(() => setActiveCard((p) => (p + 1) % 4), 3500);
+    return () => clearInterval(timer);
+  }, []);
+
   function handleChatSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!query.trim()) return;
@@ -104,182 +111,127 @@ export default function Home() {
     <div style={{ background: "var(--surface)" }}>
 
       {/* ═══ HERO ═══ */}
-      <section
-        className="relative px-4 pt-28 pb-20 md:pt-36 md:pb-24 flex flex-col items-center justify-center text-center"
-        style={{
-          background: "#0D2020",
-          minHeight: "100vh",
-        }}
-      >
-        {/* Background layers */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 40%, rgba(10,191,188,0.07) 0%, transparent 70%)" }} />
+      <section className="relative px-4 overflow-hidden" style={{ background: "#0C1A1A", minHeight: "100vh", paddingTop: "7rem", paddingBottom: "4rem" }}>
+        {/* BG layers */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 30% 40%, rgba(10,191,188,0.06) 0%, transparent 70%)" }} />
         <div className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none" style={{ background: "linear-gradient(90deg, transparent, rgba(10,191,188,0.3), transparent)" }} />
         <div className="absolute inset-0 pointer-events-none hero-grid-bg" />
 
-        <div className="relative max-w-[800px] mx-auto w-full">
-          {/* Eyebrow */}
-          <div
-            className="animate-fade-up inline-flex items-center gap-2 mb-6 mx-auto"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(10,191,188,0.2)",
-              borderRadius: 999,
-              padding: "0.3rem 1rem",
-              fontFamily: "var(--font-heading)",
-              fontSize: "0.7rem",
-              fontWeight: 600,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase" as const,
-              color: "var(--primary)",
-            }}
-          >
-            Free to start · No courses · No gatekeeping
-          </div>
-
-          {/* Headline */}
-          <h1
-            className={heading}
-            style={{
-              fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
-              lineHeight: 1.0,
-              letterSpacing: "-0.04em",
-              fontWeight: 700,
-              marginBottom: "1.5rem",
-            }}
-          >
-            <span className="hero-line hero-line-1 overflow-hidden" style={{ color: "#FFFFFF" }}>Nobody Told You</span>
-            <span className="hero-line hero-line-2 overflow-hidden" style={{ color: "var(--primary)" }}>What To Learn.</span>
-            <span className="hero-line hero-line-3 overflow-hidden" style={{ color: "#FFFFFF" }}>We Will.</span>
-          </h1>
-
-          {/* Subheadline */}
-          <p
-            className="animate-fade-up-2 mx-auto mb-10"
-            style={{
-              fontFamily: "var(--font-body)",
-              fontWeight: 400,
-              fontSize: "clamp(1rem, 2vw, 1.2rem)",
-              lineHeight: 1.7,
-              color: "var(--color-text-muted)",
-              maxWidth: 580,
-            }}
-          >
-            Tell us your dream company. Get a week-by-week roadmap, AI mock interviews, and real mentors — built for Indian graduates.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="animate-fade-up-3 flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
-            <button
-              onClick={() => {
-                const el = document.getElementById("hero-input");
-                if (el) el.focus();
-                else router.push(session ? "/chat" : "/auth/signup?role=STUDENT");
-              }}
-              className={`${heading} btn-primary animate-glow`}
-              style={{
-                padding: "0.9rem 2.2rem",
-                fontSize: "1rem",
-              }}
-            >
-              Build My Roadmap — It&apos;s Free
-            </button>
-            <a
-              href="#how-section"
-              className="transition-colors"
-              style={{
-                color: "var(--color-text-muted)",
-                fontSize: "0.95rem",
-                fontWeight: 500,
-                textDecoration: "none",
-              }}
-            >
-              See How It Works ↓
-            </a>
-          </div>
-
-          {/* Input Bar */}
-          <form onSubmit={handleChatSubmit} className="max-w-xl mx-auto mb-4 animate-fade-up-3">
-            <div
-              className="flex items-center gap-2 p-2 transition-all"
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                borderRadius: "0.625rem",
-              }}
-            >
-              <svg className="ml-3 shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-              <input
-                id="hero-input"
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="I want to join Google as a UX Designer..."
-                className="flex-1 py-3 px-2 text-sm outline-none bg-transparent"
-                style={{ color: "#FFFFFF" }}
-              />
-              <button
-                type="submit"
-                className="shrink-0 font-semibold transition-all"
-                style={{
-                  background: "var(--primary)",
-                  color: "#fff",
-                  padding: "0.6rem 1.25rem",
-                  fontSize: "0.85rem",
-                  borderRadius: "0.5rem",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-              >
-                Get My Roadmap
-              </button>
+        <div className="relative mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16" style={{ maxWidth: 1200 }}>
+          {/* ── LEFT SIDE (60%) ── */}
+          <div className="flex-1 lg:max-w-[58%] text-center lg:text-left">
+            {/* Eyebrow */}
+            <div className="animate-fade-up inline-flex items-center mb-5" style={{ background: "rgba(10,191,188,0.08)", border: "1px solid rgba(10,191,188,0.2)", borderRadius: 999, padding: "0.3rem 1rem", fontFamily: "var(--font-heading)", fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0ABFBC" }}>
+              Free to start · No courses · No gatekeeping
             </div>
-            <p className="text-center mt-2" style={{ color: "var(--color-text-secondary)", fontSize: "0.75rem" }}>
-              Powered by Claude AI · Personalised for you
-            </p>
-          </form>
 
-          {/* Social Proof */}
-          <div className="animate-fade-up-3 mb-12">
-            <p className="mb-3" style={{ color: "var(--color-text-secondary)", fontSize: "0.8rem" }}>
-              Trusted by students targeting
+            {/* Headline */}
+            <h1 className={heading} style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)", lineHeight: 1.05, letterSpacing: "-0.03em", fontWeight: 700, marginBottom: "1.25rem" }}>
+              <span className="hero-line hero-line-1" style={{ color: "#fff" }}>Nobody Told You</span>
+              <span className="hero-line hero-line-2" style={{ color: "#0ABFBC" }}>What To Learn.</span>
+              <span className="hero-line hero-line-3" style={{ color: "#fff" }}>We Will.</span>
+            </h1>
+
+            {/* Subheadline */}
+            <p className="animate-fade-up-2" style={{ color: "#6B8F8F", fontSize: "1.05rem", lineHeight: 1.7, maxWidth: 500, marginBottom: "2rem" }}>
+              Tell us your dream company. Get a week-by-week roadmap, AI mock interviews, and real mentors — built for Indian graduates.
             </p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {["TCS", "Infosys", "Google", "Deloitte", "Amazon"].map((c) => (
-                <span
-                  key={c}
+
+            {/* Search Bar */}
+            <form onSubmit={handleChatSubmit} className="animate-fade-up-3 mb-4" style={{ maxWidth: 520 }}>
+              <div className="flex items-center gap-2 p-2 transition-all" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "0.75rem" }}>
+                <svg className="ml-3 shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input id="hero-input" type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="I want to join Google as a Cyber Security Engineer..." className="flex-1 py-3 px-2 text-sm outline-none bg-transparent" style={{ color: "#fff" }} />
+                <button type="submit" className="btn-primary shrink-0" style={{ padding: "0.6rem 1.25rem", fontSize: "0.85rem" }}>Get My Roadmap</button>
+              </div>
+              <p className="mt-2 lg:text-left text-center" style={{ color: "#4A6363", fontSize: "0.72rem" }}>Powered by Claude AI · Personalised for you</p>
+            </form>
+
+            {/* Register As */}
+            <div className="animate-fade-up-3 mb-8">
+              <p className={`${heading} mb-3 lg:text-left text-center`} style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", fontWeight: 600 }}>Register As</p>
+              <div className="flex flex-wrap gap-2 lg:justify-start justify-center">
+                {[
+                  { label: "Mentor", href: "/forms/mentor-onboarding" },
+                  { label: "Company / HR", href: "/auth/signup?role=ORG" },
+                  { label: "College / University", href: "/forms/institution-onboarding" },
+                ].map((r) => (
+                  <Link key={r.label} href={r.href} className="no-underline transition-all" style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "0.5rem", padding: "0.5rem 1.25rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem", fontWeight: 500 }}>
+                    {r.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Social Proof */}
+            <div className="animate-fade-up-3">
+              <div className="flex flex-wrap gap-2 lg:justify-start justify-center">
+                {["TCS", "Infosys", "Google", "Deloitte", "Amazon"].map((c) => (
+                  <span key={c} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "#6B8F8F", fontSize: "0.72rem", borderRadius: 999, padding: "0.2rem 0.65rem" }}>{c}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── RIGHT SIDE (40%) — Floating Cards ── */}
+          <div className="hidden lg:flex flex-col items-center justify-center" style={{ width: "38%", minHeight: 420 }}>
+            <div className="relative w-full" style={{ height: 400 }}>
+              {[
+                { type: "JOB", icon: "💼", title: "Cybersecurity Analyst L1", company: "TCS", meta: "Bangalore · 3.5-5 LPA", badge: "Active", badgeColor: "#10b981" },
+                { type: "EVENT", icon: "🎤", title: "Mock Interview Workshop", company: "By Priya S.", meta: "Free · 45 spots left", badge: "Upcoming", badgeColor: "#F59E0B" },
+                { type: "COMPETITION", icon: "🏆", title: "CodeQuest Hackathon", company: "SkillMap", meta: "Rs.50K prize · 234 registered", badge: "Live", badgeColor: "#ef4444" },
+                { type: "MENTOR", icon: "👨\u200D🏫", title: "1-on-1 Career Session", company: "Arjun M. · TCS", meta: "Rs.500/session · 4.9★", badge: "Available", badgeColor: "#0ABFBC" },
+              ].map((card, i) => (
+                <div
+                  key={card.type}
+                  className="absolute left-0 right-0 transition-all duration-700 ease-in-out"
                   style={{
-                    background: "rgba(255,255,255,0.06)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    color: "var(--color-text-muted)",
-                    fontSize: "0.75rem",
-                    borderRadius: 999,
-                    padding: "0.25rem 0.75rem",
+                    top: `${i * 8}px`,
+                    opacity: activeCard === i ? 1 : 0.15,
+                    transform: activeCard === i ? "translateY(0) scale(1)" : `translateY(${(i - activeCard) * 20}px) scale(0.96)`,
+                    zIndex: activeCard === i ? 10 : 1,
+                    pointerEvents: activeCard === i ? "auto" : "none",
                   }}
                 >
-                  {c}
-                </span>
+                  <div style={{
+                    background: "linear-gradient(#0F2222, #0F2222) padding-box, linear-gradient(135deg, rgba(10,191,188,0.25), rgba(10,191,188,0.05), rgba(10,191,188,0.15)) border-box",
+                    border: "1px solid transparent",
+                    borderRadius: "1rem",
+                    padding: "1.5rem",
+                    boxShadow: activeCard === i ? "0 8px 32px rgba(10,191,188,0.1), inset 0 1px 0 rgba(255,255,255,0.05)" : "none",
+                  }}>
+                    <div className="flex items-start gap-3">
+                      <div style={{ fontSize: "1.5rem" }}>{card.icon}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span style={{ fontSize: "0.65rem", fontWeight: 600, color: "#4A6363", textTransform: "uppercase", letterSpacing: "0.08em" }}>{card.type}</span>
+                          <span style={{ fontSize: "0.6rem", fontWeight: 700, color: card.badgeColor, background: `${card.badgeColor}15`, padding: "0.1rem 0.4rem", borderRadius: 999 }}>{card.badge}</span>
+                        </div>
+                        <div className={heading} style={{ color: "#fff", fontSize: "1rem", fontWeight: 700, marginBottom: "0.2rem" }}>{card.title}</div>
+                        <div style={{ color: "#6B8F8F", fontSize: "0.8rem", marginBottom: "0.15rem" }}>{card.company}</div>
+                        <div style={{ color: "#4A6363", fontSize: "0.75rem" }}>{card.meta}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
+        </div>
 
-          {/* Stats */}
-          <div ref={statsRef} className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
-            {[
-              { num: statsVisible ? `${stat1}+` : "0", label: "Companies Mapped", sub: "With real interview Q&A" },
-              { num: statsVisible ? `${stat2}+` : "0", label: "Interview Questions", sub: "Curated by insiders" },
-              { num: "Free", label: "To Start", sub: "No credit card needed" },
-            ].map((s) => (
-              <div
-                key={s.label}
-                className="text-center card-dark"
-                style={{ padding: "1.25rem 2rem" }}
-              >
-                <div className={heading} style={{ fontSize: "2rem", fontWeight: 700, color: "#FFFFFF" }}>{s.num}</div>
-                <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "rgba(255,255,255,0.7)", marginTop: "0.25rem" }}>{s.label}</div>
-                <div style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)", marginTop: "0.2rem" }}>{s.sub}</div>
-              </div>
-            ))}
-          </div>
+        {/* Stats row — full width below */}
+        <div ref={statsRef} className="relative mx-auto mt-12 grid grid-cols-3 gap-3" style={{ maxWidth: 700 }}>
+          {[
+            { num: statsVisible ? `${stat1}+` : "0", label: "Companies Mapped", sub: "With real interview Q&A" },
+            { num: statsVisible ? `${stat2}+` : "0", label: "Interview Questions", sub: "Curated by insiders" },
+            { num: "Free", label: "To Start", sub: "No credit card needed" },
+          ].map((s) => (
+            <div key={s.label} className="text-center card-dark" style={{ padding: "1rem 1.5rem" }}>
+              <div className={heading} style={{ fontSize: "1.75rem", fontWeight: 700, color: "#fff" }}>{s.num}</div>
+              <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.7)", marginTop: "0.2rem" }}>{s.label}</div>
+              <div className="hidden sm:block" style={{ fontSize: "0.7rem", color: "#4A6363", marginTop: "0.15rem" }}>{s.sub}</div>
+            </div>
+          ))}
         </div>
       </section>
 
