@@ -343,62 +343,69 @@ export default function Home() {
       </section>
 
       {/* ═══ HOW IT WORKS ═══ */}
-      <section id="how-section" style={{ background: "#0D2020", paddingTop: "6rem", paddingBottom: "6rem" }}>
-        <div className="mx-auto px-4" style={{ maxWidth: 1000 }}>
+      <section id="how-section" className="relative overflow-hidden" style={{ background: "#0C1A1A", paddingTop: "6rem", paddingBottom: "6rem" }}>
+        {/* Background glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 50% 40% at 50% 60%, rgba(10,191,188,0.05) 0%, transparent 70%)" }} />
+
+        <div className="relative mx-auto px-4" style={{ maxWidth: 1100 }}>
           {/* Header */}
-          <div className="text-center mb-14">
-            <div className="section-eyebrow justify-center" style={{ color: "var(--primary)" }}>HOW IT WORKS</div>
-            <h2 className={heading} style={{ color: "#fff" }}>From Confused to Hired</h2>
-            <p style={{ color: "var(--color-text-secondary)", marginTop: "0.5rem", fontSize: "1rem" }}>Four steps. No fluff.</p>
+          <div className="text-center mb-16">
+            <div className="section-eyebrow justify-center">HOW IT WORKS</div>
+            <h2 className={heading} style={{ color: "#fff", marginBottom: "0.5rem" }}>From Confused to Hired</h2>
+            <p style={{ color: "#4A6363", fontSize: "1rem" }}>Four steps. No fluff.</p>
           </div>
 
-          {/* Timeline */}
-          <div className="relative">
-            {/* Horizontal connector line (desktop) */}
-            <div className="hidden lg:block absolute top-6 left-[12.5%] right-[12.5%] h-[1.5px]" style={{ background: "rgba(10,191,188,0.2)" }} />
+          {/* Steps — Cards with number, icon, content */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { num: "01", icon: "✍️", title: "Create Your Profile", desc: "Add your skills, education, and target companies. Takes 3 minutes.", time: "3 min", color: "#0ABFBC" },
+              { num: "02", icon: "🎯", title: "Tell Us Your Goal", desc: "Type your dream company and role. Our AI builds your personalised roadmap instantly.", time: "Instant", color: "#0ABFBC" },
+              { num: "03", icon: "🤖", title: "Prepare with AI + Mentors", desc: "Follow your week-by-week plan. Practice mock interviews. Book mentor sessions.", time: "4-8 weeks", color: "#F59E0B" },
+              { num: "04", icon: "🏆", title: "Apply and Get Hired", desc: "Apply to matched jobs with your skill score. Land interviews at your dream company.", time: "You're ready", color: "#10b981" },
+            ].map((step, i) => (
+              <div key={step.num} className="animate-on-scroll card-dark relative group" style={{ padding: "2rem 1.5rem", borderTop: `2px solid ${step.color}` }}>
+                {/* Step number — large watermark */}
+                <div className={heading} style={{ position: "absolute", top: "1rem", right: "1.25rem", fontSize: "3.5rem", fontWeight: 700, color: "rgba(255,255,255,0.03)", lineHeight: 1 }}>{step.num}</div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-6">
-              {[
-                { num: "01", title: "Create Your Profile", desc: "Add your skills, education, and target companies. Takes 3 minutes." },
-                { num: "02", title: "Tell Us Your Goal", desc: "Type your dream company and role. Our AI builds your personalised roadmap instantly." },
-                { num: "03", title: "Prepare with AI + Mentors", desc: "Follow your week-by-week plan. Practice mock interviews. Book mentor sessions." },
-                { num: "04", title: "Apply and Get Hired", desc: "Apply to matched jobs with your skill score. Land interviews at your dream company." },
-              ].map((step) => (
-                <div key={step.num} className="text-center relative">
-                  {/* Step circle */}
-                  <div
-                    className="mx-auto flex items-center justify-center"
-                    style={{
-                      width: "3rem", height: "3rem", borderRadius: "50%",
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1.5px solid rgba(255,255,255,0.2)",
-                    }}
-                  >
-                    <span className={heading} style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--primary)" }}>{step.num}</span>
-                  </div>
+                {/* Icon */}
+                <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>{step.icon}</div>
 
-                  {/* Title */}
-                  <h3 className={heading} style={{ color: "#fff", fontWeight: 700, fontSize: "1.1rem", marginTop: "1.25rem", marginBottom: "0.5rem" }}>
-                    {step.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="mx-auto" style={{ color: "var(--color-text-secondary)", fontSize: "0.9rem", lineHeight: 1.6, maxWidth: 220 }}>
-                    {step.desc}
-                  </p>
+                {/* Step label */}
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                  <span className={heading} style={{ fontSize: "0.7rem", fontWeight: 700, color: step.color, background: `${step.color}15`, padding: "0.2rem 0.6rem", borderRadius: 999 }}>Step {step.num}</span>
+                  <span style={{ fontSize: "0.65rem", color: "#4A6363" }}>{step.time}</span>
                 </div>
-              ))}
-            </div>
+
+                {/* Title */}
+                <h3 className={heading} style={{ color: "#fff", fontWeight: 700, fontSize: "1.05rem", marginBottom: "0.5rem" }}>{step.title}</h3>
+
+                {/* Description */}
+                <p style={{ color: "#6B8F8F", fontSize: "0.85rem", lineHeight: 1.6 }}>{step.desc}</p>
+
+                {/* Connector arrow (desktop only, not on last) */}
+                {i < 3 && (
+                  <div className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 z-10" style={{ color: "rgba(255,255,255,0.15)", fontSize: "1.2rem" }}>→</div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Progress bar visual */}
+          <div className="hidden md:flex items-center justify-center mt-8 gap-2" style={{ maxWidth: 600, margin: "2rem auto 0" }}>
+            {[25, 50, 75, 100].map((pct, i) => (
+              <div key={pct} className="flex items-center gap-2 flex-1">
+                <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <div className="h-full rounded-full" style={{ width: "100%", background: i === 3 ? "#10b981" : i === 2 ? "#F59E0B" : "#0ABFBC", opacity: 0.6 }} />
+                </div>
+                {i < 3 && <div style={{ color: "rgba(255,255,255,0.1)", fontSize: "0.6rem" }}>→</div>}
+              </div>
+            ))}
           </div>
 
           {/* CTA */}
-          <div className="text-center mt-12">
-            <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", marginBottom: "1rem" }}>Ready to start?</p>
-            <button
-              onClick={() => router.push(session ? "/chat" : "/auth/signup?role=STUDENT")}
-              className="btn-primary"
-              style={{ padding: "0.9rem 2rem", fontSize: "1rem" }}
-            >
+          <div className="text-center mt-10">
+            <p style={{ color: "#6B8F8F", fontSize: "0.9rem", marginBottom: "1rem" }}>Ready to start?</p>
+            <button onClick={() => router.push(session ? "/chat" : "/auth/signup?role=STUDENT")} className="btn-primary animate-glow" style={{ padding: "0.9rem 2.2rem", fontSize: "1rem" }}>
               Build My Free Roadmap →
             </button>
           </div>
