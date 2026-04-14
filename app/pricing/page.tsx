@@ -27,6 +27,7 @@ interface RazorpayOptions {
 
 interface RazorpayInstance {
   open: () => void;
+  on: (event: string, handler: (response: unknown) => void) => void;
 }
 
 interface Sub {
@@ -97,12 +98,23 @@ export default function PricingPage() {
   const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
-    // Load Razorpay script
-    if (document.getElementById("razorpay-script")) { setScriptLoaded(true); return; }
+    // Load Razorpay script reliably
+    const existingScript = document.getElementById("razorpay-script");
+    if (existingScript) {
+      // Check if already loaded (script tag exists but may not have finished loading)
+      if ((window as unknown as Record<string, unknown>).Razorpay) {
+        setScriptLoaded(true);
+      } else {
+        existingScript.addEventListener("load", () => setScriptLoaded(true));
+      }
+      return;
+    }
     const script = document.createElement("script");
     script.id = "razorpay-script";
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
     script.onload = () => setScriptLoaded(true);
+    script.onerror = () => setMessage({ type: "error", text: "Failed to load payment system. Please refresh the page." });
     document.body.appendChild(script);
 
     // Fetch current subscription
@@ -176,6 +188,11 @@ export default function PricingPage() {
       };
 
       const rzp = new window.Razorpay(options);
+      rzp.on("payment.failed", function (resp: unknown) {
+        const r = resp as { error?: { description?: string; reason?: string } };
+        setMessage({ type: "error", text: `Payment failed: ${r.error?.description || r.error?.reason || "Unknown error"}. Please try again.` });
+        setLoading(null);
+      });
       rzp.open();
     } catch {
       setMessage({ type: "error", text: "Something went wrong. Please try again." });
