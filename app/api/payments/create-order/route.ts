@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   if (customAmount && customAmount > 0) {
     // Custom amount for events, sessions, etc.
     amount = customAmount;
-    description = customDesc || "SkillMap Payment";
+    description = customDesc || "AstraaHire Payment";
   } else if (plan === "CAREER_READY") {
     const planDetails = PLANS.CAREER_READY;
     amount = planDetails.amount;

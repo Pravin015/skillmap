@@ -46,7 +46,7 @@ export default function AdminOverview({ stats, onNavigate }: { stats: Stats; onN
     <div className="space-y-6">
       <div>
         <h2 className={`${heading} font-bold text-xl`}>Platform Overview</h2>
-        <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>SkillMap admin control panel</p>
+        <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>AstraaHire admin control panel</p>
       </div>
 
       {/* User Stats */}

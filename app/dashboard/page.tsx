@@ -46,7 +46,7 @@ export default function DashboardPage() {
     }
 
     // Load profile from localStorage or create from session
-    const stored = localStorage.getItem("skillmap_profile");
+    const stored = localStorage.getItem("astraahire_profile");
     if (stored) {
       const p: UserProfile = JSON.parse(stored);
       setProfile(p);

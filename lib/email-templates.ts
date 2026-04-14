@@ -12,7 +12,7 @@ function layout(heading: string, body: string, ctaText?: string, ctaUrl?: string
     ${cta}
   </div>
   <div style="text-align:center;padding:24px 0;font-size:12px;color:rgba(10,10,15,0.3)">
-    <p>SkillMap · India's job-readiness engine</p>
+    <p>AstraaHire · India's job-readiness engine</p>
     <p><a href="https://ashpranix.in" style="color:rgba(10,10,15,0.3)">ashpranix.in</a> · <a href="mailto:support@ashpranix.in" style="color:rgba(10,10,15,0.3)">support@ashpranix.in</a></p>
   </div>
 </div></body></html>`;
@@ -26,7 +26,7 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
 
   switch (type) {
     case "ACCOUNT_CREATED":
-      return { subject: "Welcome to SkillMap!", html: layout("Welcome to SkillMap! 🎉",
+      return { subject: "Welcome to AstraaHire!", html: layout("Welcome to AstraaHire! 🎉",
         `<p>Hi <strong>${d.name}</strong>,</p><p>Your account has been created successfully. You're now part of India's first job-readiness platform.</p><p>Complete your profile to start getting matched with opportunities at your dream companies.</p>`,
         "Complete your profile", `${base}/profile/edit`) };
 
@@ -77,7 +77,7 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
 
     case "PROFILE_INCOMPLETE":
       return { subject: "Your profile is only " + d.score + "% complete", html: layout("Complete Your Profile 📊",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>Your SkillMap profile is only <strong>${d.score}% complete</strong>. A complete profile gets <strong>3x more views</strong> from recruiters.</p><p>Here's what's missing:</p><ul>${d.missing}</ul>`,
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your AstraaHire profile is only <strong>${d.score}% complete</strong>. A complete profile gets <strong>3x more views</strong> from recruiters.</p><p>Here's what's missing:</p><ul>${d.missing}</ul>`,
         "Complete now", `${base}/profile/edit`) };
 
     case "ADD_RESUME":
@@ -87,7 +87,7 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
 
     case "PASSWORD_CHANGED":
       return { subject: "Your password was changed", html: layout("Password Changed 🔐",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>Your SkillMap password was successfully changed. If you didn't make this change, please contact us immediately at <a href="mailto:support@ashpranix.in">support@ashpranix.in</a>.</p>`) };
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your AstraaHire password was successfully changed. If you didn't make this change, please contact us immediately at <a href="mailto:support@ashpranix.in">support@ashpranix.in</a>.</p>`) };
 
     case "INVITE_RECEIVED":
       return { subject: `${d.company} invited you to apply!`, html: layout("You've Been Invited! ✉️",
@@ -116,13 +116,13 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
         "Manage job post", `${base}/hr-dashboard`) };
 
     case "HR_ACCOUNT_CREATED":
-      return { subject: "Your HR account has been created", html: layout("Welcome to SkillMap! 🎉",
+      return { subject: "Your HR account has been created", html: layout("Welcome to AstraaHire! 🎉",
         `<p>Hi <strong>${d.name}</strong>,</p><p>Your HR account at <strong>${d.company}</strong> has been created by your company admin.</p><p>You can now log in, post jobs, search candidates, and manage applications.</p><p>Your temporary password has been shared with you. Please change it on first login.</p>`,
         "Login now", `${base}/auth/login?role=HR`) };
 
     case "HR_PASSWORD_RESET":
       return { subject: "Your password has been reset", html: layout("Password Reset 🔐",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>Your SkillMap password has been reset by your company admin. You'll receive the new temporary password from them.</p><p>Please change it after logging in.</p>`,
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your AstraaHire password has been reset by your company admin. You'll receive the new temporary password from them.</p><p>Please change it after logging in.</p>`,
         "Login", `${base}/auth/login?role=HR`) };
 
     // ═══ COMPANY TEMPLATES ═══
@@ -142,7 +142,7 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
 
     case "COMPANY_VERIFIED":
       return { subject: "Your company has been verified!", html: layout("Company Verified ✅",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>Great news! <strong>${d.company}</strong> has been verified on SkillMap.</p><p>You can now add HR accounts, post jobs, create hackathons, and access pre-assessed candidates.</p>`,
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Great news! <strong>${d.company}</strong> has been verified on AstraaHire.</p><p>You can now add HR accounts, post jobs, create hackathons, and access pre-assessed candidates.</p>`,
         "Go to dashboard", `${base}/company-dashboard`) };
 
     case "COMPANY_NEW_APPLICATION":
@@ -153,7 +153,7 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
     // ═══ MENTOR TEMPLATES ═══
     case "MENTOR_VERIFIED":
       return { subject: "You're a verified mentor! ✅", html: layout("Mentor Verified! 🎉",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>Congratulations! Your mentor profile on SkillMap has been <strong>verified</strong>.</p><p>You can now:</p><ul><li>Create events (auto-approved)</li><li>Appear in mentor search results</li><li>Start booking mentorship sessions</li></ul><p>Your verified badge is now visible on your profile.</p>`,
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Congratulations! Your mentor profile on AstraaHire has been <strong>verified</strong>.</p><p>You can now:</p><ul><li>Create events (auto-approved)</li><li>Appear in mentor search results</li><li>Start booking mentorship sessions</li></ul><p>Your verified badge is now visible on your profile.</p>`,
         "View your profile", `${base}/mentor/${d.mentorNumber}`) };
 
     case "MENTOR_REJECTED":
@@ -163,12 +163,12 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
 
     case "MENTOR_SUSPENDED":
       return { subject: "Mentor account suspended", html: layout("Account Suspended ⚠️",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>Your mentor account on SkillMap has been suspended. Your profile and events are no longer visible to students.</p><p>If you believe this is an error, please contact our support team.</p>`,
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your mentor account on AstraaHire has been suspended. Your profile and events are no longer visible to students.</p><p>If you believe this is an error, please contact our support team.</p>`,
         "Contact support", `${base}/forms/contact`) };
 
     case "MENTOR_EVENT_APPROVED":
       return { subject: `Event approved: ${d.eventTitle}`, html: layout("Event Approved! 🎤",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>Your event <strong>${d.eventTitle}</strong> has been approved and is now live on SkillMap!</p><p>Students can now register for it. Share the link to get more participants.</p>`,
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your event <strong>${d.eventTitle}</strong> has been approved and is now live on AstraaHire!</p><p>Students can now register for it. Share the link to get more participants.</p>`,
         "View your event", `${base}/events/${d.eventId}`) };
 
     case "MENTOR_EVENT_REJECTED":
@@ -182,11 +182,11 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
 
     case "MENTOR_ACCOUNT_CREATED":
       return { subject: "Your mentor account is ready!", html: layout("Welcome, Mentor! 🧑‍🏫",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>Your mentor account on SkillMap has been created by the admin team. You're already <strong>verified</strong>!</p><p>Log in with the temporary password shared with you and set a new one.</p>`,
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your mentor account on AstraaHire has been created by the admin team. You're already <strong>verified</strong>!</p><p>Log in with the temporary password shared with you and set a new one.</p>`,
         "Login now", `${base}/auth/login`) };
 
     default:
-      return { subject: d.title as string || "Notification from SkillMap", html: layout(d.title as string || "Notification",
+      return { subject: d.title as string || "Notification from AstraaHire", html: layout(d.title as string || "Notification",
         `<p>${d.message || ""}</p>`) };
   }
 }

@@ -32,7 +32,7 @@ function ChatInner() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem("skillmap_profile");
+    const stored = localStorage.getItem("astraahire_profile");
     if (stored) setProfile(JSON.parse(stored));
   }, []);
 
@@ -43,9 +43,9 @@ function ChatInner() {
   // Auto-send query from landing page chat bar
   useEffect(() => {
     if (messages.length > 0) return;
-    const pendingQuery = sessionStorage.getItem("skillmap_query");
+    const pendingQuery = sessionStorage.getItem("astraahire_query");
     if (pendingQuery) {
-      sessionStorage.removeItem("skillmap_query");
+      sessionStorage.removeItem("astraahire_query");
       sendMessage(pendingQuery);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

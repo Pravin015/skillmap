@@ -3,10 +3,10 @@ import LegalPage from "@/components/LegalPage";
 export default function ShippingPolicy() {
   return (
     <LegalPage title="Shipping & Delivery Policy" lastUpdated="12 April 2026">
-      <p>SkillMap (ashpranix.in) is a digital platform. All our products and services are delivered electronically. There are no physical goods involved.</p>
+      <p>AstraaHire (ashpranix.in) is a digital platform. All our products and services are delivered electronically. There are no physical goods involved.</p>
 
       <h2>1. Digital Service Delivery</h2>
-      <p>All services on SkillMap are delivered digitally and are accessible immediately upon:</p>
+      <p>All services on AstraaHire are delivered digitally and are accessible immediately upon:</p>
       <ul>
         <li><strong>Free Plan:</strong> Instant access upon account creation. No payment required.</li>
         <li><strong>Career Ready Plan:</strong> Instant access upon successful payment confirmation from Razorpay.</li>
@@ -45,10 +45,10 @@ export default function ShippingPolicy() {
       <p>Our Platform is available 24/7, subject to scheduled maintenance. We aim for 99.9% uptime. In case of service disruption, we will notify users via email or platform notification.</p>
 
       <h2>5. No Physical Shipping</h2>
-      <p>SkillMap does not sell, ship, or deliver any physical products. All services are cloud-based and accessible via web browser. No courier, postal, or delivery service is involved.</p>
+      <p>AstraaHire does not sell, ship, or deliver any physical products. All services are cloud-based and accessible via web browser. No courier, postal, or delivery service is involved.</p>
 
       <h2>6. Contact</h2>
-      <p>For delivery-related queries, contact us at <strong>support@skillmap.com</strong>.</p>
+      <p>For delivery-related queries, contact us at <strong>support@astraahire.com</strong>.</p>
     </LegalPage>
   );
 }

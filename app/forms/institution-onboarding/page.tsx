@@ -17,7 +17,7 @@ export default function InstitutionOnboardingForm() {
   async function handleSubmit(e: React.FormEvent) { e.preventDefault(); const err = getOfficialEmailError(email); if (err) { setEmailError(err); return; } const form = e.target as HTMLFormElement; const d = new FormData(form); const r = await submitForm("INSTITUTION_ONBOARDING", { ...Object.fromEntries(d), email }); if (r.success) setSubmitted(true); }
 
   return (
-    <FormWrapper title="Institution Onboarding" subtitle="Register your college, university, or training institute on SkillMap. No public signup — our team will verify and activate your account." submitted={submitted} successMessage="Your institution registration is under review. We will verify through your official email domain and activate your account within 2-3 business days. You'll receive a confirmation email once approved.">
+    <FormWrapper title="Institution Onboarding" subtitle="Register your college, university, or training institute on AstraaHire. No public signup — our team will verify and activate your account." submitted={submitted} successMessage="Your institution registration is under review. We will verify through your official email domain and activate your account within 2-3 business days. You'll receive a confirmation email once approved.">
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(139,92,246,0.05)", borderColor: "rgba(139,92,246,0.2)" }}>
           <strong className={`${heading} text-[#0ABFBC]`}>Manual Onboarding</strong>
@@ -48,7 +48,7 @@ export default function InstitutionOnboardingForm() {
           <div><label className={labelClass}>Current Placement Rate</label><select className={inputClass} style={{ borderColor: "var(--border)" }}><option value="">Select</option><option>Below 30%</option><option>30–50%</option><option>50–70%</option><option>70–90%</option><option>90%+</option></select></div>
           <div><label className={labelClass}>Top Recruiters</label><input type="text" placeholder="e.g. TCS, Infosys, Wipro" className={inputClass} style={{ borderColor: "var(--border)" }} /></div>
         </div>
-        <div><label className={labelClass}>What do you expect from SkillMap?</label><textarea placeholder="How can we help improve your placement outcomes?" rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
+        <div><label className={labelClass}>What do you expect from AstraaHire?</label><textarea placeholder="How can we help improve your placement outcomes?" rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
         <label className="flex items-start gap-2 text-sm cursor-pointer"><input type="checkbox" required className="mt-1 accent-[var(--ink)]" /><span style={{ color: "var(--muted)" }}>I confirm I am authorised to register this institution and the information provided is accurate. I understand the account will be activated only after verification.</span></label>
         <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit for Review</button>
       </form>

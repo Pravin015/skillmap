@@ -19,24 +19,24 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SkillMap — Know what it takes to get hired",
+  title: "AstraaHire — Intelligence that gets you hired",
   description:
-    "India's first job-readiness engine. Tell us your dream companies. We show you open roles, skill gaps, and a personalised AI prep plan.",
+    "India's AI-powered career intelligence platform. AI roadmaps, mock interviews, mentor sessions, and offer verification for fresh graduates.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "SkillMap",
+    title: "AstraaHire",
   },
   icons: {
     icon: "/icons/icon.svg",
     apple: "/icons/icon.svg",
   },
   openGraph: {
-    title: "SkillMap — Know what it takes to get hired",
-    description: "India's first job-readiness engine for fresh graduates.",
+    title: "AstraaHire — Intelligence that gets you hired",
+    description: "India's AI-powered career intelligence platform for fresh graduates.",
     url: "https://ashpranix.in",
-    siteName: "SkillMap",
+    siteName: "AstraaHire",
     type: "website",
   },
 };

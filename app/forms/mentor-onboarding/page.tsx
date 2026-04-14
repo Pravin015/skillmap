@@ -117,7 +117,7 @@ export default function MentorOnboardingForm() {
               <input type="radio" name="compensation" value="paid" required checked={compensation === "paid"} onChange={() => setCompensation("paid")} className="mt-1 accent-[var(--ink)]" />
               <div>
                 <div className={`${heading} font-bold text-sm`}>Paid Mentorship</div>
-                <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>You will be compensated for each session. Rates are set by SkillMap based on experience level.</div>
+                <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>You will be compensated for each session. Rates are set by AstraaHire based on experience level.</div>
               </div>
             </label>
             <label
@@ -127,7 +127,7 @@ export default function MentorOnboardingForm() {
               <input type="radio" name="compensation" value="volunteer" checked={compensation === "volunteer"} onChange={() => setCompensation("volunteer")} className="mt-1 accent-[var(--ink)]" />
               <div>
                 <div className={`${heading} font-bold text-sm`}>Volunteer (Free)</div>
-                <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Contribute your time to help students. You&apos;ll receive recognition badges and a mentor profile on SkillMap.</div>
+                <div className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Contribute your time to help students. You&apos;ll receive recognition badges and a mentor profile on AstraaHire.</div>
               </div>
             </label>
           </div>

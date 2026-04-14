@@ -4,7 +4,7 @@ import { useState } from "react";
 const heading = "font-[family-name:var(--font-heading)]";
 
 const steps = [
-  { id: "onboard", num: "01", title: "Company Onboarding", desc: "Register your company on SkillMap. Manual verification required.", actions: [{ label: "Onboarding Form", href: "/forms/company-onboarding", primary: true }, { label: "Sign Up as ORG", href: "/auth/signup?role=ORG" }],
+  { id: "onboard", num: "01", title: "Company Onboarding", desc: "Register your company on AstraaHire. Manual verification required.", actions: [{ label: "Onboarding Form", href: "/forms/company-onboarding", primary: true }, { label: "Sign Up as ORG", href: "/auth/signup?role=ORG" }],
     features: ["Submit onboarding form with official email (no Gmail/Yahoo)", "Admin reviews and creates your account", "Or sign up directly as ORG with organisation name", "Verification through official email domain", "Account activated within 2-3 business days"],
     testChecklist: ["Fill /forms/company-onboarding → submit → success message", "Check admin panel → form submission should appear", "Admin clicks 'Create Account' → ORG account created", "Login with provided credentials → company dashboard loads"] },
 
@@ -41,7 +41,7 @@ export default function CompanyGuidePage() {
         <div className="max-w-4xl mx-auto">
           <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-xs font-bold tracking-[0.1em] uppercase ${heading}`} style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.2)" }}>🏢 Company Guide</div>
           <h1 className={`${heading} font-bold text-3xl md:text-4xl text-white mb-3`}>Company / Organisation Guide</h1>
-          <p className="text-base" style={{ color: "rgba(255,255,255,0.5)" }}>Step-by-step guide for managing your company on SkillMap — add HRs, track hiring, view analytics.</p>
+          <p className="text-base" style={{ color: "rgba(255,255,255,0.5)" }}>Step-by-step guide for managing your company on AstraaHire — add HRs, track hiring, view analytics.</p>
         </div>
       </section>
       <section className="py-8 px-4 md:px-8"><div className="max-w-4xl mx-auto space-y-4">

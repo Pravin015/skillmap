@@ -3,7 +3,7 @@ import LegalPage from "@/components/LegalPage";
 export default function TermsAndConditions() {
   return (
     <LegalPage title="Terms & Conditions" lastUpdated="12 April 2026">
-      <p>Welcome to SkillMap. By accessing or using our platform at ashpranix.in (&quot;Platform&quot;), you agree to be bound by these Terms and Conditions (&quot;Terms&quot;). Please read them carefully.</p>
+      <p>Welcome to AstraaHire. By accessing or using our platform at ashpranix.in (&quot;Platform&quot;), you agree to be bound by these Terms and Conditions (&quot;Terms&quot;). Please read them carefully.</p>
 
       <h2>1. Acceptance of Terms</h2>
       <p>By creating an account or using our Platform, you confirm that you are at least 16 years old and agree to these Terms. If you are using the Platform on behalf of an organisation, you represent that you have authority to bind that organisation.</p>
@@ -55,7 +55,7 @@ export default function TermsAndConditions() {
       </ul>
 
       <h2>5. Intellectual Property</h2>
-      <p>All content on the Platform — including text, graphics, logos, AI-generated advice, skill maps, and software — is the property of SkillMap and is protected by intellectual property laws. You may not copy, reproduce, or distribute our content without written permission.</p>
+      <p>All content on the Platform — including text, graphics, logos, AI-generated advice, skill maps, and software — is the property of AstraaHire and is protected by intellectual property laws. You may not copy, reproduce, or distribute our content without written permission.</p>
 
       <h2>6. AI Advisor Disclaimer</h2>
       <p>The AI career advisor provides guidance based on available data. It is <strong>not a substitute for professional career counselling</strong>. We do not guarantee employment outcomes. Advice should be used as one input in your career planning process.</p>
@@ -71,7 +71,7 @@ export default function TermsAndConditions() {
       </ul>
 
       <h2>8. Limitation of Liability</h2>
-      <p>SkillMap is provided &quot;as is&quot; without warranties of any kind. We do not guarantee job placements, interview calls, or specific outcomes. Our maximum liability is limited to the amount you paid for our services in the preceding 12 months.</p>
+      <p>AstraaHire is provided &quot;as is&quot; without warranties of any kind. We do not guarantee job placements, interview calls, or specific outcomes. Our maximum liability is limited to the amount you paid for our services in the preceding 12 months.</p>
 
       <h2>9. Termination</h2>
       <p>We may suspend or terminate your account if you violate these Terms. You may delete your account at any time by contacting support. Upon termination, your right to use the Platform ceases immediately.</p>
@@ -83,7 +83,7 @@ export default function TermsAndConditions() {
       <p>We may update these Terms from time to time. Continued use of the Platform after changes constitutes acceptance of the updated Terms.</p>
 
       <h2>12. Contact</h2>
-      <p>For questions about these Terms, contact us at <strong>support@skillmap.com</strong>.</p>
+      <p>For questions about these Terms, contact us at <strong>support@astraahire.com</strong>.</p>
     </LegalPage>
   );
 }

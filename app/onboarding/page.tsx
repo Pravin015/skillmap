@@ -96,7 +96,7 @@ export default function OnboardingPage() {
       companies: selectedCompanies,
     };
 
-    localStorage.setItem("skillmap_profile", JSON.stringify(profile));
+    localStorage.setItem("astraahire_profile", JSON.stringify(profile));
     router.push("/dashboard");
   }
 

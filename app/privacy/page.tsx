@@ -3,7 +3,7 @@ import LegalPage from "@/components/LegalPage";
 export default function PrivacyPolicy() {
   return (
     <LegalPage title="Privacy Policy" lastUpdated="12 April 2026">
-      <p>This Privacy Policy describes how SkillMap (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects, uses, and protects your personal information when you use our platform at ashpranix.in (&quot;Platform&quot;).</p>
+      <p>This Privacy Policy describes how AstraaHire (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects, uses, and protects your personal information when you use our platform at ashpranix.in (&quot;Platform&quot;).</p>
 
       <h2>1. Information We Collect</h2>
       <h3>1.1 Information You Provide</h3>
@@ -53,7 +53,7 @@ export default function PrivacyPolicy() {
       </ul>
 
       <h2>5. Data Retention</h2>
-      <p>We retain your data for as long as your account is active. You can request deletion of your account and data by contacting us at <strong>support@skillmap.com</strong>. Payment records are retained for 7 years as required by Indian tax law.</p>
+      <p>We retain your data for as long as your account is active. You can request deletion of your account and data by contacting us at <strong>support@astraahire.com</strong>. Payment records are retained for 7 years as required by Indian tax law.</p>
 
       <h2>6. Your Rights</h2>
       <p>You have the right to:</p>
@@ -73,8 +73,8 @@ export default function PrivacyPolicy() {
 
       <h2>9. Contact Us</h2>
       <p>If you have questions about this Privacy Policy, contact us at:</p>
-      <p><strong>Email:</strong> support@skillmap.com</p>
-      <p><strong>Address:</strong> SkillMap, India</p>
+      <p><strong>Email:</strong> support@astraahire.com</p>
+      <p><strong>Address:</strong> AstraaHire, India</p>
     </LegalPage>
   );
 }

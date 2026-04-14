@@ -17,7 +17,7 @@ export default function SearchCompanies() {
 
   return (
     <div className="space-y-6">
-      <div><h2 className={`${heading} font-bold text-xl`}>Browse Companies</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{companies.length} companies on SkillMap</p></div>
+      <div><h2 className={`${heading} font-bold text-xl`}>Browse Companies</h2><p className="text-sm mt-1" style={{ color: "var(--muted)" }}>{companies.length} companies on AstraaHire</p></div>
       <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search companies..." className="w-full rounded-xl border px-4 py-3 text-sm outline-none" style={{ borderColor: "var(--border)" }} />
       {filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-12 text-center" style={{ borderColor: "var(--border)" }}><div className="text-4xl mb-3">🏢</div><p className={`${heading} font-bold text-base`}>{companies.length === 0 ? "No companies registered yet" : "No results"}</p></div>

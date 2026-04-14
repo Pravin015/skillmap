@@ -212,7 +212,7 @@ export default function MentorProfilePage() {
                           const orderRes = await fetch("/api/payments/create-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: "CAREER_READY", customAmount: data.price, customDesc: `Session with ${data.mentorName}` }) });
                           const orderData = await orderRes.json();
                           if (orderRes.ok) {
-                            const rzp = new (window as unknown as { Razorpay: new (o: Record<string, unknown>) => { open: () => void } }).Razorpay({ key: orderData.keyId, amount: orderData.amount, currency: orderData.currency, name: "SkillMap", description: `${data.sessionType === "GROUP" ? "Group" : "1-on-1"} session with ${data.mentorName}`, order_id: orderData.orderId,
+                            const rzp = new (window as unknown as { Razorpay: new (o: Record<string, unknown>) => { open: () => void } }).Razorpay({ key: orderData.keyId, amount: orderData.amount, currency: orderData.currency, name: "AstraaHire", description: `${data.sessionType === "GROUP" ? "Group" : "1-on-1"} session with ${data.mentorName}`, order_id: orderData.orderId,
                               handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
                                 await fetch("/api/payments/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(response) });
                                 // Now create session with payment ID

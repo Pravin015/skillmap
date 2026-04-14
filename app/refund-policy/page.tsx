@@ -3,7 +3,7 @@ import LegalPage from "@/components/LegalPage";
 export default function RefundPolicy() {
   return (
     <LegalPage title="Refund & Cancellation Policy" lastUpdated="12 April 2026">
-      <p>This Refund & Cancellation Policy applies to all paid services on SkillMap, accessible at ashpranix.in.</p>
+      <p>This Refund & Cancellation Policy applies to all paid services on AstraaHire, accessible at ashpranix.in.</p>
 
       <h2>1. Subscription Plans</h2>
       <h3>1.1 Career Ready Plan (₹299/month)</h3>
@@ -25,9 +25,9 @@ export default function RefundPolicy() {
       <h3>3.1 Full Refund (within 7 days)</h3>
       <p>If you are unsatisfied with the Career Ready plan, you may request a <strong>full refund within 7 days</strong> of your payment, provided:</p>
       <ul>
-        <li>It is your first subscription purchase on SkillMap.</li>
+        <li>It is your first subscription purchase on AstraaHire.</li>
         <li>You have not used the AI advisor for more than 20 messages.</li>
-        <li>You submit the refund request via email to <strong>support@skillmap.com</strong>.</li>
+        <li>You submit the refund request via email to <strong>support@astraahire.com</strong>.</li>
       </ul>
 
       <h3>3.2 No Refund (after 7 days)</h3>
@@ -46,7 +46,7 @@ export default function RefundPolicy() {
 
       <h2>4. Refund Process</h2>
       <ol>
-        <li>Send an email to <strong>support@skillmap.com</strong> with subject &quot;Refund Request&quot;.</li>
+        <li>Send an email to <strong>support@astraahire.com</strong> with subject &quot;Refund Request&quot;.</li>
         <li>Include your registered email, payment ID (from payment history), and reason for refund.</li>
         <li>Our team will review and respond within <strong>48 hours</strong>.</li>
         <li>Approved refunds will be processed to the original payment method within <strong>5-7 business days</strong>.</li>
@@ -65,7 +65,7 @@ export default function RefundPolicy() {
 
       <h2>7. Contact</h2>
       <p>For refund queries, contact us at:</p>
-      <p><strong>Email:</strong> support@skillmap.com</p>
+      <p><strong>Email:</strong> support@astraahire.com</p>
       <p><strong>Response time:</strong> 48 hours</p>
     </LegalPage>
   );

@@ -20,7 +20,7 @@ export const PLANS = {
     name: "Career Ready",
     amount: 29900, // ₹299 in paise
     currency: "INR",
-    description: "SkillMap Career Ready — Monthly",
+    description: "AstraaHire Career Ready — Monthly",
     features: [
       "Unlimited AI mentor conversations",
       "Full skill gap analysis",
@@ -34,7 +34,7 @@ export const PLANS = {
     name: "College / Bootcamp",
     amount: 0, // custom pricing
     currency: "INR",
-    description: "SkillMap Institution Plan — Custom",
+    description: "AstraaHire Institution Plan — Custom",
     features: [
       "Bulk student access",
       "Placement cell dashboard",

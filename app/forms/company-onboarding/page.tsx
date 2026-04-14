@@ -37,7 +37,7 @@ export default function CompanyOnboardingForm() {
   return (
     <FormWrapper
       title="Company Onboarding"
-      subtitle="Register your organisation on SkillMap to post jobs, host hackathons, and access pre-assessed talent."
+      subtitle="Register your organisation on AstraaHire to post jobs, host hackathons, and access pre-assessed talent."
       submitted={submitted}
       successMessage="Your company registration is under review. We will verify your organisation through the official email domain and activate your account within 2-3 business days. You'll receive a confirmation email once verified."
     >
@@ -86,7 +86,7 @@ export default function CompanyOnboardingForm() {
         <hr style={{ borderColor: "var(--border)" }} />
 
         <h3 className={`${heading} font-bold text-base`}>Admin Contact</h3>
-        <p className="text-xs -mt-3" style={{ color: "var(--muted)" }}>This person will be the primary admin for your company on SkillMap</p>
+        <p className="text-xs -mt-3" style={{ color: "var(--muted)" }}>This person will be the primary admin for your company on AstraaHire</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
@@ -171,7 +171,7 @@ export default function CompanyOnboardingForm() {
         {/* Terms */}
         <label className="flex items-start gap-2 text-sm cursor-pointer">
           <input type="checkbox" required className="mt-1 accent-[var(--ink)]" />
-          <span style={{ color: "var(--muted)" }}>I confirm that I am authorised to register this company on SkillMap and that the information provided is accurate. I understand the account will be activated only after verification.</span>
+          <span style={{ color: "var(--muted)" }}>I confirm that I am authorised to register this company on AstraaHire and that the information provided is accurate. I understand the account will be activated only after verification.</span>
         </label>
 
         <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit for Verification</button>

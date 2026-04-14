@@ -14,7 +14,7 @@ export default function HireFromUsForm() {
   return (
     <FormWrapper
       title="Hire From Us"
-      subtitle="Access SkillMap's pool of pre-assessed, job-ready graduates matched to your requirements."
+      subtitle="Access AstraaHire's pool of pre-assessed, job-ready graduates matched to your requirements."
       submitted={submitted}
       successMessage="Thank you! Our hiring solutions team will reach out within 24 hours to discuss your requirements."
     >

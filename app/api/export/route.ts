@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: "desc" },
       });
       const csv = toCSV(users.map((u) => ({ Name: u.name, Email: u.email, Role: u.role, Organisation: u.organisation || "", Phone: u.phone || "", Joined: u.createdAt.toISOString().split("T")[0] })));
-      return csvResponse(csv, "skillmap-users");
+      return csvResponse(csv, "astraahire-users");
     }
 
     if (type === "jobs") {
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: "desc" },
       });
       const csv = toCSV(jobs.map((j) => ({ Title: j.title, Company: j.company, Location: j.location, WorkMode: j.workMode, Experience: j.experienceLevel, JobType: j.jobType, Domain: j.domain || "", Status: j.status, Applications: j._count.applications, PostedBy: j.postedBy.name, Created: j.createdAt.toISOString().split("T")[0] })));
-      return csvResponse(csv, "skillmap-jobs");
+      return csvResponse(csv, "astraahire-jobs");
     }
 
     if (type === "applications") {
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
         orderBy: { appliedAt: "desc" },
       });
       const csv = toCSV(apps.map((a) => ({ Candidate: a.user.name, Email: a.user.email, Job: a.job.title, Company: a.job.company, Status: a.status, SkillMatch: `${a.scoreMatch}%`, Applied: a.appliedAt.toISOString().split("T")[0] })));
-      return csvResponse(csv, "skillmap-applications");
+      return csvResponse(csv, "astraahire-applications");
     }
 
     if (type === "mentors") {
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: "desc" },
       });
       const csv = toCSV(mentors.map((m) => ({ Name: m.user.name, Email: m.user.email, Company: m.currentCompany || "", Role: m.currentRole || "", Experience: `${m.yearsOfExperience} yrs`, Status: m.status, Rating: m.rating, Sessions: m.totalSessions, Mentees: m.menteesHelped, Compensation: m.compensation, MentorID: m.mentorNumber })));
-      return csvResponse(csv, "skillmap-mentors");
+      return csvResponse(csv, "astraahire-mentors");
     }
 
     if (type === "events") {
@@ -60,13 +60,13 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: "desc" },
       });
       const csv = toCSV(events.map((e) => ({ Title: e.title, Date: e.date.toISOString().split("T")[0], Type: e.eventType, Pricing: e.pricing, Price: e.price ? `₹${e.price / 100}` : "Free", Status: e.status, Registrations: e._count.registrations, MaxCapacity: e.maxParticipants, CreatedBy: e.createdBy.name })));
-      return csvResponse(csv, "skillmap-events");
+      return csvResponse(csv, "astraahire-events");
     }
 
     if (type === "forms") {
       const forms = await prisma.formSubmission.findMany({ orderBy: { createdAt: "desc" } });
       const csv = toCSV(forms.map((f) => ({ Type: f.type, Name: f.name, Email: f.email, Phone: f.phone || "", Status: f.status, Submitted: f.createdAt.toISOString().split("T")[0] })));
-      return csvResponse(csv, "skillmap-form-submissions");
+      return csvResponse(csv, "astraahire-form-submissions");
     }
   }
 

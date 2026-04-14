@@ -60,7 +60,7 @@ export default function EventDetailPage() {
           const orderData = await orderRes.json();
           if (orderRes.ok && typeof window !== "undefined" && (window as unknown as Record<string, unknown>).Razorpay) {
             const RazorpayClass = (window as unknown as Record<string, new (o: Record<string, unknown>) => { open: () => void }>).Razorpay;
-            const rzp = new RazorpayClass({ key: orderData.keyId, amount: orderData.amount, currency: orderData.currency, name: "SkillMap", description: `Event: ${data.eventTitle}`, order_id: orderData.orderId,
+            const rzp = new RazorpayClass({ key: orderData.keyId, amount: orderData.amount, currency: orderData.currency, name: "AstraaHire", description: `Event: ${data.eventTitle}`, order_id: orderData.orderId,
               handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
                 await fetch("/api/payments/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(response) });
                 setMessage({ type: "success", text: "Payment successful! You're registered." }); setHasPaid(true);

@@ -9,4 +9,4 @@ export function getResend(): Resend | null {
 }
 
 // Use custom domain if verified, fallback to Resend's test domain
-export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "SkillMap <onboarding@resend.dev>";
+export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "AstraaHire <onboarding@resend.dev>";

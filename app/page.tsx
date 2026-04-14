@@ -35,17 +35,17 @@ const whyUs = [
 ];
 
 const reviews = [
-  { quote: "SkillMap told me I was missing CEH certification for TCS Cybersecurity. Got it in 5 weeks. Got the call in week 6.", name: "Rahul Kumar", role: "B.Tech CSE, 2025", company: "TCS" },
-  { quote: "Nobody told me KPMG looks for ISO 27001 knowledge. SkillMap's roadmap was so specific — I knew exactly what to do.", name: "Priya Sharma", role: "MBA Finance, 2025", company: "KPMG" },
+  { quote: "AstraaHire told me I was missing CEH certification for TCS Cybersecurity. Got it in 5 weeks. Got the call in week 6.", name: "Rahul Kumar", role: "B.Tech CSE, 2025", company: "TCS" },
+  { quote: "Nobody told me KPMG looks for ISO 27001 knowledge. AstraaHire's roadmap was so specific — I knew exactly what to do.", name: "Priya Sharma", role: "MBA Finance, 2025", company: "KPMG" },
   { quote: "The AI advisor felt like talking to a senior who actually knew what they were talking about. Cracked Infosys first attempt.", name: "Sneha Joshi", role: "B.Tech IT, 2025", company: "Infosys" },
 ];
 
 const faqItems = [
-  { q: "Is SkillMap only for engineering graduates?", a: "No — SkillMap works for any domain. Whether you're in engineering, MBA, commerce, or arts, you can tell us your target company and role and we'll build a roadmap specific to you." },
+  { q: "Is AstraaHire only for engineering graduates?", a: "No — AstraaHire works for any domain. Whether you're in engineering, MBA, commerce, or arts, you can tell us your target company and role and we'll build a roadmap specific to you." },
   { q: "How does the AI know what skills I need?", a: "Our AI is trained on real hiring patterns from 15+ companies including TCS, Infosys, Google, KPMG, and Deloitte. It maps your profile against what each company actually looks for — not generic job descriptions." },
   { q: "Is it really free?", a: "Yes. The AI advisor, company roadmaps, mock interview Q&A, job matching, and offer verification are all free. Career Ready (Rs.299/month) unlocks AI-powered live mock interviews and priority mentor booking." },
   { q: "What if I get a fake job offer?", a: "Upload the offer letter to our Offer Verification tool. Our AI checks 20 fraud parameters — letterhead, email domain, salary realism, payment requests, and more — and gives you a trust score in seconds." },
-  { q: "How long does it take to get hired?", a: "It depends on your starting point. Students who follow their SkillMap roadmap consistently typically see interview calls within 4-8 weeks. The AI tracks your progress and adjusts your plan if you fall behind." },
+  { q: "How long does it take to get hired?", a: "It depends on your starting point. Students who follow their AstraaHire roadmap consistently typically see interview calls within 4-8 weeks. The AI tracks your progress and adjusts your plan if you fall behind." },
 ];
 
 export default function Home() {
@@ -103,7 +103,7 @@ export default function Home() {
   function handleChatSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!query.trim()) return;
-    sessionStorage.setItem("skillmap_query", query.trim());
+    sessionStorage.setItem("astraahire_query", query.trim());
     router.push(session ? "/chat" : "/auth/signup?role=STUDENT");
   }
 
@@ -179,7 +179,7 @@ export default function Home() {
               {[
                 { type: "JOB", icon: "💼", title: "Cybersecurity Analyst L1", company: "TCS", meta: "Bangalore · 3.5-5 LPA", badge: "Active", badgeColor: "#10b981" },
                 { type: "EVENT", icon: "🎤", title: "Mock Interview Workshop", company: "By Priya S.", meta: "Free · 45 spots left", badge: "Upcoming", badgeColor: "#F59E0B" },
-                { type: "COMPETITION", icon: "🏆", title: "CodeQuest Hackathon", company: "SkillMap", meta: "Rs.50K prize · 234 registered", badge: "Live", badgeColor: "#ef4444" },
+                { type: "COMPETITION", icon: "🏆", title: "CodeQuest Hackathon", company: "AstraaHire", meta: "Rs.50K prize · 234 registered", badge: "Live", badgeColor: "#ef4444" },
                 { type: "MENTOR", icon: "👨\u200D🏫", title: "1-on-1 Career Session", company: "Arjun M. · TCS", meta: "Rs.500/session · 4.9★", badge: "Available", badgeColor: "#0ABFBC" },
               ].map((card, i) => (
                 <div
@@ -248,7 +248,7 @@ export default function Home() {
               Nothing you don&apos;t.
             </p>
             <p className="mt-4 mx-auto" style={{ color: "var(--color-text-secondary)", fontSize: "0.95rem", lineHeight: 1.7, maxWidth: 600 }}>
-              Stop paying lakhs for generic video courses. SkillMap gives you AI guidance, company-specific prep, real mentors, and scam protection — free or Rs.299/month.
+              Stop paying lakhs for generic video courses. AstraaHire gives you AI guidance, company-specific prep, real mentors, and scam protection — free or Rs.299/month.
             </p>
           </div>
 
@@ -412,11 +412,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ WHY SKILLMAP — Comparison Table ═══ */}
+      {/* ═══ WHY ASTRAAHIRE — Comparison Table ═══ */}
       <section className="px-4" style={{ background: "var(--color-bg-subtle)", paddingTop: "6rem", paddingBottom: "6rem" }}>
         <div className="mx-auto" style={{ maxWidth: 1200 }}>
           <div className="text-center mb-12">
-            <div className="section-eyebrow justify-center">WHY SKILLMAP</div>
+            <div className="section-eyebrow justify-center">WHY ASTRAAHIRE</div>
             <h2 className={heading} style={{ color: "var(--ink)" }}>Not a Course. Not a Job Board.</h2>
             <p className="mt-2 mx-auto" style={{ color: "var(--color-text-secondary)", fontSize: "1rem", maxWidth: 550, lineHeight: 1.6 }}>
               The only platform built end-to-end for Indian graduates who want a job, not a certificate.
@@ -429,7 +429,7 @@ export default function Home() {
               <thead>
                 <tr style={{ background: "#0D2020" }}>
                   <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "#fff", fontSize: "0.85rem", fontWeight: 600, width: "35%" }}>Feature</th>
-                  <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--primary)", fontSize: "0.85rem", fontWeight: 700, width: "25%" }}>SkillMap</th>
+                  <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--primary)", fontSize: "0.85rem", fontWeight: 700, width: "25%" }}>AstraaHire</th>
                   <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--color-text-secondary)", fontSize: "0.85rem", fontWeight: 500 }}>Naukri / LinkedIn</th>
                   <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--color-text-secondary)", fontSize: "0.85rem", fontWeight: 500 }}>upGrad / Scaler</th>
                 </tr>
@@ -464,7 +464,7 @@ export default function Home() {
             </table>
           </div>
 
-          {/* Mobile: Stacked Cards (SkillMap column only) */}
+          {/* Mobile: Stacked Cards (AstraaHire column only) */}
           <div className="md:hidden space-y-3">
             {[
               { feature: "AI Career Roadmap", value: "Free, personalised" },
@@ -494,7 +494,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <div className="section-eyebrow justify-center">SUCCESS STORIES</div>
             <h2 className={heading} style={{ color: "var(--ink)" }}>They Were Exactly Where You Are.</h2>
-            <p className="mt-1" style={{ color: "var(--color-text-secondary)", fontSize: "1rem" }}>Then they used SkillMap.</p>
+            <p className="mt-1" style={{ color: "var(--color-text-secondary)", fontSize: "1rem" }}>Then they used AstraaHire.</p>
           </div>
 
           {/* Featured Quote */}
@@ -502,7 +502,7 @@ export default function Home() {
             <div style={{ color: "#F59E0B", fontSize: "1rem", marginBottom: "0.75rem" }}>★★★★★</div>
             <div style={{ color: "var(--primary)", fontFamily: "Georgia, serif", fontSize: "5rem", lineHeight: 0, marginBottom: "1.5rem" }}>&ldquo;</div>
             <p className={heading} style={{ color: "#fff", fontSize: "1.3rem", fontWeight: 500, lineHeight: 1.6, marginBottom: "1.5rem" }}>
-              SkillMap told me I was missing CEH certification for TCS Cybersecurity. Got it in 5 weeks. Got the call in week 6.
+              AstraaHire told me I was missing CEH certification for TCS Cybersecurity. Got it in 5 weeks. Got the call in week 6.
             </p>
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center shrink-0" style={{ width: "2.5rem", height: "2.5rem", borderRadius: "50%", background: "var(--primary)", color: "#fff", fontWeight: 700, fontSize: "0.85rem" }}>RK</div>
@@ -516,7 +516,7 @@ export default function Home() {
           {/* Supporting Quotes */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ maxWidth: 750, margin: "0 auto" }}>
             {[
-              { quote: "Nobody told me KPMG looks for ISO 27001 knowledge. SkillMap's roadmap was so specific — I knew exactly what to do.", name: "Priya Sharma", role: "MBA Finance, 2025 · Now at KPMG", initials: "PS" },
+              { quote: "Nobody told me KPMG looks for ISO 27001 knowledge. AstraaHire's roadmap was so specific — I knew exactly what to do.", name: "Priya Sharma", role: "MBA Finance, 2025 · Now at KPMG", initials: "PS" },
               { quote: "The AI advisor felt like talking to a senior who actually knew what they were talking about. Cracked Infosys first attempt.", name: "Sneha Joshi", role: "B.Tech IT, 2026 · Infosys", initials: "SJ" },
             ].map((r) => (
               <div key={r.name} style={{ background: "#fff", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "2rem" }}>

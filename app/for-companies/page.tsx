@@ -120,7 +120,7 @@ export default function ForCompaniesPage() {
         <div className="absolute inset-0 pointer-events-none" style={{background:"radial-gradient(ellipse 80% 60% at 50% 50%, rgba(10,191,188,0.12) 0%, transparent 70%)"}}/>
         <div className="relative mx-auto" style={{maxWidth:650}}>
           <div className="section-eyebrow justify-center animate-on-scroll">Join India&apos;s best hiring platform</div>
-          <h2 className={heading+" animate-on-scroll"} style={{fontWeight:700,fontSize:"clamp(2rem, 5vw, 3.5rem)",lineHeight:1.1,color:"#fff",marginBottom:"1rem"}}>Your Next Great Hire<br/>Is <span style={{color:"#0ABFBC"}}>Already On SkillMap.</span></h2>
+          <h2 className={heading+" animate-on-scroll"} style={{fontWeight:700,fontSize:"clamp(2rem, 5vw, 3.5rem)",lineHeight:1.1,color:"#fff",marginBottom:"1rem"}}>Your Next Great Hire<br/>Is <span style={{color:"#0ABFBC"}}>Already On AstraaHire.</span></h2>
           <p className="animate-on-scroll" style={{color:"#4A6363",marginBottom:"2rem"}}>Register free. Post your first job in minutes.</p>
           <Link href="/auth/signup?role=ORG" className="btn-primary animate-glow no-underline" style={{padding:"0.9rem 2.2rem",fontSize:"1rem"}}>Register Your Company — Free &#8594;</Link>
           <div className="flex justify-center gap-2 mt-4 flex-wrap">{["&#128274; Secure","&#129302; AI-Matched","&#127470;&#127475; India&apos;s Platform"].map((b,i)=>(<span key={i} style={{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:999,padding:"0.3rem 0.8rem",color:"#6B8F8F",fontSize:"0.75rem"}} dangerouslySetInnerHTML={{__html:b}}/>))}</div>

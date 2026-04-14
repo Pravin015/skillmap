@@ -17,8 +17,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className={`${heading} text-lg font-bold text-white no-underline flex items-center gap-2 mb-3`}>
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold" style={{ background: "#0ABFBC", color: "#fff" }}>S</span>
-              SkillMap
+              <svg width="24" height="24" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#0ABFBC" fillRule="evenodd" d="M300 100 L495 490 L560 505 L420 530 L300 470 L180 530 L40 505 L105 490 Z M300 220 L205 430 L245 430 L300 335 L355 430 L395 430 Z"/>
+              </svg>
+              Astr<span style={{ color: "#0ABFBC" }}>aa</span>Hire
             </Link>
             <p style={{ color: "#4A6363", fontSize: "0.875rem", lineHeight: 1.7, marginTop: "0.75rem" }}>
               India&apos;s job-readiness platform. AI-powered career guidance for fresh graduates.
@@ -45,7 +47,7 @@ export default function Footer() {
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", margin: "2rem 0" }} />
         {/* Bottom */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p style={{ color: "#4A6363", fontSize: "0.8rem" }}>&copy; 2026 SkillMap. Built for India&apos;s next generation.</p>
+          <p style={{ color: "#4A6363", fontSize: "0.8rem" }}>&copy; 2026 AstraaHire. Built for India&apos;s next generation.</p>
           <p style={{ color: "#4A6363", fontSize: "0.8rem" }}>Payments secured by Razorpay</p>
         </div>
       </div>

@@ -147,7 +147,7 @@ function SignupInner() {
       }
 
       // If user came from landing page chat bar, redirect to AI advisor
-      const pendingQuery = sessionStorage.getItem("skillmap_query");
+      const pendingQuery = sessionStorage.getItem("astraahire_query");
       window.location.href = pendingQuery ? "/chat" : "/dashboard";
     } catch {
       setError("Something went wrong.");
@@ -164,7 +164,7 @@ function SignupInner() {
             {step === 1 ? "Create your account" : "Complete your profile"}
           </h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>
-            {step === 1 ? "Join SkillMap and start your journey" : "Help us match you with the right opportunities"}
+            {step === 1 ? "Join AstraaHire and start your journey" : "Help us match you with the right opportunities"}
           </p>
           {step === 2 && (
             <div className="flex items-center justify-center gap-2 mt-4">

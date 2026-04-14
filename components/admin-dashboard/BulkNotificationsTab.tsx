@@ -89,9 +89,9 @@ export default function BulkNotificationsTab() {
         <h3 className={`${heading} text-sm font-bold mb-3`}>Quick Templates</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {[
-            { title: "New Feature Launch", msg: "We've just launched a new feature on SkillMap! Check it out in your dashboard.", role: "ALL" },
+            { title: "New Feature Launch", msg: "We've just launched a new feature on AstraaHire! Check it out in your dashboard.", role: "ALL" },
             { title: "New Jobs Available", msg: "New job openings matching your profile are now live. Don't miss the deadline!", role: "STUDENT" },
-            { title: "Platform Maintenance", msg: "SkillMap will be under maintenance tonight from 11 PM to 2 AM IST. Sorry for the inconvenience.", role: "ALL" },
+            { title: "Platform Maintenance", msg: "AstraaHire will be under maintenance tonight from 11 PM to 2 AM IST. Sorry for the inconvenience.", role: "ALL" },
             { title: "Complete Your Profile", msg: "Your profile is incomplete. Complete it now to get better job matches and recommendations.", role: "STUDENT" },
           ].map((t) => (
             <button key={t.title} onClick={() => { setTitle(t.title); setMessage(t.msg); setTargetRole(t.role); }} className="rounded-xl border p-3 text-left transition-all hover:bg-gray-50" style={{ borderColor: "var(--border)" }}>

@@ -1,11 +1,11 @@
 {
-  "name": "SkillMap",
-  "short_name": "SkillMap",
+  "name": "AstraaHire",
+  "short_name": "AstraaHire",
   "description": "India's first job-readiness engine. Know what it takes to get hired at your dream company.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f4f3ef",
-  "theme_color": "#0a0a0f",
+  "background_color": "#0C1A1A",
+  "theme_color": "#0C1A1A",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [

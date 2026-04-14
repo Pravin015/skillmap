@@ -27,7 +27,7 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
     <div className="space-y-6">
       <div>
         <h2 className={`${heading} font-bold text-xl`}>{orgName} Dashboard</h2>
-        <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Overview of your organisation&apos;s hiring activity on SkillMap</p>
+        <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>Overview of your organisation&apos;s hiring activity on AstraaHire</p>
       </div>
 
       {/* Stats grid */}

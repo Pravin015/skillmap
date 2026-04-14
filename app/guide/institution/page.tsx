@@ -20,7 +20,7 @@ const steps = [
     features: ["List all students with name, email, profile score, domain", "Application count per student", "Search by name or email", "View Profile → opens student's public profile", "Remove student (deletes their account)", "Students are scoped — you only see yours, not others"],
     testChecklist: ["My Students tab → list shows your students", "Search works by name and email", "Click 'View' → student profile opens", "Remove a student → they disappear from list"] },
 
-  { id: "companies", num: "05", title: "Browse Companies", desc: "See all companies on SkillMap and connect.", actions: [{ label: "Companies", href: "/institution-dashboard", primary: true }],
+  { id: "companies", num: "05", title: "Browse Companies", desc: "See all companies on AstraaHire and connect.", actions: [{ label: "Companies", href: "/institution-dashboard", primary: true }],
     features: ["List of all registered companies on platform", "Shows HR count and job post count per company", "Search companies by name", "Connect button (placeholder for future integration)"],
     testChecklist: ["Companies tab → shows registered organisations", "Search filters companies", "HR and job counts visible"] },
 

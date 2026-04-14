@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Welcome notification
-    createNotification({ userId: user.id, type: "ACCOUNT_CREATED", title: "Welcome to SkillMap!", message: `Hi ${user.name}, welcome to SkillMap! Complete your profile to start getting matched with jobs.` }).catch(() => {});
+    createNotification({ userId: user.id, type: "ACCOUNT_CREATED", title: "Welcome to AstraaHire!", message: `Hi ${user.name}, welcome to AstraaHire! Complete your profile to start getting matched with jobs.` }).catch(() => {});
 
     return NextResponse.json(
       {

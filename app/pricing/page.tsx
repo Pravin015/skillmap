@@ -141,7 +141,7 @@ export default function PricingPage() {
         key: data.keyId,
         amount: data.amount,
         currency: data.currency,
-        name: "SkillMap",
+        name: "AstraaHire",
         description: "Career Ready Plan — Monthly",
         order_id: data.orderId,
         handler: async function (response) {

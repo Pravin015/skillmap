@@ -5,13 +5,13 @@ const heading = "font-[family-name:var(--font-heading)]";
 
 export default function AboutPage() {
   return (
-    <LegalPage title="About SkillMap" lastUpdated="12 April 2026">
-      <p>SkillMap is India&apos;s first job-readiness engine — a platform that tells fresh graduates exactly what skills they need to get hired at their dream companies, shows them live job openings, and gives them a personalised AI-powered preparation roadmap.</p>
+    <LegalPage title="About AstraaHire" lastUpdated="12 April 2026">
+      <p>AstraaHire is India&apos;s first job-readiness engine — a platform that tells fresh graduates exactly what skills they need to get hired at their dream companies, shows them live job openings, and gives them a personalised AI-powered preparation roadmap.</p>
 
       <h2>Our Mission</h2>
       <p>Every year, 10 million graduates leave Indian colleges with degrees but no direction. They don&apos;t know what companies actually want, which ones are hiring, or how to bridge the gap between where they are and where they want to be.</p>
       <p><strong>We exist to fix that.</strong></p>
-      <p>SkillMap bridges the gap between education and employment by giving graduates clarity, direction, and a concrete path to their dream job.</p>
+      <p>AstraaHire bridges the gap between education and employment by giving graduates clarity, direction, and a concrete path to their dream job.</p>
 
       <h2>What We Do</h2>
       <ul>
@@ -39,9 +39,9 @@ export default function AboutPage() {
       </ul>
 
       <h2>Contact Information</h2>
-      <p><strong>Business Name:</strong> SkillMap</p>
+      <p><strong>Business Name:</strong> AstraaHire</p>
       <p><strong>Website:</strong> ashpranix.in</p>
-      <p><strong>Email:</strong> support@skillmap.com</p>
+      <p><strong>Email:</strong> support@astraahire.com</p>
       <p><strong>Location:</strong> India</p>
 
       <div className="mt-8 flex gap-3 flex-wrap">

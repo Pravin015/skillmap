@@ -9,7 +9,7 @@ export default function ResumeCard() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("skillmap_resume_name");
+    const saved = localStorage.getItem("astraahire_resume_name");
     if (saved) setResumeName(saved);
   }, []);
 
@@ -24,8 +24,8 @@ export default function ResumeCard() {
     }
     const reader = new FileReader();
     reader.onload = () => {
-      localStorage.setItem("skillmap_resume", reader.result as string);
-      localStorage.setItem("skillmap_resume_name", file.name);
+      localStorage.setItem("astraahire_resume", reader.result as string);
+      localStorage.setItem("astraahire_resume_name", file.name);
       setResumeName(file.name);
     };
     reader.readAsDataURL(file);
@@ -39,7 +39,7 @@ export default function ResumeCard() {
   }
 
   function viewResume() {
-    const data = localStorage.getItem("skillmap_resume");
+    const data = localStorage.getItem("astraahire_resume");
     if (data) {
       const win = window.open();
       if (win) {
@@ -49,8 +49,8 @@ export default function ResumeCard() {
   }
 
   function removeResume() {
-    localStorage.removeItem("skillmap_resume");
-    localStorage.removeItem("skillmap_resume_name");
+    localStorage.removeItem("astraahire_resume");
+    localStorage.removeItem("astraahire_resume_name");
     setResumeName(null);
   }
 

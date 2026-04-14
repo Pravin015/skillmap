@@ -87,7 +87,7 @@ export default function ForInstitutionsPage() {
       <section className="px-4 py-16" style={{ background: "var(--primary)" }}>
         <div className="max-w-2xl mx-auto text-center">
           <h2 className={`${heading} font-bold text-xl md:text-2xl text-white mb-3`}>Ready to Transform Placements?</h2>
-          <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.7)" }}>Join institutions using SkillMap for student career readiness.</p>
+          <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.7)" }}>Join institutions using AstraaHire for student career readiness.</p>
           <Link href="/forms/institution-onboarding" className="inline-block rounded-xl px-8 py-3 text-sm font-semibold no-underline" style={{ background: "white", color: "var(--primary)" }}>
             Register Institution — Free
           </Link>

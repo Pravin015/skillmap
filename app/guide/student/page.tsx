@@ -20,7 +20,7 @@ const steps: Step[] = [
     id: "signup",
     num: "01",
     title: "Sign Up & Verify Email",
-    desc: "Create your SkillMap account with email OTP verification.",
+    desc: "Create your AstraaHire account with email OTP verification.",
     actions: [
       { label: "Sign Up", href: "/auth/signup?role=STUDENT", primary: true },
     ],
@@ -280,7 +280,7 @@ export default function StudentGuidePage() {
             🎓 Student Guide
           </div>
           <h1 className={`${heading} font-bold text-3xl md:text-4xl text-white mb-3`}>Student Onboarding Guide</h1>
-          <p className="text-base" style={{ color: "rgba(255,255,255,0.5)" }}>Step-by-step walkthrough of everything you can do on SkillMap. Follow along to test each feature.</p>
+          <p className="text-base" style={{ color: "rgba(255,255,255,0.5)" }}>Step-by-step walkthrough of everything you can do on AstraaHire. Follow along to test each feature.</p>
         </div>
       </section>
 

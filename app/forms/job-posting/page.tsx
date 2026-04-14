@@ -15,7 +15,7 @@ export default function JobPostingForm() {
   return (
     <FormWrapper
       title="Post a Job Opening"
-      subtitle="Fill in the details below to list your job opening on SkillMap and reach thousands of qualified graduates."
+      subtitle="Fill in the details below to list your job opening on AstraaHire and reach thousands of qualified graduates."
       submitted={submitted}
       successMessage="Your job posting has been received. Our team will review and publish it within 24 hours."
     >

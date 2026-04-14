@@ -110,10 +110,12 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: scrolled ? "rgba(12,26,26,0.95)" : "rgba(12,26,26,0.8)", backdropFilter: "blur(12px)" }}>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4" ref={dropdownRef}>
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 no-underline shrink-0" onClick={() => setMobileNav(false)}>
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white" style={{ background: "var(--primary)" }}>S</div>
+        <Link href="/" className="flex items-center gap-2 no-underline shrink-0" onClick={() => setMobileNav(false)}>
+          <svg width="28" height="28" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#0ABFBC" fillRule="evenodd" d="M300 100 L495 490 L560 505 L420 530 L300 470 L180 530 L40 505 L105 490 Z M300 220 L205 430 L245 430 L300 335 L355 430 L395 430 Z"/>
+          </svg>
           <span className={`${heading} text-lg font-bold text-white`}>
-            Skill<span className="px-1 py-0.5 rounded" style={{ background: "var(--primary)", color: "#fff" }}>Map</span>
+            Astr<span style={{ color: "#0ABFBC" }}>aa</span>Hire
           </span>
         </Link>
 

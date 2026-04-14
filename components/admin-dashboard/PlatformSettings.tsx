@@ -36,7 +36,7 @@ export default function PlatformSettings() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium block mb-1" style={{ color: "var(--muted)" }}>Platform Name</label>
-            <div className="rounded-xl border px-4 py-3 text-sm font-medium" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>SkillMap</div>
+            <div className="rounded-xl border px-4 py-3 text-sm font-medium" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>AstraaHire</div>
           </div>
           <div>
             <label className="text-xs font-medium block mb-1" style={{ color: "var(--muted)" }}>Domain</label>

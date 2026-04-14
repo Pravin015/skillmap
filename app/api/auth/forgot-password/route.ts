@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     try {
       await resend.emails.send({
         from: FROM_EMAIL, to: email,
-        subject: `${otp} — Reset your SkillMap password`,
+        subject: `${otp} — Reset your AstraaHire password`,
         html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f4f3ef;font-family:'Segoe UI',sans-serif">
 <div style="max-width:480px;margin:0 auto;padding:20px">
   <div style="background:#0a0a0f;border-radius:16px 16px 0 0;padding:20px 28px;text-align:center">
