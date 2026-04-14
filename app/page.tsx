@@ -541,25 +541,33 @@ export default function Home() {
       </section>
 
       {/* ═══ FAQ ═══ */}
-      <section className="px-4" style={{ background: "var(--surface-alt)", paddingTop: "6rem", paddingBottom: "6rem" }}>
-        <div className="max-w-2xl mx-auto">
+      <section className="px-4" style={{ background: "#0C1A1A", paddingTop: "6rem", paddingBottom: "6rem" }}>
+        <div className="mx-auto" style={{ maxWidth: 700 }}>
           <div className="text-center mb-10">
             <div className="section-eyebrow justify-center">FAQ</div>
-            <h2 className={heading} style={{ color: "var(--ink)" }}>Questions We Get A Lot.</h2>
+            <h2 className={heading} style={{ color: "#fff" }}>Questions We Get A Lot.</h2>
           </div>
 
           <div className="space-y-3">
             {faqItems.map((item, i) => (
-              <div key={i} className={`animate-on-scroll overflow-hidden ${openFaq === i ? "faq-open" : ""}`} style={{ background: "white", border: `1px solid ${openFaq === i ? "var(--primary)" : "var(--color-border)"}`, borderRadius: "0.75rem" }}>
+              <div
+                key={i}
+                className={`overflow-hidden transition-all duration-300 ${openFaq === i ? "faq-open" : ""}`}
+                style={{
+                  background: openFaq === i ? "rgba(10,191,188,0.05)" : "rgba(255,255,255,0.03)",
+                  border: `1px solid ${openFaq === i ? "rgba(10,191,188,0.25)" : "rgba(255,255,255,0.08)"}`,
+                  borderRadius: "0.75rem",
+                }}
+              >
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full flex justify-between items-center text-left bg-transparent border-none cursor-pointer"
                   style={{ padding: "1.25rem 1.5rem" }}
                 >
-                  <span style={{ fontWeight: 600, color: "var(--color-text-primary)", fontSize: "1rem", paddingRight: "1rem" }}>{item.q}</span>
-                  <span className="shrink-0 faq-icon transition-transform duration-300" style={{ color: openFaq === i ? "var(--primary)" : "var(--muted)", fontSize: "1.2rem" }}>+</span>
+                  <span style={{ fontWeight: 600, color: "#fff", fontSize: "0.95rem", paddingRight: "1rem" }}>{item.q}</span>
+                  <span className="shrink-0 faq-icon transition-transform duration-300" style={{ color: openFaq === i ? "#0ABFBC" : "#4A6363", fontSize: "1.2rem" }}>+</span>
                 </button>
-                <div className="faq-answer" style={{ padding: "0 1.5rem", color: "var(--color-text-secondary)", fontSize: "0.9rem", lineHeight: 1.7 }}>
+                <div className="faq-answer" style={{ padding: "0 1.5rem", color: "#6B8F8F", fontSize: "0.9rem", lineHeight: 1.7 }}>
                   {item.a}
                 </div>
               </div>
