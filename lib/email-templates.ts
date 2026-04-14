@@ -1,13 +1,13 @@
 function layout(heading: string, body: string, ctaText?: string, ctaUrl?: string): string {
-  const cta = ctaText && ctaUrl ? `<a href="${ctaUrl}" style="display:inline-block;background:#0a0a0f;color:#e8ff47;font-family:'Segoe UI',sans-serif;font-weight:700;font-size:14px;padding:12px 28px;border-radius:12px;text-decoration:none;margin-top:20px">${ctaText}</a>` : "";
+  const cta = ctaText && ctaUrl ? `<a href="${ctaUrl}" style="display:inline-block;background:#0C1A1A;color:#0ABFBC;font-family:'Segoe UI',sans-serif;font-weight:700;font-size:14px;padding:12px 28px;border-radius:12px;text-decoration:none;margin-top:20px">${ctaText}</a>` : "";
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#f4f3ef;font-family:'Segoe UI','DM Sans',sans-serif">
 <div style="max-width:560px;margin:0 auto;padding:20px">
-  <div style="background:#0a0a0f;border-radius:16px 16px 0 0;padding:20px 28px">
-    <span style="font-weight:800;font-size:18px;color:#fff">Skill</span><span style="background:#e8ff47;color:#0a0a0f;padding:1px 6px;border-radius:4px;font-weight:800;font-size:18px">Map</span>
+  <div style="background:#0C1A1A;border-radius:16px 16px 0 0;padding:20px 28px">
+    <span style="font-weight:800;font-size:18px;color:#fff">Skill</span><span style="background:#0ABFBC;color:#0C1A1A;padding:1px 6px;border-radius:4px;font-weight:800;font-size:18px">Map</span>
   </div>
   <div style="background:#ffffff;border-radius:0 0 16px 16px;padding:32px 28px;border:1px solid rgba(10,10,15,0.08);border-top:none">
-    <h1 style="font-size:20px;font-weight:800;color:#0a0a0f;margin:0 0 16px">${heading}</h1>
+    <h1 style="font-size:20px;font-weight:800;color:#0C1A1A;margin:0 0 16px">${heading}</h1>
     <div style="font-size:14px;line-height:1.7;color:rgba(10,10,15,0.55)">${body}</div>
     ${cta}
   </div>
@@ -42,7 +42,7 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
 
     case "APPLICATION_STATUS_CHANGED":
       return { subject: `Update: ${d.role} at ${d.company}`, html: layout("Application Update",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>There's an update on your application for <strong>${d.role}</strong> at <strong>${d.company}</strong>.</p><p>New status: <strong style="color:#0a0a0f">${d.status}</strong></p>`,
+        `<p>Hi <strong>${d.name}</strong>,</p><p>There's an update on your application for <strong>${d.role}</strong> at <strong>${d.company}</strong>.</p><p>New status: <strong style="color:#0C1A1A">${d.status}</strong></p>`,
         "View details", `${base}/dashboard`) };
 
     case "SHORTLISTED":

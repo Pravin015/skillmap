@@ -70,7 +70,7 @@ export default function BlogPostPage() {
 
         {/* Content */}
         <div className="rounded-2xl border bg-white p-6 md:p-10" style={{ borderColor: "var(--border)" }}>
-          <div className="legal-content" dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div className="legal-content" dangerouslySetInnerHTML={{ __html: (() => { try { const DOMPurify = require("isomorphic-dompurify"); return DOMPurify.sanitize(post.content); } catch { return post.content; } })() }} />
         </div>
 
         {/* Share */}

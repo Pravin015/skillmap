@@ -326,7 +326,7 @@ export default function JobDetailPage() {
                 <>
                   {job.labTemplate ? (
                     <>
-                      <div className="rounded-xl p-3 mb-3 text-xs border" style={{ background: "rgba(232,255,71,0.05)", borderColor: "rgba(10,191,188,0.2)" }}>
+                      <div className="rounded-xl p-3 mb-3 text-xs border" style={{ background: "rgba(10,191,188,0.05)", borderColor: "rgba(10,191,188,0.2)" }}>
                         <div className={`${heading} font-bold text-sm mb-1`}>🧪 Lab Assessment Required</div>
                         <p style={{ color: "var(--muted)" }}>{job.labTemplate.title} · {job.labTemplate.timeLimit} min · {job.labTemplate.difficulty} · Pass: {job.labTemplate.passingScore}%</p>
                       </div>

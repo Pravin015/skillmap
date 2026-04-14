@@ -325,7 +325,7 @@ export default function StudentGuidePage() {
                     </div>
 
                     {/* Test checklist */}
-                    <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(10,191,188,0.2)", background: "rgba(232,255,71,0.03)" }}>
+                    <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(10,191,188,0.2)", background: "rgba(10,191,188,0.03)" }}>
                       <h4 className={`${heading} font-bold text-sm mb-2`}>🧪 Test checklist:</h4>
                       <div className="space-y-1.5">
                         {step.testChecklist.map((t, i) => (

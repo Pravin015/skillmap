@@ -34,13 +34,13 @@ export async function POST(req: NextRequest) {
         subject: `${otp} — Your AstraaHire verification code`,
         html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f4f3ef;font-family:'Segoe UI',sans-serif">
 <div style="max-width:480px;margin:0 auto;padding:20px">
-  <div style="background:#0a0a0f;border-radius:16px 16px 0 0;padding:20px 28px;text-align:center">
-    <span style="font-weight:800;font-size:18px;color:#fff">Skill</span><span style="background:#e8ff47;color:#0a0a0f;padding:1px 6px;border-radius:4px;font-weight:800;font-size:18px">Map</span>
+  <div style="background:#0C1A1A;border-radius:16px 16px 0 0;padding:20px 28px;text-align:center">
+    <span style="font-weight:800;font-size:18px;color:#fff">Astr</span><span style="color:#0ABFBC;font-weight:800;font-size:18px">aa</span><span style="font-weight:800;font-size:18px;color:#fff">Hire</span>
   </div>
   <div style="background:#fff;border-radius:0 0 16px 16px;padding:32px 28px;text-align:center;border:1px solid rgba(10,10,15,0.08);border-top:none">
-    <h1 style="font-size:20px;font-weight:800;color:#0a0a0f;margin:0 0 8px">Verify your email</h1>
+    <h1 style="font-size:20px;font-weight:800;color:#0C1A1A;margin:0 0 8px">Verify your email</h1>
     <p style="font-size:14px;color:rgba(10,10,15,0.5);margin:0 0 24px">Enter this code to complete your registration</p>
-    <div style="background:#0a0a0f;color:#e8ff47;font-size:36px;font-weight:800;letter-spacing:8px;padding:16px;border-radius:12px;margin:0 auto;display:inline-block">${otp}</div>
+    <div style="background:#0C1A1A;color:#0ABFBC;font-size:36px;font-weight:800;letter-spacing:8px;padding:16px;border-radius:12px;margin:0 auto;display:inline-block">${otp}</div>
     <p style="font-size:12px;color:rgba(10,10,15,0.3);margin:20px 0 0">This code expires in 10 minutes</p>
   </div>
   <p style="text-align:center;font-size:11px;color:rgba(10,10,15,0.3);padding:16px">If you didn't request this, ignore this email.</p>

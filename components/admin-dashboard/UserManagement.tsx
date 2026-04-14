@@ -67,7 +67,7 @@ export default function UserManagement({ users, onRefresh }: { users: User[]; on
       </div>
 
       {resetPwd && (
-        <div className="rounded-xl p-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(232,255,71,0.3)" }}>
+        <div className="rounded-xl p-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(10,191,188,0.2)" }}>
           <div className={`${heading} font-bold text-sm mb-1`}>New password generated:</div>
           <code className="text-base font-mono font-bold select-all">{resetPwd.pwd}</code>
           <button onClick={() => setResetPwd(null)} className="ml-4 text-xs underline" style={{ color: "var(--muted)" }}>Dismiss</button>

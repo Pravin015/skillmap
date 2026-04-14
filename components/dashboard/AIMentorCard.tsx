@@ -8,7 +8,7 @@ export default function AIMentorCard() {
     <div className="rounded-2xl overflow-hidden relative" style={{ background: "var(--ink)" }}>
       {/* Decorative mesh */}
       <div className="absolute inset-0 opacity-20" style={{
-        backgroundImage: "radial-gradient(circle at 30% 50%, rgba(232,255,71,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(71,200,255,0.2) 0%, transparent 40%)"
+        backgroundImage: "radial-gradient(circle at 30% 50%, rgba(10,191,188,0.2) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(71,200,255,0.2) 0%, transparent 40%)"
       }} />
       <div className="relative p-6">
         <h3 className={`${heading} font-bold text-lg text-white mb-1`}>AI Assistant</h3>

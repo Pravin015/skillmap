@@ -124,7 +124,7 @@ export default function NTTUsersTab({ users }: { users: User[] }) {
 
       {/* Action Message */}
       {actionMsg && (
-        <div className="rounded-xl p-3 text-sm font-mono" style={{ background: "rgba(232,255,71,0.2)", color: "var(--ink)" }}>
+        <div className="rounded-xl p-3 text-sm font-mono" style={{ background: "rgba(10,191,188,0.15)", color: "var(--ink)" }}>
           {actionMsg}
           <button onClick={() => setActionMsg("")} className="ml-3 text-xs underline" style={{ color: "var(--muted)" }}>dismiss</button>
         </div>

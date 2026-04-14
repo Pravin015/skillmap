@@ -51,7 +51,7 @@ export default function MentorOnboardingForm() {
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Notice */}
-        <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(10,191,188,0.3)" }}>
+        <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(10,191,188,0.05)", borderColor: "rgba(10,191,188,0.3)" }}>
           <strong className={heading}>Official email required</strong> — We verify all mentors through their company email. Personal emails (Gmail, Yahoo, etc.) are not accepted.
         </div>
 

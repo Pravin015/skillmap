@@ -305,7 +305,7 @@ export default function OfferVerifyPage() {
                         />
                       </label>
                     ) : (
-                      <div className="rounded-xl border p-4 flex items-center gap-3" style={{ borderColor: "var(--ink)", background: "rgba(232,255,71,0.05)" }}>
+                      <div className="rounded-xl border p-4 flex items-center gap-3" style={{ borderColor: "var(--ink)", background: "rgba(10,191,188,0.05)" }}>
                         <div className="text-2xl">
                           {fileType.includes("pdf") ? "📑" : "🖼️"}
                         </div>

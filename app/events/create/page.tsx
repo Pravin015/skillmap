@@ -128,7 +128,7 @@ export default function CreateEventPage() {
             </div>
           </div>
 
-          <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(232,255,71,0.08)", borderColor: "rgba(10,191,188,0.2)" }}>
+          <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(10,191,188,0.05)", borderColor: "rgba(10,191,188,0.2)" }}>
             <strong className={heading}>Approval:</strong> Verified mentors&apos; events are auto-approved. Unverified mentors&apos; events require admin approval before they go live.
           </div>
 

@@ -230,7 +230,7 @@ function SignupInner() {
 
               {/* OTP Section */}
               {otpSent && !otpVerified && (
-                <div className="mt-4 rounded-xl p-4 border" style={{ background: "rgba(232,255,71,0.05)", borderColor: "rgba(10,191,188,0.2)" }}>
+                <div className="mt-4 rounded-xl p-4 border" style={{ background: "rgba(10,191,188,0.05)", borderColor: "rgba(10,191,188,0.2)" }}>
                   <p className={`${heading} font-bold text-sm mb-2`}>Enter verification code</p>
                   <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>We sent a 6-digit code to <strong>{email}</strong></p>
                   <input type="text" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="Enter 6-digit code" maxLength={6} className={`${inputClass} text-center text-lg tracking-[0.3em] font-bold`} style={{ borderColor: "var(--border)" }} />
