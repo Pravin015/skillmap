@@ -24,6 +24,7 @@ const navGroups: NavGroup[] = [
     label: "Platform",
     items: [
       { href: "/jobs", label: "Jobs", desc: "Browse open positions" },
+      { href: "/courses", label: "Courses", desc: "Learn skills that get you hired" },
       { href: "/events", label: "Events", desc: "Workshops & webinars" },
       { href: "/blog", label: "Blog", desc: "Career tips & guides" },
       { href: "/companies", label: "Companies", desc: "Explore employers" },

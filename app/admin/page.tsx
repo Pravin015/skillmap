@@ -23,6 +23,7 @@ import MockInterviewStats from "@/components/admin-dashboard/MockInterviewStats"
 import PaymentsTab from "@/components/admin-dashboard/PaymentsTab";
 import BulkNotificationsTab from "@/components/admin-dashboard/BulkNotificationsTab";
 import CompetitionsTab from "@/components/admin-dashboard/CompetitionsTab";
+import CoursesAdminTab from "@/components/admin-dashboard/CoursesAdminTab";
 
 const heading = "font-[family-name:var(--font-heading)]";
 
@@ -67,6 +68,7 @@ const sidebarCategories: SidebarCategory[] = [
       { id: "labs", label: "Labs", icon: "🧪" },
       { id: "blog", label: "Blog", icon: "📝" },
       { id: "competitions", label: "Competitions", icon: "🏆" },
+      { id: "courses", label: "Courses", icon: "📚" },
     ],
   },
   {
@@ -152,6 +154,7 @@ export default function AdminPage() {
       case "mock-stats": return <MockInterviewStats />;
       case "payments": return <PaymentsTab />;
       case "competitions": return <CompetitionsTab />;
+      case "courses": return <CoursesAdminTab />;
       case "notifications": return <BulkNotificationsTab />;
       case "settings": return <PlatformSettings />;
       default: return <AdminOverview stats={stats} onNavigate={setActiveTab} />;

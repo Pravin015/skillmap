@@ -48,6 +48,8 @@ model User {
   mockInterviews MockInterview[]
   companyProfile    CompanyProfile?
   competitionsCreated Competition[] @relation("CompetitionCreator")
+  coursesCreated      Course[]      @relation("CourseCreator")
+  courseEnrollments    CourseEnrollment[]
 }
 
 enum FormType {
@@ -889,4 +891,67 @@ model ProctoringLog {
 
   @@index([sessionId])
   @@index([userId])
+}
+
+// ═══ COURSES MODULE ═══
+
+model Course {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  description     String
+  coverImageUrl   String?
+  duration        String?          // "4 weeks", "2 hours"
+  difficulty      String   @default("Beginner") // Beginner, Intermediate, Advanced
+  skills          String[] @default([])
+  category        String?
+  tags            String[] @default([])
+
+  createdById     String
+  createdBy       User     @relation("CourseCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  creatorRole     String   @default("ADMIN") // ADMIN, INSTITUTION
+
+  status          String   @default("DRAFT") // DRAFT, PENDING_REVIEW, PUBLISHED
+  pricing         String   @default("FREE")  // FREE, PAID
+  price           Int?     // paise
+  videoUrl        String?  // YouTube/Vimeo embed
+
+  enrollmentCount Int      @default(0)
+  rating          Float    @default(0)
+
+  modules         CourseModule[]
+  enrollments     CourseEnrollment[]
+
+  publishedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdById])
+}
+
+model CourseModule {
+  id        String   @id @default(cuid())
+  courseId   String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  content   String   // HTML/markdown
+  videoUrl  String?
+  duration  String?  // "15 min"
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model CourseEnrollment {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId          String
+  course           Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress         Int      @default(0) // 0-100
+  completedModules String[] @default([])
+  enrolledAt       DateTime @default(now())
+  lastAccessedAt   DateTime @default(now())
+
+  @@unique([userId, courseId])
 }

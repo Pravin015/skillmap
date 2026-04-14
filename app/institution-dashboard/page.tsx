@@ -15,9 +15,19 @@ const tabs = [
   { id: "students", label: "Students", icon: "🎓" },
   { id: "add-student", label: "Add Student", icon: "➕" },
   { id: "companies", label: "Companies", icon: "🏢" },
+  { id: "courses", label: "Courses", icon: "📚" },
   { id: "analytics", label: "Analytics", icon: "📈" },
   { id: "settings", label: "Settings", icon: "⚙️" },
 ];
+
+function InstitutionCourses() {
+  const [courses, setCourses] = useState<{id:string;slug:string;title:string;status:string;_count:{modules:number;enrollments:number}}[]>([]);
+  const [ld, setLd] = useState(true);
+  useEffect(() => { fetch("/api/courses?mine=true").then(r=>r.json()).then(d=>{setCourses(d.courses||[]);setLd(false);}).catch(()=>setLd(false)); }, []);
+  if (ld) return <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-4 border-t-transparent" style={{ borderColor: "var(--primary)", borderTopColor: "transparent" }} /></div>;
+  if (courses.length === 0) return <div className="rounded-2xl border bg-white p-8 text-center" style={{ borderColor: "var(--border)" }}><div className="text-3xl mb-2">📚</div><p className="text-sm" style={{ color: "var(--muted)" }}>No courses yet. Create your first one!</p></div>;
+  return <div className="space-y-2">{courses.map(c=><div key={c.id} className="rounded-xl border bg-white p-4 flex items-center gap-3" style={{borderColor:"var(--border)"}}><div className="flex-1"><div className={`${heading} text-sm font-bold`} style={{color:"var(--ink)"}}>{c.title}</div><div className="text-[10px]" style={{color:"var(--muted)"}}>{c.status} · {c._count.modules} modules · {c._count.enrollments} enrolled</div></div><a href={`/courses/${c.slug}`} target="_blank" className="text-[10px] px-2 py-1 rounded-lg border no-underline" style={{borderColor:"var(--border)",color:"var(--muted)"}}>View ↗</a></div>)}</div>;
+}
 
 export default function InstitutionDashboardPage() {
   const { data: session, status } = useSession();
@@ -47,6 +57,7 @@ export default function InstitutionDashboardPage() {
       case "students": return <MyStudents students={students} onRefresh={fetchStudents} onNavigate={setActiveTab} />;
       case "add-student": return <AddStudent onRefresh={fetchStudents} />;
       case "companies": return <SearchCompanies />;
+      case "courses": return <div className="space-y-4"><div className="flex items-center justify-between"><div><h2 className={`${heading} font-bold text-xl`}>Your Courses</h2><p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Create and manage courses for your students</p></div><a href="/courses/create" className="btn-primary no-underline text-xs" style={{ padding: "0.5rem 1rem" }}>+ Create Course</a></div><InstitutionCourses /></div>;
       case "analytics": return <InstitutionAnalytics studentCount={students.length} />;
       case "settings": return <InstitutionSettings orgName={orgName} />;
       default: return <InstitutionOverview studentCount={students.length} orgName={orgName} onNavigate={setActiveTab} />;
