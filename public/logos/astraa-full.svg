@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900">
+  <rect width="1200" height="900" fill="#0C1A1A"/>
+
+  <!-- ============ TRIANGULAR A MARK ============ -->
+  <!-- Outer triangle with flared base + inner upward arrow (negative space) -->
+  <g transform="translate(600,140)">
+    <!-- Main triangular A shape, built as a single path:
+         Outline: top apex (clipped flat), down to flared base points, up into base notch, inner arrow cutout -->
+    <path fill="#0ABFBC" fill-rule="evenodd" d="
+      M 0,0
+      L 195,390
+      L 260,405
+      L 120,430
+      L 0,370
+      L -120,430
+      L -260,405
+      L -195,390
+      Z
+      M 0,120
+      L -95,330
+      L -55,330
+      L 0,235
+      L 55,330
+      L 95,330
+      Z
+    "/>
+  </g>
+
+  <!-- ============ WORDMARK: ASTRAA ============ -->
+  <!-- Custom geometric tech-style letters inspired by the ASTRA reference.
+       Each glyph lives on a 120x150 grid, baseline at y=150, drawn as filled paths. -->
+  <g transform="translate(230,660)" fill="#FFFFFF">
+
+    <!-- A -->
+    <g transform="translate(0,0)">
+      <path d="M 0,150 L 30,150 L 38,128 L 82,128 L 90,150 L 120,150 L 75,0 L 45,0 Z
+               M 48,98 L 72,98 L 60,58 Z" fill-rule="evenodd"/>
+    </g>
+
+    <!-- S -->
+    <g transform="translate(140,0)">
+      <path d="M 0,30 L 30,0 L 120,0 L 120,30 L 30,30 L 30,60 L 90,60 L 120,90 L 120,150 L 0,150 L 0,120 L 90,120 L 90,90 L 30,90 L 0,60 Z"/>
+    </g>
+
+    <!-- T -->
+    <g transform="translate(280,0)">
+      <path d="M 0,0 L 120,0 L 120,30 L 75,30 L 75,150 L 45,150 L 45,30 L 0,30 Z"/>
+    </g>
+
+    <!-- R -->
+    <g transform="translate(420,0)">
+      <path d="M 0,0 L 90,0 L 120,30 L 120,60 L 90,90 L 120,150 L 88,150 L 60,95 L 30,95 L 30,150 L 0,150 Z
+               M 30,30 L 30,65 L 80,65 L 90,55 L 90,40 L 80,30 Z" fill-rule="evenodd"/>
+    </g>
+
+  </g>
+
+  <!-- The distinctive "aa" — in teal -->
+  <g transform="translate(230,660)" fill="#0ABFBC">
+    <!-- first A of the double -->
+    <g transform="translate(560,0)">
+      <path d="M 0,150 L 30,150 L 38,128 L 82,128 L 90,150 L 120,150 L 75,0 L 45,0 Z
+               M 48,98 L 72,98 L 60,58 Z" fill-rule="evenodd"/>
+    </g>
+    <!-- second A -->
+    <g transform="translate(700,0)">
+      <path d="M 0,150 L 30,150 L 38,128 L 82,128 L 90,150 L 120,150 L 75,0 L 45,0 Z
+               M 48,98 L 72,98 L 60,58 Z" fill-rule="evenodd"/>
+    </g>
+  </g>
+
+  <!-- Tagline -->
+  <text x="600" y="860" text-anchor="middle"
+        font-family="'Inter', sans-serif" font-size="22" letter-spacing="8" fill="#9CA3AF">
+    INTELLIGENCE THAT GETS YOU HIRED
+  </text>
+</svg>

@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /hr-dashboard
+Disallow: /company-dashboard
+Disallow: /mentor-dashboard
+Disallow: /institution-dashboard
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /notifications
+Disallow: /profile/edit
+
+Sitemap: https://ashpranix.in/sitemap.xml

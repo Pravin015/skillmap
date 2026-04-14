@@ -1,0 +1,27 @@
+{
+  "name": "AstraaHire",
+  "short_name": "AstraaHire",
+  "description": "India's first job-readiness engine. Know what it takes to get hired at your dream company.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0C1A1A",
+  "theme_color": "#0C1A1A",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["education", "business", "productivity"],
+  "prefer_related_applications": false
+}
