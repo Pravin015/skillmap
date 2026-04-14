@@ -916,8 +916,9 @@ model Course {
   price           Int?     // paise
   videoUrl        String?  // YouTube/Vimeo embed
 
-  enrollmentCount Int      @default(0)
-  rating          Float    @default(0)
+  enrollmentCount    Int      @default(0)
+  rating             Float    @default(0)
+  sequentialUnlock   Boolean  @default(false) // modules must be completed in order
 
   modules         CourseModule[]
   enrollments     CourseEnrollment[]
@@ -941,6 +942,12 @@ model CourseModule {
   videoUrl  String?
   duration  String?  // "15 min"
   order     Int      @default(0)
+
+  // Quiz (optional per module)
+  hasQuiz       Boolean  @default(false)
+  quizQuestions String?  // JSON: [{question, options: [a,b,c,d], correctAnswer: 0}]
+  quizPassScore Int      @default(70) // percentage to pass
+
   createdAt DateTime @default(now())
 }
 

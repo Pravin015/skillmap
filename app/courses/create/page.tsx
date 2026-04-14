@@ -18,7 +18,8 @@ export default function CreateCoursePage() {
   const [pricing, setPricing] = useState("FREE");
   const [price, setPrice] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
-  const [modules, setModules] = useState([{ title: "", content: "", videoUrl: "", duration: "" }]);
+  const [sequentialUnlock, setSequentialUnlock] = useState(false);
+  const [modules, setModules] = useState([{ title: "", content: "", videoUrl: "", duration: "", hasQuiz: false, quizQuestions: "[]" }]);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -26,9 +27,9 @@ export default function CreateCoursePage() {
     return <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface)" }}><p style={{ color: "var(--muted)" }}>Only Admin and Institutions can create courses.</p></div>;
   }
 
-  function addModule() { setModules([...modules, { title: "", content: "", videoUrl: "", duration: "" }]); }
+  function addModule() { setModules([...modules, { title: "", content: "", videoUrl: "", duration: "", hasQuiz: false, quizQuestions: "[]" }]); }
   function removeModule(i: number) { setModules(modules.filter((_, idx) => idx !== i)); }
-  function updateModule(i: number, field: string, value: string) { const m = [...modules]; (m[i] as Record<string, string>)[field] = value; setModules(m); }
+  function updateModule(i: number, field: string, value: string | boolean) { const m = [...modules]; (m[i] as Record<string, string | boolean>)[field] = field === "hasQuiz" ? !!value : value; setModules(m); }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,7 +38,7 @@ export default function CreateCoursePage() {
 
     const res = await fetch("/api/courses", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, description, duration, difficulty, skills: skills.split(",").map((s) => s.trim()).filter(Boolean), category, pricing, price: pricing === "PAID" ? parseInt(price) * 100 : null, videoUrl, modules: modules.filter((m) => m.title.trim()) }),
+      body: JSON.stringify({ title, description, duration, difficulty, skills: skills.split(",").map((s) => s.trim()).filter(Boolean), category, pricing, price: pricing === "PAID" ? parseInt(price) * 100 : null, videoUrl, sequentialUnlock, modules: modules.filter((m) => m.title.trim()).map((m) => ({ ...m, hasQuiz: m.hasQuiz, quizQuestions: m.hasQuiz ? m.quizQuestions : null })) }),
     });
     const data = await res.json();
     if (res.ok) { router.push(`/courses/${data.course.slug}`); }
@@ -74,6 +75,10 @@ export default function CreateCoursePage() {
                 <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="pricing" checked={pricing === "PAID"} onChange={() => setPricing("PAID")} /> <span className="text-xs">Paid</span></label>
                 {pricing === "PAID" && <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Price in Rs." className="rounded-xl border px-3 py-1.5 text-sm w-32 outline-none" style={{ borderColor: "var(--border)" }} />}
               </div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={sequentialUnlock} onChange={(e) => setSequentialUnlock(e.target.checked)} className="accent-[var(--primary)] w-4 h-4" />
+                <span className="text-xs" style={{ color: "var(--ink)" }}>Sequential unlock — students must complete modules in order</span>
+              </label>
             </div>
           </div>
 
@@ -97,6 +102,16 @@ export default function CreateCoursePage() {
                       <input value={m.videoUrl} onChange={(e) => updateModule(i, "videoUrl", e.target.value)} placeholder="Video URL (optional)" className="rounded-lg border px-3 py-2 text-sm outline-none" style={{ borderColor: "var(--border)" }} />
                       <input value={m.duration} onChange={(e) => updateModule(i, "duration", e.target.value)} placeholder="Duration (e.g., 15 min)" className="rounded-lg border px-3 py-2 text-sm outline-none" style={{ borderColor: "var(--border)" }} />
                     </div>
+                    <label className="flex items-center gap-2 cursor-pointer mt-2">
+                      <input type="checkbox" checked={m.hasQuiz} onChange={(e) => updateModule(i, "hasQuiz", e.target.checked ? "true" : "")} className="accent-[var(--primary)] w-4 h-4" />
+                      <span className="text-xs" style={{ color: "var(--ink)" }}>Add quiz to this module</span>
+                    </label>
+                    {m.hasQuiz && (
+                      <div className="mt-2 rounded-lg p-3" style={{ background: "var(--surface-alt)", border: "1px solid var(--border)" }}>
+                        <p className="text-[10px] mb-2" style={{ color: "var(--muted)" }}>Quiz JSON format: [{`{"question":"...", "options":["A","B","C","D"], "correctAnswer":0}`}]</p>
+                        <textarea value={m.quizQuestions} onChange={(e) => updateModule(i, "quizQuestions", e.target.value)} rows={4} placeholder='[{"question":"What is Python?","options":["Language","Framework","Database","OS"],"correctAnswer":0}]' className="w-full rounded-lg border px-3 py-2 text-xs font-mono outline-none" style={{ borderColor: "var(--border)" }} />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

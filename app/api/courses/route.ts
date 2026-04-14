@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { title, description, coverImageUrl, duration, difficulty, skills, category, tags, pricing, price, videoUrl, modules } = body;
+  const { title, description, coverImageUrl, duration, difficulty, skills, category, tags, pricing, price, videoUrl, modules, sequentialUnlock } = body;
 
   if (!title || !description) return NextResponse.json({ error: "Title and description required" }, { status: 400 });
 
@@ -73,6 +73,7 @@ export async function POST(req: NextRequest) {
       videoUrl,
       createdById: userId,
       creatorRole: userRole,
+      sequentialUnlock: sequentialUnlock || false,
       status: userRole === "ADMIN" ? "PUBLISHED" : "PENDING_REVIEW",
       publishedAt: userRole === "ADMIN" ? new Date() : null,
     },
@@ -81,13 +82,15 @@ export async function POST(req: NextRequest) {
   // Create modules if provided
   if (modules && Array.isArray(modules) && modules.length > 0) {
     await prisma.courseModule.createMany({
-      data: modules.map((m: { title: string; content: string; videoUrl?: string; duration?: string }, i: number) => ({
+      data: modules.map((m: { title: string; content: string; videoUrl?: string; duration?: string; hasQuiz?: boolean; quizQuestions?: string }, i: number) => ({
         courseId: course.id,
         title: m.title,
         content: m.content || "",
         videoUrl: m.videoUrl || null,
         duration: m.duration || null,
         order: i + 1,
+        hasQuiz: m.hasQuiz || false,
+        quizQuestions: m.hasQuiz && m.quizQuestions ? m.quizQuestions : null,
       })),
     });
   }

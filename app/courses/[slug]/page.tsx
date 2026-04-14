@@ -4,8 +4,8 @@ import { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
 const heading = "font-[family-name:var(--font-heading)]";
 
-interface Module { id: string; title: string; content: string; videoUrl: string | null; duration: string | null; order: number }
-interface CourseData { id: string; slug: string; title: string; description: string; coverImageUrl: string | null; duration: string | null; difficulty: string; skills: string[]; category: string | null; pricing: string; price: number | null; videoUrl: string | null; enrollmentCount: number; createdBy: { name: string; organisation: string | null }; modules: Module[]; _count: { enrollments: number }; createdAt: string }
+interface Module { id: string; title: string; content: string; videoUrl: string | null; duration: string | null; order: number; hasQuiz: boolean; quizQuestions: string | null }
+interface CourseData { id: string; slug: string; title: string; description: string; coverImageUrl: string | null; duration: string | null; difficulty: string; skills: string[]; category: string | null; pricing: string; price: number | null; videoUrl: string | null; enrollmentCount: number; sequentialUnlock: boolean; createdBy: { name: string; organisation: string | null }; modules: Module[]; _count: { enrollments: number }; createdAt: string }
 interface Enrollment { id: string; progress: number; completedModules: string[] }
 interface Review { id: string; userName: string; rating: number; review: string | null; createdAt: string }
 interface Certificate { id: string; certificateId: string; issuedAt: string }
@@ -26,6 +26,9 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
   const [submittingReview, setSubmittingReview] = useState(false);
   const [certificate, setCertificate] = useState<Certificate | null>(null);
   const [generatingCert, setGeneratingCert] = useState(false);
+  const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
+  const [quizResult, setQuizResult] = useState<{ score: number; passed: boolean; correct: number; total: number } | null>(null);
+  const [submittingQuiz, setSubmittingQuiz] = useState(false);
 
   useEffect(() => {
     fetch(`/api/courses/${slug}`).then((r) => r.json()).then((d) => {
@@ -69,6 +72,19 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
     if (data.certificate) { setCertificate(data.certificate); setMsg("Certificate generated!"); }
     else setMsg(data.error || "Failed to generate certificate");
     setGeneratingCert(false); setTimeout(() => setMsg(""), 3000);
+  }
+
+  async function submitQuiz(moduleId: string) {
+    if (!course) return;
+    setSubmittingQuiz(true); setQuizResult(null);
+    const answers = Object.values(quizAnswers);
+    const res = await fetch(`/api/courses/${course.id}/quiz`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ moduleId, answers }) });
+    const data = await res.json();
+    setQuizResult(data);
+    if (data.passed && enrollment) {
+      setEnrollment({ ...enrollment, completedModules: [...enrollment.completedModules, moduleId], progress: Math.min(100, Math.round(((enrollment.completedModules.length + 1) / course.modules.length) * 100)) });
+    }
+    setSubmittingQuiz(false);
   }
 
   async function markComplete(moduleId: string) {
@@ -137,11 +153,14 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
               {course.modules.map((m, i) => {
                 const isComplete = enrollment?.completedModules.includes(m.id);
                 const isActive = activeModule === m.id;
+                const prevComplete = i === 0 || !course.sequentialUnlock || !enrollment || enrollment.completedModules.includes(course.modules[i - 1]?.id);
+                const isLocked = course.sequentialUnlock && enrollment && !prevComplete && !isComplete;
                 return (
-                  <button key={m.id} onClick={() => setActiveModule(m.id)} className="w-full text-left rounded-lg p-3 transition-all" style={{ background: isActive ? "rgba(10,191,188,0.08)" : "white", border: `1px solid ${isActive ? "var(--primary)" : "var(--border)"}` }}>
+                  <button key={m.id} onClick={() => { if (!isLocked) { setActiveModule(m.id); setQuizResult(null); setQuizAnswers({}); } }} disabled={!!isLocked} className="w-full text-left rounded-lg p-3 transition-all" style={{ background: isActive ? "rgba(10,191,188,0.08)" : "white", border: `1px solid ${isActive ? "var(--primary)" : "var(--border)"}`, opacity: isLocked ? 0.5 : 1 }}>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs shrink-0" style={{ color: isComplete ? "#10b981" : "var(--muted)" }}>{isComplete ? "✓" : `${i + 1}.`}</span>
+                      <span className="text-xs shrink-0" style={{ color: isComplete ? "#10b981" : isLocked ? "#8FA8A8" : "var(--muted)" }}>{isComplete ? "✓" : isLocked ? "🔒" : `${i + 1}.`}</span>
                       <span className="text-xs font-medium" style={{ color: isActive ? "var(--primary)" : "var(--ink)" }}>{m.title}</span>
+                      {m.hasQuiz && <span className="text-[9px] px-1.5 py-0.5 rounded-full" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>Quiz</span>}
                     </div>
                     {m.duration && <span className="text-[10px] ml-5" style={{ color: "var(--muted)" }}>{m.duration}</span>}
                   </button>
@@ -161,7 +180,40 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
                   </div>
                 )}
                 <div className="text-sm leading-relaxed" style={{ color: "var(--muted)" }} dangerouslySetInnerHTML={{ __html: (() => { try { const DOMPurify = require("isomorphic-dompurify"); return DOMPurify.sanitize(currentModule.content); } catch { return currentModule.content; } })() }} />
-                {enrollment && !enrollment.completedModules.includes(currentModule.id) && (
+                {/* Quiz Section */}
+                {enrollment && currentModule.hasQuiz && currentModule.quizQuestions && !enrollment.completedModules.includes(currentModule.id) && (
+                  <div className="mt-6 rounded-xl border p-5" style={{ borderColor: "var(--primary)", background: "rgba(10,191,188,0.03)" }}>
+                    <h4 className={`${heading} text-sm font-bold mb-3`} style={{ color: "var(--ink)" }}>📝 Module Quiz</h4>
+                    <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Pass this quiz to complete the module and unlock the next one.</p>
+                    {(() => { try { const qs = JSON.parse(currentModule.quizQuestions || "[]") as { question: string; options: string[] }[]; return (
+                      <div className="space-y-4">
+                        {qs.map((q, qi) => (
+                          <div key={qi}>
+                            <p className="text-sm font-medium mb-2" style={{ color: "var(--ink)" }}>{qi + 1}. {q.question}</p>
+                            <div className="space-y-1">
+                              {q.options.map((opt, oi) => (
+                                <label key={oi} className="flex items-center gap-2 rounded-lg p-2 cursor-pointer transition-all" style={{ background: quizAnswers[qi] === oi ? "rgba(10,191,188,0.08)" : "transparent", border: `1px solid ${quizAnswers[qi] === oi ? "var(--primary)" : "var(--border)"}` }}>
+                                  <input type="radio" name={`q${qi}`} checked={quizAnswers[qi] === oi} onChange={() => setQuizAnswers({ ...quizAnswers, [qi]: oi })} className="accent-[var(--primary)]" />
+                                  <span className="text-xs" style={{ color: "var(--ink)" }}>{opt}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                        <button onClick={() => submitQuiz(currentModule.id)} disabled={submittingQuiz || Object.keys(quizAnswers).length < qs.length} className="btn-primary disabled:opacity-50 text-xs" style={{ padding: "0.5rem 1.25rem" }}>{submittingQuiz ? "Submitting..." : "Submit Quiz"}</button>
+                      </div>
+                    ); } catch { return <p className="text-xs" style={{ color: "#ef4444" }}>Quiz data is invalid</p>; } })()}
+                    {quizResult && (
+                      <div className="mt-4 rounded-lg p-4" style={{ background: quizResult.passed ? "#10b98110" : "#ef444410", border: `1px solid ${quizResult.passed ? "#10b981" : "#ef4444"}30` }}>
+                        <p className={`${heading} text-sm font-bold`} style={{ color: quizResult.passed ? "#10b981" : "#ef4444" }}>{quizResult.passed ? "✓ Passed!" : "✗ Not Passed"}</p>
+                        <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Score: {quizResult.score}% ({quizResult.correct}/{quizResult.total} correct)</p>
+                        {!quizResult.passed && <p className="text-xs mt-1" style={{ color: "#ef4444" }}>You need {70}% to pass. Try again!</p>}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {/* Mark Complete (only if no quiz or quiz passed) */}
+                {enrollment && !enrollment.completedModules.includes(currentModule.id) && !currentModule.hasQuiz && (
                   <button onClick={() => markComplete(currentModule.id)} className="btn-primary mt-4" style={{ padding: "0.5rem 1.25rem", fontSize: "0.85rem" }}>Mark as Complete ✓</button>
                 )}
                 {enrollment?.completedModules.includes(currentModule.id) && (

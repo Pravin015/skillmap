@@ -9,16 +9,24 @@ const diffColors: Record<string, string> = { Beginner: "#10b981", Intermediate: 
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [allCourses, setAllCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [difficulty, setDifficulty] = useState("ALL");
   const [pricing, setPricing] = useState("ALL");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams();
     if (difficulty !== "ALL") params.set("difficulty", difficulty);
     if (pricing !== "ALL") params.set("pricing", pricing);
-    fetch(`/api/courses?${params}`).then((r) => r.json()).then((d) => { setCourses(d.courses || []); setLoading(false); });
+    fetch(`/api/courses?${params}`).then((r) => r.json()).then((d) => { setAllCourses(d.courses || []); setCourses(d.courses || []); setLoading(false); });
   }, [difficulty, pricing]);
+
+  useEffect(() => {
+    if (!search.trim()) { setCourses(allCourses); return; }
+    const q = search.toLowerCase();
+    setCourses(allCourses.filter((c) => c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q) || c.skills.some((s) => s.toLowerCase().includes(q)) || (c.category || "").toLowerCase().includes(q)));
+  }, [search, allCourses]);
 
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
@@ -27,7 +35,10 @@ export default function CoursesPage() {
         <div className="mx-auto max-w-6xl px-4 text-center">
           <div className="section-eyebrow justify-center">COURSES</div>
           <h1 className={`${heading} text-2xl md:text-4xl font-bold text-white mb-3`}>Learn What Companies Actually Want</h1>
-          <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "#6B8F8F" }}>Courses built by institutions and verified experts. Learn the exact skills that get you hired.</p>
+          <p className="text-sm md:text-base max-w-xl mx-auto mb-6" style={{ color: "#6B8F8F" }}>Courses built by institutions and verified experts. Learn the exact skills that get you hired.</p>
+          <div className="max-w-md mx-auto">
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search courses by title, skill, or category..." className="w-full rounded-xl px-5 py-3 text-sm outline-none bg-transparent" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "#fff" }} />
+          </div>
         </div>
       </section>
 
