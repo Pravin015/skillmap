@@ -7,6 +7,8 @@ const heading = "font-[family-name:var(--font-heading)]";
 interface Module { id: string; title: string; content: string; videoUrl: string | null; duration: string | null; order: number }
 interface CourseData { id: string; slug: string; title: string; description: string; coverImageUrl: string | null; duration: string | null; difficulty: string; skills: string[]; category: string | null; pricing: string; price: number | null; videoUrl: string | null; enrollmentCount: number; createdBy: { name: string; organisation: string | null }; modules: Module[]; _count: { enrollments: number }; createdAt: string }
 interface Enrollment { id: string; progress: number; completedModules: string[] }
+interface Review { id: string; userName: string; rating: number; review: string | null; createdAt: string }
+interface Certificate { id: string; certificateId: string; issuedAt: string }
 
 export default function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -17,9 +19,24 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
   const [enrolling, setEnrolling] = useState(false);
   const [activeModule, setActiveModule] = useState<string | null>(null);
   const [msg, setMsg] = useState("");
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [avgRating, setAvgRating] = useState(0);
+  const [myRating, setMyRating] = useState(0);
+  const [myReview, setMyReview] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [certificate, setCertificate] = useState<Certificate | null>(null);
+  const [generatingCert, setGeneratingCert] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/courses/${slug}`).then((r) => r.json()).then((d) => { setCourse(d.course); setEnrollment(d.enrollment); if (d.course?.modules?.[0]) setActiveModule(d.course.modules[0].id); setLoading(false); });
+    fetch(`/api/courses/${slug}`).then((r) => r.json()).then((d) => {
+      setCourse(d.course); setEnrollment(d.enrollment);
+      if (d.course?.modules?.[0]) setActiveModule(d.course.modules[0].id);
+      setLoading(false);
+      // Fetch reviews
+      if (d.course) fetch(`/api/courses/${d.course.id}/review`).then((r) => r.json()).then((rv) => { setReviews(rv.reviews || []); setAvgRating(rv.average || 0); });
+      // Fetch certificate
+      if (d.course) fetch(`/api/courses/${d.course.id}/certificate`).then((r) => r.json()).then((c) => { if (c.certificate) setCertificate(c.certificate); });
+    });
   }, [slug]);
 
   async function handleEnroll() {
@@ -32,6 +49,26 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
     else setMsg(data.error || "Enrollment failed");
     setEnrolling(false);
     setTimeout(() => setMsg(""), 3000);
+  }
+
+  async function submitReview() {
+    if (!course || !myRating) return;
+    setSubmittingReview(true);
+    const res = await fetch(`/api/courses/${course.id}/review`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ rating: myRating, review: myReview || null }) });
+    const data = await res.json();
+    if (res.ok) { setReviews((prev) => [data.review, ...prev]); setMsg("Review submitted!"); setMyRating(0); setMyReview(""); }
+    else setMsg(data.error || "Failed to submit review");
+    setSubmittingReview(false); setTimeout(() => setMsg(""), 3000);
+  }
+
+  async function generateCertificate() {
+    if (!course) return;
+    setGeneratingCert(true);
+    const res = await fetch(`/api/courses/${course.id}/certificate`, { method: "POST" });
+    const data = await res.json();
+    if (data.certificate) { setCertificate(data.certificate); setMsg("Certificate generated!"); }
+    else setMsg(data.error || "Failed to generate certificate");
+    setGeneratingCert(false); setTimeout(() => setMsg(""), 3000);
   }
 
   async function markComplete(moduleId: string) {
@@ -123,7 +160,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
                     <iframe src={currentModule.videoUrl} className="w-full h-full" allowFullScreen />
                   </div>
                 )}
-                <div className="text-sm leading-relaxed" style={{ color: "var(--muted)" }} dangerouslySetInnerHTML={{ __html: currentModule.content }} />
+                <div className="text-sm leading-relaxed" style={{ color: "var(--muted)" }} dangerouslySetInnerHTML={{ __html: (() => { try { const DOMPurify = require("isomorphic-dompurify"); return DOMPurify.sanitize(currentModule.content); } catch { return currentModule.content; } })() }} />
                 {enrollment && !enrollment.completedModules.includes(currentModule.id) && (
                   <button onClick={() => markComplete(currentModule.id)} className="btn-primary mt-4" style={{ padding: "0.5rem 1.25rem", fontSize: "0.85rem" }}>Mark as Complete ✓</button>
                 )}
@@ -140,12 +177,77 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
         {/* Skills */}
         {course.skills.length > 0 && (
           <div className="mt-8">
-            <h3 className={`${heading} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>Skills You'll Learn</h3>
+            <h3 className={`${heading} text-sm font-bold mb-2`} style={{ color: "var(--ink)" }}>Skills You&apos;ll Learn</h3>
             <div className="flex flex-wrap gap-2">
               {course.skills.map((s) => <span key={s} className="rounded-full px-3 py-1 text-xs" style={{ background: "var(--surface-alt)", border: "1px solid var(--border)", color: "var(--ink)" }}>{s}</span>)}
             </div>
           </div>
         )}
+
+        {/* Certificate */}
+        {enrollment && enrollment.progress >= 100 && (
+          <div className="mt-8 rounded-xl border p-5" style={{ borderColor: "var(--primary)", background: "rgba(10,191,188,0.03)" }}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className={`${heading} text-sm font-bold`} style={{ color: "var(--ink)" }}>🏆 Course Completed!</h3>
+                {certificate ? (
+                  <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>
+                    Certificate ID: <span className="font-mono text-[var(--primary)]">{certificate.certificateId}</span>
+                    <span className="mx-2">·</span>
+                    <a href={`/verify/${certificate.certificateId}`} target="_blank" className="no-underline" style={{ color: "var(--primary)" }}>Verify ↗</a>
+                  </div>
+                ) : (
+                  <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Get your certificate of completion</p>
+                )}
+              </div>
+              {!certificate ? (
+                <button onClick={generateCertificate} disabled={generatingCert} className="btn-primary text-xs" style={{ padding: "0.5rem 1rem" }}>{generatingCert ? "Generating..." : "Get Certificate"}</button>
+              ) : (
+                <a href={`/verify/${certificate.certificateId}`} target="_blank" className="btn-primary no-underline text-xs" style={{ padding: "0.5rem 1rem" }}>View Certificate</a>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Reviews */}
+        <div className="mt-8">
+          <div className="flex items-center gap-3 mb-4">
+            <h3 className={`${heading} text-sm font-bold`} style={{ color: "var(--ink)" }}>Reviews</h3>
+            {avgRating > 0 && <span className="text-xs font-bold" style={{ color: "#F59E0B" }}>★ {avgRating} ({reviews.length})</span>}
+          </div>
+
+          {/* Write review (if enrolled) */}
+          {enrollment && !reviews.some((r) => r.userName === session?.user?.name) && (
+            <div className="rounded-xl border bg-white p-4 mb-4" style={{ borderColor: "var(--border)" }}>
+              <p className="text-xs font-medium mb-2" style={{ color: "var(--ink)" }}>Rate this course</p>
+              <div className="flex gap-1 mb-3">
+                {[1,2,3,4,5].map((star) => (
+                  <button key={star} onClick={() => setMyRating(star)} className="text-xl transition-transform hover:scale-110" style={{ color: star <= myRating ? "#F59E0B" : "#D4E8E8" }}>★</button>
+                ))}
+              </div>
+              <textarea value={myReview} onChange={(e) => setMyReview(e.target.value)} placeholder="Write your review (optional)..." rows={2} className="w-full rounded-lg border px-3 py-2 text-sm outline-none mb-2" style={{ borderColor: "var(--border)" }} />
+              <button onClick={submitReview} disabled={!myRating || submittingReview} className="btn-primary text-xs disabled:opacity-50" style={{ padding: "0.4rem 1rem" }}>{submittingReview ? "Submitting..." : "Submit Review"}</button>
+            </div>
+          )}
+
+          {/* Review list */}
+          {reviews.length === 0 ? (
+            <p className="text-sm" style={{ color: "var(--muted)" }}>No reviews yet. Be the first!</p>
+          ) : (
+            <div className="space-y-3">
+              {reviews.map((r) => (
+                <div key={r.id} className="rounded-xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium" style={{ color: "var(--ink)" }}>{r.userName}</span>
+                    <span className="text-xs" style={{ color: "#F59E0B" }}>{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>
+                  </div>
+                  {r.review && <p className="text-xs" style={{ color: "var(--muted)" }}>{r.review}</p>}
+                  <span className="text-[10px]" style={{ color: "var(--muted)" }}>{new Date(r.createdAt).toLocaleDateString()}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -921,6 +921,8 @@ model Course {
 
   modules         CourseModule[]
   enrollments     CourseEnrollment[]
+  reviews         CourseReview[]
+  certificates    CourseCertificate[]
 
   publishedAt     DateTime?
   createdAt       DateTime @default(now())
@@ -954,4 +956,31 @@ model CourseEnrollment {
   lastAccessedAt   DateTime @default(now())
 
   @@unique([userId, courseId])
+}
+
+model CourseReview {
+  id        String   @id @default(cuid())
+  courseId   String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId    String
+  userName  String
+  rating    Int      // 1-5
+  review    String?
+  createdAt DateTime @default(now())
+
+  @@unique([courseId, userId])
+  @@index([courseId])
+}
+
+model CourseCertificate {
+  id          String   @id @default(cuid())
+  courseId     String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId      String
+  userName    String
+  courseTitle  String
+  issuedAt    DateTime @default(now())
+  certificateId String @unique // CERT-XXXXX for verification
+
+  @@unique([courseId, userId])
 }
