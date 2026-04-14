@@ -124,11 +124,9 @@ export default function Header() {
             <div key={group.label} className="relative">
               <button
                 onClick={() => setOpenDropdown(openDropdown === group.label ? null : group.label)}
-                className={`flex items-center gap-1 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
-                  openDropdown === group.label ? "" : ""
-                }`}
+                className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
                 style={{
-                  color: openDropdown === group.label ? "var(--primary)" : "rgba(255,255,255,0.6)",
+                  color: openDropdown === group.label ? "#0ABFBC" : "rgba(255,255,255,0.85)",
                   background: openDropdown === group.label ? "rgba(10,191,188,0.1)" : "transparent",
                 }}
               >
@@ -138,12 +136,12 @@ export default function Header() {
                 </svg>
               </button>
               {openDropdown === group.label && (
-                <div className="nav-dropdown">
+                <div className="nav-dropdown" style={{ background: "#0D2020", border: "1px solid rgba(10,191,188,0.15)", boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }}>
                   {group.items.map((item) => (
                     <Link key={item.href} href={item.href} onClick={() => setOpenDropdown(null)}>
                       <div>
-                        <div className="font-medium" style={{ color: pathname.startsWith(item.href) ? "var(--primary)" : "var(--ink)" }}>{item.label}</div>
-                        {item.desc && <div className="text-[11px]" style={{ color: "var(--muted)" }}>{item.desc}</div>}
+                        <div className="font-semibold text-sm" style={{ color: pathname.startsWith(item.href) ? "#0ABFBC" : "#fff" }}>{item.label}</div>
+                        {item.desc && <div className="text-[11px] mt-0.5" style={{ color: "#6B8F8F" }}>{item.desc}</div>}
                       </div>
                     </Link>
                   ))}
@@ -157,9 +155,9 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-lg px-3 py-2 text-[13px] font-medium transition-colors no-underline"
+              className="rounded-lg px-3 py-2 text-sm font-medium transition-colors no-underline"
               style={{
-                color: pathname.startsWith(link.href) ? "var(--primary)" : "rgba(255,255,255,0.6)",
+                color: pathname.startsWith(link.href) ? "#0ABFBC" : "rgba(255,255,255,0.85)",
                 background: pathname.startsWith(link.href) ? "rgba(10,191,188,0.1)" : "transparent",
               }}
             >
