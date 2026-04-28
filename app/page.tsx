@@ -120,25 +120,25 @@ const studentSteps = [
   { n: "01", title: "Tell us your dream company", body: "Type \"TCS Cybersecurity\" or \"Razorpay SDE-1\" — we already know what they hire for." },
   { n: "02", title: "Get a personalised roadmap", body: "Week-by-week prep plan. The exact skills, certs, and projects this company looks at." },
   { n: "03", title: "Practice + verify", body: "AI mock interviews graded against the real bar. Proctored skill labs. Verified offer letters." },
-  { n: "04", title: "Land the offer", body: "Apply with a profile recruiters can trust. We've placed 12,000+ students with this same playbook." },
+  { n: "04", title: "Land the offer", body: "Apply with a profile recruiters can trust. The same playbook our beta cohort is using right now." },
 ];
 
 const audiences = [
   {
     eyebrow: "For students",
     title: "Stop guessing. Start hiring-ready.",
-    body: "Personalised AI roadmaps, mock interviews for 15+ companies, mentor sessions, and offer verification — everything to go from \"applying everywhere\" to \"chose between 3 offers\".",
+    body: "Personalised AI roadmaps, mock interviews for 15+ companies, mentor sessions, and offer verification — everything you need from \"applying everywhere\" to \"choosing between offers\".",
     cta: { label: "Get started — free", href: "/auth/signup" },
     accent: "linear-gradient(135deg, #DDD6FE 0%, #FBCFE8 100%)",
-    stats: [{ k: "12k+", v: "Placed" }, { k: "₹0", v: "Free tier" }],
+    stats: [{ k: "₹0", v: "Free tier" }, { k: "15+", v: "Companies tracked" }],
   },
   {
     eyebrow: "For mentors",
     title: "Earn ₹16k+/mo. On your schedule.",
-    body: "If you've shipped real work at a real company, students will pay to learn from you. We handle scheduling, payments, and screening — you focus on the session.",
+    body: "If you've shipped real work at a real company, students will pay to learn from you. We handle scheduling, payments, and screening — you focus on the session. Apply now to be one of our launch mentors.",
     cta: { label: "Apply to mentor", href: "/for-mentors" },
     accent: "linear-gradient(135deg, #FED7AA 0%, #FBCFE8 100%)",
-    stats: [{ k: "₹1,200", v: "Avg / session" }, { k: "200+", v: "Active mentors" }],
+    stats: [{ k: "₹500–2k", v: "Per session" }, { k: "85%", v: "Take-home rate" }],
   },
   {
     eyebrow: "For colleges & institutions",
@@ -146,7 +146,7 @@ const audiences = [
     body: "Bulk-onboard your batch. Run NIRF-grade proctored exams. Track placement % live. Get pre-vetted students in front of verified employers — without an IT migration.",
     cta: { label: "Partner with us", href: "/for-institutions" },
     accent: "linear-gradient(135deg, #BBF7D0 0%, #DDD6FE 100%)",
-    stats: [{ k: "+38%", v: "Placement uplift" }, { k: "−65%", v: "Coordinator hours" }],
+    stats: [{ k: "Free", v: "To partner" }, { k: "NIRF", v: "Audit-ready" }],
   },
   {
     eyebrow: "For companies",
@@ -154,20 +154,23 @@ const audiences = [
     body: "AI candidate matching, proctored assessments, and hackathon hiring. Cut screening time from 8 days to 2. Free to register — pay only for premium.",
     cta: { label: "Hire with us", href: "/for-companies" },
     accent: "linear-gradient(135deg, #FBCFE8 0%, #FED7AA 100%)",
-    stats: [{ k: "8 → 2", v: "Days to shortlist" }, { k: "89%", v: "Offer acceptance" }],
+    stats: [{ k: "Free", v: "To register" }, { k: "Proctored", v: "Assessments" }],
   },
 ];
 
+// Illustrative product targets, not measured outcomes.
+// Will be replaced with audited cohort data once we publish quarterly results.
 const outcomes = [
-  { tier: "Tier-1 colleges (IITs, NITs, BITS)", placed: "94%", topCo: "Google · Razorpay · Microsoft", note: "Average package ₹18 LPA" },
-  { tier: "Tier-2 colleges (state engineering)", placed: "76%", topCo: "TCS · Infosys · Wipro · KPMG", note: "Average package ₹6 LPA" },
-  { tier: "Tier-3 colleges (private + regional)", placed: "61%", topCo: "TCS · Cognizant · Capgemini", note: "47 placed at FAANG-tier in 2025" },
+  { tier: "Tier-1 colleges (IITs, NITs, BITS)", placed: "94%", topCo: "Top product companies", note: "Target placement rate" },
+  { tier: "Tier-2 colleges (state engineering)", placed: "76%", topCo: "Mid-tier IT services + startups", note: "Target placement rate" },
+  { tier: "Tier-3 colleges (private + regional)", placed: "61%", topCo: "IT services + regional employers", note: "Target placement rate" },
 ];
 
+// Composite mentor profiles (illustrative). Real mentors visible on /mentors after launch.
 const mentors = [
-  { name: "Vikram Saini", role: "Senior SDE", company: "Razorpay", topics: "System design, Go, distributed systems", img: "linear-gradient(135deg, #C084FC, #F0ABFC)" },
-  { name: "Priya Anand", role: "Engineering Manager", company: "Microsoft", topics: "Career planning, scaling teams, leadership", img: "linear-gradient(135deg, #93C5FD, #C4B5FD)" },
-  { name: "Rahul Khanna", role: "Cybersecurity Lead", company: "Deloitte India", topics: "OSCP prep, SOC analyst tracks, ISO 27001", img: "linear-gradient(135deg, #FDA4AF, #FCD34D)" },
+  { name: "Senior SDE", role: "Backend & systems", company: "Top fintech (Series C)", topics: "System design, Go, distributed systems", img: "linear-gradient(135deg, #C084FC, #F0ABFC)" },
+  { name: "Engineering Manager", role: "Scaling teams", company: "Big-4 product company", topics: "Career planning, scaling teams, leadership", img: "linear-gradient(135deg, #93C5FD, #C4B5FD)" },
+  { name: "Cybersecurity Lead", role: "Offensive security", company: "Big-4 consulting", topics: "OSCP prep, SOC analyst tracks, ISO 27001", img: "linear-gradient(135deg, #FDA4AF, #FCD34D)" },
 ];
 
 const compareRows = [
@@ -186,20 +189,24 @@ const pricingPlans = [
   { name: "Institutional", price: "Custom", period: "", desc: "Bulk plans for colleges, universities, and corporate L&D.", features: ["Everything in Career-Ready", "Bulk student onboarding", "Placement analytics dashboard", "Priority support", "Custom integrations"], cta: "Talk to sales", featured: false },
 ];
 
+// Slots reserved for partner colleges. Real names appear once partnerships are signed.
 const partnerColleges = [
-  "IIT Delhi", "NIT Trichy", "VIT", "Manipal", "Anna University", "BITS Pilani",
-  "Christ University", "Symbiosis", "Amity", "Lovely Professional",
+  "Your college", "Premier engineering college", "Tier-1 university",
+  "State technical university", "Private engineering college", "Deemed university",
+  "Tier-2 institute", "Management institute", "Polytechnic", "+ 14 more",
 ];
 
+// Companies our students commonly target / apply to.
+// Logos appear here when we secure direct partnerships.
 const trustedCompanies = ["TCS", "Infosys", "Wipro", "Razorpay", "KPMG", "Deloitte", "Accenture", "Flipkart", "PhonePe", "Zomato"];
 
 const faqs = [
   { q: "Is there really a free tier?", a: "Yes — forever. Browse all jobs, take 1 mock interview/month, use the basic AI advisor. No credit card. No \"free for 14 days then auto-charge\" trickery." },
   { q: "How is this different from Naukri or LinkedIn?", a: "Naukri shows you jobs. LinkedIn shows you connections. We tell you exactly what each company hires for, give you a roadmap to close the gap, and prepare you with mock interviews graded by AI. Different product, different outcome." },
-  { q: "Do mentor sessions actually help?", a: "Look at our outcomes section above. Students who book ≥2 mentor sessions land offers 3.1× faster than those who don't. Our mentors are verified — they work at the companies you're applying to." },
+  { q: "Do mentor sessions actually help?", a: "Our mentors are verified — they work at the companies you're applying to, not life-coach influencers. The product is designed so mentor time is targeted at the gap our AI flags in your roadmap, not generic chat." },
   { q: "What happens if I get a fake offer letter?", a: "Upload it to our offer verifier. We check 20 fraud parameters in 30 seconds. If it's a scam, we flag it. If it's real, you get a trust score you can share with your family." },
   { q: "Can I cancel anytime?", a: "Yes. No lock-in, no \"3-month minimum\" nonsense. Cancel from your settings page — refund processed in 7 working days under our refund policy." },
-  { q: "What if I'm from a tier-3 college?", a: "47 of our 2025 placements at FAANG-tier companies came from tier-3 institutions. We don't filter by college name. We measure skills." },
+  { q: "What if I'm from a tier-3 college?", a: "We don't filter by college name. The skill-match algorithm scores you on demonstrated skills, not your alma mater. Tier-3 students are a deliberate focus of our beta." },
 ];
 
 export default function HomePage() {
@@ -250,7 +257,7 @@ export default function HomePage() {
               <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "var(--success)" }} />
             </span>
             <span style={{ color: "var(--muted)" }}>
-              <strong style={{ color: "var(--ink)" }}>1,247 students</strong> prepared today · <strong style={{ color: "var(--ink)" }}>89 offers</strong> verified this week
+              Now in <strong style={{ color: "var(--ink)" }}>private beta</strong> · early access spots available
             </span>
           </div>
         </div>
@@ -260,7 +267,7 @@ export default function HomePage() {
       <section className="px-4 pb-12">
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>
-            Students placed at companies hiring through AstraaHire
+            Companies our students commonly target
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 opacity-60">
             {trustedCompanies.map((c) => (
@@ -338,10 +345,10 @@ export default function HomePage() {
       <section className="px-4 py-10">
         <div className="max-w-5xl mx-auto rounded-3xl p-8 md:p-12 text-center" style={{ background: "linear-gradient(135deg, #EDE9FE 0%, #FBCFE8 60%, #FED7AA 100%)" }}>
           <h2 className="font-semibold text-2xl md:text-3xl mb-3" style={{ color: "var(--ink)" }}>
-            Average student lands their first offer in 12 weeks.
+            Goal: first offer in under 12 weeks.
           </h2>
           <p className="text-sm md:text-base max-w-xl mx-auto mb-6" style={{ color: "var(--ink-soft)" }}>
-            That&apos;s with our free tier. Premium users average 7 weeks.
+            Free tier alone is enough to start. Premium users get the full prep stack.
           </p>
           <Link href="/auth/signup" className="btn-primary">Start your roadmap</Link>
         </div>
@@ -351,12 +358,13 @@ export default function HomePage() {
       <section className="px-4 py-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <div className="section-eyebrow mx-auto">Outcomes</div>
+            <div className="section-eyebrow mx-auto">Targets</div>
             <h2 className="font-semibold text-3xl md:text-4xl" style={{ color: "var(--ink)" }}>
               We don&apos;t filter by college name. We measure skills.
             </h2>
             <p className="text-sm md:text-base max-w-xl mx-auto mt-3" style={{ color: "var(--muted)" }}>
-              Real placement numbers from the 2025 batch — across every tier.
+              Our target placement rates by tier — what we&apos;re building toward.
+              First audited cohort report publishes Q3 2026.
             </p>
           </div>
 
@@ -567,7 +575,7 @@ export default function HomePage() {
             Stop wasting two years figuring this out alone.
           </h2>
           <p className="text-sm md:text-base max-w-md mx-auto mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
-            12,000+ students built their roadmap on AstraaHire. The free tier is enough to land your first offer.
+            Sign up for free, build your personalised roadmap, and join the launch cohort. No credit card. No commitment.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -577,6 +585,17 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
+      </section>
+
+      {/* ═══════════════ DISCLOSURE FOOTNOTE ═══════════════ */}
+      <section className="px-4 pb-16">
+        <p className="max-w-3xl mx-auto text-center text-[11px] leading-relaxed" style={{ color: "var(--muted)" }}>
+          AstraaHire is currently in private beta. Numbers shown on this page (placement rates by tier,
+          target outcomes, mentor profiles, partner colleges) are illustrative product targets that
+          will be replaced with audited cohort data once we publish our first quarterly outcomes report.
+          Company logos shown indicate target employers our students apply to, not direct partnerships
+          unless explicitly stated.
+        </p>
       </section>
     </div>
   );
