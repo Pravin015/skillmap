@@ -44,7 +44,8 @@ export default function MentorOnboardingForm() {
 
   return (
     <FormWrapper
-      title="Become a Mentor"
+      eyebrow="For mentors"
+      title="Become a mentor"
       subtitle="Help fresh graduates land their dream jobs. Share your industry experience and guide the next generation."
       submitted={submitted}
       successMessage="Thank you for signing up as a mentor! We'll verify your profile and reach out within 48 hours."
@@ -155,7 +156,7 @@ export default function MentorOnboardingForm() {
           <textarea placeholder="Tell us your motivation..." rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} />
         </div>
 
-        <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Application</button>
+        <button type="submit" className="btn-primary">Submit application</button>
       </form>
     </FormWrapper>
   );

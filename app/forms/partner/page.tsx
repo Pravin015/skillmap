@@ -13,7 +13,8 @@ export default function PartnerForm() {
 
   return (
     <FormWrapper
-      title="Partner With Us"
+      eyebrow="Partnerships"
+      title="Partner with us"
       subtitle="Join AstraaHire's ecosystem — whether you're a college, bootcamp, training provider, or technology partner."
       submitted={submitted}
       successMessage="Thank you for your interest in partnering with AstraaHire. Our partnerships team will contact you within 48 hours."
@@ -77,7 +78,7 @@ export default function PartnerForm() {
           <label className={labelClass}>What do you hope to achieve through this partnership? *</label>
           <textarea required placeholder="Describe your goals and how you'd like to collaborate with AstraaHire..." rows={4} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} />
         </div>
-        <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Partnership Request</button>
+        <button type="submit" className="btn-primary">Submit partnership request</button>
       </form>
     </FormWrapper>
   );

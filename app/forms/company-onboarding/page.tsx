@@ -36,7 +36,8 @@ export default function CompanyOnboardingForm() {
 
   return (
     <FormWrapper
-      title="Company Onboarding"
+      eyebrow="For companies"
+      title="Company onboarding"
       subtitle="Register your organisation on AstraaHire to post jobs, host hackathons, and access pre-assessed talent."
       submitted={submitted}
       successMessage="Your company registration is under review. We will verify your organisation through the official email domain and activate your account within 2-3 business days. You'll receive a confirmation email once verified."
@@ -174,7 +175,7 @@ export default function CompanyOnboardingForm() {
           <span style={{ color: "var(--muted)" }}>I confirm that I am authorised to register this company on AstraaHire and that the information provided is accurate. I understand the account will be activated only after verification.</span>
         </label>
 
-        <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit for Verification</button>
+        <button type="submit" className="btn-primary">Submit for verification</button>
       </form>
     </FormWrapper>
   );

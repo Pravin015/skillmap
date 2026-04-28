@@ -17,7 +17,7 @@ export default function InstitutionOnboardingForm() {
   async function handleSubmit(e: React.FormEvent) { e.preventDefault(); const err = getOfficialEmailError(email); if (err) { setEmailError(err); return; } const form = e.target as HTMLFormElement; const d = new FormData(form); const r = await submitForm("INSTITUTION_ONBOARDING", { ...Object.fromEntries(d), email }); if (r.success) setSubmitted(true); }
 
   return (
-    <FormWrapper title="Institution Onboarding" subtitle="Register your college, university, or training institute on AstraaHire. No public signup — our team will verify and activate your account." submitted={submitted} successMessage="Your institution registration is under review. We will verify through your official email domain and activate your account within 2-3 business days. You'll receive a confirmation email once approved.">
+    <FormWrapper eyebrow="For institutions" title="Institution onboarding" subtitle="Register your college, university, or training institute on AstraaHire. No public signup — our team will verify and activate your account." submitted={submitted} successMessage="Your institution registration is under review. We will verify through your official email domain and activate your account within 2-3 business days. You'll receive a confirmation email once approved.">
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(139,92,246,0.05)", borderColor: "rgba(139,92,246,0.2)" }}>
           <strong className={`${heading} text-[#7C3AED]`}>Manual Onboarding</strong>
@@ -50,7 +50,7 @@ export default function InstitutionOnboardingForm() {
         </div>
         <div><label className={labelClass}>What do you expect from AstraaHire?</label><textarea placeholder="How can we help improve your placement outcomes?" rows={3} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} /></div>
         <label className="flex items-start gap-2 text-sm cursor-pointer"><input type="checkbox" required className="mt-1 accent-[var(--ink)]" /><span style={{ color: "var(--muted)" }}>I confirm I am authorised to register this institution and the information provided is accurate. I understand the account will be activated only after verification.</span></label>
-        <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit for Review</button>
+        <button type="submit" className="btn-primary">Submit for review</button>
       </form>
     </FormWrapper>
   );

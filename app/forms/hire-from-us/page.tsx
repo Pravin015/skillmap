@@ -13,7 +13,8 @@ export default function HireFromUsForm() {
 
   return (
     <FormWrapper
-      title="Hire From Us"
+      eyebrow="For companies"
+      title="Hire from us"
       subtitle="Access AstraaHire's pool of pre-assessed, job-ready graduates matched to your requirements."
       submitted={submitted}
       successMessage="Thank you! Our hiring solutions team will reach out within 24 hours to discuss your requirements."
@@ -83,7 +84,7 @@ export default function HireFromUsForm() {
           <label className={labelClass}>Additional Requirements</label>
           <textarea placeholder="Any specific skills, certifications, or other requirements..." rows={4} className={`${inputClass} resize-none`} style={{ borderColor: "var(--border)" }} />
         </div>
-        <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Hiring Request</button>
+        <button type="submit" className="btn-primary">Submit hiring request</button>
       </form>
     </FormWrapper>
   );

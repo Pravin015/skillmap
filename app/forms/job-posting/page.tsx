@@ -14,7 +14,8 @@ export default function JobPostingForm() {
 
   return (
     <FormWrapper
-      title="Post a Job Opening"
+      eyebrow="Hiring"
+      title="Post a job opening"
       subtitle="Fill in the details below to list your job opening on AstraaHire and reach thousands of qualified graduates."
       submitted={submitted}
       successMessage="Your job posting has been received. Our team will review and publish it within 24 hours."
@@ -100,7 +101,7 @@ export default function JobPostingForm() {
           <label className={labelClass}>Application Deadline</label>
           <input type="date" className={inputClass} style={{ borderColor: "var(--border)" }} />
         </div>
-        <button type="submit" className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Submit Job Posting</button>
+        <button type="submit" className="btn-primary">Submit job posting</button>
       </form>
     </FormWrapper>
   );

@@ -128,7 +128,13 @@
       "Bash(set PYTHONIOENCODING=utf-8)",
       "Bash(python -X utf8 generate_data.py)",
       "Bash(npx tsc *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(sed -i 's|title=\"Contact Us\"|eyebrow=\"Contact\"\\\\n      title=\"Contact us\"|' app/forms/contact/page.tsx)",
+      "Bash(sed -i 's|title=\"Partner With Us\"|eyebrow=\"Partnerships\"\\\\n      title=\"Partner with us\"|' app/forms/partner/page.tsx)",
+      "Bash(sed -i 's|title=\"Become a Mentor\"|eyebrow=\"For mentors\"\\\\n      title=\"Become a mentor\"|' app/forms/mentor-onboarding/page.tsx)",
+      "Bash(sed -i 's|title=\"Hire From Us\"|eyebrow=\"For companies\"\\\\n      title=\"Hire from us\"|' app/forms/hire-from-us/page.tsx)",
+      "Bash(sed -i 's|title=\"Post a Job Opening\"|eyebrow=\"Hiring\"\\\\n      title=\"Post a job opening\"|' app/forms/job-posting/page.tsx)",
+      "Bash(git commit -m 'Phase A: Forms cleanup — restyled FormWrapper + 7 form pages *)"
     ]
   }
 }
