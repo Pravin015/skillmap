@@ -7,6 +7,115 @@
 import Link from "next/link";
 import { useState } from "react";
 
+// ───────── Mini-mockup widgets that sit in the audience-card headers ─────────
+
+function StudentMock() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-lg p-3 w-full max-w-[260px] border" style={{ borderColor: "rgba(0,0,0,0.04)" }}>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[9px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>Skill match</p>
+          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>+12%</span>
+        </div>
+        <p className="text-2xl font-semibold mb-2" style={{ color: "var(--ink)" }}>78%</p>
+        <div className="h-1.5 rounded-full overflow-hidden mb-3" style={{ background: "#E8E2D6" }}>
+          <div className="h-full rounded-full" style={{ width: "78%", background: "linear-gradient(90deg, #7C3AED, #A78BFA)" }} />
+        </div>
+        <div className="flex flex-wrap gap-1">
+          {["Python", "SQL", "Spark"].map((s) => (
+            <span key={s} className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: "#F3EFE8", color: "var(--ink-soft)" }}>{s}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MentorMock() {
+  const bars = [55, 80, 65, 90, 75, 95];
+  return (
+    <div className="absolute inset-0 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-lg p-3 w-full max-w-[260px] border" style={{ borderColor: "rgba(0,0,0,0.04)" }}>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[9px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>This month</p>
+          <span className="text-[9px] font-bold" style={{ color: "var(--success)" }}>+24%</span>
+        </div>
+        <p className="text-xl font-semibold mb-3" style={{ color: "var(--ink)" }}>₹16,320</p>
+        <div className="flex items-end gap-1 h-10 mb-2">
+          {bars.map((h, i) => (
+            <div key={i} className="flex-1 rounded-t" style={{ height: `${h}%`, background: i === bars.length - 1 ? "var(--primary)" : "#DDD6FE" }} />
+          ))}
+        </div>
+        <p className="text-[9px]" style={{ color: "var(--muted)" }}>12 sessions completed</p>
+      </div>
+    </div>
+  );
+}
+
+function CollegeMock() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-lg p-3 w-full max-w-[260px] border" style={{ borderColor: "rgba(0,0,0,0.04)" }}>
+        <p className="text-[9px] font-semibold uppercase tracking-wide mb-2" style={{ color: "var(--muted)" }}>Batch 2025 — placement</p>
+        <div className="space-y-1.5">
+          {[
+            { dept: "CSE", pct: 94 },
+            { dept: "ECE", pct: 81 },
+            { dept: "Mech", pct: 67 },
+          ].map((d) => (
+            <div key={d.dept} className="flex items-center gap-2">
+              <span className="text-[9px] w-8 font-medium" style={{ color: "var(--ink-soft)" }}>{d.dept}</span>
+              <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "#E8E2D6" }}>
+                <div className="h-full rounded-full" style={{ width: `${d.pct}%`, background: "var(--primary)" }} />
+              </div>
+              <span className="text-[9px] font-semibold w-8 text-right" style={{ color: "var(--ink)" }}>{d.pct}%</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 pt-2 border-t flex items-center justify-between" style={{ borderColor: "#F3EFE8" }}>
+          <span className="text-[9px]" style={{ color: "var(--muted)" }}>Total placed</span>
+          <span className="text-[9px] font-bold" style={{ color: "var(--primary)" }}>184 / 220</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CompanyMock() {
+  const candidates = [
+    { name: "Priya S.", match: 94, color: "#10B981" },
+    { name: "Rahul K.", match: 87, color: "#7C3AED" },
+    { name: "Sneha J.", match: 76, color: "#F59E0B" },
+  ];
+  return (
+    <div className="absolute inset-0 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-lg p-3 w-full max-w-[260px] border" style={{ borderColor: "rgba(0,0,0,0.04)" }}>
+        <p className="text-[9px] font-semibold uppercase tracking-wide mb-2" style={{ color: "var(--muted)" }}>Top matches · SDE-1</p>
+        <div className="space-y-1.5">
+          {candidates.map((c) => (
+            <div key={c.name} className="flex items-center gap-2 p-1.5 rounded-lg" style={{ background: "#FAF7F2" }}>
+              <span className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold text-white" style={{ background: c.color }}>{c.name[0]}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-semibold truncate" style={{ color: "var(--ink)" }}>{c.name}</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="text-[9px] font-bold" style={{ color: c.color }}>{c.match}%</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const mockMap: Record<string, () => React.JSX.Element> = {
+  "For students": StudentMock,
+  "For mentors": MentorMock,
+  "For colleges & institutions": CollegeMock,
+  "For companies": CompanyMock,
+};
+
 const studentSteps = [
   { n: "01", title: "Tell us your dream company", body: "Type \"TCS Cybersecurity\" or \"Razorpay SDE-1\" — we already know what they hire for." },
   { n: "02", title: "Get a personalised roadmap", body: "Week-by-week prep plan. The exact skills, certs, and projects this company looks at." },
@@ -197,10 +306,12 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {audiences.map((a) => (
+            {audiences.map((a) => {
+              const Mock = mockMap[a.eyebrow];
+              return (
               <div key={a.eyebrow} className="card flex flex-col">
-                <div className="rounded-2xl mb-5 h-32 flex items-center justify-center" style={{ background: a.accent }}>
-                  <div className="w-14 h-14 rounded-full bg-white/70 backdrop-blur-sm" />
+                <div className="rounded-2xl mb-5 h-44 relative overflow-hidden" style={{ background: a.accent }}>
+                  {Mock && <Mock />}
                 </div>
                 <p className="text-[10px] uppercase tracking-[0.18em] font-semibold mb-2" style={{ color: "var(--primary)" }}>{a.eyebrow}</p>
                 <h3 className="font-semibold text-xl mb-2" style={{ color: "var(--ink)" }}>{a.title}</h3>
@@ -217,7 +328,8 @@ export default function HomePage() {
                   {a.cta.label} →
                 </Link>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
