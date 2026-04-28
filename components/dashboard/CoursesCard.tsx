@@ -37,7 +37,7 @@ export default function CoursesCard({ domainKey }: { domainKey: string }) {
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                {c.free && <span className={`${heading} text-[0.6rem] font-bold px-1.5 py-0.5 rounded`} style={{ background: "var(--primary)", color: "var(--ink)" }}>FREE</span>}
+                {c.free && <span className={`${heading} text-[0.6rem] font-bold px-1.5 py-0.5 rounded`} style={{ background: "var(--primary)", color: "white" }}>FREE</span>}
                 <a href={c.url} className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-[0.7rem] no-underline`} style={{ background: "var(--primary)", color: "white" }}>Start</a>
               </div>
             </div>

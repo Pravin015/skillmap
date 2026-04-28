@@ -123,7 +123,7 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
                 </button>
               )}
               {isRegistered && !hasSubmitted && canSubmit && (
-                <Link href={comp.labTemplateId ? `/labs/${comp.labTemplateId}` : `/competitions/${slug}/submit`} className={`block w-full rounded-xl py-3 text-sm font-bold text-center no-underline ${heading}`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
+                <Link href={comp.labTemplateId ? `/labs/${comp.labTemplateId}` : `/competitions/${slug}/submit`} className={`block w-full rounded-xl py-3 text-sm font-bold text-center no-underline ${heading}`} style={{ background: "var(--primary)", color: "white" }}>
                   {comp.labTemplateId ? "Start Assessment" : "Submit Solution"}
                 </Link>
               )}

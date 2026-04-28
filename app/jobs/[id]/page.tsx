@@ -330,12 +330,12 @@ export default function JobDetailPage() {
                         <div className={`${heading} font-bold text-sm mb-1`}>🧪 Lab Assessment Required</div>
                         <p style={{ color: "var(--muted)" }}>{job.labTemplate.title} · {job.labTemplate.timeLimit} min · {job.labTemplate.difficulty} · Pass: {job.labTemplate.passingScore}%</p>
                       </div>
-                      <a href={`/labs/${job.labTemplate.id}?jobId=${job.id}`} className={`block w-full text-center py-3.5 rounded-xl ${heading} font-bold text-sm no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
+                      <a href={`/labs/${job.labTemplate.id}?jobId=${job.id}`} className={`block w-full text-center py-3.5 rounded-xl ${heading} font-bold text-sm no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>
                         Start Lab & Apply →
                       </a>
                     </>
                   ) : (
-                    <button onClick={() => setShowApplyForm(true)} className={`w-full py-3.5 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
+                    <button onClick={() => setShowApplyForm(true)} className={`w-full py-3.5 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>
                       Apply Now →
                     </button>
                   )}

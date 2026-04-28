@@ -182,7 +182,7 @@ function SignupInner() {
               {roles.map((role) => (
                 <button key={role.key} onClick={() => { setActiveRole(role.key); setError(""); }}
                   className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-bold transition-all sm:text-sm ${heading}`}
-                  style={{ background: activeRole === role.key ? "var(--ink)" : "transparent", color: activeRole === role.key ? "var(--primary)" : "var(--muted)" }}>
+                  style={{ background: activeRole === role.key ? "var(--primary-light)" : "transparent", color: activeRole === role.key ? "var(--primary)" : "var(--muted)" }}>
                   {role.label}
                 </button>
               ))}

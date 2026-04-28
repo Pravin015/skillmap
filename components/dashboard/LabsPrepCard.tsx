@@ -11,7 +11,7 @@ export default function LabsPrepCard() {
       <div className="p-6 relative">
         <div className="flex items-center gap-2 mb-1">
           <h3 className={`${heading} font-bold text-base text-white`}>Labs & Interview Prep</h3>
-          <span className={`${heading} text-[0.55rem] font-bold px-2 py-0.5 rounded-full`} style={{ background: "var(--primary)", color: "var(--ink)" }}>COMING SOON</span>
+          <span className={`${heading} text-[0.55rem] font-bold px-2 py-0.5 rounded-full`} style={{ background: "var(--primary)", color: "white" }}>COMING SOON</span>
         </div>
         <p className="text-xs mb-5" style={{ color: "rgba(255,255,255,0.5)" }}>Hands-on practice tailored to your target companies</p>
 

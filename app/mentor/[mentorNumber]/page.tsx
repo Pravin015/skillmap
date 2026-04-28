@@ -177,7 +177,7 @@ export default function MentorProfilePage() {
               <button
                 onClick={() => setShowSchedule(true)}
                 className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`}
-                style={{ background: "var(--primary)", color: "var(--ink)" }}
+                style={{ background: "var(--primary)", color: "white" }}
               >
                 Schedule Call →
               </button>
@@ -234,7 +234,7 @@ export default function MentorProfilePage() {
                     }
                   } catch { setBookingStatus({ type: "error", text: "Failed to book" }); }
                   finally { setBooking(false); }
-                }} className={`px-5 py-2.5 rounded-xl ${heading} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "var(--ink)" }}>{booking ? "Processing..." : (() => { const rate = sessionType === "GROUP" ? (m.groupSessionRate || m.sessionRate || 0) : (m.sessionRate || 0); return m.compensation === "PAID" && rate > 0 ? `Pay ₹${rate} & Request` : "Request Session (Free)"; })()}</button>
+                }} className={`px-5 py-2.5 rounded-xl ${heading} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{booking ? "Processing..." : (() => { const rate = sessionType === "GROUP" ? (m.groupSessionRate || m.sessionRate || 0) : (m.sessionRate || 0); return m.compensation === "PAID" && rate > 0 ? `Pay ₹${rate} & Request` : "Request Session (Free)"; })()}</button>
               </div>
             )}
           </div>

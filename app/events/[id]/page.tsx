@@ -140,7 +140,7 @@ export default function EventDetailPage() {
             {isRegistered && event.joinLink && (event.pricing === "FREE" || hasPaid) && (
               <div className="rounded-2xl p-6" style={{ background: "var(--ink)" }}>
                 <h2 className={`${heading} font-bold text-base text-white mb-2`}>Join Event</h2>
-                <a href={event.joinLink} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl ${heading} font-bold text-sm no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "var(--ink)" }}>Join now →</a>
+                <a href={event.joinLink} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl ${heading} font-bold text-sm no-underline transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>Join now →</a>
                 {event.joinInstructions && <p className="text-xs mt-3" style={{ color: "rgba(255,255,255,0.5)" }}>{event.joinInstructions}</p>}
               </div>
             )}
@@ -160,7 +160,7 @@ export default function EventDetailPage() {
               ) : isRegistered ? (
                 <><div className="text-center py-4"><div className="text-3xl mb-2">✅</div><p className={`${heading} font-bold`}>You&apos;re registered</p><p className="text-xs mt-1" style={{ color: "var(--muted)" }}>{event.pricing === "PAID" && !hasPaid ? "Payment pending — link hidden until paid" : "See joining details above"}</p></div></>
               ) : (
-                <><button onClick={handleJoin} disabled={joining} className={`w-full py-3.5 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "var(--ink)" }}>{joining ? "Registering..." : event.pricing === "FREE" ? "Join for free →" : `Register · ₹${(event.price || 0) / 100}`}</button><p className="text-center text-[0.65rem] mt-2" style={{ color: "var(--muted)" }}>{event.maxParticipants - event._count.registrations} spots remaining</p></>
+                <><button onClick={handleJoin} disabled={joining} className={`w-full py-3.5 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5 disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{joining ? "Registering..." : event.pricing === "FREE" ? "Join for free →" : `Register · ₹${(event.price || 0) / 100}`}</button><p className="text-center text-[0.65rem] mt-2" style={{ color: "var(--muted)" }}>{event.maxParticipants - event._count.registrations} spots remaining</p></>
               )}
 
               <hr className="my-4" style={{ borderColor: "var(--border)" }} />

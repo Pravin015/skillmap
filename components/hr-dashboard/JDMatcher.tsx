@@ -124,7 +124,7 @@ export default function JDMatcher() {
                     <input value={inviteMsg} onChange={(e) => setInviteMsg(e.target.value)} placeholder="Message (optional)" className="flex-1 rounded-lg px-3 py-2 text-xs" style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.15)" }} />
                   </div>
                 </div>
-                <button onClick={sendInvites} disabled={inviting} className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
+                <button onClick={sendInvites} disabled={inviting} className={`px-6 py-3 rounded-xl ${heading} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>
                   {inviting ? "Sending..." : `Send ${selected.size} invite${selected.size !== 1 ? "s" : ""}`}
                 </button>
               </div>

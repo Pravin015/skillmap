@@ -101,17 +101,17 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
       {/* Hero */}
-      <section style={{ background: "#0F0E14", paddingTop: "7rem", paddingBottom: "3rem" }}>
+      <section className="blob-bg blob-bg-soft pb-10 pt-6">
         <div className="mx-auto max-w-5xl px-4">
-          <Link href="/courses" className="text-xs no-underline mb-3 inline-block" style={{ color: "rgba(255,255,255,0.5)" }}>← Back to courses</Link>
+          <Link href="/courses" className="text-xs no-underline mb-3 inline-block" style={{ color: "var(--muted)" }}>← Back to courses</Link>
           <div className="flex items-center gap-2 mb-3">
-            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${diffColors[course.difficulty]}15`, color: diffColors[course.difficulty] }}>{course.difficulty}</span>
-            {course.pricing === "FREE" ? <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#10b98115", color: "#10b981" }}>Free</span> : <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#F59E0B15", color: "#F59E0B" }}>Rs.{(course.price || 0) / 100}</span>}
-            {course.category && <span className="text-[10px]" style={{ color: "#9A95A6" }}>{course.category}</span>}
+            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${diffColors[course.difficulty]}20`, color: diffColors[course.difficulty] }}>{course.difficulty}</span>
+            {course.pricing === "FREE" ? <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#10b98120", color: "#10b981" }}>Free</span> : <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#F59E0B20", color: "#D97706" }}>Rs.{(course.price || 0) / 100}</span>}
+            {course.category && <span className="text-[10px]" style={{ color: "var(--muted)" }}>{course.category}</span>}
           </div>
-          <h1 className={`${heading} text-2xl md:text-3xl font-bold text-white mb-2`}>{course.title}</h1>
-          <p className="text-sm mb-3" style={{ color: "#6B6776" }}>{course.description}</p>
-          <div className="flex flex-wrap items-center gap-4 text-xs" style={{ color: "#9A95A6" }}>
+          <h1 className="font-semibold mb-2" style={{ color: "var(--ink)" }}>{course.title}</h1>
+          <p className="text-sm mb-3 max-w-2xl" style={{ color: "var(--muted)" }}>{course.description}</p>
+          <div className="flex flex-wrap items-center gap-4 text-xs" style={{ color: "var(--muted)" }}>
             <span>By {course.createdBy.organisation || course.createdBy.name}</span>
             {course.duration && <span>{course.duration}</span>}
             <span>{course.modules.length} modules</span>

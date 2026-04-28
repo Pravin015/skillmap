@@ -95,7 +95,7 @@ export default function PublicProfilePage() {
                   {p.collegeName || "College not specified"}{p.user.degree ? ` · ${p.user.degree}` : ""}{p.user.gradYear ? ` · ${p.user.gradYear}` : ""}
                 </p>
                 <div className="flex gap-2 mt-2 flex-wrap">
-                  <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${heading}`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
+                  <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${heading}`} style={{ background: "var(--primary)", color: "white" }}>
                     {p.experienceLevel === "FRESHER" ? "Fresher" : "Experienced"}
                   </span>
                   {p.fieldOfInterest && (
@@ -129,7 +129,7 @@ export default function PublicProfilePage() {
                   <h3 className={`${heading} font-bold text-base text-white`}>Connect with {p.user.name.split(" ")[0]}</h3>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>Reach out to this candidate directly</p>
                 </div>
-                <button onClick={() => setShowConnect(!showConnect)} className={`px-5 py-2.5 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "var(--ink)" }}>
+                <button onClick={() => setShowConnect(!showConnect)} className={`px-5 py-2.5 rounded-xl ${heading} font-bold text-sm transition-transform hover:-translate-y-0.5`} style={{ background: "var(--primary)", color: "white" }}>
                   {showConnect ? "Hide details" : "Connect now →"}
                 </button>
               </div>

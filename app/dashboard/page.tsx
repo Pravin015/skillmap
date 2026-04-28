@@ -104,7 +104,7 @@ export default function DashboardPage() {
                 activeSection === item.id ? "font-bold" : ""
               }`}
               style={{
-                background: activeSection === item.id ? "var(--ink)" : "transparent",
+                background: activeSection === item.id ? "var(--primary-light)" : "transparent",
                 color: activeSection === item.id ? "var(--primary)" : "var(--muted)",
               }}
             >
@@ -127,7 +127,7 @@ export default function DashboardPage() {
             onClick={() => scrollToSection(item.id)}
             className={`shrink-0 flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-[0.6rem] transition-colors ${heading}`}
             style={{
-              background: activeSection === item.id ? "var(--ink)" : "transparent",
+              background: activeSection === item.id ? "var(--primary-light)" : "transparent",
               color: activeSection === item.id ? "var(--primary)" : "var(--muted)",
             }}
           >
@@ -142,7 +142,7 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className={`${heading} font-bold text-2xl md:text-3xl`}>
-            {greeting()}, <span style={{ color: "var(--primary)", background: "var(--ink)", padding: "0 6px", borderRadius: "6px" }}>{profile.name.split(" ")[0]}</span>
+            {greeting()}, <span style={{ color: "white", background: "var(--primary)", padding: "0 8px", borderRadius: "8px" }}>{profile.name.split(" ")[0]}</span>
           </h1>
           <p className="text-sm mt-2" style={{ color: "var(--muted)" }}>
             Here&apos;s your career progress · {profile.domain} · {profile.companies.length} dream companies
