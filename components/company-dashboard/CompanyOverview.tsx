@@ -70,10 +70,10 @@ export default function CompanyOverview({ orgName, hrCount, onNavigate }: Props)
           {["Applied", "Screened", "Interview", "Assessment", "Offer", "Hired"].map((stage, i) => (
             <div key={stage} className="text-center">
               <div className="rounded-xl border-2 border-dashed p-3 mb-1" style={{ borderColor: "var(--border)" }}>
-                <div className={`${heading} text-xl font-bold`} style={{ color: "var(--border)" }}>0</div>
+                <div className={`${heading} text-xl font-bold`} style={{ color: "var(--muted-2)" }}>0</div>
               </div>
               <div className="text-[0.6rem] font-medium" style={{ color: "var(--muted)" }}>{stage}</div>
-              {i < 5 && <div className="text-xs mt-1" style={{ color: "var(--border)" }}>→</div>}
+              {i < 5 && <div className="text-xs mt-1" style={{ color: "var(--muted-2)" }}>→</div>}
             </div>
           ))}
         </div>

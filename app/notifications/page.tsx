@@ -57,7 +57,7 @@ export default function NotificationsPage() {
                   <div className="flex-1">
                     <div className={`${heading} text-sm ${n.read ? "font-medium" : "font-bold"}`} style={{ color: "var(--ink)" }}>{n.title}</div>
                     <p className="text-sm mt-1 leading-relaxed" style={{ color: "var(--muted)" }}>{n.message}</p>
-                    <div className="flex items-center gap-3 mt-2 text-[0.65rem]" style={{ color: "var(--border)" }}>
+                    <div className="flex items-center gap-3 mt-2 text-[0.65rem]" style={{ color: "var(--muted-2)" }}>
                       <span>{new Date(n.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
                       {n.emailSent && <span>· Email sent</span>}
                       <span className="px-1.5 py-0.5 rounded text-[0.55rem]" style={{ background: "rgba(10,10,15,0.04)" }}>{n.type.replace(/_/g, " ")}</span>

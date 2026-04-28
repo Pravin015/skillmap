@@ -119,7 +119,7 @@ function LabInner() {
     <ProctoringGuard sessionId={attemptId || ""} sessionType="LAB" strictMode={true} maxViolations={4} onAutoSubmit={handleSubmit} enabled={!!attemptId}>
     <div className="min-h-[calc(100vh-4rem)]" style={{ background: "var(--surface)" }}>
       {/* Timer bar */}
-      <div className="sticky top-16 z-40 border-b py-3 px-4" style={{ background: "white", borderColor: "var(--border)" }}>
+      <div className="sticky top-24 z-40 border-b py-3 px-4" style={{ background: "white", borderColor: "var(--border)" }}>
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className={`${heading} font-bold text-sm`}>{lab.title}</div>
           <div className="flex items-center gap-4">

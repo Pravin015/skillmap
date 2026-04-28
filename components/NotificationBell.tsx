@@ -77,7 +77,7 @@ export default function NotificationBell() {
                       <div className="flex-1 min-w-0">
                         <div className={`text-xs font-medium ${n.read ? "" : "font-bold"}`} style={{ color: "var(--ink)" }}>{n.title}</div>
                         <div className="text-[0.7rem] mt-0.5 line-clamp-2" style={{ color: "var(--muted)" }}>{n.message}</div>
-                        <div className="text-[0.6rem] mt-1" style={{ color: "var(--border)" }}>{timeAgo(n.createdAt)}</div>
+                        <div className="text-[0.6rem] mt-1" style={{ color: "var(--muted-2)" }}>{timeAgo(n.createdAt)}</div>
                       </div>
                     </div>
                   </div>

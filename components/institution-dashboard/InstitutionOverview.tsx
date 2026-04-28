@@ -46,7 +46,7 @@ export default function InstitutionOverview({ studentCount, orgName, onNavigate 
         <div className="grid grid-cols-5 gap-2">
           {["Applied", "Screening", "Interview", "Offer", "Placed"].map((stage) => (
             <div key={stage} className="rounded-xl border-2 border-dashed p-4 text-center" style={{ borderColor: "var(--border)" }}>
-              <div className={`${heading} text-xl font-bold`} style={{ color: "var(--border)" }}>0</div>
+              <div className={`${heading} text-xl font-bold`} style={{ color: "var(--muted-2)" }}>0</div>
               <div className="text-[0.6rem] font-medium" style={{ color: "var(--muted)" }}>{stage}</div>
             </div>
           ))}

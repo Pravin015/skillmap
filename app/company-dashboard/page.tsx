@@ -79,7 +79,7 @@ export default function CompanyDashboardPage() {
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
       {/* Sidebar */}
-      <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] py-6 px-3" style={{ borderColor: "var(--border)", background: "white" }}>
+      <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r sticky top-24 h-[calc(100vh-6rem)] py-6 px-3" style={{ borderColor: "var(--border)", background: "white" }}>
         <div className="mb-6 px-3">
           <div className={`${heading} font-bold text-sm`} style={{ color: "var(--ink)" }}>Company Dashboard</div>
           <div className="text-xs mt-0.5 truncate" style={{ color: "var(--muted)" }}>{orgName}</div>

@@ -168,7 +168,7 @@ export default function AdminPage() {
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
       {/* Sidebar — categorized */}
-      <aside className="hidden lg:flex w-60 shrink-0 flex-col border-r sticky top-16 h-[calc(100vh-4rem)] py-4 px-3 overflow-y-auto" style={{ borderColor: "var(--border)", background: "white" }}>
+      <aside className="hidden lg:flex w-60 shrink-0 flex-col border-r sticky top-24 h-[calc(100vh-6rem)] py-4 px-3 overflow-y-auto" style={{ borderColor: "var(--border)", background: "white" }}>
         <div className="mb-4 px-3">
           <div className={`${heading} font-bold text-sm flex items-center gap-2`} style={{ color: "#ef4444" }}>
             <span className="w-6 h-6 rounded-lg flex items-center justify-center text-[0.6rem] font-bold text-white" style={{ background: "#ef4444" }}>A</span>
@@ -179,7 +179,7 @@ export default function AdminPage() {
         <nav className="flex flex-col flex-1">
           {sidebarCategories.map((category) => (
             <div key={category.label} className="mb-3">
-              <div className={`px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] ${heading}`} style={{ color: "var(--border)" }}>
+              <div className={`px-3 py-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] ${heading}`} style={{ color: "var(--muted-2)" }}>
                 {category.label}
               </div>
               <div className="flex flex-col gap-0.5 mt-0.5">

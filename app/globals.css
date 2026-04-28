@@ -73,15 +73,18 @@ body {
 input, select, textarea, button { font-family: inherit; }
 a { color: inherit; text-decoration: none; }
 
-/* ═══ TYPOGRAPHY ═══ */
-h1, h2, h3, h4, h5, h6 {
+/* ═══ TYPOGRAPHY ═══
+   :where() keeps specificity at 0 so Tailwind utilities like
+   `text-base` or `text-xl` can override these defaults on inline cards.
+*/
+:where(h1, h2, h3, h4, h5, h6) {
   font-family: var(--font-body), 'Poppins', sans-serif;
   letter-spacing: -0.02em;
 }
-h1 { font-size: clamp(2.4rem, 5.5vw, 4rem); font-weight: 600; line-height: 1.05; letter-spacing: -0.035em; }
-h2 { font-size: clamp(1.8rem, 4vw, 2.75rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; }
-h3 { font-size: clamp(1.05rem, 1.8vw, 1.4rem); font-weight: 600; line-height: 1.3; }
-p  { font-size: 0.95rem; line-height: 1.7; font-weight: 400; }
+:where(h1) { font-size: clamp(2.4rem, 5.5vw, 4rem); font-weight: 600; line-height: 1.05; letter-spacing: -0.035em; }
+:where(h2) { font-size: clamp(1.8rem, 4vw, 2.75rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; }
+:where(h3) { font-size: clamp(1.05rem, 1.8vw, 1.4rem); font-weight: 600; line-height: 1.3; }
+:where(p)  { font-size: 0.95rem; line-height: 1.7; font-weight: 400; }
 
 /* ═══ SOFT GRADIENT BLOBS — page backdrop ═══ */
 .blob-bg {
