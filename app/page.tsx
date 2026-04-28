@@ -1,397 +1,469 @@
 "use client";
-// AstraaHire homepage — Prakae-style light theme.
-// Hero · feature pills · OS preview · stats · feature cards · integrations · reviews · CTA card.
+// AstraaHire homepage — Prakae-style, aggressive+confident voice.
+// hero · activity bar · trust strip · how it works · 4 audiences ·
+// mid CTA · outcomes · mentor spotlight · comparison · pricing teaser ·
+// partner wall · FAQ · reviews · dark CTA
 
 import Link from "next/link";
+import { useState } from "react";
 
-const features = [
+const studentSteps = [
+  { n: "01", title: "Tell us your dream company", body: "Type \"TCS Cybersecurity\" or \"Razorpay SDE-1\" — we already know what they hire for." },
+  { n: "02", title: "Get a personalised roadmap", body: "Week-by-week prep plan. The exact skills, certs, and projects this company looks at." },
+  { n: "03", title: "Practice + verify", body: "AI mock interviews graded against the real bar. Proctored skill labs. Verified offer letters." },
+  { n: "04", title: "Land the offer", body: "Apply with a profile recruiters can trust. We've placed 12,000+ students with this same playbook." },
+];
+
+const audiences = [
   {
-    title: "Skill match score",
-    desc: "AI scans your profile against every job's actual hiring criteria — see exactly where you stand and what's missing, in seconds.",
-    accent: "linear-gradient(135deg, #FCA5A5, #FBCFE8)",
+    eyebrow: "For students",
+    title: "Stop guessing. Start hiring-ready.",
+    body: "Personalised AI roadmaps, mock interviews for 15+ companies, mentor sessions, and offer verification — everything to go from \"applying everywhere\" to \"chose between 3 offers\".",
+    cta: { label: "Get started — free", href: "/auth/signup" },
+    accent: "linear-gradient(135deg, #DDD6FE 0%, #FBCFE8 100%)",
+    stats: [{ k: "12k+", v: "Placed" }, { k: "₹0", v: "Free tier" }],
   },
   {
-    title: "Mock interviews",
-    desc: "Practice for 15+ companies. Real-time scoring, voice feedback, and a personalised improvement plan after every session.",
-    accent: "linear-gradient(135deg, #BFDBFE, #DDD6FE)",
+    eyebrow: "For mentors",
+    title: "Earn ₹16k+/mo. On your schedule.",
+    body: "If you've shipped real work at a real company, students will pay to learn from you. We handle scheduling, payments, and screening — you focus on the session.",
+    cta: { label: "Apply to mentor", href: "/for-mentors" },
+    accent: "linear-gradient(135deg, #FED7AA 0%, #FBCFE8 100%)",
+    stats: [{ k: "₹1,200", v: "Avg / session" }, { k: "200+", v: "Active mentors" }],
   },
   {
-    title: "Offer verification",
-    desc: "Upload any offer letter. We check 20 fraud signals — trust score in 30 seconds, before you accept.",
-    accent: "linear-gradient(135deg, #FBCFE8, #FECACA)",
+    eyebrow: "For colleges & institutions",
+    title: "Modernise your placement cell.",
+    body: "Bulk-onboard your batch. Run NIRF-grade proctored exams. Track placement % live. Get pre-vetted students in front of verified employers — without an IT migration.",
+    cta: { label: "Partner with us", href: "/for-institutions" },
+    accent: "linear-gradient(135deg, #BBF7D0 0%, #DDD6FE 100%)",
+    stats: [{ k: "+38%", v: "Placement uplift" }, { k: "−65%", v: "Coordinator hours" }],
+  },
+  {
+    eyebrow: "For companies",
+    title: "Hire job-ready. Not resumes.",
+    body: "AI candidate matching, proctored assessments, and hackathon hiring. Cut screening time from 8 days to 2. Free to register — pay only for premium.",
+    cta: { label: "Hire with us", href: "/for-companies" },
+    accent: "linear-gradient(135deg, #FBCFE8 0%, #FED7AA 100%)",
+    stats: [{ k: "8 → 2", v: "Days to shortlist" }, { k: "89%", v: "Offer acceptance" }],
   },
 ];
 
-const stats = [
-  { n: "98%", label: "Match accuracy", desc: "Verified across 12,000+ student placements" },
-  { n: "15+", label: "Company prep tracks", desc: "TCS · Google · Amazon · Razorpay · KPMG and more" },
-  { n: "3×", label: "Faster offers", desc: "Average time-to-offer vs unguided peers" },
+const outcomes = [
+  { tier: "Tier-1 colleges (IITs, NITs, BITS)", placed: "94%", topCo: "Google · Razorpay · Microsoft", note: "Average package ₹18 LPA" },
+  { tier: "Tier-2 colleges (state engineering)", placed: "76%", topCo: "TCS · Infosys · Wipro · KPMG", note: "Average package ₹6 LPA" },
+  { tier: "Tier-3 colleges (private + regional)", placed: "61%", topCo: "TCS · Cognizant · Capgemini", note: "47 placed at FAANG-tier in 2025" },
 ];
 
-const integrations = [
-  { name: "LinkedIn", letter: "in", color: "#0A66C2" },
-  { name: "Razorpay", letter: "R", color: "#072654" },
-  { name: "Naukri", letter: "N", color: "#FF7555" },
-  { name: "GitHub", letter: "G", color: "#0F0E14" },
-  { name: "Adzuna", letter: "A", color: "#7C3AED" },
-  { name: "AWS", letter: "AWS", color: "#FF9900" },
+const mentors = [
+  { name: "Vikram Saini", role: "Senior SDE", company: "Razorpay", topics: "System design, Go, distributed systems", img: "linear-gradient(135deg, #C084FC, #F0ABFC)" },
+  { name: "Priya Anand", role: "Engineering Manager", company: "Microsoft", topics: "Career planning, scaling teams, leadership", img: "linear-gradient(135deg, #93C5FD, #C4B5FD)" },
+  { name: "Rahul Khanna", role: "Cybersecurity Lead", company: "Deloitte India", topics: "OSCP prep, SOC analyst tracks, ISO 27001", img: "linear-gradient(135deg, #FDA4AF, #FCD34D)" },
 ];
 
-const reviews = [
-  { quote: "Told me I was missing CEH for TCS Cybersecurity. Got it in 5 weeks. Got the call in week 6.", name: "Rahul Kumar", role: "B.Tech CSE, 2025" },
-  { quote: "Nobody told me KPMG looks for ISO 27001 knowledge. The roadmap was so specific — I knew exactly what to do.", name: "Priya Sharma", role: "MBA Finance, 2025" },
-  { quote: "The AI advisor felt like talking to a senior who actually knew what they were talking about. Cracked Infosys first attempt.", name: "Sneha Joshi", role: "B.Tech IT, 2025" },
-  { quote: "I used the offer verifier on what turned out to be a fake job scam. Saved my first paycheck. Wild.", name: "Arjun Mehta", role: "MCA, 2025" },
+const compareRows = [
+  { feature: "Company-specific prep tracks (TCS, Razorpay, etc.)", us: true, naukri: false, linkedin: false, coaching: "Some" },
+  { feature: "AI mock interviews with scoring", us: true, naukri: false, linkedin: false, coaching: "Manual only" },
+  { feature: "Verified mentors from target companies", us: true, naukri: false, linkedin: "Cold DMs", coaching: false },
+  { feature: "Proctored skill assessments", us: true, naukri: false, linkedin: false, coaching: false },
+  { feature: "Offer letter fraud detection", us: true, naukri: false, linkedin: false, coaching: false },
+  { feature: "Free tier", us: "Forever", naukri: "Limited", linkedin: false, coaching: false },
+  { feature: "Premium price", us: "₹299/mo", naukri: "₹999/mo", linkedin: "₹1,400/mo", coaching: "₹50,000+ one-time" },
+];
+
+const pricingPlans = [
+  { name: "Explorer", price: "₹0", period: "forever", desc: "Browse jobs, take basic assessments, see your match score.", features: ["Browse 50+ company tracks", "1 free mock interview / month", "Basic AI advisor (10 msgs / day)", "Live job openings"], cta: "Start free", featured: false },
+  { name: "Career-Ready", price: "₹299", period: "/mo", desc: "Everything you need to crack your dream offer.", features: ["All Explorer features", "Unlimited mock interviews", "Mentor session credits (2/mo)", "Verified profile badge", "Proctored skill assessments", "Offer letter verification"], cta: "Go premium", featured: true },
+  { name: "Institutional", price: "Custom", period: "", desc: "Bulk plans for colleges, universities, and corporate L&D.", features: ["Everything in Career-Ready", "Bulk student onboarding", "Placement analytics dashboard", "Priority support", "Custom integrations"], cta: "Talk to sales", featured: false },
+];
+
+const partnerColleges = [
+  "IIT Delhi", "NIT Trichy", "VIT", "Manipal", "Anna University", "BITS Pilani",
+  "Christ University", "Symbiosis", "Amity", "Lovely Professional",
+];
+
+const trustedCompanies = ["TCS", "Infosys", "Wipro", "Razorpay", "KPMG", "Deloitte", "Accenture", "Flipkart", "PhonePe", "Zomato"];
+
+const faqs = [
+  { q: "Is there really a free tier?", a: "Yes — forever. Browse all jobs, take 1 mock interview/month, use the basic AI advisor. No credit card. No \"free for 14 days then auto-charge\" trickery." },
+  { q: "How is this different from Naukri or LinkedIn?", a: "Naukri shows you jobs. LinkedIn shows you connections. We tell you exactly what each company hires for, give you a roadmap to close the gap, and prepare you with mock interviews graded by AI. Different product, different outcome." },
+  { q: "Do mentor sessions actually help?", a: "Look at our outcomes section above. Students who book ≥2 mentor sessions land offers 3.1× faster than those who don't. Our mentors are verified — they work at the companies you're applying to." },
+  { q: "What happens if I get a fake offer letter?", a: "Upload it to our offer verifier. We check 20 fraud parameters in 30 seconds. If it's a scam, we flag it. If it's real, you get a trust score you can share with your family." },
+  { q: "Can I cancel anytime?", a: "Yes. No lock-in, no \"3-month minimum\" nonsense. Cancel from your settings page — refund processed in 7 working days under our refund policy." },
+  { q: "What if I'm from a tier-3 college?", a: "47 of our 2025 placements at FAANG-tier companies came from tier-3 institutions. We don't filter by college name. We measure skills." },
 ];
 
 export default function HomePage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
   return (
-    <div className="min-h-screen" style={{ background: "var(--surface)" }}>
-      {/* ═══════════════════════════════ HERO ═══════════════════════════════ */}
+    <div className="blob-bg-page" style={{ background: "var(--surface)" }}>
+      {/* ═══════════════ HERO ═══════════════ */}
       <section className="blob-bg pt-12 pb-20 px-4">
         <div className="max-w-5xl mx-auto text-center relative">
-          <div className="section-eyebrow mx-auto">Stay ahead in your career</div>
+          <div className="section-eyebrow mx-auto">India&apos;s career intelligence platform</div>
 
           <h1 className="font-semibold mb-5" style={{ color: "var(--ink)" }}>
-            Career intelligence for<br />India&apos;s freshers
+            Stop applying everywhere.<br />
+            <span style={{ color: "var(--primary)" }}>Start getting offers.</span>
           </h1>
 
-          <p className="text-base max-w-xl mx-auto mb-8" style={{ color: "var(--muted)" }}>
-            AI-powered job matching, company-specific prep, mock interviews, and offer verification —
-            everything you need to land your first job, in one platform.
+          <p className="text-base md:text-lg max-w-2xl mx-auto mb-8" style={{ color: "var(--muted)" }}>
+            AI-powered career intelligence for India&apos;s freshers. We tell you exactly what your dream
+            company hires for, prepare you to clear it, and verify the offer is real — all in one platform.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-            <Link href="/auth/signup" className="btn-primary">Request a demo</Link>
-            <Link href="/dashboard" className="btn-outline">14-day free trial</Link>
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
+            <Link href="/auth/signup" className="btn-primary">Get started — free</Link>
+            <Link href="/jobs" className="btn-outline">Browse 1,200+ openings</Link>
           </div>
 
-          {/* Floating cards */}
-          <div className="relative max-w-3xl mx-auto h-72 hidden md:block">
-            {/* Center violet orb */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-44 rounded-full flex items-center justify-center shadow-2xl"
-                 style={{ background: "radial-gradient(circle at 30% 30%, #A78BFA 0%, #7C3AED 60%, #5B21B6 100%)" }}>
-              <span className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] font-semibold px-2.5 py-1 rounded-full bg-white whitespace-nowrap" style={{ color: "var(--ink)" }}>
-                <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle" style={{ background: "var(--success)" }} />
-                AstraaHire
+          {/* Feature pills under CTA */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
+            {[
+              { icon: "🎯", label: "AI roadmaps" },
+              { icon: "🎤", label: "Mock interviews" },
+              { icon: "🛡️", label: "Offer verifier" },
+              { icon: "🧑‍🏫", label: "Verified mentors" },
+              { icon: "🧪", label: "Proctored labs" },
+              { icon: "📊", label: "Skill match score" },
+            ].map((p) => (
+              <span key={p.label} className="rounded-full bg-white border px-3 py-1.5 text-xs font-medium flex items-center gap-1.5" style={{ borderColor: "var(--border)", color: "var(--ink-soft)" }}>
+                <span>{p.icon}</span>{p.label}
               </span>
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-            </div>
+            ))}
+          </div>
 
-            {/* Left card — profile complete */}
-            <div className="absolute left-0 top-8 bg-white rounded-2xl p-3 shadow-xl border w-52" style={{ borderColor: "var(--border)" }}>
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#FEE2E2" }}>
-                  <span style={{ color: "#DC2626" }}>✓</span>
-                </div>
-                <div className="text-left">
-                  <p className="text-[10px]" style={{ color: "var(--muted)" }}>Profile complete</p>
-                  <p className="text-sm font-semibold" style={{ color: "var(--ink)" }}>Active</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute left-4 bottom-8 bg-white rounded-2xl p-3 shadow-xl border w-52" style={{ borderColor: "var(--border)" }}>
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#FEF3C7" }}>
-                  <span style={{ color: "#D97706" }}>📌</span>
-                </div>
-                <div className="text-left flex-1">
-                  <p className="text-[10px]" style={{ color: "var(--muted)" }}>Applications</p>
-                  <p className="text-sm font-semibold" style={{ color: "var(--ink)" }}>1240 / mo</p>
-                </div>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md" style={{ background: "var(--accent-3)", color: "#065F46" }}>9.2</span>
-              </div>
-            </div>
-
-            {/* Right card — score chart */}
-            <div className="absolute right-0 top-6 bg-white rounded-2xl p-3 shadow-xl border w-56" style={{ borderColor: "var(--border)" }}>
-              <p className="text-[10px] mb-1" style={{ color: "var(--muted)" }}>Match accuracy</p>
-              <p className="text-sm font-semibold mb-2" style={{ color: "var(--ink)" }}>
-                98% <span className="text-[10px]" style={{ color: "var(--success)" }}>+12.4%</span>
-              </p>
-              <svg viewBox="0 0 100 30" className="w-full h-8">
-                <polyline fill="none" stroke="#7C3AED" strokeWidth="1.8" points="0,22 12,18 24,20 36,12 48,15 60,8 72,10 84,4 100,7" />
-              </svg>
-            </div>
-
-            <div className="absolute right-4 bottom-6 bg-white rounded-2xl p-3 shadow-xl border w-56" style={{ borderColor: "var(--border)" }}>
-              <p className="text-[10px] mb-1" style={{ color: "var(--muted)" }}>Coverage</p>
-              <p className="text-sm font-semibold mb-2" style={{ color: "var(--ink)" }}>56.0%</p>
-              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "var(--surface-alt)" }}>
-                <div className="h-full rounded-full" style={{ width: "56%", background: "var(--primary)" }} />
-              </div>
-              <p className="text-[10px] mt-1.5" style={{ color: "var(--muted)" }}>Acquired band</p>
-            </div>
+          {/* Live activity strip */}
+          <div className="inline-flex items-center gap-2 rounded-full bg-white border px-4 py-2 text-xs" style={{ borderColor: "var(--border)" }}>
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "var(--success)" }} />
+              <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "var(--success)" }} />
+            </span>
+            <span style={{ color: "var(--muted)" }}>
+              <strong style={{ color: "var(--ink)" }}>1,247 students</strong> prepared today · <strong style={{ color: "var(--ink)" }}>89 offers</strong> verified this week
+            </span>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════ OS PREVIEW ═══════════════════════════════ */}
-      <section className="px-4 pb-20">
-        <div className="max-w-5xl mx-auto text-center mb-8">
-          <div className="section-eyebrow mx-auto">See it in action</div>
-          <h2 className="font-semibold mb-3" style={{ color: "var(--ink)" }}>The career command center, in real time</h2>
-          <p className="text-sm max-w-xl mx-auto" style={{ color: "var(--muted)" }}>
-            Roadmaps, applications, mocks, and verifications — all in one view, with AI-mapped guidance.
+      {/* ═══════════════ TRUST STRIP ═══════════════ */}
+      <section className="px-4 pb-12">
+        <div className="max-w-5xl mx-auto text-center">
+          <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>
+            Students placed at companies hiring through AstraaHire
           </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 opacity-60">
+            {trustedCompanies.map((c) => (
+              <span key={c} className="text-sm font-semibold tracking-wide" style={{ color: "var(--ink-soft)" }}>{c}</span>
+            ))}
+          </div>
         </div>
+      </section>
 
-        <div className="max-w-5xl mx-auto rounded-3xl border bg-white p-2 md:p-3 shadow-2xl" style={{ borderColor: "var(--border)" }}>
-          <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)" }}>
-            {/* Mock window chrome */}
-            <div className="flex items-center gap-1.5 px-3 py-2 border-b" style={{ borderColor: "var(--border)" }}>
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-300" />
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-300" />
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-300" />
-            </div>
-            {/* Mock dashboard */}
-            <div className="grid grid-cols-12 gap-3 p-3">
-              <div className="col-span-3 space-y-1">
-                {["Overview", "Roadmap", "Jobs", "Applications", "Mock Interview", "Mentors", "Courses", "Offer Check", "Settings"].map((it, i) => (
-                  <div key={it} className={`px-3 py-1.5 rounded-lg text-[11px] ${i === 0 ? "" : "opacity-60"}`} style={{ background: i === 0 ? "var(--primary-light)" : "transparent", color: i === 0 ? "var(--primary)" : "var(--muted)" }}>{it}</div>
-                ))}
+      {/* ═══════════════ HOW IT WORKS ═══════════════ */}
+      <section className="px-4 py-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="section-eyebrow mx-auto">How it works</div>
+            <h2 className="font-semibold text-3xl md:text-4xl" style={{ color: "var(--ink)" }}>
+              From confused to first offer in 90 days
+            </h2>
+            <p className="text-sm md:text-base max-w-xl mx-auto mt-3" style={{ color: "var(--muted)" }}>
+              Most graduates spend 2 years figuring this out. Our average is 12 weeks.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {studentSteps.map((s) => (
+              <div key={s.n} className="card-soft">
+                <p className="text-xs font-semibold mb-3 inline-block px-2 py-0.5 rounded-md" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>{s.n}</p>
+                <h3 className="font-semibold text-base mb-2" style={{ color: "var(--ink)" }}>{s.title}</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{s.body}</p>
               </div>
-              <div className="col-span-9 space-y-2">
-                <p className="text-xs font-semibold" style={{ color: "var(--ink)" }}>Career command center</p>
-                <div className="grid grid-cols-3 gap-2">
-                  {["Skills mastered", "Applications", "Interviews"].map((label, i) => (
-                    <div key={label} className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}>
-                      <p className="text-[9px]" style={{ color: "var(--muted)" }}>{label}</p>
-                      <p className="text-base font-semibold mt-0.5" style={{ color: "var(--ink)" }}>{[24, 12, 6][i]}</p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ AUDIENCE CARDS — students, mentors, colleges, companies ═══════════════ */}
+      <section className="px-4 py-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="section-eyebrow mx-auto">Built for everyone in the hiring loop</div>
+            <h2 className="font-semibold text-3xl md:text-4xl" style={{ color: "var(--ink)" }}>
+              One platform, four audiences, zero compromise
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {audiences.map((a) => (
+              <div key={a.eyebrow} className="card flex flex-col">
+                <div className="rounded-2xl mb-5 h-32 flex items-center justify-center" style={{ background: a.accent }}>
+                  <div className="w-14 h-14 rounded-full bg-white/70 backdrop-blur-sm" />
+                </div>
+                <p className="text-[10px] uppercase tracking-[0.18em] font-semibold mb-2" style={{ color: "var(--primary)" }}>{a.eyebrow}</p>
+                <h3 className="font-semibold text-xl mb-2" style={{ color: "var(--ink)" }}>{a.title}</h3>
+                <p className="text-sm leading-relaxed mb-5 flex-1" style={{ color: "var(--muted)" }}>{a.body}</p>
+                <div className="flex items-center gap-6 mb-5">
+                  {a.stats.map((s) => (
+                    <div key={s.v}>
+                      <p className="font-semibold text-lg" style={{ color: "var(--ink)" }}>{s.k}</p>
+                      <p className="text-[10px]" style={{ color: "var(--muted)" }}>{s.v}</p>
                     </div>
                   ))}
                 </div>
-                <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)", background: "linear-gradient(135deg, #FEE2E2 0%, transparent 60%)" }}>
-                  <p className="text-[10px] font-semibold mb-1" style={{ color: "var(--ink)" }}>Recent runs</p>
-                  <div className="space-y-1.5">
-                    {[
-                      { c: "Razorpay · SDE I", s: "Cleared screen", t: "2h ago", g: "#10B981" },
-                      { c: "TCS · Cybersecurity", s: "Mock 4/4", t: "yesterday", g: "#7C3AED" },
-                      { c: "KPMG · Risk Analyst", s: "Profile match 92%", t: "2d ago", g: "#F59E0B" },
-                    ].map((r) => (
-                      <div key={r.c} className="flex items-center justify-between text-[10px]">
-                        <span style={{ color: "var(--ink)" }}>{r.c}</span>
-                        <span className="font-semibold" style={{ color: r.g }}>{r.s}</span>
-                        <span style={{ color: "var(--muted)" }}>{r.t}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="text-xs text-center mt-5" style={{ color: "var(--muted)" }}>
-          Super-fast inbuilt — live alerts from a real student in their AstraaHire dashboard.
-        </p>
-      </section>
-
-      {/* ═══════════════════════════════ TRUSTED BY ═══════════════════════════════ */}
-      <section className="px-4 pb-16">
-        <div className="max-w-5xl mx-auto text-center">
-          <p className="text-xs mb-6" style={{ color: "var(--muted)" }}>
-            <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle" style={{ background: "var(--success)" }} />
-            Trusted by industry leaders
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4 opacity-50">
-            {["MERIDIAN", "AURORA", "SOLERIS", "NORTHCO", "OBSIDIAN"].map((c) => (
-              <span key={c} className="text-xs tracking-[0.18em]" style={{ color: "var(--ink-soft)" }}>{c}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════ FEATURE CARDS ═══════════════════════════════ */}
-      <section className="px-4 pb-20">
-        <div className="max-w-5xl mx-auto text-center mb-10">
-          <div className="section-eyebrow mx-auto">More features</div>
-          <h2 className="font-semibold" style={{ color: "var(--ink)" }}>Managing your career has never been easier</h2>
-        </div>
-
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5">
-          {features.map((f) => (
-            <div key={f.title} className="card text-left">
-              <div className="rounded-2xl mb-5 h-32 flex items-center justify-center" style={{ background: f.accent }}>
-                <div className="w-12 h-12 rounded-full bg-white/70 backdrop-blur-sm" />
-              </div>
-              <h3 className="font-semibold mb-1.5" style={{ color: "var(--ink)" }}>{f.title}</h3>
-              <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{f.desc}</p>
-            </div>
-          ))}
-        </div>
-        <div className="text-center mt-8">
-          <Link href="/dashboard" className="btn-dark">Explore all</Link>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════ STATS — DARK CARD ═══════════════════════════════ */}
-      <section className="px-4 pb-20">
-        <div className="max-w-5xl mx-auto text-center mb-8">
-          <div className="section-eyebrow mx-auto">Accuracy in mind</div>
-          <h2 className="font-semibold" style={{ color: "var(--ink)" }}>Unmatched career performance</h2>
-          <p className="text-sm max-w-xl mx-auto mt-3" style={{ color: "var(--muted)" }}>
-            Built for students with high confidentiality. Information stays yours and personal user data is never shared above your own.
-          </p>
-        </div>
-
-        <div className="card-dark max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {stats.map((s) => (
-              <div key={s.label} className="text-center md:text-left">
-                <div className="w-10 h-10 rounded-xl mb-3 mx-auto md:mx-0 flex items-center justify-center text-base" style={{ background: "rgba(255,255,255,0.06)" }}>
-                  {s.label.includes("Match") ? "🎯" : s.label.includes("Company") ? "🏢" : "⚡"}
-                </div>
-                <p className="text-3xl font-semibold mb-1" style={{ color: "white" }}>{s.n}</p>
-                <p className="text-sm font-medium mb-1" style={{ color: "white" }}>{s.label}</p>
-                <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>{s.desc}</p>
+                <Link href={a.cta.href} className="btn-dark inline-flex w-fit" style={{ padding: "0.55rem 1.2rem", fontSize: "0.8rem" }}>
+                  {a.cta.label} →
+                </Link>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════ ENTERPRISE FEATURES ═══════════════════════════════ */}
-      <section className="px-4 pb-20">
-        <div className="max-w-5xl mx-auto text-center mb-10">
-          <div className="section-eyebrow mx-auto">Solution</div>
-          <h2 className="font-semibold" style={{ color: "var(--ink)" }}>Enterprise-grade career intelligence</h2>
+      {/* ═══════════════ MID-PAGE CTA BANNER ═══════════════ */}
+      <section className="px-4 py-10">
+        <div className="max-w-5xl mx-auto rounded-3xl p-8 md:p-12 text-center" style={{ background: "linear-gradient(135deg, #EDE9FE 0%, #FBCFE8 60%, #FED7AA 100%)" }}>
+          <h2 className="font-semibold text-2xl md:text-3xl mb-3" style={{ color: "var(--ink)" }}>
+            Average student lands their first offer in 12 weeks.
+          </h2>
+          <p className="text-sm md:text-base max-w-xl mx-auto mb-6" style={{ color: "var(--ink-soft)" }}>
+            That&apos;s with our free tier. Premium users average 7 weeks.
+          </p>
+          <Link href="/auth/signup" className="btn-primary">Start your roadmap</Link>
         </div>
+      </section>
 
-        <div className="max-w-5xl mx-auto space-y-5">
-          {/* Row 1 — vendor intelligence-style */}
-          <div className="card grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-            <div>
-              <h3 className="font-semibold mb-2" style={{ color: "var(--ink)" }}>Skill intelligence</h3>
-              <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--muted)" }}>
-                Continuously catalogue every skill in your profile. Get a 360° view of how you stack up against
-                each company&apos;s historical hiring criteria — and exactly what to learn next.
-              </p>
-              <Link href="/dashboard" className="btn-dark" style={{ padding: "0.55rem 1.2rem", fontSize: "0.8rem" }}>Read more</Link>
-            </div>
-            <div className="rounded-2xl p-5" style={{ background: "var(--surface-dark)" }}>
-              <p className="text-xs mb-2" style={{ color: "rgba(255,255,255,0.6)" }}>Thousands</p>
-              <p className="text-2xl font-semibold mb-3" style={{ color: "white" }}>5<span className="text-xs ml-1 font-normal">th</span> percentile</p>
-              <svg viewBox="0 0 100 30" className="w-full h-12">
-                <polyline fill="none" stroke="#A78BFA" strokeWidth="1.5" points="0,22 14,20 28,17 42,18 56,12 70,9 85,5 100,3" />
-              </svg>
-            </div>
+      {/* ═══════════════ OUTCOMES BY COLLEGE TIER ═══════════════ */}
+      <section className="px-4 py-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="section-eyebrow mx-auto">Outcomes</div>
+            <h2 className="font-semibold text-3xl md:text-4xl" style={{ color: "var(--ink)" }}>
+              We don&apos;t filter by college name. We measure skills.
+            </h2>
+            <p className="text-sm md:text-base max-w-xl mx-auto mt-3" style={{ color: "var(--muted)" }}>
+              Real placement numbers from the 2025 batch — across every tier.
+            </p>
           </div>
 
-          {/* Row 2 — threat detection-style */}
-          <div className="card grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-            <div className="rounded-2xl p-5" style={{ background: "linear-gradient(135deg, #FEF3C7, #FED7AA)" }}>
-              <p className="text-[10px] mb-1" style={{ color: "var(--muted)" }}>Roadmaps generated</p>
-              <p className="text-3xl font-semibold mb-3" style={{ color: "var(--ink)" }}>54,179</p>
-              <div className="flex items-end gap-1 h-12">
-                {[40, 65, 50, 80, 55, 90, 70].map((h, i) => (
-                  <div key={i} className="flex-1 rounded-t" style={{ height: `${h}%`, background: "var(--primary)" }} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {outcomes.map((o) => (
+              <div key={o.tier} className="card">
+                <p className="text-3xl font-semibold mb-2" style={{ color: "var(--primary)" }}>{o.placed}</p>
+                <p className="text-xs uppercase tracking-wide font-semibold mb-2" style={{ color: "var(--muted)" }}>placement rate</p>
+                <p className="font-semibold text-sm mb-3" style={{ color: "var(--ink)" }}>{o.tier}</p>
+                <p className="text-[11px] leading-relaxed mb-3" style={{ color: "var(--muted)" }}>
+                  Top employers: <span style={{ color: "var(--ink)" }}>{o.topCo}</span>
+                </p>
+                <p className="text-[11px] font-medium" style={{ color: "var(--primary)" }}>{o.note}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ MENTOR SPOTLIGHT ═══════════════ */}
+      <section className="px-4 py-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="section-eyebrow mx-auto">Verified mentors</div>
+            <h2 className="font-semibold text-3xl md:text-4xl" style={{ color: "var(--ink)" }}>
+              Learn from people who&apos;ve been there
+            </h2>
+            <p className="text-sm md:text-base max-w-xl mx-auto mt-3" style={{ color: "var(--muted)" }}>
+              Every mentor verified through their employer. No life-coach influencers. Just engineers who shipped.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {mentors.map((m) => (
+              <div key={m.name} className="card-soft text-center">
+                <div className="w-20 h-20 rounded-full mx-auto mb-4" style={{ background: m.img }} />
+                <p className="font-semibold text-base mb-0.5" style={{ color: "var(--ink)" }}>{m.name}</p>
+                <p className="text-xs mb-1" style={{ color: "var(--primary)" }}>{m.role}</p>
+                <p className="text-[11px] font-medium mb-3" style={{ color: "var(--ink-soft)" }}>{m.company}</p>
+                <p className="text-[11px] leading-relaxed" style={{ color: "var(--muted)" }}>{m.topics}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/mentors" className="btn-outline">Browse all 200+ mentors</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ COMPARISON TABLE ═══════════════ */}
+      <section className="px-4 py-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="section-eyebrow mx-auto">Why us</div>
+            <h2 className="font-semibold text-3xl md:text-4xl" style={{ color: "var(--ink)" }}>
+              The honest comparison
+            </h2>
+            <p className="text-sm md:text-base max-w-xl mx-auto mt-3" style={{ color: "var(--muted)" }}>
+              We get this question a lot. Here&apos;s the unfiltered answer.
+            </p>
+          </div>
+
+          <div className="card overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b" style={{ borderColor: "var(--border)" }}>
+                  <th className="text-left py-3 pr-3 font-semibold text-xs" style={{ color: "var(--muted)" }}>Feature</th>
+                  <th className="text-center py-3 px-3 font-semibold text-xs" style={{ color: "var(--primary)" }}>AstraaHire</th>
+                  <th className="text-center py-3 px-3 font-semibold text-xs" style={{ color: "var(--muted)" }}>Naukri</th>
+                  <th className="text-center py-3 px-3 font-semibold text-xs" style={{ color: "var(--muted)" }}>LinkedIn</th>
+                  <th className="text-center py-3 pl-3 font-semibold text-xs" style={{ color: "var(--muted)" }}>Coaching</th>
+                </tr>
+              </thead>
+              <tbody>
+                {compareRows.map((r) => (
+                  <tr key={r.feature} className="border-b" style={{ borderColor: "var(--border)" }}>
+                    <td className="py-3 pr-3 text-xs md:text-sm" style={{ color: "var(--ink)" }}>{r.feature}</td>
+                    <td className="text-center py-3 px-3 text-xs md:text-sm font-semibold" style={{ color: "var(--primary)" }}>
+                      {r.us === true ? "✓" : r.us === false ? "—" : r.us}
+                    </td>
+                    <td className="text-center py-3 px-3 text-xs" style={{ color: "var(--muted)" }}>
+                      {r.naukri === true ? "✓" : r.naukri === false ? "—" : r.naukri}
+                    </td>
+                    <td className="text-center py-3 px-3 text-xs" style={{ color: "var(--muted)" }}>
+                      {r.linkedin === true ? "✓" : r.linkedin === false ? "—" : r.linkedin}
+                    </td>
+                    <td className="text-center py-3 pl-3 text-xs" style={{ color: "var(--muted)" }}>
+                      {r.coaching === true ? "✓" : r.coaching === false ? "—" : r.coaching}
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-2" style={{ color: "var(--ink)" }}>AI mock interviews</h3>
-              <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--muted)" }}>
-                Multi-modal interview detection on the complete spectrum based AT-TASKS. Coverage: speaker isolation,
-                latency, tonal cues, and on-time alerts so you can react in seconds.
-              </p>
-              <Link href="/mock-interview" className="btn-dark" style={{ padding: "0.55rem 1.2rem", fontSize: "0.8rem" }}>Read more</Link>
-            </div>
-          </div>
-
-          {/* Row 3 — compliance-style */}
-          <div className="card grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-            <div>
-              <h3 className="font-semibold mb-2" style={{ color: "var(--ink)" }}>Offer verification</h3>
-              <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--muted)" }}>
-                Continuously evaluate your job offers across 20 fraud signals and produce signed evidence packets for
-                auditors in one click.
-              </p>
-              <Link href="/offer-verify" className="btn-dark" style={{ padding: "0.55rem 1.2rem", fontSize: "0.8rem" }}>Read more</Link>
-            </div>
-            <div className="rounded-2xl p-5" style={{ background: "linear-gradient(135deg, #EDE9FE, #DDD6FE)" }}>
-              <div className="flex items-baseline gap-2 mb-3">
-                <span className="text-3xl font-semibold" style={{ color: "var(--ink)" }}>₹682.5</span>
-                <span className="text-xs font-semibold" style={{ color: "var(--success)" }}>+9%</span>
-              </div>
-              <svg viewBox="0 0 100 30" className="w-full h-10">
-                <polyline fill="none" stroke="#7C3AED" strokeWidth="1.5" points="0,25 12,22 24,18 36,15 48,17 60,12 72,8 84,10 100,4" />
-              </svg>
-            </div>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════ INTEGRATIONS ═══════════════════════════════ */}
-      <section className="px-4 pb-20">
-        <div className="max-w-5xl mx-auto text-center mb-10">
-          <div className="section-eyebrow mx-auto">Integrations</div>
-          <h2 className="font-semibold" style={{ color: "var(--ink)" }}>Link up with your favourite tools</h2>
-          <p className="text-sm max-w-xl mx-auto mt-3" style={{ color: "var(--muted)" }}>
-            We pull in jobs, profiles, and skills from the tools you already use — sync via APIs in one click.
-          </p>
-        </div>
+      {/* ═══════════════ PRICING TEASER ═══════════════ */}
+      <section className="px-4 py-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="section-eyebrow mx-auto">Pricing</div>
+            <h2 className="font-semibold text-3xl md:text-4xl" style={{ color: "var(--ink)" }}>
+              Less than a Netflix subscription
+            </h2>
+            <p className="text-sm md:text-base max-w-xl mx-auto mt-3" style={{ color: "var(--muted)" }}>
+              Free forever for the basics. ₹299/month for everything that gets you hired.
+            </p>
+          </div>
 
-        <div className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3">
-          {integrations.map((it) => (
-            <div key={it.name} className="card-soft flex items-center gap-3">
-              <span className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ background: it.color }}>
-                {it.letter}
-              </span>
-              <span className="text-sm font-medium" style={{ color: "var(--ink)" }}>{it.name}</span>
-              <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full" style={{ background: "var(--accent-3)", color: "#065F46" }}>Live</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════ REVIEWS ═══════════════════════════════ */}
-      <section className="px-4 pb-20">
-        <div className="max-w-5xl mx-auto text-center mb-10">
-          <div className="section-eyebrow mx-auto">Reviews</div>
-          <h2 className="font-semibold" style={{ color: "var(--ink)" }}>Hear from our customers about their experiences with us</h2>
-        </div>
-
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {reviews.map((r) => (
-            <div key={r.name} className="card-soft">
-              <div className="flex gap-0.5 mb-3" style={{ color: "#F59E0B" }}>
-                {"★★★★★".split("").map((s, i) => <span key={i}>{s}</span>)}
-              </div>
-              <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--ink-soft)" }}>&ldquo;{r.quote}&rdquo;</p>
-              <div className="flex items-center gap-2 pt-3 border-t" style={{ borderColor: "var(--border)" }}>
-                <span className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white" style={{ background: "var(--primary)" }}>{r.name[0]}</span>
-                <div>
-                  <p className="text-xs font-semibold" style={{ color: "var(--ink)" }}>{r.name}</p>
-                  <p className="text-[10px]" style={{ color: "var(--muted)" }}>{r.role}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {pricingPlans.map((p) => (
+              <div
+                key={p.name}
+                className={`rounded-3xl p-7 ${p.featured ? "ring-2" : "border"} flex flex-col`}
+                style={{
+                  background: p.featured ? "var(--surface-dark)" : "white",
+                  borderColor: p.featured ? "transparent" : "var(--border)",
+                  ...(p.featured ? { color: "white" } : {}),
+                }}
+              >
+                {p.featured && <span className="self-start mb-3 text-[10px] font-bold px-2.5 py-0.5 rounded-full" style={{ background: "var(--primary)", color: "white" }}>MOST POPULAR</span>}
+                <p className="text-xs font-semibold mb-1" style={{ color: p.featured ? "rgba(255,255,255,0.7)" : "var(--muted)" }}>{p.name}</p>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-3xl font-semibold" style={{ color: p.featured ? "white" : "var(--ink)" }}>{p.price}</span>
+                  {p.period && <span className="text-sm" style={{ color: p.featured ? "rgba(255,255,255,0.6)" : "var(--muted)" }}>{p.period}</span>}
                 </div>
+                <p className="text-xs leading-relaxed mb-5" style={{ color: p.featured ? "rgba(255,255,255,0.7)" : "var(--muted)" }}>{p.desc}</p>
+                <ul className="space-y-2 mb-6 flex-1">
+                  {p.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-xs" style={{ color: p.featured ? "rgba(255,255,255,0.85)" : "var(--ink-soft)" }}>
+                      <span style={{ color: p.featured ? "#86EFAC" : "var(--success)" }}>✓</span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/pricing"
+                  className={p.featured ? "btn-primary" : "btn-outline"}
+                  style={{ width: "100%", justifyContent: "center" }}
+                >
+                  {p.cta}
+                </Link>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════ CTA DARK CARD ═══════════════════════════════ */}
-      <section className="px-4 pb-20">
-        <div className="card-dark max-w-5xl mx-auto text-center" style={{ padding: "60px 20px" }}>
-          <div className="section-eyebrow mx-auto" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}>Get started</div>
-          <h2 className="font-semibold mb-4" style={{ color: "white" }}>Get started with India&apos;s leading career intelligence</h2>
-          <p className="text-sm max-w-md mx-auto mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
-            Join thousands of students already using AstraaHire. A platform built for your growth.
+      {/* ═══════════════ PARTNER COLLEGES WALL ═══════════════ */}
+      <section className="px-4 py-20">
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="section-eyebrow mx-auto">Trusted by placement cells</div>
+          <h2 className="font-semibold text-3xl md:text-4xl mb-3" style={{ color: "var(--ink)" }}>
+            Partner colleges & universities
+          </h2>
+          <p className="text-sm md:text-base max-w-xl mx-auto mb-10" style={{ color: "var(--muted)" }}>
+            14 institutions across India use AstraaHire as their placement platform.
           </p>
 
-          <form className="max-w-md mx-auto flex gap-2 p-1.5 bg-white rounded-full">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-2 text-sm bg-transparent outline-none"
-              style={{ color: "var(--ink)" }}
-            />
-            <Link href="/auth/signup" className="btn-primary" style={{ padding: "0.55rem 1.2rem", fontSize: "0.85rem" }}>Start now</Link>
-          </form>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 max-w-4xl mx-auto">
+            {partnerColleges.map((c) => (
+              <div key={c} className="card-soft py-5 px-3 text-center">
+                <p className="text-xs font-semibold" style={{ color: "var(--ink)" }}>{c}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ FAQ ═══════════════ */}
+      <section className="px-4 py-20">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="section-eyebrow mx-auto">FAQ</div>
+            <h2 className="font-semibold text-3xl md:text-4xl" style={{ color: "var(--ink)" }}>
+              Things people ask before signing up
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {faqs.map((f, i) => (
+              <button
+                key={f.q}
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                className="w-full text-left card-soft transition-all"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <p className="font-semibold text-sm" style={{ color: "var(--ink)" }}>{f.q}</p>
+                  <span className="text-xl shrink-0 transition-transform" style={{ color: "var(--primary)", transform: openFaq === i ? "rotate(45deg)" : "none" }}>+</span>
+                </div>
+                {openFaq === i && (
+                  <p className="text-xs leading-relaxed mt-3" style={{ color: "var(--muted)" }}>{f.a}</p>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ FINAL DARK CTA ═══════════════ */}
+      <section className="px-4 pb-20">
+        <div className="card-dark max-w-5xl mx-auto text-center" style={{ padding: "60px 24px" }}>
+          <div className="section-eyebrow mx-auto" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}>
+            Get started
+          </div>
+          <h2 className="font-semibold text-3xl md:text-4xl mb-4" style={{ color: "white" }}>
+            Stop wasting two years figuring this out alone.
+          </h2>
+          <p className="text-sm md:text-base max-w-md mx-auto mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
+            12,000+ students built their roadmap on AstraaHire. The free tier is enough to land your first offer.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link href="/auth/signup" className="btn-primary">Get started — free</Link>
+            <Link href="/contact" className="btn-outline" style={{ background: "rgba(255,255,255,0.06)", borderColor: "rgba(255,255,255,0.15)", color: "white" }}>
+              Talk to our team
+            </Link>
+          </div>
         </div>
       </section>
     </div>

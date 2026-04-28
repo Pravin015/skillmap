@@ -86,7 +86,11 @@ a { color: inherit; text-decoration: none; }
 :where(h3) { font-size: clamp(1.05rem, 1.8vw, 1.4rem); font-weight: 600; line-height: 1.3; }
 :where(p)  { font-size: 0.95rem; line-height: 1.7; font-weight: 400; }
 
-/* ═══ SOFT GRADIENT BLOBS — page backdrop ═══ */
+/* ═══ SOFT GRADIENT BLOBS — page backdrop ═══
+   Two blobs in the corners of the hero (peach top-left, mint top-right).
+   Pages with `.blob-bg-page` add a third subtle blob mid-way down so
+   long scrolls don't go flat.
+*/
 .blob-bg {
   position: relative;
   overflow: hidden;
@@ -96,26 +100,66 @@ a { color: inherit; text-decoration: none; }
 .blob-bg::after {
   content: '';
   position: absolute;
-  width: 520px;
-  height: 520px;
+  width: 640px;
+  height: 640px;
   border-radius: 50%;
-  filter: blur(110px);
-  opacity: 0.55;
+  filter: blur(120px);
+  opacity: 0.85;
   z-index: -1;
   pointer-events: none;
 }
 .blob-bg::before {
-  background: radial-gradient(circle, #FED7AA 0%, transparent 70%);
-  top: -160px;
-  left: -180px;
+  background: radial-gradient(circle, #FDBA74 0%, #FED7AA 40%, transparent 75%);
+  top: -200px;
+  left: -220px;
 }
 .blob-bg::after {
-  background: radial-gradient(circle, #BBF7D0 0%, transparent 70%);
-  top: -120px;
-  right: -180px;
+  background: radial-gradient(circle, #86EFAC 0%, #BBF7D0 40%, transparent 75%);
+  top: -160px;
+  right: -220px;
 }
-.blob-bg-soft::before { opacity: 0.35; }
-.blob-bg-soft::after  { opacity: 0.35; }
+
+.blob-bg-soft::before,
+.blob-bg-soft::after {
+  opacity: 0.5;
+  width: 520px;
+  height: 520px;
+}
+
+/* Mid-page subtle blob — apply to the page wrapper for long scrolls. */
+.blob-bg-page {
+  position: relative;
+  overflow: hidden;
+}
+.blob-bg-page::before {
+  content: '';
+  position: absolute;
+  left: -240px;
+  top: 65%;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #C4B5FD 0%, #DDD6FE 45%, transparent 75%);
+  filter: blur(130px);
+  opacity: 0.45;
+  z-index: 0;
+  pointer-events: none;
+}
+.blob-bg-page::after {
+  content: '';
+  position: absolute;
+  right: -200px;
+  top: 110%;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FBCFE8 0%, #FECACA 45%, transparent 75%);
+  filter: blur(120px);
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
+.blob-bg-page > * { position: relative; z-index: 1; }
 
 /* ═══ ANIMATIONS ═══ */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
