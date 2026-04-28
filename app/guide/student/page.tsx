@@ -276,7 +276,7 @@ export default function StudentGuidePage() {
       {/* Header */}
       <section className="py-12 px-4 md:px-8" style={{ background: "var(--ink)" }}>
         <div className="max-w-4xl mx-auto">
-          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-xs font-bold tracking-[0.1em] uppercase ${heading}`} style={{ background: "var(--primary-light)", color: "var(--primary)", border: "1px solid rgba(10,191,188,0.2)" }}>
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-xs font-bold tracking-[0.1em] uppercase ${heading}`} style={{ background: "var(--primary-light)", color: "var(--primary)", border: "1px solid rgba(124,58,237,0.2)" }}>
             🎓 Student Guide
           </div>
           <h1 className={`${heading} font-bold text-3xl md:text-4xl text-white mb-3`}>Student Onboarding Guide</h1>
@@ -325,7 +325,7 @@ export default function StudentGuidePage() {
                     </div>
 
                     {/* Test checklist */}
-                    <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(10,191,188,0.2)", background: "rgba(10,191,188,0.03)" }}>
+                    <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(124,58,237,0.2)", background: "rgba(124,58,237,0.03)" }}>
                       <h4 className={`${heading} font-bold text-sm mb-2`}>🧪 Test checklist:</h4>
                       <div className="space-y-1.5">
                         {step.testChecklist.map((t, i) => (

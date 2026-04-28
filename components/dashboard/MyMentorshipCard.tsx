@@ -107,7 +107,7 @@ function SessionCard({ s, onRate }: { s: Session; onRate?: () => void }) {
         <div className="flex items-center gap-2">
           <span className={`font-[family-name:var(--font-heading)] font-bold text-sm`}>{s.mentor?.name || "Mentor"}</span>
           <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${statusBadge[s.status]}`}>{s.status}</span>
-          <span className={`text-[0.6rem] px-2 py-0.5 rounded-full ${s.sessionType === "GROUP" ? "bg-[#E0F7F7] text-[#0ABFBC]" : "bg-blue-100 text-blue-700"}`}>{s.sessionType === "GROUP" ? "Group" : "1-on-1"}</span>
+          <span className={`text-[0.6rem] px-2 py-0.5 rounded-full ${s.sessionType === "GROUP" ? "bg-[#EDE9FE] text-[#7C3AED]" : "bg-blue-100 text-blue-700"}`}>{s.sessionType === "GROUP" ? "Group" : "1-on-1"}</span>
         </div>
         <div className="text-xs" style={{ color: "var(--muted)" }}>
           {new Date(s.preferredDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} · {s.duration}{s.isPaid ? ` · ₹${(s.price || 0) / 100}` : " · Free"}

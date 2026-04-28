@@ -20,7 +20,7 @@ export default function InstitutionOnboardingForm() {
     <FormWrapper title="Institution Onboarding" subtitle="Register your college, university, or training institute on AstraaHire. No public signup — our team will verify and activate your account." submitted={submitted} successMessage="Your institution registration is under review. We will verify through your official email domain and activate your account within 2-3 business days. You'll receive a confirmation email once approved.">
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-xl p-4 text-sm border" style={{ background: "rgba(139,92,246,0.05)", borderColor: "rgba(139,92,246,0.2)" }}>
-          <strong className={`${heading} text-[#0ABFBC]`}>Manual Onboarding</strong>
+          <strong className={`${heading} text-[#7C3AED]`}>Manual Onboarding</strong>
           <p className="mt-1" style={{ color: "var(--muted)" }}>Institution accounts are verified manually. Official email required. No self-signup.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

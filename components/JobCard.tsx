@@ -46,7 +46,7 @@ export default function JobCard({ job }: JobCardProps) {
       <div className="mt-4">
         <Link
           href={`/chat?job=${job.id}`}
-          className="inline-flex items-center gap-1 rounded-lg bg-[#E0F7F7] px-3 py-1.5 text-xs font-medium text-[#0ABFBC] transition-colors hover:bg-[#E0F7F7]"
+          className="inline-flex items-center gap-1 rounded-lg bg-[#EDE9FE] px-3 py-1.5 text-xs font-medium text-[#7C3AED] transition-colors hover:bg-[#EDE9FE]"
         >
           View prep plan
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

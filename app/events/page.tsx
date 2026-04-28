@@ -26,10 +26,11 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)]" style={{ background: "var(--surface)" }}>
-      <section className="py-12 px-4 md:px-8" style={{ background: "var(--ink)" }}>
-        <div className="max-w-5xl mx-auto">
-          <h1 className={`${heading} font-bold text-2xl md:text-3xl text-white mb-2`}>Events</h1>
-          <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Career guidance sessions, workshops, and webinars by industry mentors</p>
+      <section className="blob-bg blob-bg-soft py-12 px-4 md:px-8">
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="section-eyebrow mx-auto">Events</div>
+          <h1 className="font-semibold mb-3" style={{ color: "var(--ink)" }}>Workshops, webinars, and AMAs</h1>
+          <p className="text-sm max-w-xl mx-auto" style={{ color: "var(--muted)" }}>Career guidance sessions and live workshops by industry mentors.</p>
         </div>
       </section>
 

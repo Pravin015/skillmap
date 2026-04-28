@@ -60,7 +60,7 @@ export default function ResumeCard() {
       <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Upload your latest resume (PDF, max 5MB)</p>
 
       {resumeName ? (
-        <div className="rounded-xl border p-4 flex items-center gap-3" style={{ borderColor: "var(--border)", background: "rgba(10,191,188,0.05)" }}>
+        <div className="rounded-xl border p-4 flex items-center gap-3" style={{ borderColor: "var(--border)", background: "rgba(124,58,237,0.05)" }}>
           <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg" style={{ background: "var(--primary)", color: "white" }}>📄</div>
           <div className="flex-1 min-w-0">
             <div className={`${heading} font-bold text-sm truncate`}>{resumeName}</div>
@@ -74,7 +74,7 @@ export default function ResumeCard() {
         </div>
       ) : (
         <div
-          className={`rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${dragging ? "border-[var(--primary)] bg-[rgba(10,191,188,0.05)]" : "hover:border-gray-400"}`}
+          className={`rounded-xl border-2 border-dashed p-8 text-center cursor-pointer transition-colors ${dragging ? "border-[var(--primary)] bg-[rgba(124,58,237,0.05)]" : "hover:border-gray-400"}`}
           style={{ borderColor: dragging ? "var(--primary)" : "var(--border)" }}
           onClick={() => fileRef.current?.click()}
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}

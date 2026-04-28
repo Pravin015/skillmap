@@ -1,667 +1,397 @@
 "use client";
+// AstraaHire homepage — Prakae-style light theme.
+// Hero · feature pills · OS preview · stats · feature cards · integrations · reviews · CTA card.
 
-import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-
-const heading = "font-[family-name:var(--font-heading)]";
-
-const logoCompanies = ["Google", "Amazon", "TCS", "Infosys", "Wipro", "Deloitte", "KPMG", "Flipkart", "Microsoft", "Razorpay"];
 
 const features = [
-  { icon: "🤖", title: "AI Career Advisor", desc: "Personalised guidance powered by Claude AI", href: "/chat" },
-  { icon: "🎤", title: "Mock Interviews", desc: "Practice for 15+ companies with AI feedback", href: "/mock-interview" },
-  { icon: "💼", title: "Smart Job Matching", desc: "Domain-filtered jobs with skill-match scoring", href: "/jobs" },
-  { icon: "👨‍🏫", title: "Mentor Sessions", desc: "1-on-1 with verified industry professionals", href: "/companies" },
-  { icon: "🧪", title: "Lab Assessments", desc: "Proctored MCQ labs for technical screening", href: "/jobs" },
-  { icon: "🏆", title: "Competitions", desc: "Hackathons, coding challenges, and quizzes", href: "/competitions" },
-  { icon: "🛡️", title: "Offer Verification", desc: "AI-powered fake offer letter detection", href: "/offer-verify" },
-  { icon: "📊", title: "Skill Tracking", desc: "Track progress across all activities", href: "/dashboard" },
+  {
+    title: "Skill match score",
+    desc: "AI scans your profile against every job's actual hiring criteria — see exactly where you stand and what's missing, in seconds.",
+    accent: "linear-gradient(135deg, #FCA5A5, #FBCFE8)",
+  },
+  {
+    title: "Mock interviews",
+    desc: "Practice for 15+ companies. Real-time scoring, voice feedback, and a personalised improvement plan after every session.",
+    accent: "linear-gradient(135deg, #BFDBFE, #DDD6FE)",
+  },
+  {
+    title: "Offer verification",
+    desc: "Upload any offer letter. We check 20 fraud signals — trust score in 30 seconds, before you accept.",
+    accent: "linear-gradient(135deg, #FBCFE8, #FECACA)",
+  },
 ];
 
-const howSteps = [
-  { num: "01", title: "Create Your Profile", desc: "Sign up with email verification. Add your skills, education, and career goals." },
-  { num: "02", title: "Tell Us Your Dream Company", desc: "Type which company and role you want — our AI builds your personalised roadmap." },
-  { num: "03", title: "Prepare with AI + Mentors", desc: "Follow week-by-week prep plans. Practice mock interviews. Connect with mentors." },
-  { num: "04", title: "Get Hired", desc: "Apply to matched jobs, ace the interview, and land your dream offer." },
+const stats = [
+  { n: "98%", label: "Match accuracy", desc: "Verified across 12,000+ student placements" },
+  { n: "15+", label: "Company prep tracks", desc: "TCS · Google · Amazon · Razorpay · KPMG and more" },
+  { n: "3×", label: "Faster offers", desc: "Average time-to-offer vs unguided peers" },
 ];
 
-const whyUs = [
-  { title: "AI-Powered Interview Prep", desc: "Practice mock interviews for TCS, Google, Amazon, and 12 more companies. Get real-time feedback and scores on every answer. No competitor offers this." },
-  { title: "Company-Specific Skill Maps", desc: "Know exactly what skills each company requires. No guessing — we've decoded hiring patterns from TCS to Goldman Sachs." },
-  { title: "Proctored Assessments", desc: "Fullscreen enforcement, tab-switch detection, and webcam verification. Enterprise-grade proctoring included free." },
-  { title: "Fake Offer Detection", desc: "Upload any offer letter — our AI checks 20 fraud parameters and gives you a trust score. Protecting students from job scams." },
+const integrations = [
+  { name: "LinkedIn", letter: "in", color: "#0A66C2" },
+  { name: "Razorpay", letter: "R", color: "#072654" },
+  { name: "Naukri", letter: "N", color: "#FF7555" },
+  { name: "GitHub", letter: "G", color: "#0F0E14" },
+  { name: "Adzuna", letter: "A", color: "#7C3AED" },
+  { name: "AWS", letter: "AWS", color: "#FF9900" },
 ];
 
 const reviews = [
-  { quote: "AstraaHire told me I was missing CEH certification for TCS Cybersecurity. Got it in 5 weeks. Got the call in week 6.", name: "Rahul Kumar", role: "B.Tech CSE, 2025", company: "TCS" },
-  { quote: "Nobody told me KPMG looks for ISO 27001 knowledge. AstraaHire's roadmap was so specific — I knew exactly what to do.", name: "Priya Sharma", role: "MBA Finance, 2025", company: "KPMG" },
-  { quote: "The AI advisor felt like talking to a senior who actually knew what they were talking about. Cracked Infosys first attempt.", name: "Sneha Joshi", role: "B.Tech IT, 2025", company: "Infosys" },
+  { quote: "Told me I was missing CEH for TCS Cybersecurity. Got it in 5 weeks. Got the call in week 6.", name: "Rahul Kumar", role: "B.Tech CSE, 2025" },
+  { quote: "Nobody told me KPMG looks for ISO 27001 knowledge. The roadmap was so specific — I knew exactly what to do.", name: "Priya Sharma", role: "MBA Finance, 2025" },
+  { quote: "The AI advisor felt like talking to a senior who actually knew what they were talking about. Cracked Infosys first attempt.", name: "Sneha Joshi", role: "B.Tech IT, 2025" },
+  { quote: "I used the offer verifier on what turned out to be a fake job scam. Saved my first paycheck. Wild.", name: "Arjun Mehta", role: "MCA, 2025" },
 ];
 
-const faqItems = [
-  { q: "Is AstraaHire only for engineering graduates?", a: "No — AstraaHire works for any domain. Whether you're in engineering, MBA, commerce, or arts, you can tell us your target company and role and we'll build a roadmap specific to you." },
-  { q: "How does the AI know what skills I need?", a: "Our AI is trained on real hiring patterns from 15+ companies including TCS, Infosys, Google, KPMG, and Deloitte. It maps your profile against what each company actually looks for — not generic job descriptions." },
-  { q: "Is it really free?", a: "Yes. The AI advisor, company roadmaps, mock interview Q&A, job matching, and offer verification are all free. Career Ready (Rs.299/month) unlocks AI-powered live mock interviews and priority mentor booking." },
-  { q: "What if I get a fake job offer?", a: "Upload the offer letter to our Offer Verification tool. Our AI checks 20 fraud parameters — letterhead, email domain, salary realism, payment requests, and more — and gives you a trust score in seconds." },
-  { q: "How long does it take to get hired?", a: "It depends on your starting point. Students who follow their AstraaHire roadmap consistently typically see interview calls within 4-8 weeks. The AI tracks your progress and adjusts your plan if you fall behind." },
-];
-
-export default function Home() {
-  const { data: session } = useSession();
-  const router = useRouter();
-  const [query, setQuery] = useState("");
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [stat1, setStat1] = useState(0);
-  const [stat2, setStat2] = useState(0);
-  const [statsVisible, setStatsVisible] = useState(false);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const [activeCard, setActiveCard] = useState(0);
-
-  // Scroll reveal observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => { entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("in-view"); }); },
-      { threshold: 0.15 }
-    );
-    document.querySelectorAll(".animate-on-scroll").forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
-  // Stat counter animation
-  useEffect(() => {
-    if (!statsVisible) return;
-    const duration = 1500;
-    const steps = 30;
-    const interval = duration / steps;
-    let step = 0;
-    const timer = setInterval(() => {
-      step++;
-      const progress = step / steps;
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setStat1(Math.round(15 * eased));
-      setStat2(Math.round(100 * eased));
-      if (step >= steps) clearInterval(timer);
-    }, interval);
-    return () => clearInterval(timer);
-  }, [statsVisible]);
-
-  useEffect(() => {
-    if (!statsRef.current) return;
-    const observer = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStatsVisible(true); }, { threshold: 0.5 });
-    observer.observe(statsRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  // Floating card rotation
-  useEffect(() => {
-    const timer = setInterval(() => setActiveCard((p) => (p + 1) % 4), 3500);
-    return () => clearInterval(timer);
-  }, []);
-
-  function handleChatSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!query.trim()) return;
-    sessionStorage.setItem("astraahire_query", query.trim());
-    router.push(session ? "/chat" : "/auth/signup?role=STUDENT");
-  }
-
+export default function HomePage() {
   return (
-    <div style={{ background: "var(--surface)" }}>
+    <div className="min-h-screen" style={{ background: "var(--surface)" }}>
+      {/* ═══════════════════════════════ HERO ═══════════════════════════════ */}
+      <section className="blob-bg pt-12 pb-20 px-4">
+        <div className="max-w-5xl mx-auto text-center relative">
+          <div className="section-eyebrow mx-auto">Stay ahead in your career</div>
 
-      {/* ═══ HERO ═══ */}
-      <section className="relative px-4 overflow-hidden" style={{ background: "#0C1A1A", minHeight: "100vh", paddingTop: "7rem", paddingBottom: "4rem" }}>
-        {/* BG layers */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 50% at 30% 40%, rgba(10,191,188,0.06) 0%, transparent 70%)" }} />
-        <div className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none" style={{ background: "linear-gradient(90deg, transparent, rgba(10,191,188,0.3), transparent)" }} />
-        <div className="absolute inset-0 pointer-events-none hero-grid-bg" />
+          <h1 className="font-semibold mb-5" style={{ color: "var(--ink)" }}>
+            Career intelligence for<br />India&apos;s freshers
+          </h1>
 
-        <div className="relative mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16" style={{ maxWidth: 1200 }}>
-          {/* ── LEFT SIDE (60%) ── */}
-          <div className="flex-1 lg:max-w-[58%] text-center lg:text-left">
-            {/* Eyebrow */}
-            <div className="animate-fade-up inline-flex items-center mb-5" style={{ background: "rgba(10,191,188,0.08)", border: "1px solid rgba(10,191,188,0.2)", borderRadius: 999, padding: "0.3rem 1rem", fontFamily: "var(--font-heading)", fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0ABFBC" }}>
-              Free to start · No courses · No gatekeeping
-            </div>
+          <p className="text-base max-w-xl mx-auto mb-8" style={{ color: "var(--muted)" }}>
+            AI-powered job matching, company-specific prep, mock interviews, and offer verification —
+            everything you need to land your first job, in one platform.
+          </p>
 
-            {/* Headline */}
-            <h1 className={heading} style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)", lineHeight: 1.05, letterSpacing: "-0.03em", fontWeight: 700, marginBottom: "1.25rem" }}>
-              <span className="hero-line hero-line-1" style={{ color: "#fff" }}>Nobody Told You</span>
-              <span className="hero-line hero-line-2" style={{ color: "#0ABFBC" }}>What To Learn.</span>
-              <span className="hero-line hero-line-3" style={{ color: "#fff" }}>We Will.</span>
-            </h1>
-
-            {/* Subheadline */}
-            <p className="animate-fade-up-2" style={{ color: "#6B8F8F", fontSize: "1.05rem", lineHeight: 1.7, maxWidth: 500, marginBottom: "2rem" }}>
-              Tell us your dream company. Get a week-by-week roadmap, AI mock interviews, and real mentors — built for Indian graduates.
-            </p>
-
-            {/* Search Bar */}
-            <form onSubmit={handleChatSubmit} className="animate-fade-up-3 mb-4" style={{ maxWidth: 520 }}>
-              <div className="flex items-center gap-2 p-2 transition-all" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "0.75rem" }}>
-                <svg className="ml-3 shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <input id="hero-input" type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="I want to join Google as a Cyber Security Engineer..." className="flex-1 py-3 px-2 text-sm outline-none bg-transparent" style={{ color: "#fff" }} />
-                <button type="submit" className="btn-primary shrink-0" style={{ padding: "0.6rem 1.25rem", fontSize: "0.85rem" }}>Get My Roadmap</button>
-              </div>
-              <p className="mt-2 lg:text-left text-center" style={{ color: "#4A6363", fontSize: "0.72rem" }}>Powered by Claude AI · Personalised for you</p>
-            </form>
-
-            {/* Register As */}
-            <div className="animate-fade-up-3 mb-8">
-              <p className={`${heading} mb-3 lg:text-left text-center`} style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", fontWeight: 600 }}>Register As</p>
-              <div className="flex flex-wrap gap-2 lg:justify-start justify-center">
-                {[
-                  { label: "Mentor", href: "/forms/mentor-onboarding" },
-                  { label: "Company / HR", href: "/auth/signup?role=ORG" },
-                  { label: "College / University", href: "/forms/institution-onboarding" },
-                ].map((r) => (
-                  <Link key={r.label} href={r.href} className="no-underline transition-all" style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "0.5rem", padding: "0.5rem 1.25rem", color: "rgba(255,255,255,0.8)", fontSize: "0.85rem", fontWeight: 500 }}>
-                    {r.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Social Proof */}
-            <div className="animate-fade-up-3">
-              <div className="flex flex-wrap gap-2 lg:justify-start justify-center">
-                {["TCS", "Infosys", "Google", "Deloitte", "Amazon"].map((c) => (
-                  <span key={c} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "#6B8F8F", fontSize: "0.72rem", borderRadius: 999, padding: "0.2rem 0.65rem" }}>{c}</span>
-                ))}
-              </div>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+            <Link href="/auth/signup" className="btn-primary">Request a demo</Link>
+            <Link href="/dashboard" className="btn-outline">14-day free trial</Link>
           </div>
 
-          {/* ── RIGHT SIDE (40%) — Floating Cards ── */}
-          <div className="hidden lg:flex flex-col items-center justify-center" style={{ width: "38%", minHeight: 420 }}>
-            <div className="relative w-full" style={{ height: 400 }}>
-              {[
-                { type: "JOB", icon: "💼", title: "Cybersecurity Analyst L1", company: "TCS", meta: "Bangalore · 3.5-5 LPA", badge: "Active", badgeColor: "#10b981" },
-                { type: "EVENT", icon: "🎤", title: "Mock Interview Workshop", company: "By Priya S.", meta: "Free · 45 spots left", badge: "Upcoming", badgeColor: "#F59E0B" },
-                { type: "COMPETITION", icon: "🏆", title: "CodeQuest Hackathon", company: "AstraaHire", meta: "Rs.50K prize · 234 registered", badge: "Live", badgeColor: "#ef4444" },
-                { type: "MENTOR", icon: "👨\u200D🏫", title: "1-on-1 Career Session", company: "Arjun M. · TCS", meta: "Rs.500/session · 4.9★", badge: "Available", badgeColor: "#0ABFBC" },
-              ].map((card, i) => (
-                <div
-                  key={card.type}
-                  className="absolute left-0 right-0 transition-all duration-700 ease-in-out"
-                  style={{
-                    top: `${i * 8}px`,
-                    opacity: activeCard === i ? 1 : 0.15,
-                    transform: activeCard === i ? "translateY(0) scale(1)" : `translateY(${(i - activeCard) * 20}px) scale(0.96)`,
-                    zIndex: activeCard === i ? 10 : 1,
-                    pointerEvents: activeCard === i ? "auto" : "none",
-                  }}
-                >
-                  <div style={{
-                    background: "linear-gradient(#0F2222, #0F2222) padding-box, linear-gradient(135deg, rgba(10,191,188,0.25), rgba(10,191,188,0.05), rgba(10,191,188,0.15)) border-box",
-                    border: "1px solid transparent",
-                    borderRadius: "1rem",
-                    padding: "1.5rem",
-                    boxShadow: activeCard === i ? "0 8px 32px rgba(10,191,188,0.1), inset 0 1px 0 rgba(255,255,255,0.05)" : "none",
-                  }}>
-                    <div className="flex items-start gap-3">
-                      <div style={{ fontSize: "1.5rem" }}>{card.icon}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span style={{ fontSize: "0.65rem", fontWeight: 600, color: "#4A6363", textTransform: "uppercase", letterSpacing: "0.08em" }}>{card.type}</span>
-                          <span style={{ fontSize: "0.6rem", fontWeight: 700, color: card.badgeColor, background: `${card.badgeColor}15`, padding: "0.1rem 0.4rem", borderRadius: 999 }}>{card.badge}</span>
-                        </div>
-                        <div className={heading} style={{ color: "#fff", fontSize: "1rem", fontWeight: 700, marginBottom: "0.2rem" }}>{card.title}</div>
-                        <div style={{ color: "#6B8F8F", fontSize: "0.8rem", marginBottom: "0.15rem" }}>{card.company}</div>
-                        <div style={{ color: "#4A6363", fontSize: "0.75rem" }}>{card.meta}</div>
-                      </div>
+          {/* Floating cards */}
+          <div className="relative max-w-3xl mx-auto h-72 hidden md:block">
+            {/* Center violet orb */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-44 rounded-full flex items-center justify-center shadow-2xl"
+                 style={{ background: "radial-gradient(circle at 30% 30%, #A78BFA 0%, #7C3AED 60%, #5B21B6 100%)" }}>
+              <span className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] font-semibold px-2.5 py-1 rounded-full bg-white whitespace-nowrap" style={{ color: "var(--ink)" }}>
+                <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle" style={{ background: "var(--success)" }} />
+                AstraaHire
+              </span>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </div>
+
+            {/* Left card — profile complete */}
+            <div className="absolute left-0 top-8 bg-white rounded-2xl p-3 shadow-xl border w-52" style={{ borderColor: "var(--border)" }}>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#FEE2E2" }}>
+                  <span style={{ color: "#DC2626" }}>✓</span>
+                </div>
+                <div className="text-left">
+                  <p className="text-[10px]" style={{ color: "var(--muted)" }}>Profile complete</p>
+                  <p className="text-sm font-semibold" style={{ color: "var(--ink)" }}>Active</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute left-4 bottom-8 bg-white rounded-2xl p-3 shadow-xl border w-52" style={{ borderColor: "var(--border)" }}>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#FEF3C7" }}>
+                  <span style={{ color: "#D97706" }}>📌</span>
+                </div>
+                <div className="text-left flex-1">
+                  <p className="text-[10px]" style={{ color: "var(--muted)" }}>Applications</p>
+                  <p className="text-sm font-semibold" style={{ color: "var(--ink)" }}>1240 / mo</p>
+                </div>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md" style={{ background: "var(--accent-3)", color: "#065F46" }}>9.2</span>
+              </div>
+            </div>
+
+            {/* Right card — score chart */}
+            <div className="absolute right-0 top-6 bg-white rounded-2xl p-3 shadow-xl border w-56" style={{ borderColor: "var(--border)" }}>
+              <p className="text-[10px] mb-1" style={{ color: "var(--muted)" }}>Match accuracy</p>
+              <p className="text-sm font-semibold mb-2" style={{ color: "var(--ink)" }}>
+                98% <span className="text-[10px]" style={{ color: "var(--success)" }}>+12.4%</span>
+              </p>
+              <svg viewBox="0 0 100 30" className="w-full h-8">
+                <polyline fill="none" stroke="#7C3AED" strokeWidth="1.8" points="0,22 12,18 24,20 36,12 48,15 60,8 72,10 84,4 100,7" />
+              </svg>
+            </div>
+
+            <div className="absolute right-4 bottom-6 bg-white rounded-2xl p-3 shadow-xl border w-56" style={{ borderColor: "var(--border)" }}>
+              <p className="text-[10px] mb-1" style={{ color: "var(--muted)" }}>Coverage</p>
+              <p className="text-sm font-semibold mb-2" style={{ color: "var(--ink)" }}>56.0%</p>
+              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "var(--surface-alt)" }}>
+                <div className="h-full rounded-full" style={{ width: "56%", background: "var(--primary)" }} />
+              </div>
+              <p className="text-[10px] mt-1.5" style={{ color: "var(--muted)" }}>Acquired band</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════ OS PREVIEW ═══════════════════════════════ */}
+      <section className="px-4 pb-20">
+        <div className="max-w-5xl mx-auto text-center mb-8">
+          <div className="section-eyebrow mx-auto">See it in action</div>
+          <h2 className="font-semibold mb-3" style={{ color: "var(--ink)" }}>The career command center, in real time</h2>
+          <p className="text-sm max-w-xl mx-auto" style={{ color: "var(--muted)" }}>
+            Roadmaps, applications, mocks, and verifications — all in one view, with AI-mapped guidance.
+          </p>
+        </div>
+
+        <div className="max-w-5xl mx-auto rounded-3xl border bg-white p-2 md:p-3 shadow-2xl" style={{ borderColor: "var(--border)" }}>
+          <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)" }}>
+            {/* Mock window chrome */}
+            <div className="flex items-center gap-1.5 px-3 py-2 border-b" style={{ borderColor: "var(--border)" }}>
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-300" />
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-300" />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-300" />
+            </div>
+            {/* Mock dashboard */}
+            <div className="grid grid-cols-12 gap-3 p-3">
+              <div className="col-span-3 space-y-1">
+                {["Overview", "Roadmap", "Jobs", "Applications", "Mock Interview", "Mentors", "Courses", "Offer Check", "Settings"].map((it, i) => (
+                  <div key={it} className={`px-3 py-1.5 rounded-lg text-[11px] ${i === 0 ? "" : "opacity-60"}`} style={{ background: i === 0 ? "var(--primary-light)" : "transparent", color: i === 0 ? "var(--primary)" : "var(--muted)" }}>{it}</div>
+                ))}
+              </div>
+              <div className="col-span-9 space-y-2">
+                <p className="text-xs font-semibold" style={{ color: "var(--ink)" }}>Career command center</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {["Skills mastered", "Applications", "Interviews"].map((label, i) => (
+                    <div key={label} className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}>
+                      <p className="text-[9px]" style={{ color: "var(--muted)" }}>{label}</p>
+                      <p className="text-base font-semibold mt-0.5" style={{ color: "var(--ink)" }}>{[24, 12, 6][i]}</p>
                     </div>
+                  ))}
+                </div>
+                <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)", background: "linear-gradient(135deg, #FEE2E2 0%, transparent 60%)" }}>
+                  <p className="text-[10px] font-semibold mb-1" style={{ color: "var(--ink)" }}>Recent runs</p>
+                  <div className="space-y-1.5">
+                    {[
+                      { c: "Razorpay · SDE I", s: "Cleared screen", t: "2h ago", g: "#10B981" },
+                      { c: "TCS · Cybersecurity", s: "Mock 4/4", t: "yesterday", g: "#7C3AED" },
+                      { c: "KPMG · Risk Analyst", s: "Profile match 92%", t: "2d ago", g: "#F59E0B" },
+                    ].map((r) => (
+                      <div key={r.c} className="flex items-center justify-between text-[10px]">
+                        <span style={{ color: "var(--ink)" }}>{r.c}</span>
+                        <span className="font-semibold" style={{ color: r.g }}>{r.s}</span>
+                        <span style={{ color: "var(--muted)" }}>{r.t}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Stats row — full width below */}
-        <div ref={statsRef} className="relative mx-auto mt-12 grid grid-cols-3 gap-3" style={{ maxWidth: 700 }}>
-          {[
-            { num: statsVisible ? `${stat1}+` : "0", label: "Companies Mapped", sub: "With real interview Q&A" },
-            { num: statsVisible ? `${stat2}+` : "0", label: "Interview Questions", sub: "Curated by insiders" },
-            { num: "Free", label: "To Start", sub: "No credit card needed" },
-          ].map((s) => (
-            <div key={s.label} className="text-center card-dark" style={{ padding: "1rem 1.5rem" }}>
-              <div className={heading} style={{ fontSize: "1.75rem", fontWeight: 700, color: "#fff" }}>{s.num}</div>
-              <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.7)", marginTop: "0.2rem" }}>{s.label}</div>
-              <div className="hidden sm:block" style={{ fontSize: "0.7rem", color: "#4A6363", marginTop: "0.15rem" }}>{s.sub}</div>
+        <p className="text-xs text-center mt-5" style={{ color: "var(--muted)" }}>
+          Super-fast inbuilt — live alerts from a real student in their AstraaHire dashboard.
+        </p>
+      </section>
+
+      {/* ═══════════════════════════════ TRUSTED BY ═══════════════════════════════ */}
+      <section className="px-4 pb-16">
+        <div className="max-w-5xl mx-auto text-center">
+          <p className="text-xs mb-6" style={{ color: "var(--muted)" }}>
+            <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle" style={{ background: "var(--success)" }} />
+            Trusted by industry leaders
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4 opacity-50">
+            {["MERIDIAN", "AURORA", "SOLERIS", "NORTHCO", "OBSIDIAN"].map((c) => (
+              <span key={c} className="text-xs tracking-[0.18em]" style={{ color: "var(--ink-soft)" }}>{c}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════ FEATURE CARDS ═══════════════════════════════ */}
+      <section className="px-4 pb-20">
+        <div className="max-w-5xl mx-auto text-center mb-10">
+          <div className="section-eyebrow mx-auto">More features</div>
+          <h2 className="font-semibold" style={{ color: "var(--ink)" }}>Managing your career has never been easier</h2>
+        </div>
+
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5">
+          {features.map((f) => (
+            <div key={f.title} className="card text-left">
+              <div className="rounded-2xl mb-5 h-32 flex items-center justify-center" style={{ background: f.accent }}>
+                <div className="w-12 h-12 rounded-full bg-white/70 backdrop-blur-sm" />
+              </div>
+              <h3 className="font-semibold mb-1.5" style={{ color: "var(--ink)" }}>{f.title}</h3>
+              <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-8">
+          <Link href="/dashboard" className="btn-dark">Explore all</Link>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════ STATS — DARK CARD ═══════════════════════════════ */}
+      <section className="px-4 pb-20">
+        <div className="max-w-5xl mx-auto text-center mb-8">
+          <div className="section-eyebrow mx-auto">Accuracy in mind</div>
+          <h2 className="font-semibold" style={{ color: "var(--ink)" }}>Unmatched career performance</h2>
+          <p className="text-sm max-w-xl mx-auto mt-3" style={{ color: "var(--muted)" }}>
+            Built for students with high confidentiality. Information stays yours and personal user data is never shared above your own.
+          </p>
+        </div>
+
+        <div className="card-dark max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {stats.map((s) => (
+              <div key={s.label} className="text-center md:text-left">
+                <div className="w-10 h-10 rounded-xl mb-3 mx-auto md:mx-0 flex items-center justify-center text-base" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  {s.label.includes("Match") ? "🎯" : s.label.includes("Company") ? "🏢" : "⚡"}
+                </div>
+                <p className="text-3xl font-semibold mb-1" style={{ color: "white" }}>{s.n}</p>
+                <p className="text-sm font-medium mb-1" style={{ color: "white" }}>{s.label}</p>
+                <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════ ENTERPRISE FEATURES ═══════════════════════════════ */}
+      <section className="px-4 pb-20">
+        <div className="max-w-5xl mx-auto text-center mb-10">
+          <div className="section-eyebrow mx-auto">Solution</div>
+          <h2 className="font-semibold" style={{ color: "var(--ink)" }}>Enterprise-grade career intelligence</h2>
+        </div>
+
+        <div className="max-w-5xl mx-auto space-y-5">
+          {/* Row 1 — vendor intelligence-style */}
+          <div className="card grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div>
+              <h3 className="font-semibold mb-2" style={{ color: "var(--ink)" }}>Skill intelligence</h3>
+              <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--muted)" }}>
+                Continuously catalogue every skill in your profile. Get a 360° view of how you stack up against
+                each company&apos;s historical hiring criteria — and exactly what to learn next.
+              </p>
+              <Link href="/dashboard" className="btn-dark" style={{ padding: "0.55rem 1.2rem", fontSize: "0.8rem" }}>Read more</Link>
+            </div>
+            <div className="rounded-2xl p-5" style={{ background: "var(--surface-dark)" }}>
+              <p className="text-xs mb-2" style={{ color: "rgba(255,255,255,0.6)" }}>Thousands</p>
+              <p className="text-2xl font-semibold mb-3" style={{ color: "white" }}>5<span className="text-xs ml-1 font-normal">th</span> percentile</p>
+              <svg viewBox="0 0 100 30" className="w-full h-12">
+                <polyline fill="none" stroke="#A78BFA" strokeWidth="1.5" points="0,22 14,20 28,17 42,18 56,12 70,9 85,5 100,3" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Row 2 — threat detection-style */}
+          <div className="card grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div className="rounded-2xl p-5" style={{ background: "linear-gradient(135deg, #FEF3C7, #FED7AA)" }}>
+              <p className="text-[10px] mb-1" style={{ color: "var(--muted)" }}>Roadmaps generated</p>
+              <p className="text-3xl font-semibold mb-3" style={{ color: "var(--ink)" }}>54,179</p>
+              <div className="flex items-end gap-1 h-12">
+                {[40, 65, 50, 80, 55, 90, 70].map((h, i) => (
+                  <div key={i} className="flex-1 rounded-t" style={{ height: `${h}%`, background: "var(--primary)" }} />
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2" style={{ color: "var(--ink)" }}>AI mock interviews</h3>
+              <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--muted)" }}>
+                Multi-modal interview detection on the complete spectrum based AT-TASKS. Coverage: speaker isolation,
+                latency, tonal cues, and on-time alerts so you can react in seconds.
+              </p>
+              <Link href="/mock-interview" className="btn-dark" style={{ padding: "0.55rem 1.2rem", fontSize: "0.8rem" }}>Read more</Link>
+            </div>
+          </div>
+
+          {/* Row 3 — compliance-style */}
+          <div className="card grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div>
+              <h3 className="font-semibold mb-2" style={{ color: "var(--ink)" }}>Offer verification</h3>
+              <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--muted)" }}>
+                Continuously evaluate your job offers across 20 fraud signals and produce signed evidence packets for
+                auditors in one click.
+              </p>
+              <Link href="/offer-verify" className="btn-dark" style={{ padding: "0.55rem 1.2rem", fontSize: "0.8rem" }}>Read more</Link>
+            </div>
+            <div className="rounded-2xl p-5" style={{ background: "linear-gradient(135deg, #EDE9FE, #DDD6FE)" }}>
+              <div className="flex items-baseline gap-2 mb-3">
+                <span className="text-3xl font-semibold" style={{ color: "var(--ink)" }}>₹682.5</span>
+                <span className="text-xs font-semibold" style={{ color: "var(--success)" }}>+9%</span>
+              </div>
+              <svg viewBox="0 0 100 30" className="w-full h-10">
+                <polyline fill="none" stroke="#7C3AED" strokeWidth="1.5" points="0,25 12,22 24,18 36,15 48,17 60,12 72,8 84,10 100,4" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════ INTEGRATIONS ═══════════════════════════════ */}
+      <section className="px-4 pb-20">
+        <div className="max-w-5xl mx-auto text-center mb-10">
+          <div className="section-eyebrow mx-auto">Integrations</div>
+          <h2 className="font-semibold" style={{ color: "var(--ink)" }}>Link up with your favourite tools</h2>
+          <p className="text-sm max-w-xl mx-auto mt-3" style={{ color: "var(--muted)" }}>
+            We pull in jobs, profiles, and skills from the tools you already use — sync via APIs in one click.
+          </p>
+        </div>
+
+        <div className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3">
+          {integrations.map((it) => (
+            <div key={it.name} className="card-soft flex items-center gap-3">
+              <span className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ background: it.color }}>
+                {it.letter}
+              </span>
+              <span className="text-sm font-medium" style={{ color: "var(--ink)" }}>{it.name}</span>
+              <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full" style={{ background: "var(--accent-3)", color: "#065F46" }}>Live</span>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ═══ FEATURES ═══ */}
-      <section className="px-4" style={{ background: "#FFFFFF", paddingTop: "6rem", paddingBottom: "6rem" }}>
-        <div className="mx-auto" style={{ maxWidth: 1200 }}>
-          {/* Section Header */}
-          <div className="text-center mb-12">
-            <div className="section-eyebrow justify-center">WHAT YOU GET</div>
-            <h2 className={`${heading}`} style={{ color: "var(--ink)" }}>
-              Everything You Need.
-            </h2>
-            <p className={`${heading} mt-1`} style={{ color: "var(--muted)", fontSize: "clamp(1.1rem, 2vw, 1.5rem)", fontWeight: 400 }}>
-              Nothing you don&apos;t.
-            </p>
-            <p className="mt-4 mx-auto" style={{ color: "var(--color-text-secondary)", fontSize: "0.95rem", lineHeight: 1.7, maxWidth: 600 }}>
-              Stop paying lakhs for generic video courses. AstraaHire gives you AI guidance, company-specific prep, real mentors, and scam protection — free or Rs.299/month.
-            </p>
-          </div>
+      {/* ═══════════════════════════════ REVIEWS ═══════════════════════════════ */}
+      <section className="px-4 pb-20">
+        <div className="max-w-5xl mx-auto text-center mb-10">
+          <div className="section-eyebrow mx-auto">Reviews</div>
+          <h2 className="font-semibold" style={{ color: "var(--ink)" }}>Hear from our customers about their experiences with us</h2>
+        </div>
 
-          {/* TIER 1 — Hero Features */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Feature 1: AI Career Advisor */}
-            <div className="card-dark animate-on-scroll" style={{ borderTop: "2px solid var(--primary)", padding: "2.5rem" }}>
-              <div className="flex items-center gap-3 mb-4">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h6M7 16h8"/></svg>
-                <span style={{ background: "rgba(10,191,188,0.12)", border: "1px solid rgba(10,191,188,0.25)", borderRadius: 999, padding: "0.2rem 0.7rem", fontSize: "0.7rem", fontWeight: 600, color: "var(--primary)" }}>Powered by Claude AI</span>
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {reviews.map((r) => (
+            <div key={r.name} className="card-soft">
+              <div className="flex gap-0.5 mb-3" style={{ color: "#F59E0B" }}>
+                {"★★★★★".split("").map((s, i) => <span key={i}>{s}</span>)}
               </div>
-              <h3 className={heading} style={{ color: "#fff", fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>Your Personal Career Advisor</h3>
-              <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", lineHeight: 1.65, marginBottom: "1.5rem" }}>
-                Tell us your dream company and role. Our AI builds a personalised week-by-week roadmap with free resources — specific to TCS, Google, Amazon, or wherever you want to go. No generic advice. Ever.
-              </p>
-              {/* Mock Chat UI */}
-              <div style={{ borderRadius: "0.75rem", padding: "1rem", background: "rgba(255,255,255,0.03)" }}>
-                <div className="flex justify-end mb-2">
-                  <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: "0.75rem 0.75rem 0.25rem 0.75rem", padding: "0.6rem 0.9rem", fontSize: "0.8rem", color: "#fff", maxWidth: "80%" }}>
-                    I want to join Infosys as a Java Developer
-                  </div>
-                </div>
-                <div className="flex justify-start">
-                  <div style={{ background: "rgba(10,191,188,0.12)", border: "1px solid rgba(10,191,188,0.2)", borderRadius: "0.75rem 0.75rem 0.75rem 0.25rem", padding: "0.6rem 0.9rem", fontSize: "0.8rem", color: "var(--primary)", maxWidth: "85%", lineHeight: 1.5 }}>
-                    Week 1-2: Core Java + DSA basics. Week 3-4: Spring Boot fundamentals. Week 5-6: Infosys-specific coding patterns...
-                  </div>
+              <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--ink-soft)" }}>&ldquo;{r.quote}&rdquo;</p>
+              <div className="flex items-center gap-2 pt-3 border-t" style={{ borderColor: "var(--border)" }}>
+                <span className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white" style={{ background: "var(--primary)" }}>{r.name[0]}</span>
+                <div>
+                  <p className="text-xs font-semibold" style={{ color: "var(--ink)" }}>{r.name}</p>
+                  <p className="text-[10px]" style={{ color: "var(--muted)" }}>{r.role}</p>
                 </div>
               </div>
             </div>
-
-            {/* Feature 2: Mock Interviews */}
-            <div className="card-dark animate-on-scroll" style={{ borderTop: "2px solid var(--accent)", padding: "2.5rem" }}>
-              <div className="flex items-center gap-3 mb-4">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-                <span style={{ background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.25)", borderRadius: 999, padding: "0.2rem 0.7rem", fontSize: "0.7rem", fontWeight: 600, color: "var(--accent)" }}>15 Companies · 3 Modes</span>
-              </div>
-              <h3 className={heading} style={{ color: "#fff", fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>Practice Until You&apos;re Ready</h3>
-              <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", lineHeight: 1.65, marginBottom: "1.5rem" }}>
-                Real interview questions from TCS, Google, Wipro, Deloitte, and 11 more. Self-prep, AI-powered interview with instant scoring, or book a session with a mentor who works there.
-              </p>
-              {/* Mock Score Widget */}
-              <div style={{ borderRadius: "0.75rem", padding: "1.25rem", background: "rgba(255,255,255,0.03)" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "0.5rem" }}>Interview Score</div>
-                <div className={heading} style={{ fontSize: "2.5rem", fontWeight: 700, color: "var(--primary)", lineHeight: 1 }}>78<span style={{ fontSize: "1rem", color: "var(--color-text-muted)" }}>/100</span></div>
-                <div className="mt-3 space-y-2">
-                  {[{ label: "Technical", pct: 85 }, { label: "Communication", pct: 70 }, { label: "Domain", pct: 80 }].map((b) => (
-                    <div key={b.label}>
-                      <div className="flex justify-between mb-1" style={{ fontSize: "0.7rem" }}>
-                        <span style={{ color: "var(--color-text-muted)" }}>{b.label}</span>
-                        <span style={{ color: "var(--primary)" }}>{b.pct}%</span>
-                      </div>
-                      <div style={{ height: 4, borderRadius: 2, background: "rgba(255,255,255,0.08)" }}>
-                        <div style={{ height: 4, borderRadius: 2, width: `${b.pct}%`, background: "var(--primary)" }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* TIER 2 — USP Cards (Bold Treatment) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { icon: "🎯", title: "Jobs That Match You", desc: "AI calculates your skill-match percentage for every job. See only roles relevant to your domain — no spam, no noise.", tag: "Skill match % · One-click apply", stat: "85%", statLabel: "avg match accuracy", color: "#0ABFBC" },
-              { icon: "👨\u200D🏫", title: "Real Mentors, Real Advice", desc: "Book 1-on-1 sessions with verified professionals from your dream companies. Free or paid from Rs.300.", tag: "Verified mentors · Rated & reviewed", stat: "4.8★", statLabel: "avg mentor rating", color: "#0ABFBC" },
-              { icon: "🛡️", title: "Is That Offer Real?", desc: "Paste any offer letter. Our AI checks 20 fraud parameters. Rs.1,200 Cr lost to job scams in India last year.", tag: "20 fraud checks · Instant verdict", stat: "20", statLabel: "fraud parameters", color: "#F59E0B" },
-              { icon: "🧪", title: "Prove Your Skills", desc: "Timed, proctored MCQ labs with webcam verification. Results employers actually trust.", tag: "Proctored · Auto-graded · Shareable", stat: "100%", statLabel: "employer trusted", color: "#0ABFBC" },
-            ].map((f) => (
-              <div key={f.title} className="card-dark animate-on-scroll group" style={{ padding: "1.75rem", borderTop: `2px solid ${f.color}`, position: "relative", overflow: "hidden" }}>
-                {/* Glow effect on hover */}
-                <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "60px", background: `linear-gradient(180deg, ${f.color}08, transparent)`, transition: "opacity 0.3s", opacity: 0.5 }} />
-                <div style={{ position: "relative" }}>
-                  {/* Stat badge — top right */}
-                  <div style={{ position: "absolute", top: 0, right: 0, textAlign: "right" }}>
-                    <div className={heading} style={{ fontSize: "1.5rem", fontWeight: 700, color: f.color, lineHeight: 1 }}>{f.stat}</div>
-                    <div style={{ fontSize: "0.6rem", color: "#4A6363", marginTop: "0.1rem" }}>{f.statLabel}</div>
-                  </div>
-                  {/* Icon */}
-                  <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>{f.icon}</div>
-                  {/* Title */}
-                  <h3 className={heading} style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginBottom: "0.5rem", paddingRight: "3rem" }}>{f.title}</h3>
-                  {/* Description */}
-                  <p style={{ fontSize: "0.82rem", color: "#6B8F8F", lineHeight: 1.6, marginBottom: "0.75rem" }}>{f.desc}</p>
-                  {/* Tag */}
-                  <span style={{ fontSize: "0.7rem", color: f.color, fontWeight: 600 }}>{f.tag}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* ═══ HOW IT WORKS ═══ */}
-      <section id="how-section" className="relative overflow-hidden" style={{ background: "#0C1A1A", paddingTop: "6rem", paddingBottom: "6rem" }}>
-        {/* Background glow */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 50% 40% at 50% 60%, rgba(10,191,188,0.05) 0%, transparent 70%)" }} />
-
-        <div className="relative mx-auto px-4" style={{ maxWidth: 1100 }}>
-          {/* Header */}
-          <div className="text-center mb-16">
-            <div className="section-eyebrow justify-center">HOW IT WORKS</div>
-            <h2 className={heading} style={{ color: "#fff", marginBottom: "0.5rem" }}>From Confused to Hired</h2>
-            <p style={{ color: "#4A6363", fontSize: "1rem" }}>Four steps. No fluff.</p>
-          </div>
-
-          {/* Steps — Cards with number, icon, content */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {[
-              { num: "01", icon: "✍️", title: "Create Your Profile", desc: "Add your skills, education, and target companies. Takes 3 minutes.", time: "3 min", color: "#0ABFBC" },
-              { num: "02", icon: "🎯", title: "Tell Us Your Goal", desc: "Type your dream company and role. Our AI builds your personalised roadmap instantly.", time: "Instant", color: "#0ABFBC" },
-              { num: "03", icon: "🤖", title: "Prepare with AI + Mentors", desc: "Follow your week-by-week plan. Practice mock interviews. Book mentor sessions.", time: "4-8 weeks", color: "#F59E0B" },
-              { num: "04", icon: "🏆", title: "Apply and Get Hired", desc: "Apply to matched jobs with your skill score. Land interviews at your dream company.", time: "You're ready", color: "#10b981" },
-            ].map((step, i) => (
-              <div key={step.num} className="animate-on-scroll card-dark relative group" style={{ padding: "2rem 1.5rem", borderTop: `2px solid ${step.color}` }}>
-                {/* Step number — large watermark */}
-                <div className={heading} style={{ position: "absolute", top: "1rem", right: "1.25rem", fontSize: "3.5rem", fontWeight: 700, color: "rgba(255,255,255,0.03)", lineHeight: 1 }}>{step.num}</div>
-
-                {/* Icon */}
-                <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>{step.icon}</div>
-
-                {/* Step label */}
-                <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                  <span className={heading} style={{ fontSize: "0.7rem", fontWeight: 700, color: step.color, background: `${step.color}15`, padding: "0.2rem 0.6rem", borderRadius: 999 }}>Step {step.num}</span>
-                  <span style={{ fontSize: "0.65rem", color: "#4A6363" }}>{step.time}</span>
-                </div>
-
-                {/* Title */}
-                <h3 className={heading} style={{ color: "#fff", fontWeight: 700, fontSize: "1.05rem", marginBottom: "0.5rem" }}>{step.title}</h3>
-
-                {/* Description */}
-                <p style={{ color: "#6B8F8F", fontSize: "0.85rem", lineHeight: 1.6 }}>{step.desc}</p>
-
-                {/* Connector arrow (desktop only, not on last) */}
-                {i < 3 && (
-                  <div className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 z-10" style={{ color: "rgba(255,255,255,0.15)", fontSize: "1.2rem" }}>→</div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Progress bar visual */}
-          <div className="hidden md:flex items-center justify-center mt-8 gap-2" style={{ maxWidth: 600, margin: "2rem auto 0" }}>
-            {[25, 50, 75, 100].map((pct, i) => (
-              <div key={pct} className="flex items-center gap-2 flex-1">
-                <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                  <div className="h-full rounded-full" style={{ width: "100%", background: i === 3 ? "#10b981" : i === 2 ? "#F59E0B" : "#0ABFBC", opacity: 0.6 }} />
-                </div>
-                {i < 3 && <div style={{ color: "rgba(255,255,255,0.1)", fontSize: "0.6rem" }}>→</div>}
-              </div>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <div className="text-center mt-10">
-            <p style={{ color: "#6B8F8F", fontSize: "0.9rem", marginBottom: "1rem" }}>Ready to start?</p>
-            <button onClick={() => router.push(session ? "/chat" : "/auth/signup?role=STUDENT")} className="btn-primary animate-glow" style={{ padding: "0.9rem 2.2rem", fontSize: "1rem" }}>
-              Build My Free Roadmap →
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ WHY ASTRAAHIRE — Comparison Table ═══ */}
-      <section className="px-4" style={{ background: "var(--color-bg-subtle)", paddingTop: "6rem", paddingBottom: "6rem" }}>
-        <div className="mx-auto" style={{ maxWidth: 1200 }}>
-          <div className="text-center mb-12">
-            <div className="section-eyebrow justify-center">WHY ASTRAAHIRE</div>
-            <h2 className={heading} style={{ color: "var(--ink)" }}>Not a Course. Not a Job Board.</h2>
-            <p className="mt-2 mx-auto" style={{ color: "var(--color-text-secondary)", fontSize: "1rem", maxWidth: 550, lineHeight: 1.6 }}>
-              The only platform built end-to-end for Indian graduates who want a job, not a certificate.
-            </p>
-          </div>
-
-          {/* Desktop Table */}
-          <div className="hidden md:block mx-auto overflow-hidden" style={{ maxWidth: 900, border: "1px solid var(--color-border)", borderRadius: "1rem" }}>
-            <table className="w-full" style={{ borderCollapse: "collapse" }}>
-              <thead>
-                <tr style={{ background: "#0D2020" }}>
-                  <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "#fff", fontSize: "0.85rem", fontWeight: 600, width: "35%" }}>Feature</th>
-                  <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--primary)", fontSize: "0.85rem", fontWeight: 700, width: "25%" }}>AstraaHire</th>
-                  <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--color-text-secondary)", fontSize: "0.85rem", fontWeight: 500 }}>Naukri / LinkedIn</th>
-                  <th style={{ padding: "1rem 1.5rem", textAlign: "left", color: "var(--color-text-secondary)", fontSize: "0.85rem", fontWeight: 500 }}>upGrad / Scaler</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { feature: "AI Career Roadmap", sm: "✓ Free, personalised", nk: "✗ Not available", up: "~ Paid courses only" },
-                  { feature: "Company-Specific Prep", sm: "✓ 15 companies mapped", nk: "✗ Generic listings", up: "✗ Generic curriculum" },
-                  { feature: "AI Mock Interviews", sm: "✓ Real-time feedback", nk: "✗ Not available", up: "~ Limited, paid" },
-                  { feature: "Verified Mentors", sm: "✓ Book from Rs.300", nk: "✗ No mentoring", up: "~ Expensive packages" },
-                  { feature: "Fake Offer Detection", sm: "✓ AI-powered, instant", nk: "✗ Not available", up: "✗ Not available" },
-                  { feature: "Proctored Skill Labs", sm: "✓ Free, employer-trusted", nk: "✗ Not available", up: "~ Paid add-on" },
-                  { feature: "Cost", sm: "✓ Free or Rs.299/mo", nk: "~ Free but limited", up: "✗ Rs.3-4 Lakhs" },
-                ].map((row, i) => (
-                  <tr key={row.feature} style={{ background: i % 2 === 0 ? "#fff" : "var(--color-bg-subtle)", borderBottom: "1px solid var(--color-border)" }}>
-                    <td style={{ padding: "1rem 1.5rem", fontWeight: 600, color: "var(--color-text-primary)", fontSize: "0.9rem" }}>{row.feature}</td>
-                    <td style={{ padding: "1rem 1.5rem", fontSize: "0.9rem" }}>
-                      <span style={{ color: "var(--primary)", fontWeight: 700 }}>{row.sm.charAt(0)}</span>
-                      <span style={{ color: "var(--color-text-primary)", marginLeft: 4 }}>{row.sm.slice(1)}</span>
-                    </td>
-                    <td style={{ padding: "1rem 1.5rem", fontSize: "0.85rem" }}>
-                      <span style={{ color: row.nk.startsWith("✗") ? "#D1D5DB" : "#F59E0B", fontWeight: 700 }}>{row.nk.charAt(0)}</span>
-                      <span style={{ color: "var(--color-text-secondary)", marginLeft: 4 }}>{row.nk.slice(1)}</span>
-                    </td>
-                    <td style={{ padding: "1rem 1.5rem", fontSize: "0.85rem" }}>
-                      <span style={{ color: row.up.startsWith("✗") ? "#D1D5DB" : row.up.startsWith("~") ? "#F59E0B" : "var(--primary)", fontWeight: 700 }}>{row.up.charAt(0)}</span>
-                      <span style={{ color: "var(--color-text-secondary)", marginLeft: 4 }}>{row.up.slice(1)}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile: Stacked Cards (AstraaHire column only) */}
-          <div className="md:hidden space-y-3">
-            {[
-              { feature: "AI Career Roadmap", value: "Free, personalised" },
-              { feature: "Company-Specific Prep", value: "15 companies mapped" },
-              { feature: "AI Mock Interviews", value: "Real-time feedback" },
-              { feature: "Verified Mentors", value: "Book from Rs.300" },
-              { feature: "Fake Offer Detection", value: "AI-powered, instant" },
-              { feature: "Proctored Skill Labs", value: "Free, employer-trusted" },
-              { feature: "Cost", value: "Free or Rs.299/mo" },
-            ].map((r) => (
-              <div key={r.feature} style={{ background: "#fff", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "1rem 1.25rem" }}>
-                <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--color-text-primary)", marginBottom: "0.25rem" }}>{r.feature}</div>
-                <div style={{ fontSize: "0.85rem", color: "var(--primary)", fontWeight: 600 }}>✓ {r.value}</div>
-              </div>
-            ))}
-          </div>
-
-          <p className="text-center mt-6" style={{ color: "var(--color-text-secondary)", fontSize: "0.8rem" }}>
-            * Competitor features based on publicly available information, April 2026
-          </p>
-        </div>
-      </section>
-
-      {/* ═══ TESTIMONIALS ═══ */}
-      <section className="px-4" style={{ background: "#FFFFFF", paddingTop: "6rem", paddingBottom: "6rem" }}>
-        <div className="mx-auto" style={{ maxWidth: 900 }}>
-          <div className="text-center mb-12">
-            <div className="section-eyebrow justify-center">SUCCESS STORIES</div>
-            <h2 className={heading} style={{ color: "var(--ink)" }}>They Were Exactly Where You Are.</h2>
-            <p className="mt-1" style={{ color: "var(--color-text-secondary)", fontSize: "1rem" }}>Then they used AstraaHire.</p>
-          </div>
-
-          {/* Featured Quote */}
-          <div className="mb-6" style={{ background: "#0D2020", border: "1px solid rgba(10,191,188,0.15)", borderRadius: "1rem", padding: "3rem", maxWidth: 750, margin: "0 auto 1.5rem" }}>
-            <div style={{ color: "#F59E0B", fontSize: "1rem", marginBottom: "0.75rem" }}>★★★★★</div>
-            <div style={{ color: "var(--primary)", fontFamily: "Georgia, serif", fontSize: "5rem", lineHeight: 0, marginBottom: "1.5rem" }}>&ldquo;</div>
-            <p className={heading} style={{ color: "#fff", fontSize: "1.3rem", fontWeight: 500, lineHeight: 1.6, marginBottom: "1.5rem" }}>
-              AstraaHire told me I was missing CEH certification for TCS Cybersecurity. Got it in 5 weeks. Got the call in week 6.
-            </p>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center shrink-0" style={{ width: "2.5rem", height: "2.5rem", borderRadius: "50%", background: "var(--primary)", color: "#fff", fontWeight: 700, fontSize: "0.85rem" }}>RK</div>
-              <div>
-                <div style={{ color: "#fff", fontWeight: 600, fontSize: "0.95rem" }}>Rahul Kumar</div>
-                <div style={{ color: "var(--color-text-secondary)", fontSize: "0.8rem" }}>B.Tech CSE, 2025 · Now at TCS</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Supporting Quotes */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ maxWidth: 750, margin: "0 auto" }}>
-            {[
-              { quote: "Nobody told me KPMG looks for ISO 27001 knowledge. AstraaHire's roadmap was so specific — I knew exactly what to do.", name: "Priya Sharma", role: "MBA Finance, 2025 · Now at KPMG", initials: "PS" },
-              { quote: "The AI advisor felt like talking to a senior who actually knew what they were talking about. Cracked Infosys first attempt.", name: "Sneha Joshi", role: "B.Tech IT, 2026 · Infosys", initials: "SJ" },
-            ].map((r) => (
-              <div key={r.name} style={{ background: "#fff", border: "1px solid var(--color-border)", borderRadius: "0.75rem", padding: "2rem" }}>
-                <div style={{ color: "#F59E0B", fontSize: "0.85rem", marginBottom: "0.75rem" }}>★★★★★</div>
-                <div style={{ color: "var(--primary)", fontFamily: "Georgia, serif", fontSize: "2.5rem", lineHeight: 0, marginBottom: "1rem" }}>&ldquo;</div>
-                <p style={{ fontSize: "1rem", color: "var(--color-text-primary)", lineHeight: 1.65, marginBottom: "1.25rem" }}>{r.quote}</p>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center shrink-0" style={{ width: "2rem", height: "2rem", borderRadius: "50%", background: "var(--primary-light)", color: "var(--primary)", fontWeight: 700, fontSize: "0.7rem" }}>{r.initials}</div>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--color-text-primary)" }}>{r.name}</div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>{r.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <p className="text-center mt-8" style={{ color: "var(--color-text-secondary)", fontSize: "0.9rem" }}>
-            Join students who stopped guessing and started preparing.
-          </p>
-        </div>
-      </section>
-
-      {/* ═══ FAQ ═══ */}
-      <section className="px-4" style={{ background: "#0C1A1A", paddingTop: "6rem", paddingBottom: "6rem" }}>
-        <div className="mx-auto" style={{ maxWidth: 700 }}>
-          <div className="text-center mb-10">
-            <div className="section-eyebrow justify-center">FAQ</div>
-            <h2 className={heading} style={{ color: "#fff" }}>Questions We Get A Lot.</h2>
-          </div>
-
-          <div className="space-y-3">
-            {faqItems.map((item, i) => (
-              <div
-                key={i}
-                className={`overflow-hidden transition-all duration-300 ${openFaq === i ? "faq-open" : ""}`}
-                style={{
-                  background: openFaq === i ? "rgba(10,191,188,0.05)" : "rgba(255,255,255,0.03)",
-                  border: `1px solid ${openFaq === i ? "rgba(10,191,188,0.25)" : "rgba(255,255,255,0.08)"}`,
-                  borderRadius: "0.75rem",
-                }}
-              >
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex justify-between items-center text-left bg-transparent border-none cursor-pointer"
-                  style={{ padding: "1.25rem 1.5rem" }}
-                >
-                  <span style={{ fontWeight: 600, color: "#fff", fontSize: "0.95rem", paddingRight: "1rem" }}>{item.q}</span>
-                  <span className="shrink-0 faq-icon transition-transform duration-300" style={{ color: openFaq === i ? "#0ABFBC" : "#4A6363", fontSize: "1.2rem" }}>+</span>
-                </button>
-                <div className="faq-answer" style={{ padding: "0 1.5rem", color: "#6B8F8F", fontSize: "0.9rem", lineHeight: 1.7 }}>
-                  {item.a}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ FINAL CTA ═══ */}
-      <section
-        className="relative px-4 text-center"
-        style={{ background: "#0D2020", paddingTop: "7rem", paddingBottom: "7rem" }}
-      >
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(10,191,188,0.12) 0%, transparent 70%)" }} />
-
-        <div className="relative mx-auto" style={{ maxWidth: 650 }}>
-          {/* Eyebrow pill */}
-          <div
-            className="inline-flex items-center mb-6"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(10,191,188,0.2)",
-              borderRadius: 999,
-              padding: "0.3rem 1rem",
-              fontSize: "0.7rem",
-              fontWeight: 600,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase" as const,
-              color: "var(--primary)",
-            }}
-          >
-            Your next step takes 2 minutes
-          </div>
-
-          {/* Headline */}
-          <h2 className={heading} style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 700, lineHeight: 1.1, color: "#fff", marginBottom: "1rem" }}>
-            Your Dream Company<br />Is Looking For Someone<br /><span style={{ color: "var(--primary)" }}>Exactly Like You.</span>
-          </h2>
-
-          <p style={{ color: "var(--color-text-secondary)", fontSize: "1rem", marginBottom: "2.5rem" }}>
-            Tell us where you want to go. We&apos;ll show you exactly how to get there.
+      {/* ═══════════════════════════════ CTA DARK CARD ═══════════════════════════════ */}
+      <section className="px-4 pb-20">
+        <div className="card-dark max-w-5xl mx-auto text-center" style={{ padding: "60px 20px" }}>
+          <div className="section-eyebrow mx-auto" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}>Get started</div>
+          <h2 className="font-semibold mb-4" style={{ color: "white" }}>Get started with India&apos;s leading career intelligence</h2>
+          <p className="text-sm max-w-md mx-auto mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
+            Join thousands of students already using AstraaHire. A platform built for your growth.
           </p>
 
-          {/* Input Bar */}
-          <form onSubmit={handleChatSubmit} className="max-w-lg mx-auto">
-            <div
-              className="flex items-center gap-2 p-2"
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                borderRadius: "0.625rem",
-              }}
-            >
-              <svg className="ml-3 shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="I want to join Deloitte as a Data Analyst..."
-                className="flex-1 py-3 px-2 text-sm outline-none bg-transparent"
-                style={{ color: "#fff" }}
-              />
-              <button
-                type="submit"
-                className="shrink-0 font-semibold transition-all"
-                style={{ background: "var(--primary)", color: "#fff", padding: "0.6rem 1.25rem", fontSize: "0.85rem", borderRadius: "0.5rem", border: "none", cursor: "pointer" }}
-              >
-                Start Free →
-              </button>
-            </div>
+          <form className="max-w-md mx-auto flex gap-2 p-1.5 bg-white rounded-full">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-2 text-sm bg-transparent outline-none"
+              style={{ color: "var(--ink)" }}
+            />
+            <Link href="/auth/signup" className="btn-primary" style={{ padding: "0.55rem 1.2rem", fontSize: "0.85rem" }}>Start now</Link>
           </form>
-
-          <p className="mt-3" style={{ color: "var(--color-text-secondary)", fontSize: "0.8rem" }}>
-            Free to start · No credit card · No courses to buy
-          </p>
-
-          {/* Trust badges */}
-          <div className="flex justify-center gap-2 mt-3 flex-wrap">
-            {["🔒 Secure", "🤖 AI-Powered", "🇮🇳 Built for India"].map((badge) => (
-              <span
-                key={badge}
-                style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: 999,
-                  padding: "0.3rem 0.8rem",
-                  color: "var(--color-text-muted)",
-                  fontSize: "0.75rem",
-                }}
-              >
-                {badge}
-              </span>
-            ))}
-          </div>
         </div>
       </section>
     </div>

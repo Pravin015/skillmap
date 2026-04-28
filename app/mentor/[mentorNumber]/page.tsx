@@ -126,7 +126,7 @@ export default function MentorProfilePage() {
                     <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${heading}`} style={{ background: "var(--primary)", color: "white" }}>{m.currentCompany}</span>
                   )}
                   {m.compensation === "VOLUNTEER" && (
-                    <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-[#E0F7F7] text-[#0ABFBC]">Free / Volunteer</span>
+                    <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-[#EDE9FE] text-[#7C3AED]">Free / Volunteer</span>
                   )}
                   {m.compensation === "PAID" && m.sessionRate && (
                     <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">₹{m.sessionRate}/session</span>

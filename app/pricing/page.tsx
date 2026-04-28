@@ -181,7 +181,7 @@ export default function PricingPage() {
           name: data.name || "",
           email: data.email || "",
         },
-        theme: { color: "#0ABFBC" },
+        theme: { color: "#7C3AED" },
         modal: {
           ondismiss: () => setLoading(null),
         },

@@ -64,6 +64,7 @@ const sidebarCategories: SidebarCategory[] = [
     label: "Content & Listings",
     items: [
       { id: "jobs", label: "Job Posts", icon: "💼" },
+      { id: "external-jobs", label: "External Jobs (Scraped)", icon: "🌐" },
       { id: "events", label: "Events", icon: "🎤" },
       { id: "labs", label: "Labs", icon: "🧪" },
       { id: "blog", label: "Blog", icon: "📝" },
@@ -145,6 +146,9 @@ export default function AdminPage() {
       case "students": return <StudentsTab users={users} onRefresh={fetchUsers} />;
       case "institutions": return <InstitutionsTab users={users} onRefresh={fetchUsers} />;
       case "jobs": return <JobPostsTab />;
+      case "external-jobs":
+        if (typeof window !== "undefined") window.location.href = "/admin/scrape-runs";
+        return null;
       case "events": return <EventsTab />;
       case "labs": return <LabsTab />;
       case "blog": return <BlogTab />;

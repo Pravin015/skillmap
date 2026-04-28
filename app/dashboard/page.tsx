@@ -237,7 +237,7 @@ function EventsWidget() {
                 <div className={`${s} font-bold text-sm`}>{e.title}</div>
                 <div className="text-xs" style={{ color: "var(--muted)" }}>by {e.createdBy.name} · {new Date(e.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })} · {e._count.registrations} joined</div>
               </div>
-              <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${e.pricing === "FREE" ? "bg-green-100 text-green-700" : "bg-[#E0F7F7] text-[#0ABFBC]"}`}>{e.pricing === "FREE" ? "Free" : `₹${(e.price || 0) / 100}`}</span>
+              <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${e.pricing === "FREE" ? "bg-green-100 text-green-700" : "bg-[#EDE9FE] text-[#7C3AED]"}`}>{e.pricing === "FREE" ? "Free" : `₹${(e.price || 0) / 100}`}</span>
             </Link>
           ))}
         </div>

@@ -15,11 +15,11 @@ interface User {
 }
 
 const roleBadge: Record<string, string> = {
-  STUDENT: "bg-[#E0F7F7] text-[#0ABFBC]",
+  STUDENT: "bg-[#EDE9FE] text-[#7C3AED]",
   MENTOR: "bg-amber-100 text-amber-700",
   HR: "bg-cyan-100 text-cyan-700",
   ORG: "bg-emerald-100 text-emerald-700",
-  INSTITUTION: "bg-[#E0F7F7] text-[#0ABFBC]",
+  INSTITUTION: "bg-[#EDE9FE] text-[#7C3AED]",
   ADMIN: "bg-red-100 text-red-700",
 };
 
@@ -124,7 +124,7 @@ export default function NTTUsersTab({ users }: { users: User[] }) {
 
       {/* Action Message */}
       {actionMsg && (
-        <div className="rounded-xl p-3 text-sm font-mono" style={{ background: "rgba(10,191,188,0.15)", color: "var(--ink)" }}>
+        <div className="rounded-xl p-3 text-sm font-mono" style={{ background: "rgba(124,58,237,0.15)", color: "var(--ink)" }}>
           {actionMsg}
           <button onClick={() => setActionMsg("")} className="ml-3 text-xs underline" style={{ color: "var(--muted)" }}>dismiss</button>
         </div>

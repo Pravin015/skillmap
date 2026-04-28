@@ -17,7 +17,7 @@ export default function LabsPrepCard() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {labFeatures.map((f) => (
-            <div key={f.title} className="rounded-xl p-4 border transition-colors hover:border-[rgba(10,191,188,0.2)]" style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.08)" }}>
+            <div key={f.title} className="rounded-xl p-4 border transition-colors hover:border-[rgba(124,58,237,0.2)]" style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.08)" }}>
               <div className="text-2xl mb-2">{f.icon}</div>
               <div className={`${heading} font-bold text-sm text-white mb-1`}>{f.title}</div>
               <div className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>{f.desc}</div>

@@ -47,15 +47,13 @@ export default function CompetitionsPage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
       {/* Hero */}
-      <section style={{ background: "var(--ink)" }}>
+      <section className="blob-bg blob-bg-soft">
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold mb-4" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>
-            🏆 Compete & Get Hired
-          </div>
-          <h1 className={`${heading} text-2xl md:text-4xl font-bold text-white mb-3`}>
-            Competitions & Hiring Challenges
+          <div className="section-eyebrow mx-auto">🏆 Compete &amp; Get Hired</div>
+          <h1 className="font-semibold mb-3" style={{ color: "var(--ink)" }}>
+            Competitions &amp; Hiring Challenges
           </h1>
-          <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.6)" }}>
+          <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "var(--muted)" }}>
             Participate in hackathons, coding challenges, quizzes, and case studies. Win prizes and get hired directly by top companies.
           </p>
         </div>

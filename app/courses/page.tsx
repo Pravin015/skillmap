@@ -31,13 +31,13 @@ export default function CoursesPage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
       {/* Hero */}
-      <section style={{ background: "#0C1A1A", paddingTop: "7rem", paddingBottom: "4rem" }}>
+      <section className="blob-bg blob-bg-soft pb-12 pt-8">
         <div className="mx-auto max-w-6xl px-4 text-center">
-          <div className="section-eyebrow justify-center">COURSES</div>
-          <h1 className={`${heading} text-2xl md:text-4xl font-bold text-white mb-3`}>Learn What Companies Actually Want</h1>
-          <p className="text-sm md:text-base max-w-xl mx-auto mb-6" style={{ color: "#6B8F8F" }}>Courses built by institutions and verified experts. Learn the exact skills that get you hired.</p>
+          <div className="section-eyebrow mx-auto">Courses</div>
+          <h1 className="font-semibold mb-3" style={{ color: "var(--ink)" }}>Learn what companies actually want</h1>
+          <p className="text-sm md:text-base max-w-xl mx-auto mb-6" style={{ color: "var(--muted)" }}>Courses built by institutions and verified experts. Learn the exact skills that get you hired.</p>
           <div className="max-w-md mx-auto">
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search courses by title, skill, or category..." className="w-full rounded-xl px-5 py-3 text-sm outline-none bg-transparent" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "#fff" }} />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by title, skill, or category…" className="w-full rounded-full px-5 py-3 text-sm outline-none bg-white border" style={{ borderColor: "var(--border)", color: "var(--ink)" }} />
           </div>
         </div>
       </section>
@@ -80,18 +80,18 @@ export default function CoursesPage() {
                   ) : (
                     <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#F59E0B15", color: "#F59E0B" }}>Rs.{(course.price || 0) / 100}</span>
                   )}
-                  {course.category && <span className="text-[10px]" style={{ color: "#4A6363" }}>{course.category}</span>}
+                  {course.category && <span className="text-[10px]" style={{ color: "#9A95A6" }}>{course.category}</span>}
                 </div>
                 <h3 className={`${heading} text-base font-bold mb-1`} style={{ color: "#fff" }}>{course.title}</h3>
-                <p className="text-xs mb-3 line-clamp-2" style={{ color: "#6B8F8F" }}>{course.description}</p>
+                <p className="text-xs mb-3 line-clamp-2" style={{ color: "#6B6776" }}>{course.description}</p>
                 {course.skills.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-3">
                     {course.skills.slice(0, 4).map((s) => (
-                      <span key={s} className="rounded-full px-2 py-0.5 text-[9px]" style={{ background: "rgba(255,255,255,0.05)", color: "#6B8F8F" }}>{s}</span>
+                      <span key={s} className="rounded-full px-2 py-0.5 text-[9px]" style={{ background: "rgba(255,255,255,0.05)", color: "#6B6776" }}>{s}</span>
                     ))}
                   </div>
                 )}
-                <div className="flex items-center justify-between text-[10px] pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)", color: "#4A6363" }}>
+                <div className="flex items-center justify-between text-[10px] pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)", color: "#9A95A6" }}>
                   <span>{course.createdBy.organisation || course.createdBy.name}</span>
                   <span>{course._count.modules} modules · {course._count.enrollments} enrolled</span>
                 </div>

@@ -101,17 +101,17 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
       {/* Hero */}
-      <section style={{ background: "#0C1A1A", paddingTop: "7rem", paddingBottom: "3rem" }}>
+      <section style={{ background: "#0F0E14", paddingTop: "7rem", paddingBottom: "3rem" }}>
         <div className="mx-auto max-w-5xl px-4">
           <Link href="/courses" className="text-xs no-underline mb-3 inline-block" style={{ color: "rgba(255,255,255,0.5)" }}>← Back to courses</Link>
           <div className="flex items-center gap-2 mb-3">
             <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${diffColors[course.difficulty]}15`, color: diffColors[course.difficulty] }}>{course.difficulty}</span>
             {course.pricing === "FREE" ? <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#10b98115", color: "#10b981" }}>Free</span> : <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#F59E0B15", color: "#F59E0B" }}>Rs.{(course.price || 0) / 100}</span>}
-            {course.category && <span className="text-[10px]" style={{ color: "#4A6363" }}>{course.category}</span>}
+            {course.category && <span className="text-[10px]" style={{ color: "#9A95A6" }}>{course.category}</span>}
           </div>
           <h1 className={`${heading} text-2xl md:text-3xl font-bold text-white mb-2`}>{course.title}</h1>
-          <p className="text-sm mb-3" style={{ color: "#6B8F8F" }}>{course.description}</p>
-          <div className="flex flex-wrap items-center gap-4 text-xs" style={{ color: "#4A6363" }}>
+          <p className="text-sm mb-3" style={{ color: "#6B6776" }}>{course.description}</p>
+          <div className="flex flex-wrap items-center gap-4 text-xs" style={{ color: "#9A95A6" }}>
             <span>By {course.createdBy.organisation || course.createdBy.name}</span>
             {course.duration && <span>{course.duration}</span>}
             <span>{course.modules.length} modules</span>
@@ -156,7 +156,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
                 const prevComplete = i === 0 || !course.sequentialUnlock || !enrollment || enrollment.completedModules.includes(course.modules[i - 1]?.id);
                 const isLocked = course.sequentialUnlock && enrollment && !prevComplete && !isComplete;
                 return (
-                  <button key={m.id} onClick={() => { if (!isLocked) { setActiveModule(m.id); setQuizResult(null); setQuizAnswers({}); } }} disabled={!!isLocked} className="w-full text-left rounded-lg p-3 transition-all" style={{ background: isActive ? "rgba(10,191,188,0.08)" : "white", border: `1px solid ${isActive ? "var(--primary)" : "var(--border)"}`, opacity: isLocked ? 0.5 : 1 }}>
+                  <button key={m.id} onClick={() => { if (!isLocked) { setActiveModule(m.id); setQuizResult(null); setQuizAnswers({}); } }} disabled={!!isLocked} className="w-full text-left rounded-lg p-3 transition-all" style={{ background: isActive ? "rgba(124,58,237,0.08)" : "white", border: `1px solid ${isActive ? "var(--primary)" : "var(--border)"}`, opacity: isLocked ? 0.5 : 1 }}>
                     <div className="flex items-center gap-2">
                       <span className="text-xs shrink-0" style={{ color: isComplete ? "#10b981" : isLocked ? "#8FA8A8" : "var(--muted)" }}>{isComplete ? "✓" : isLocked ? "🔒" : `${i + 1}.`}</span>
                       <span className="text-xs font-medium" style={{ color: isActive ? "var(--primary)" : "var(--ink)" }}>{m.title}</span>
@@ -182,7 +182,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
                 <div className="text-sm leading-relaxed" style={{ color: "var(--muted)" }} dangerouslySetInnerHTML={{ __html: (() => { try { const DOMPurify = require("isomorphic-dompurify"); return DOMPurify.sanitize(currentModule.content); } catch { return currentModule.content; } })() }} />
                 {/* Quiz Section */}
                 {enrollment && currentModule.hasQuiz && currentModule.quizQuestions && !enrollment.completedModules.includes(currentModule.id) && (
-                  <div className="mt-6 rounded-xl border p-5" style={{ borderColor: "var(--primary)", background: "rgba(10,191,188,0.03)" }}>
+                  <div className="mt-6 rounded-xl border p-5" style={{ borderColor: "var(--primary)", background: "rgba(124,58,237,0.03)" }}>
                     <h4 className={`${heading} text-sm font-bold mb-3`} style={{ color: "var(--ink)" }}>📝 Module Quiz</h4>
                     <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>Pass this quiz to complete the module and unlock the next one.</p>
                     {(() => { try { const qs = JSON.parse(currentModule.quizQuestions || "[]") as { question: string; options: string[] }[]; return (
@@ -192,7 +192,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
                             <p className="text-sm font-medium mb-2" style={{ color: "var(--ink)" }}>{qi + 1}. {q.question}</p>
                             <div className="space-y-1">
                               {q.options.map((opt, oi) => (
-                                <label key={oi} className="flex items-center gap-2 rounded-lg p-2 cursor-pointer transition-all" style={{ background: quizAnswers[qi] === oi ? "rgba(10,191,188,0.08)" : "transparent", border: `1px solid ${quizAnswers[qi] === oi ? "var(--primary)" : "var(--border)"}` }}>
+                                <label key={oi} className="flex items-center gap-2 rounded-lg p-2 cursor-pointer transition-all" style={{ background: quizAnswers[qi] === oi ? "rgba(124,58,237,0.08)" : "transparent", border: `1px solid ${quizAnswers[qi] === oi ? "var(--primary)" : "var(--border)"}` }}>
                                   <input type="radio" name={`q${qi}`} checked={quizAnswers[qi] === oi} onChange={() => setQuizAnswers({ ...quizAnswers, [qi]: oi })} className="accent-[var(--primary)]" />
                                   <span className="text-xs" style={{ color: "var(--ink)" }}>{opt}</span>
                                 </label>
@@ -238,7 +238,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
 
         {/* Certificate */}
         {enrollment && enrollment.progress >= 100 && (
-          <div className="mt-8 rounded-xl border p-5" style={{ borderColor: "var(--primary)", background: "rgba(10,191,188,0.03)" }}>
+          <div className="mt-8 rounded-xl border p-5" style={{ borderColor: "var(--primary)", background: "rgba(124,58,237,0.03)" }}>
             <div className="flex items-center justify-between">
               <div>
                 <h3 className={`${heading} text-sm font-bold`} style={{ color: "var(--ink)" }}>🏆 Course Completed!</h3>
@@ -274,7 +274,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ slug: s
               <p className="text-xs font-medium mb-2" style={{ color: "var(--ink)" }}>Rate this course</p>
               <div className="flex gap-1 mb-3">
                 {[1,2,3,4,5].map((star) => (
-                  <button key={star} onClick={() => setMyRating(star)} className="text-xl transition-transform hover:scale-110" style={{ color: star <= myRating ? "#F59E0B" : "#D4E8E8" }}>★</button>
+                  <button key={star} onClick={() => setMyRating(star)} className="text-xl transition-transform hover:scale-110" style={{ color: star <= myRating ? "#F59E0B" : "#E8E2D6" }}>★</button>
                 ))}
               </div>
               <textarea value={myReview} onChange={(e) => setMyReview(e.target.value)} placeholder="Write your review (optional)..." rows={2} className="w-full rounded-lg border px-3 py-2 text-sm outline-none mb-2" style={{ borderColor: "var(--border)" }} />

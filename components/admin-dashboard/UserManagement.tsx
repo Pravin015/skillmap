@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const heading = "font-[family-name:var(--font-heading)]";
 const roleBadge: Record<string, string> = {
-  STUDENT: "bg-[#E0F7F7] text-[#0ABFBC]",
+  STUDENT: "bg-[#EDE9FE] text-[#7C3AED]",
   HR: "bg-cyan-100 text-cyan-700",
   ORG: "bg-emerald-100 text-emerald-700",
   ADMIN: "bg-red-100 text-red-700",
@@ -67,7 +67,7 @@ export default function UserManagement({ users, onRefresh }: { users: User[]; on
       </div>
 
       {resetPwd && (
-        <div className="rounded-xl p-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(10,191,188,0.2)" }}>
+        <div className="rounded-xl p-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(124,58,237,0.2)" }}>
           <div className={`${heading} font-bold text-sm mb-1`}>New password generated:</div>
           <code className="text-base font-mono font-bold select-all">{resetPwd.pwd}</code>
           <button onClick={() => setResetPwd(null)} className="ml-4 text-xs underline" style={{ color: "var(--muted)" }}>Dismiss</button>

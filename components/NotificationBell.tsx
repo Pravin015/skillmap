@@ -71,7 +71,7 @@ export default function NotificationBell() {
                 <div className="p-8 text-center text-sm" style={{ color: "var(--muted)" }}>No notifications yet</div>
               ) : (
                 notifications.map((n) => (
-                  <div key={n.id} className="px-4 py-3 border-b transition-colors hover:bg-gray-50" style={{ borderColor: "var(--border)", background: n.read ? "transparent" : "rgba(10,191,188,0.03)" }}>
+                  <div key={n.id} className="px-4 py-3 border-b transition-colors hover:bg-gray-50" style={{ borderColor: "var(--border)", background: n.read ? "transparent" : "rgba(124,58,237,0.03)" }}>
                     <div className="flex items-start gap-2">
                       {!n.read && <div className="w-1.5 h-1.5 rounded-full shrink-0 mt-1.5" style={{ background: "var(--primary)" }} />}
                       <div className="flex-1 min-w-0">

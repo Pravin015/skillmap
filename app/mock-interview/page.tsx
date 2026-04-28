@@ -55,7 +55,7 @@ export default function MockInterviewPage() {
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
       {/* Hero */}
       <section className="relative overflow-hidden" style={{ background: "var(--ink)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(10,191,188,0.3) 1px, transparent 0)", backgroundSize: "40px 40px" }} />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(124,58,237,0.3) 1px, transparent 0)", backgroundSize: "40px 40px" }} />
         <div className="relative mx-auto max-w-6xl px-4 py-16 md:py-24 text-center">
           <div className="inline-block rounded-full px-4 py-1.5 text-xs font-medium mb-6" style={{ background: "var(--primary-light)", color: "var(--primary)" }}>
             Interview Preparation

@@ -4,7 +4,7 @@ import { coursesMap, Course } from "@/lib/mock-dashboard";
 const heading = "font-[family-name:var(--font-heading)]";
 
 const platformColors: Record<string, string> = {
-  YouTube: "bg-red-100 text-red-700", Coursera: "bg-blue-100 text-blue-700", Udemy: "bg-[#E0F7F7] text-[#0ABFBC]",
+  YouTube: "bg-red-100 text-red-700", Coursera: "bg-blue-100 text-blue-700", Udemy: "bg-[#EDE9FE] text-[#7C3AED]",
   "Khan Academy": "bg-green-100 text-green-700", "AWS Training": "bg-orange-100 text-orange-700",
   "HashiCorp Learn": "bg-cyan-100 text-cyan-700", NeetCode: "bg-emerald-100 text-emerald-700",
 };

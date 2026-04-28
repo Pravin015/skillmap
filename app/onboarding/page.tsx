@@ -110,7 +110,7 @@ export default function OnboardingPage() {
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-gray-200">
           <div
-            className="h-full rounded-full bg-[#0ABFBC] transition-all duration-300"
+            className="h-full rounded-full bg-[#7C3AED] transition-all duration-300"
             style={{ width: `${(step / 3) * 100}%` }}
           />
         </div>
@@ -136,7 +136,7 @@ export default function OnboardingPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your name"
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition-colors focus:border-[#0ABFBC] focus:ring-2 focus:ring-[#E0F7F7]"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition-colors focus:border-[#7C3AED] focus:ring-2 focus:ring-[#EDE9FE]"
               />
             </div>
 
@@ -147,7 +147,7 @@ export default function OnboardingPage() {
               <select
                 value={degree}
                 onChange={(e) => setDegree(e.target.value)}
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition-colors focus:border-[#0ABFBC] focus:ring-2 focus:ring-[#E0F7F7]"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition-colors focus:border-[#7C3AED] focus:ring-2 focus:ring-[#EDE9FE]"
               >
                 <option value="">Select degree</option>
                 {degrees.map((d) => (
@@ -165,7 +165,7 @@ export default function OnboardingPage() {
               <select
                 value={gradYear}
                 onChange={(e) => setGradYear(e.target.value)}
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition-colors focus:border-[#0ABFBC] focus:ring-2 focus:ring-[#E0F7F7]"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition-colors focus:border-[#7C3AED] focus:ring-2 focus:ring-[#EDE9FE]"
               >
                 <option value="">Select year</option>
                 {gradYears.map((y) => (
@@ -196,7 +196,7 @@ export default function OnboardingPage() {
                 onClick={() => setSelectedDomain(d.key)}
                 className={`rounded-xl border-2 p-5 text-left transition-all ${
                   selectedDomain === d.key
-                    ? "border-[#0ABFBC] bg-[#E0F7F7] ring-2 ring-[#E0F7F7]"
+                    ? "border-[#7C3AED] bg-[#EDE9FE] ring-2 ring-[#EDE9FE]"
                     : "border-gray-200 bg-white hover:border-gray-300"
                 }`}
               >
@@ -235,7 +235,7 @@ export default function OnboardingPage() {
                   onClick={() => toggleCompany(c.id)}
                   className={`relative rounded-xl border-2 p-5 text-left transition-all ${
                     selected
-                      ? "border-[#0ABFBC] bg-[#E0F7F7] ring-2 ring-[#E0F7F7]"
+                      ? "border-[#7C3AED] bg-[#EDE9FE] ring-2 ring-[#EDE9FE]"
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
                 >
@@ -258,7 +258,7 @@ export default function OnboardingPage() {
                     </div>
                   </div>
                   {selected && (
-                    <div className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#0ABFBC] text-white">
+                    <div className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#7C3AED] text-white">
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
@@ -289,7 +289,7 @@ export default function OnboardingPage() {
         <button
           onClick={handleNext}
           disabled={!canProceed()}
-          className="rounded-xl bg-[#0ABFBC] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-[#089A97] disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded-xl bg-[#7C3AED] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-[#6D28D9] disabled:cursor-not-allowed disabled:opacity-40"
         >
           {step === 3 ? "See my dashboard" : "Continue"}
         </button>

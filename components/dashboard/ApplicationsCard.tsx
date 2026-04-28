@@ -6,7 +6,7 @@ const heading = "font-[family-name:var(--font-heading)]";
 const statusColors: Record<string, string> = {
   APPLIED: "bg-blue-100 text-blue-700",
   SCREENING: "bg-yellow-100 text-yellow-700",
-  INTERVIEW: "bg-[#E0F7F7] text-[#0ABFBC]",
+  INTERVIEW: "bg-[#EDE9FE] text-[#7C3AED]",
   ASSESSMENT: "bg-orange-100 text-orange-700",
   OFFER: "bg-green-100 text-green-700",
   HIRED: "bg-emerald-100 text-emerald-800",

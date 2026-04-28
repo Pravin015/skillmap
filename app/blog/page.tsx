@@ -18,10 +18,11 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)]" style={{ background: "var(--surface)" }}>
-      <section className="py-12 px-4 md:px-8" style={{ background: "var(--ink)" }}>
-        <div className="max-w-5xl mx-auto">
-          <h1 className={`${heading} font-bold text-3xl md:text-4xl text-white mb-2`}>Blog</h1>
-          <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Career advice, industry insights, and skill-building tips from mentors and experts</p>
+      <section className="blob-bg blob-bg-soft py-12 px-4 md:px-8">
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="section-eyebrow mx-auto">Blog</div>
+          <h1 className="font-semibold mb-3" style={{ color: "var(--ink)" }}>Career insights, fresh weekly</h1>
+          <p className="text-sm max-w-xl mx-auto" style={{ color: "var(--muted)" }}>Career advice, industry insights, and skill-building tips from mentors and experts.</p>
         </div>
       </section>
 

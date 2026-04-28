@@ -212,7 +212,7 @@ export default function PublicProfilePage() {
         {p.resumeUrl && (
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
             <h2 className={`${heading} font-bold text-base mb-3`}>Resume</h2>
-            <div className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: "var(--border)", background: "rgba(10,191,188,0.05)" }}>
+            <div className="flex items-center gap-3 p-3 rounded-xl border" style={{ borderColor: "var(--border)", background: "rgba(124,58,237,0.05)" }}>
               <span className="text-2xl">📄</span>
               <div className="flex-1">
                 <div className={`${heading} font-bold text-sm`}>Resume uploaded</div>

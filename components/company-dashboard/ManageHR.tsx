@@ -85,7 +85,7 @@ export default function ManageHR({ hrs, onRefresh }: Props) {
             </div>
           )}
           {tempPassword && (
-            <div className="rounded-xl p-4 mb-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(10,191,188,0.2)" }}>
+            <div className="rounded-xl p-4 mb-4 border" style={{ background: "var(--primary-light)", borderColor: "rgba(124,58,237,0.2)" }}>
               <div className={`${heading} font-bold text-sm mb-1`}>Temporary Password (share with HR)</div>
               <code className="text-base font-mono font-bold select-all">{tempPassword}</code>
               <p className="text-xs mt-2" style={{ color: "var(--muted)" }}>This password is shown only once. Copy it now and share it securely with the HR.</p>

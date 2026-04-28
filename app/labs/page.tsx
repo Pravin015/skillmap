@@ -19,11 +19,11 @@ export default function LabsPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
-      <section style={{ background: "#0C1A1A", paddingTop: "7rem", paddingBottom: "4rem" }}>
+      <section className="blob-bg blob-bg-soft pb-12 pt-8">
         <div className="mx-auto max-w-4xl px-4 text-center">
-          <div className="section-eyebrow justify-center">SKILL ASSESSMENTS</div>
-          <h1 className={`${heading} text-2xl md:text-4xl font-bold text-white mb-3`}>Lab Assessments</h1>
-          <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "#6B8F8F" }}>Timed, proctored MCQ assessments. Prove your skills to employers with results they can trust.</p>
+          <div className="section-eyebrow mx-auto">Skill assessments</div>
+          <h1 className="font-semibold mb-3" style={{ color: "var(--ink)" }}>Lab Assessments</h1>
+          <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "var(--muted)" }}>Timed, proctored MCQ assessments. Prove your skills to employers with results they can trust.</p>
         </div>
       </section>
 
@@ -42,11 +42,11 @@ export default function LabsPage() {
               <div key={lab.id} className="card-dark" style={{ padding: "1.75rem" }}>
                 <div className="flex items-center gap-2 mb-3">
                   <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${diffColors[lab.difficulty]}15`, color: diffColors[lab.difficulty] }}>{lab.difficulty}</span>
-                  <span className="text-[10px]" style={{ color: "#4A6363" }}>{lab.domain}</span>
+                  <span className="text-[10px]" style={{ color: "#9A95A6" }}>{lab.domain}</span>
                 </div>
                 <h3 className={`${heading} text-base font-bold mb-1`} style={{ color: "#fff" }}>{lab.title}</h3>
-                {lab.description && <p className="text-xs mb-3" style={{ color: "#6B8F8F" }}>{lab.description}</p>}
-                <div className="flex items-center gap-4 text-xs mb-4" style={{ color: "#4A6363" }}>
+                {lab.description && <p className="text-xs mb-3" style={{ color: "#6B6776" }}>{lab.description}</p>}
+                <div className="flex items-center gap-4 text-xs mb-4" style={{ color: "#9A95A6" }}>
                   <span>{lab._count.problems} questions</span>
                   <span>{lab.timeLimit} min</span>
                   <span>Pass: {lab.passingScore}%</span>

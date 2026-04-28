@@ -132,7 +132,7 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
         </div>
         {/* Lab Assessment */}
         {labs.length > 0 && (
-          <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(10,191,188,0.2)", background: "rgba(10,191,188,0.05)" }}>
+          <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(124,58,237,0.2)", background: "rgba(124,58,237,0.05)" }}>
             <label className={labelClass}>Attach Assessment Lab</label>
             <select name="labTemplateId" className={inputClass} style={{ borderColor: "var(--border)" }}>
               <option value="">No lab (optional)</option>
