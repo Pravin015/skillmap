@@ -63,7 +63,7 @@ const navGroups: MegaGroup[] = [
       {
         heading: "REACH US",
         items: [
-          { href: "/forms?type=contact", label: "Contact sales", desc: "Talk to a hiring engineer.", icon: Icon.bag },
+          { href: "/contact", label: "Contact sales", desc: "Talk to a hiring engineer.", icon: Icon.bag },
           { href: "/about#trust", label: "Trust center", desc: "Security & compliance posture.", icon: Icon.shield },
         ],
       },
@@ -146,7 +146,7 @@ const navGroups: MegaGroup[] = [
       {
         heading: "SUPPORT",
         items: [
-          { href: "/forms?type=contact", label: "Contact us", desc: "We're here to help.", icon: Icon.chat },
+          { href: "/contact", label: "Contact us", desc: "We're here to help.", icon: Icon.chat },
           { href: "/guide", label: "Help guide", desc: "Step-by-step product walkthrough.", icon: Icon.book },
         ],
       },

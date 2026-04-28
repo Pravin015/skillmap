@@ -205,20 +205,20 @@ export default function PricingPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)]" style={{ background: "var(--surface)" }}>
       {/* Header */}
-      <section className="py-16 px-4 md:px-8 text-center" style={{ background: "var(--ink)" }}>
+      <section className="blob-bg blob-bg-soft pt-12 pb-12 px-4 md:px-8 text-center">
         <div className="max-w-3xl mx-auto">
-          <div className="section-eyebrow justify-center" style={{ color: "var(--primary)" }}>Pricing</div>
-          <h1 className={`${heading} font-bold text-3xl md:text-4xl text-white mb-3`}>
-            Start Free. Upgrade When Ready.
+          <div className="section-eyebrow mx-auto">Pricing</div>
+          <h1 className="font-semibold mb-4" style={{ color: "var(--ink)" }}>
+            Start free. Upgrade when ready.
           </h1>
-          <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
-            No hidden fees. Cancel anytime. Your career investment starts at Rs.299/month.
+          <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "var(--muted)" }}>
+            No hidden fees. Cancel anytime. Your career investment starts at ₹299/month.
           </p>
         </div>
       </section>
 
       {/* Plans */}
-      <section className="py-12 px-4 md:px-8 -mt-6">
+      <section className="pb-12 px-4 md:px-8">
         <div className="max-w-4xl mx-auto">
           {message && (
             <div className={`rounded-xl p-4 text-sm mb-6 text-center font-medium ${message.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
