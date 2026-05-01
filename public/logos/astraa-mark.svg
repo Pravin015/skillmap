@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <rect width="600" height="600" fill="#0C1A1A"/>
+  <g transform="translate(300,100)">
+    <path fill="#0ABFBC" fill-rule="evenodd" d="
+      M 0,0
+      L 195,390
+      L 260,405
+      L 120,430
+      L 0,370
+      L -120,430
+      L -260,405
+      L -195,390
+      Z
+      M 0,120
+      L -95,330
+      L -55,330
+      L 0,235
+      L 55,330
+      L 95,330
+      Z
+    "/>
+  </g>
+</svg>

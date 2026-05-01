@@ -1,0 +1,1090 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  HR
+  ORG
+  ADMIN
+  INSTITUTION
+  MENTOR
+}
+
+enum ExperienceLevel {
+  FRESHER
+  EXPERIENCED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  password     String
+  role              Role     @default(STUDENT)
+  profileImage      String?
+  mustChangePassword Boolean @default(false)
+  organisation String?
+  phone        String?
+  degree       String?
+  gradYear     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  profile       StudentProfile?
+  mentorProfile MentorProfile?
+  jobPostings   JobPosting[]
+  applications  Application[]
+  payments      Payment[]
+  subscription  Subscription?
+  createdEvents Event[]              @relation("EventCreator")
+  eventRegs     EventRegistration[]  @relation("EventRegistrations")
+  profileViews  ProfileView[]       @relation("ProfileViewer")
+  notifications Notification[]
+  mockInterviews MockInterview[]
+  companyProfile    CompanyProfile?
+  competitionsCreated Competition[] @relation("CompetitionCreator")
+  coursesCreated      Course[]      @relation("CourseCreator")
+  courseEnrollments    CourseEnrollment[]
+}
+
+enum FormType {
+  CONTACT
+  PARTNER
+  HIRE_FROM_US
+  JOB_POSTING
+  MENTOR_ONBOARDING
+  COMPANY_ONBOARDING
+  INSTITUTION_ONBOARDING
+}
+
+enum FormStatus {
+  PENDING
+  REVIEWED
+  APPROVED
+  REJECTED
+}
+
+model FormSubmission {
+  id        String     @id @default(cuid())
+  type      FormType
+  status    FormStatus @default(PENDING)
+  data      String     // JSON stringified form data
+  name      String
+  email     String
+  phone     String?
+  notes     String?    // admin notes
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model ProfileView {
+  id          String   @id @default(cuid())
+  viewerId    String
+  viewer      User     @relation("ProfileViewer", fields: [viewerId], references: [id], onDelete: Cascade)
+  profileId   String
+  viewedAt    DateTime @default(now())
+
+  @@unique([viewerId, profileId])
+}
+
+enum MentorStatus {
+  PENDING
+  VERIFIED
+  UNVERIFIED
+  SUSPENDED
+}
+
+enum CompensationType {
+  PAID
+  VOLUNTEER
+}
+
+model MentorProfile {
+  id                String          @id @default(cuid())
+  mentorNumber      String          @unique
+  userId            String          @unique
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Verification
+  status            MentorStatus    @default(PENDING)
+  verifiedAt        DateTime?
+
+  // Basic
+  headline          String?         // e.g. "Senior Cybersecurity Analyst at TCS"
+  bio               String?
+  currentCompany    String?
+  currentRole       String?
+  collegeName       String?
+
+  // Experience
+  yearsOfExperience Int             @default(0)
+  companiesWorked   String[]        // list of company names
+  areaOfExpertise   String[]        // e.g. ["Cybersecurity", "Cloud"]
+
+  // Mentoring
+  menteesHelped     Int             @default(0)
+  rating            Float           @default(0)
+  totalSessions     Int             @default(0)
+  compensation      CompensationType @default(PAID)
+  sessionRate       Int?            // per 1-on-1 session rate in INR (if paid)
+  groupSessionRate  Int?            // per group session rate in INR
+  availability      String?         // "1-2 hours/week", etc.
+
+  // Links
+  linkedinUrl       String?
+  profilePhotoUrl   String?
+
+  // Achievements
+  achievements      MentorAchievement[]
+
+  // Skills they mentor on
+  mentorTopics      String[]
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model MentorAchievement {
+  id          String        @id @default(cuid())
+  profileId   String
+  profile     MentorProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  imageUrl    String?
+}
+
+model StudentProfile {
+  id              String          @id @default(cuid())
+  profileNumber   String          @unique
+  userId          String          @unique
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Institution link (if enrolled through a college)
+  institutionId   String?
+
+  // Basic info
+  collegeName     String?
+  experienceLevel ExperienceLevel @default(FRESHER)
+  fieldOfInterest String?
+  bio             String?
+
+  // Academic
+  academicScore   String?
+  academicType    String?         // "CGPA", "Percentage", "GPA"
+
+  // Job preferences
+  salaryMin       Int?
+  salaryMax       Int?
+  availableToJoin Boolean         @default(true)
+  joinDate        String?         // "Immediately", "15 days", "30 days", "60 days+"
+
+  // Links
+  resumeUrl       String?
+  githubUrl       String?
+  linkedinUrl     String?
+  portfolioUrl    String?
+  otherLinks      String[]
+
+  // Experience (for experienced candidates)
+  experiences     Experience[]
+
+  // Certifications
+  certifications  Certification[]
+
+  // Profile score (computed fields stored)
+  profileScore    Int             @default(0)
+
+  // Skills
+  skills          String[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Experience {
+  id          String         @id @default(cuid())
+  profileId   String
+  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  company     String
+  role        String
+  startDate   String
+  endDate     String?        // null = currently working
+  description String?
+  current     Boolean        @default(false)
+}
+
+model Certification {
+  id          String         @id @default(cuid())
+  profileId   String
+  profile     StudentProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  issuer      String
+  issueDate   String?
+  imageUrl    String?        // base64 or URL of certificate
+}
+
+enum JobStatus {
+  ACTIVE
+  CLOSED
+  DRAFT
+  UNDER_REVIEW
+}
+
+enum ApplicationStatus {
+  APPLIED
+  SCREENING
+  INTERVIEW
+  ASSESSMENT
+  OFFER
+  HIRED
+  REJECTED
+  WITHDRAWN
+}
+
+model JobPosting {
+  id              String        @id @default(cuid())
+  postedById      String
+  postedBy        User          @relation(fields: [postedById], references: [id], onDelete: Cascade)
+
+  title           String
+  company         String
+  location        String
+  workMode        String        // "On-site", "Remote", "Hybrid"
+  salaryMin       Int?
+  salaryMax       Int?
+  experienceLevel String        // "Fresher", "1 year", etc.
+  urgency         String        // "Urgent", "Within 15 days", etc.
+  jobType         String        // "Full-time", "Part-time", etc.
+  domain          String?
+  department      String?
+  description     String
+  skills          String[]
+  perks           String?
+  deadline        DateTime?
+  openings        Int           @default(1)
+
+  status          JobStatus     @default(ACTIVE)
+  applications    Application[]
+
+  // Lab assessment
+  labTemplateId   String?
+  labTemplate     LabTemplate?  @relation("JobLab", fields: [labTemplateId], references: [id])
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Application {
+  id            String            @id @default(cuid())
+  jobId         String
+  job           JobPosting        @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  status        ApplicationStatus @default(APPLIED)
+  scoreMatch    Int               @default(0)  // 0-100 match percentage
+  coverNote     String?
+  appliedAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([jobId, userId])       // one application per job per user
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+enum PlanType {
+  FREE
+  CAREER_READY
+  INSTITUTION
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  razorpayOrderId   String        @unique
+  razorpayPaymentId String?       @unique
+  razorpaySignature String?
+
+  amount            Int           // in paise (29900 = ₹299)
+  currency          String        @default("INR")
+  status            PaymentStatus @default(CREATED)
+  plan              PlanType      @default(CAREER_READY)
+
+  description       String?
+  receipt           String?
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan        PlanType @default(FREE)
+  active      Boolean  @default(true)
+  expiresAt   DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum EventStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
+enum EventType {
+  VIRTUAL
+  PHYSICAL
+  HYBRID
+}
+
+enum EventPricing {
+  FREE
+  PAID
+}
+
+model Event {
+  id              String          @id @default(cuid())
+  createdById     String
+  createdBy       User            @relation("EventCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  title           String
+  description     String
+  agenda          String?
+  benefits        String?
+  date            DateTime
+  endDate         DateTime?
+  duration        String?         // "1 hour", "2 hours", etc.
+  eventType       EventType       @default(VIRTUAL)
+  location        String?         // physical address or city
+
+  // Pricing
+  pricing         EventPricing    @default(FREE)
+  price           Int?            // in paise (e.g. 49900 = ₹499)
+
+  // Capacity
+  minParticipants Int             @default(1)
+  maxParticipants Int             @default(100)
+
+  // Join link — hidden for paid events until payment
+  joinLink        String?         // Zoom/Meet link
+  joinInstructions String?
+
+  // Status
+  status          EventStatus     @default(PENDING_APPROVAL)
+  approvedAt      DateTime?
+  rejectedReason  String?
+
+  // Meta
+  category        String?         // "Career Guidance", "Resume Review", etc.
+  tags            String[]
+  coverImageUrl   String?
+
+  registrations   EventRegistration[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model EventRegistration {
+  id          String   @id @default(cuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation("EventRegistrations", fields: [userId], references: [id], onDelete: Cascade)
+
+  paid        Boolean  @default(false)
+  paymentId   String?  // razorpay payment ID if paid
+  joinedAt    DateTime @default(now())
+
+  @@unique([eventId, userId])
+}
+
+enum NotificationType {
+  APPLICATION_SUBMITTED
+  APPLICATION_VIEWED
+  APPLICATION_STATUS_CHANGED
+  SHORTLISTED
+  REJECTED
+  INTERVIEW_SCHEDULED
+  OFFER_RECEIVED
+  POSITION_FILLED
+  APPLICATION_CLOSED
+  NEW_JOB_MATCH
+  HIGH_MATCH_JOB
+  URGENT_HIRING
+  JOB_CLOSING_SOON
+  LAST_DAY_TO_APPLY
+  INVITE_RECEIVED
+  NEW_EVENT
+  PROFILE_INCOMPLETE
+  ADD_RESUME
+  ADD_SKILLS
+  PASSWORD_CHANGED
+  ACCOUNT_CREATED
+  // HR
+  HR_NEW_APPLICATION
+  HR_HIGH_MATCH_CANDIDATE
+  HR_JOB_EXPIRING
+  HR_JOB_APPROVED
+  HR_ACCOUNT_CREATED
+  HR_PASSWORD_RESET
+  // Company
+  COMPANY_HR_ADDED
+  COMPANY_HR_REMOVED
+  COMPANY_JOB_POSTED
+  COMPANY_VERIFIED
+  COMPANY_NEW_APPLICATION
+  // Mentor
+  MENTOR_VERIFIED
+  MENTOR_REJECTED
+  MENTOR_SUSPENDED
+  MENTOR_EVENT_APPROVED
+  MENTOR_EVENT_REJECTED
+  MENTOR_EVENT_REGISTRATION
+  MENTOR_ACCOUNT_CREATED
+  GENERAL
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  data      String?          // JSON metadata (jobId, companyName, etc.)
+  read      Boolean          @default(false)
+  emailSent Boolean          @default(false)
+  createdAt DateTime         @default(now())
+}
+
+model EmailOTP {
+  id        String   @id @default(cuid())
+  email     String
+  otp       String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+// ═══ LAB MODULE ═══
+
+enum LabDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum LabStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model LabTemplate {
+  id            String         @id @default(cuid())
+  title         String
+  domain        String         // "Cybersecurity", "Software Development", etc.
+  description   String?
+  difficulty    LabDifficulty  @default(MEDIUM)
+  timeLimit     Int            @default(30)  // minutes
+  passingScore  Int            @default(60)  // percentage
+  status        LabStatus      @default(DRAFT)
+  createdById   String
+  problems      LabProblem[]
+  attempts      LabAttempt[]
+  jobPostings   JobPosting[]   @relation("JobLab")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model LabProblem {
+  id            String       @id @default(cuid())
+  labTemplateId String
+  labTemplate   LabTemplate  @relation(fields: [labTemplateId], references: [id], onDelete: Cascade)
+  question      String
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  correctAnswer String       // "A", "B", "C", "D"
+  explanation   String?
+  order         Int          @default(1)
+  answers       LabAnswer[]
+}
+
+model LabAttempt {
+  id            String       @id @default(cuid())
+  userId        String
+  jobId         String?
+  labTemplateId String
+  labTemplate   LabTemplate  @relation(fields: [labTemplateId], references: [id])
+  startedAt     DateTime     @default(now())
+  completedAt   DateTime?
+  timeExpired   Boolean      @default(false)
+  score         Int          @default(0)  // correct answers count
+  percentage    Int          @default(0)
+  passed        Boolean      @default(false)
+  answers       LabAnswer[]
+}
+
+model LabAnswer {
+  id             String      @id @default(cuid())
+  attemptId      String
+  attempt        LabAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  problemId      String
+  problem        LabProblem  @relation(fields: [problemId], references: [id])
+  selectedAnswer String      // "A", "B", "C", "D"
+  isCorrect      Boolean     @default(false)
+}
+
+enum SessionStatus {
+  REQUESTED
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+enum SessionType {
+  ONE_ON_ONE
+  GROUP
+}
+
+model MentorSession {
+  id              String        @id @default(cuid())
+  mentorId        String        // MentorProfile ID
+  studentId       String        // User ID of student
+  mentorUserId    String        // User ID of mentor
+
+  sessionType     SessionType   @default(ONE_ON_ONE)
+  status          SessionStatus @default(REQUESTED)
+
+  // Request details
+  preferredDate   DateTime
+  message         String?       // student's message to mentor
+  duration        String?       // "30 min", "60 min"
+
+  // Pricing
+  isPaid          Boolean       @default(false)
+  price           Int?          // in paise
+  paymentId       String?
+
+  // Meeting
+  meetingLink     String?       // set by mentor on accept
+  mentorNotes     String?       // mentor's notes to student
+
+  // Rating
+  rating          Int?          // 1-5 after session
+  review          String?
+
+  // Rejection
+  rejectedReason  String?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+enum InviteStatus {
+  SENT
+  VIEWED
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+model CandidateInvite {
+  id          String       @id @default(cuid())
+  hrId        String
+  candidateId String
+  jobId       String?
+  message     String?
+  status      InviteStatus @default(SENT)
+  viewedAt    DateTime?
+  respondedAt DateTime?
+  createdAt   DateTime     @default(now())
+
+  @@unique([hrId, candidateId, jobId])
+}
+
+enum BlogStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  REJECTED
+}
+
+model BlogPost {
+  id            String     @id @default(cuid())
+  slug          String     @unique
+  title         String
+  content       String     // HTML/markdown content
+  excerpt       String?    // Short summary
+  coverImageUrl String?
+  authorId      String
+  authorName    String
+  authorRole    String     // "ADMIN", "MENTOR", "HR"
+  status        BlogStatus @default(DRAFT)
+  tags          String[]
+  category      String?
+  videoUrl      String?    // YouTube/Vimeo embed URL
+  readTime      Int?       // estimated minutes
+  views         Int        @default(0)
+  publishedAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+// ═══ MOCK INTERVIEW MODULE ═══
+
+model MockCompany {
+  id             String          @id @default(cuid())
+  name           String
+  slug           String          @unique
+  logo           String?
+  domain         String          // "IT", "Finance", "Consulting", "E-commerce", etc.
+  description    String?
+  interviewTypes String[]        // ["TECHNICAL", "HR", "BEHAVIORAL", "SYSTEM_DESIGN"]
+  questions      MockQuestion[]
+  interviews     MockInterview[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model MockQuestion {
+  id           String      @id @default(cuid())
+  companyId    String
+  company      MockCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  category     String      // "TECHNICAL", "HR", "BEHAVIORAL", "SYSTEM_DESIGN"
+  difficulty   String      // "EASY", "MEDIUM", "HARD"
+  question     String
+  sampleAnswer String?
+  tips         String?
+  domain       String?     // "CS", "Finance", "Marketing", etc.
+  tags         String[]    @default([])
+  order        Int         @default(0)
+  progress     QuestionProgress[]
+  createdAt    DateTime    @default(now())
+}
+
+model MockInterview {
+  id             String         @id @default(cuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId      String
+  company        MockCompany    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  type           String         // "SELF", "AI", "MENTOR"
+  interviewType  String         // "TECHNICAL", "HR", "BEHAVIORAL", "SYSTEM_DESIGN"
+  difficulty     String         // "EASY", "MEDIUM", "HARD"
+  status         String         @default("IN_PROGRESS") // "IN_PROGRESS", "COMPLETED", "ABANDONED"
+  score          Int?           // overall 0-100
+  feedback       String?        // AI-generated summary
+  duration       Int?           // minutes taken
+  questionsAsked Int?
+  totalQuestions  Int            @default(5)
+  responses      MockResponse[]
+  createdAt      DateTime       @default(now())
+  completedAt    DateTime?
+
+  @@index([userId])
+  @@index([companyId])
+}
+
+model MockResponse {
+  id          String        @id @default(cuid())
+  interviewId String
+  interview   MockInterview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  question    String
+  answer      String
+  aiFeedback  String?
+  score       Int?          // 0-10 per question
+  order       Int
+  createdAt   DateTime      @default(now())
+}
+
+model QuestionProgress {
+  id         String       @id @default(cuid())
+  userId     String
+  questionId String
+  question   MockQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  practiced  Boolean      @default(true)
+  createdAt  DateTime     @default(now())
+
+  @@unique([userId, questionId])
+}
+
+// ═══ OFFER LETTER VERIFICATION MODULE ═══
+
+model OfferVerification {
+  id              String   @id @default(cuid())
+  userId          String?
+  companyName     String
+  offerText       String   // full text of the offer letter
+  trustScore      Int      // 0-100 (0 = definite scam, 100 = likely genuine)
+  verdict         String   // "LIKELY_GENUINE", "SUSPICIOUS", "LIKELY_FAKE", "DEFINITE_SCAM"
+  analysis        String   // AI-generated detailed analysis (JSON)
+  redFlags        String[] // list of red flags found
+  greenFlags      String[] // list of positive signals found
+  riskLevel       String   // "LOW", "MEDIUM", "HIGH", "CRITICAL"
+  parameterScores String   // JSON: scores per parameter
+  recommendation  String   // AI recommendation text
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+  @@index([verdict])
+}
+
+// ═══ EMPLOYER / COMPANY PROFILE ═══
+
+model CompanyProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug        String   @unique
+  name        String
+  logo        String?
+  industry    String?
+  about       String?
+  culture     String?
+  website     String?
+  location    String?
+  size        String?  // "1-50", "50-200", "200-1000", "1000+"
+  founded     String?
+  socialLinks String[] @default([])
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ApplicationNote {
+  id            String   @id @default(cuid())
+  applicationId String
+  authorId      String
+  authorName    String
+  content       String
+  createdAt     DateTime @default(now())
+
+  @@index([applicationId])
+}
+
+// ═══ COMPETITIONS & HIRING CHALLENGES ═══
+
+model Competition {
+  id                String   @id @default(cuid())
+  createdById       String
+  createdBy         User     @relation("CompetitionCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  title             String
+  slug              String   @unique
+  description       String
+  rules             String?
+  prizes            String?
+  coverImageUrl     String?
+
+  type              String   @default("HACKATHON") // HACKATHON, CODING, QUIZ, CASE_STUDY
+  difficulty        String   @default("MEDIUM")    // EASY, MEDIUM, HARD
+  domain            String?
+
+  // Timing
+  registrationStart DateTime
+  registrationEnd   DateTime
+  startDate         DateTime
+  endDate           DateTime
+
+  // Capacity
+  maxParticipants   Int      @default(500)
+  teamSize          Int      @default(1)
+
+  // Assessment link
+  labTemplateId     String?
+
+  // Pricing
+  entryFee          Int?     // paise, null = free
+
+  // Company sponsorship
+  companyName       String?
+  companyLogo       String?
+  hiringEnabled     Boolean  @default(false)
+
+  // Status
+  status            String   @default("DRAFT") // DRAFT, OPEN, LIVE, JUDGING, COMPLETED, CANCELLED
+
+  participants      CompetitionParticipant[]
+  submissions       CompetitionSubmission[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status])
+  @@index([type])
+}
+
+model CompetitionParticipant {
+  id              String      @id @default(cuid())
+  competitionId   String
+  competition     Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  userId          String
+  teamName        String?
+  role            String      @default("INDIVIDUAL")
+  status          String      @default("REGISTERED")
+  registeredAt    DateTime    @default(now())
+
+  @@unique([competitionId, userId])
+}
+
+model CompetitionSubmission {
+  id              String      @id @default(cuid())
+  competitionId   String
+  competition     Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  userId          String
+
+  labAttemptId    String?
+  score           Int?
+  submissionUrl   String?
+  submissionText  String?
+
+  totalScore      Int         @default(0)
+  rank            Int?
+
+  submittedAt     DateTime    @default(now())
+
+  @@unique([competitionId, userId])
+  @@index([competitionId, totalScore])
+}
+
+// ═══ PROCTORING ═══
+
+model ProctoringLog {
+  id               String    @id @default(cuid())
+  sessionId        String    // lab attemptId or mock interview ID
+  sessionType      String    // "LAB" or "MOCK_INTERVIEW"
+  userId           String
+  events           String    @default("[]") // JSON array of events
+  tabSwitches      Int       @default(0)
+  fullscreenExits  Int       @default(0)
+  copyAttempts     Int       @default(0)
+  webcamUrl        String?
+  startedAt        DateTime  @default(now())
+  endedAt          DateTime?
+  flagged          Boolean   @default(false)
+
+  @@index([sessionId])
+  @@index([userId])
+}
+
+// ═══ COURSES MODULE ═══
+
+model Course {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  description     String
+  coverImageUrl   String?
+  duration        String?          // "4 weeks", "2 hours"
+  difficulty      String   @default("Beginner") // Beginner, Intermediate, Advanced
+  skills          String[] @default([])
+  category        String?
+  tags            String[] @default([])
+
+  createdById     String
+  createdBy       User     @relation("CourseCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  creatorRole     String   @default("ADMIN") // ADMIN, INSTITUTION
+
+  status          String   @default("DRAFT") // DRAFT, PENDING_REVIEW, PUBLISHED
+  pricing         String   @default("FREE")  // FREE, PAID
+  price           Int?     // paise
+  videoUrl        String?  // YouTube/Vimeo embed
+
+  enrollmentCount    Int      @default(0)
+  rating             Float    @default(0)
+  sequentialUnlock   Boolean  @default(false) // modules must be completed in order
+
+  modules         CourseModule[]
+  enrollments     CourseEnrollment[]
+  reviews         CourseReview[]
+  certificates    CourseCertificate[]
+
+  publishedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdById])
+}
+
+model CourseModule {
+  id        String   @id @default(cuid())
+  courseId   String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  content   String   // HTML/markdown
+  videoUrl  String?
+  duration  String?  // "15 min"
+  order     Int      @default(0)
+
+  // Quiz (optional per module)
+  hasQuiz       Boolean  @default(false)
+  quizQuestions String?  // JSON: [{question, options: [a,b,c,d], correctAnswer: 0}]
+  quizPassScore Int      @default(70) // percentage to pass
+
+  createdAt DateTime @default(now())
+}
+
+model CourseEnrollment {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId          String
+  course           Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress         Int      @default(0) // 0-100
+  completedModules String[] @default([])
+  enrolledAt       DateTime @default(now())
+  lastAccessedAt   DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+model CourseReview {
+  id        String   @id @default(cuid())
+  courseId   String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId    String
+  userName  String
+  rating    Int      // 1-5
+  review    String?
+  createdAt DateTime @default(now())
+
+  @@unique([courseId, userId])
+  @@index([courseId])
+}
+
+model CourseCertificate {
+  id          String   @id @default(cuid())
+  courseId     String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId      String
+  userName    String
+  courseTitle  String
+  issuedAt    DateTime @default(now())
+  certificateId String @unique // CERT-XXXXX for verification
+
+  @@unique([courseId, userId])
+}
+
+// ============================================================
+// External job aggregation (scraped from Indeed/LinkedIn/Apna/Internshala/etc.)
+// Users are redirected to the source portal to apply — we only list.
+// ============================================================
+
+enum JobVertical {
+  INTERNSHIP
+  FULLTIME
+}
+
+enum ScrapeRunStatus {
+  RUNNING
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+model JobSource {
+  id             String      @id @default(cuid())
+  slug           String      @unique // "internshala", "indeed-in", "linkedin-guest", "remotive", "apna"
+  displayName    String
+  baseUrl        String
+  enabled        Boolean     @default(true)
+  vertical       JobVertical @default(FULLTIME)
+  defaultQuery   Json?       // per-source query params (keywords, location, etc.)
+  minIntervalMin Int         @default(360) // min minutes between scrapes
+  lastRunAt      DateTime?
+  lastStatus     ScrapeRunStatus?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  runs           ScrapeRun[]
+  jobs           ExternalJob[]
+}
+
+model ExternalJob {
+  id              String      @id @default(cuid())
+  sourceId        String
+  source          JobSource   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  sourceJobId     String      // upstream id (or fallback hash)
+  dedupeHash      String      // sha256(title|company|location|sourceSlug)
+
+  title           String
+  company         String
+  companyLogoUrl  String?
+  location        String
+  workMode        String?     // "On-site" | "Remote" | "Hybrid" | null
+  salaryText      String?     // raw stipend/salary from source
+  salaryMin       Int?        // normalized LPA (INR)
+  salaryMax       Int?
+  experienceLevel String?     // "Fresher" | "1-3 years" | ...
+  jobType         String?     // "Full-time" | "Internship" | "Part-time"
+  domain          String?
+  description     String?     // truncated snippet, not full JD
+  skills          String[]
+  vertical        JobVertical
+  externalUrl     String      // canonical apply URL on source
+
+  postedAt        DateTime?
+  expiresAt       DateTime?
+
+  firstSeenAt     DateTime    @default(now())
+  lastSeenAt      DateTime    @default(now())
+  isActive        Boolean     @default(true)
+  clickCount      Int         @default(0)
+
+  @@unique([sourceId, sourceJobId])
+  @@unique([dedupeHash])
+  @@index([vertical, isActive])
+  @@index([domain])
+  @@index([location])
+  @@index([postedAt])
+}
+
+model ScrapeRun {
+  id            String           @id @default(cuid())
+  sourceId      String
+  source        JobSource        @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  status        ScrapeRunStatus  @default(RUNNING)
+  startedAt     DateTime         @default(now())
+  finishedAt    DateTime?
+  durationMs    Int?
+
+  itemsFound    Int              @default(0)
+  itemsInserted Int              @default(0)
+  itemsUpdated  Int              @default(0)
+  itemsSkipped  Int              @default(0)
+
+  triggeredBy   String?          // "cron" | "admin:<userId>" | "cli"
+  query         Json?            // query used for this run
+  errorMessage  String?
+
+  @@index([sourceId, startedAt])
+}

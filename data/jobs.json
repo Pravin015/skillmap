@@ -1,0 +1,12 @@
+{
+  "jobs": [
+    { "id": 1, "company": "tcs", "title": "Cybersecurity Analyst L1", "domain": "cybersecurity", "location": "Bangalore / Pune / Hyderabad", "posted": "2 days ago", "deadline": "30 Apr 2026", "type": "Full-time", "experience": "0-2 years", "active": true },
+    { "id": 2, "company": "tcs", "title": "Cloud Support Engineer", "domain": "cloud", "location": "Chennai / Hyderabad", "posted": "5 days ago", "deadline": "15 May 2026", "type": "Full-time", "experience": "0-1 years", "active": true },
+    { "id": 3, "company": "kpmg", "title": "Cyber Risk Analyst", "domain": "cybersecurity", "location": "Gurgaon / Mumbai", "posted": "1 day ago", "deadline": "25 Apr 2026", "type": "Full-time", "experience": "0-2 years", "active": true },
+    { "id": 4, "company": "infosys", "title": "Systems Engineer", "domain": "software", "location": "Mysore / Bangalore", "posted": "3 days ago", "deadline": "10 May 2026", "type": "Full-time", "experience": "0 years (fresher)", "active": true },
+    { "id": 5, "company": "deloitte", "title": "Cyber Analyst", "domain": "cybersecurity", "location": "Bangalore / Mumbai", "posted": "Today", "deadline": "20 Apr 2026", "type": "Full-time", "experience": "0-1 years", "active": true },
+    { "id": 6, "company": "wipro", "title": "Project Engineer", "domain": "software", "location": "Multiple cities", "posted": "1 week ago", "deadline": "5 May 2026", "type": "Full-time", "experience": "Freshers", "active": true },
+    { "id": 7, "company": "kpmg", "title": "Data Analyst", "domain": "data", "location": "Bangalore / Pune", "posted": "4 days ago", "deadline": "30 Apr 2026", "type": "Full-time", "experience": "0-2 years", "active": true },
+    { "id": 8, "company": "deloitte", "title": "Analyst - Data & AI", "domain": "data", "location": "Hyderabad / Bangalore", "posted": "2 days ago", "deadline": "28 Apr 2026", "type": "Full-time", "experience": "0-1 years", "active": true }
+  ]
+}
