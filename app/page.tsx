@@ -278,7 +278,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ HOW IT WORKS ═══════════════ */}
-      <section className="px-4 py-20">
+      <section className="px-4 py-12 md:py-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <div className="section-eyebrow mx-auto">How it works</div>
@@ -303,7 +303,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ AUDIENCE CARDS — students, mentors, colleges, companies ═══════════════ */}
-      <section className="px-4 py-20">
+      <section className="px-4 py-12 md:py-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <div className="section-eyebrow mx-auto">Built for everyone in the hiring loop</div>
@@ -343,7 +343,7 @@ export default function HomePage() {
 
       {/* ═══════════════ MID-PAGE CTA BANNER ═══════════════ */}
       <section className="px-4 py-10">
-        <div className="max-w-5xl mx-auto rounded-3xl p-8 md:p-12 text-center" style={{ background: "linear-gradient(135deg, #EDE9FE 0%, #FBCFE8 60%, #FED7AA 100%)" }}>
+        <div className="max-w-5xl mx-auto rounded-3xl p-6 md:p-12 text-center" style={{ background: "linear-gradient(135deg, #EDE9FE 0%, #FBCFE8 60%, #FED7AA 100%)" }}>
           <h2 className="font-semibold text-2xl md:text-3xl mb-3" style={{ color: "var(--ink)" }}>
             Goal: first offer in under 12 weeks.
           </h2>
@@ -355,7 +355,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ OUTCOMES BY COLLEGE TIER ═══════════════ */}
-      <section className="px-4 py-20">
+      <section className="px-4 py-12 md:py-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <div className="section-eyebrow mx-auto">Targets</div>
@@ -385,7 +385,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ MENTOR SPOTLIGHT ═══════════════ */}
-      <section className="px-4 py-20">
+      <section className="px-4 py-12 md:py-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <div className="section-eyebrow mx-auto">Verified mentors</div>
@@ -415,7 +415,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ COMPARISON TABLE ═══════════════ */}
-      <section className="px-4 py-20">
+      <section className="px-4 py-12 md:py-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <div className="section-eyebrow mx-auto">Why us</div>
@@ -427,8 +427,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="card overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="card overflow-x-auto" style={{ padding: "20px" }}>
+            <table className="w-full text-sm" style={{ minWidth: "560px" }}>
               <thead>
                 <tr className="border-b" style={{ borderColor: "var(--border)" }}>
                   <th className="text-left py-3 pr-3 font-semibold text-xs" style={{ color: "var(--muted)" }}>Feature</th>
@@ -463,7 +463,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ PRICING TEASER ═══════════════ */}
-      <section className="px-4 py-20">
+      <section className="px-4 py-12 md:py-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <div className="section-eyebrow mx-auto">Pricing</div>
@@ -515,7 +515,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ PARTNER COLLEGES WALL ═══════════════ */}
-      <section className="px-4 py-20">
+      <section className="px-4 py-12 md:py-20">
         <div className="max-w-5xl mx-auto text-center">
           <div className="section-eyebrow mx-auto">Trusted by placement cells</div>
           <h2 className="font-semibold text-3xl md:text-4xl mb-3" style={{ color: "var(--ink)" }}>
@@ -536,7 +536,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ FAQ ═══════════════ */}
-      <section className="px-4 py-20">
+      <section className="px-4 py-12 md:py-20">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <div className="section-eyebrow mx-auto">FAQ</div>

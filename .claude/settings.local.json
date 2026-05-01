@@ -134,7 +134,10 @@
       "Bash(sed -i 's|title=\"Become a Mentor\"|eyebrow=\"For mentors\"\\\\n      title=\"Become a mentor\"|' app/forms/mentor-onboarding/page.tsx)",
       "Bash(sed -i 's|title=\"Hire From Us\"|eyebrow=\"For companies\"\\\\n      title=\"Hire from us\"|' app/forms/hire-from-us/page.tsx)",
       "Bash(sed -i 's|title=\"Post a Job Opening\"|eyebrow=\"Hiring\"\\\\n      title=\"Post a job opening\"|' app/forms/job-posting/page.tsx)",
-      "Bash(git commit -m 'Phase A: Forms cleanup — restyled FormWrapper + 7 form pages *)"
+      "Bash(git commit -m 'Phase A: Forms cleanup — restyled FormWrapper + 7 form pages *)",
+      "Bash(openssl rand *)",
+      "Bash(echo \"NEXTAUTH_SECRET=$\\(openssl rand -hex 32\\)\")",
+      "Bash(echo \"CRON_SECRET=$\\(openssl rand -hex 32\\)\")"
     ]
   }
 }
