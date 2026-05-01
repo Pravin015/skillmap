@@ -221,7 +221,7 @@ export default function Header() {
             <span className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-semibold text-sm" style={{ background: "var(--primary)" }}>
               A
             </span>
-            <span className="font-semibold text-[15px]" style={{ color: "var(--ink)" }}>AstraaHire</span>
+            <span className="font-semibold text-[15px] hidden sm:inline" style={{ color: "var(--ink)" }}>AstraaHire</span>
           </Link>
 
           {/* Desktop nav */}
@@ -285,8 +285,8 @@ export default function Header() {
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="hidden md:inline-flex nav-link">Sign in</Link>
-                <Link href="/auth/signup" className="btn-dark hidden md:inline-flex" style={{ padding: "0.55rem 1.2rem", fontSize: "0.85rem" }}>
+                <Link href="/auth/login" className="hidden lg:inline-flex nav-link">Sign in</Link>
+                <Link href="/auth/signup" className="btn-dark hidden lg:inline-flex" style={{ padding: "0.55rem 1.2rem", fontSize: "0.85rem" }}>
                   Get started
                 </Link>
               </>

@@ -427,37 +427,40 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="card overflow-x-auto" style={{ padding: "20px" }}>
-            <table className="w-full text-sm" style={{ minWidth: "560px" }}>
+          <div className="card" style={{ padding: "20px" }}>
+            <table className="w-full text-sm">
               <thead>
                 <tr className="border-b" style={{ borderColor: "var(--border)" }}>
-                  <th className="text-left py-3 pr-3 font-semibold text-xs" style={{ color: "var(--muted)" }}>Feature</th>
-                  <th className="text-center py-3 px-3 font-semibold text-xs" style={{ color: "var(--primary)" }}>AstraaHire</th>
-                  <th className="text-center py-3 px-3 font-semibold text-xs" style={{ color: "var(--muted)" }}>Naukri</th>
-                  <th className="text-center py-3 px-3 font-semibold text-xs" style={{ color: "var(--muted)" }}>LinkedIn</th>
-                  <th className="text-center py-3 pl-3 font-semibold text-xs" style={{ color: "var(--muted)" }}>Coaching</th>
+                  <th className="text-left py-3 pr-2 font-semibold text-[11px] md:text-xs" style={{ color: "var(--muted)" }}>Feature</th>
+                  <th className="text-center py-3 px-2 font-semibold text-[11px] md:text-xs" style={{ color: "var(--primary)" }}>AstraaHire</th>
+                  <th className="text-center py-3 px-2 font-semibold text-[11px] md:text-xs hidden md:table-cell" style={{ color: "var(--muted)" }}>Naukri</th>
+                  <th className="text-center py-3 px-2 font-semibold text-[11px] md:text-xs hidden md:table-cell" style={{ color: "var(--muted)" }}>LinkedIn</th>
+                  <th className="text-center py-3 pl-2 font-semibold text-[11px] md:text-xs" style={{ color: "var(--muted)" }}>Coaching</th>
                 </tr>
               </thead>
               <tbody>
                 {compareRows.map((r) => (
                   <tr key={r.feature} className="border-b" style={{ borderColor: "var(--border)" }}>
-                    <td className="py-3 pr-3 text-xs md:text-sm" style={{ color: "var(--ink)" }}>{r.feature}</td>
-                    <td className="text-center py-3 px-3 text-xs md:text-sm font-semibold" style={{ color: "var(--primary)" }}>
+                    <td className="py-3 pr-2 text-[11px] md:text-sm" style={{ color: "var(--ink)" }}>{r.feature}</td>
+                    <td className="text-center py-3 px-2 text-[11px] md:text-sm font-semibold" style={{ color: "var(--primary)" }}>
                       {r.us === true ? "✓" : r.us === false ? "—" : r.us}
                     </td>
-                    <td className="text-center py-3 px-3 text-xs" style={{ color: "var(--muted)" }}>
+                    <td className="text-center py-3 px-2 text-[11px] hidden md:table-cell" style={{ color: "var(--muted)" }}>
                       {r.naukri === true ? "✓" : r.naukri === false ? "—" : r.naukri}
                     </td>
-                    <td className="text-center py-3 px-3 text-xs" style={{ color: "var(--muted)" }}>
+                    <td className="text-center py-3 px-2 text-[11px] hidden md:table-cell" style={{ color: "var(--muted)" }}>
                       {r.linkedin === true ? "✓" : r.linkedin === false ? "—" : r.linkedin}
                     </td>
-                    <td className="text-center py-3 pl-3 text-xs" style={{ color: "var(--muted)" }}>
+                    <td className="text-center py-3 pl-2 text-[11px] md:text-sm" style={{ color: "var(--muted)" }}>
                       {r.coaching === true ? "✓" : r.coaching === false ? "—" : r.coaching}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <p className="text-[10px] mt-3 md:hidden" style={{ color: "var(--muted)" }}>
+              Showing AstraaHire vs Coaching. Naukri & LinkedIn columns visible on desktop.
+            </p>
           </div>
         </div>
       </section>
