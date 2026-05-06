@@ -193,7 +193,17 @@ export default function JobDetailPage() {
                 <div className="rounded-xl border bg-white p-4" style={{ borderColor: "var(--border)" }}>
                   <div className="text-xs" style={{ color: "var(--muted)" }}>Salary</div>
                   <div className={`${heading} font-bold text-sm mt-0.5`}>
-                    {job.salaryMin && job.salaryMax ? `₹${job.salaryMin}–${job.salaryMax} LPA` : job.salaryMax ? `Up to ₹${job.salaryMax} LPA` : `₹${job.salaryMin}+ LPA`}
+                    {(() => {
+                      // If a value looks like raw rupees (>1000), normalise to LPA.
+                      const toLPA = (n: number) => (n > 1000 ? n / 100000 : n);
+                      const fmt = (n: number) => {
+                        const lpa = toLPA(n);
+                        return lpa % 1 === 0 ? `${lpa}` : lpa.toFixed(1);
+                      };
+                      if (job.salaryMin && job.salaryMax) return `₹${fmt(job.salaryMin)}–${fmt(job.salaryMax)} LPA`;
+                      if (job.salaryMax) return `Up to ₹${fmt(job.salaryMax)} LPA`;
+                      return `₹${fmt(job.salaryMin!)}+ LPA`;
+                    })()}
                   </div>
                 </div>
               )}
