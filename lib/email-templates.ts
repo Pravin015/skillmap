@@ -1,19 +1,39 @@
+// Email layout — must use inline styles only (Gmail, Outlook strip <style>).
+// Brand tokens (must match globals.css):
+//   primary:   #7C3AED (violet)
+//   ink:       #0F0E14 (near-black)
+//   surface:   #FAF7F2 (cream paper)
+//   border:    #E8E2D6 (warm grey)
+//   muted:     #6B6776
 function layout(heading: string, body: string, ctaText?: string, ctaUrl?: string): string {
-  const cta = ctaText && ctaUrl ? `<a href="${ctaUrl}" style="display:inline-block;background:#0C1A1A;color:#0ABFBC;font-family:'Segoe UI',sans-serif;font-weight:700;font-size:14px;padding:12px 28px;border-radius:12px;text-decoration:none;margin-top:20px">${ctaText}</a>` : "";
+  const cta = ctaText && ctaUrl
+    ? `<a href="${ctaUrl}" style="display:inline-block;background:#7C3AED;color:#ffffff;font-family:'Poppins','Segoe UI',sans-serif;font-weight:600;font-size:14px;padding:12px 28px;border-radius:999px;text-decoration:none;margin-top:20px">${ctaText} →</a>`
+    : "";
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f4f3ef;font-family:'Segoe UI','DM Sans',sans-serif">
+<body style="margin:0;padding:0;background:#FAF7F2;font-family:'Poppins','Segoe UI','DM Sans',sans-serif">
 <div style="max-width:560px;margin:0 auto;padding:20px">
-  <div style="background:#0C1A1A;border-radius:16px 16px 0 0;padding:20px 28px">
-    <span style="font-weight:800;font-size:18px;color:#fff">Skill</span><span style="background:#0ABFBC;color:#0C1A1A;padding:1px 6px;border-radius:4px;font-weight:800;font-size:18px">Map</span>
+  <div style="background:#ffffff;border-radius:16px 16px 0 0;padding:18px 24px;border:1px solid #E8E2D6;border-bottom:none">
+    <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse">
+      <tr>
+        <td style="vertical-align:middle">
+          <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:#7C3AED;border-radius:8px;width:30px;height:30px">
+            <tr><td align="center" valign="middle" style="color:#ffffff;font-weight:600;font-size:15px;font-family:'Poppins','Segoe UI',sans-serif">A</td></tr>
+          </table>
+        </td>
+        <td style="padding-left:10px;vertical-align:middle">
+          <span style="font-weight:600;font-size:16px;color:#0F0E14;letter-spacing:-0.01em">AstraaHire</span>
+        </td>
+      </tr>
+    </table>
   </div>
-  <div style="background:#ffffff;border-radius:0 0 16px 16px;padding:32px 28px;border:1px solid rgba(10,10,15,0.08);border-top:none">
-    <h1 style="font-size:20px;font-weight:800;color:#0C1A1A;margin:0 0 16px">${heading}</h1>
-    <div style="font-size:14px;line-height:1.7;color:rgba(10,10,15,0.55)">${body}</div>
+  <div style="background:#ffffff;border-radius:0 0 16px 16px;padding:28px;border:1px solid #E8E2D6;border-top:none">
+    <h1 style="font-size:20px;font-weight:600;color:#0F0E14;margin:0 0 16px;letter-spacing:-0.02em">${heading}</h1>
+    <div style="font-size:14px;line-height:1.7;color:#2A2730">${body}</div>
     ${cta}
   </div>
-  <div style="text-align:center;padding:24px 0;font-size:12px;color:rgba(10,10,15,0.3)">
-    <p>AstraaHire · India's job-readiness engine</p>
-    <p><a href="https://astraahire.com" style="color:rgba(10,10,15,0.3)">astraahire.com</a> · <a href="mailto:support@astraahire.com" style="color:rgba(10,10,15,0.3)">support@astraahire.com</a></p>
+  <div style="text-align:center;padding:24px 0;font-size:12px;color:#9A95A6;line-height:1.6">
+    <p style="margin:0 0 4px">AstraaHire · India's career intelligence platform</p>
+    <p style="margin:0"><a href="https://astraahire.com" style="color:#7C3AED;text-decoration:none">astraahire.com</a> · <a href="mailto:support@astraahire.com" style="color:#7C3AED;text-decoration:none">support@astraahire.com</a></p>
   </div>
 </div></body></html>`;
 }
@@ -42,7 +62,7 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
 
     case "APPLICATION_STATUS_CHANGED":
       return { subject: `Update: ${d.role} at ${d.company}`, html: layout("Application Update",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>There's an update on your application for <strong>${d.role}</strong> at <strong>${d.company}</strong>.</p><p>New status: <strong style="color:#0C1A1A">${d.status}</strong></p>`,
+        `<p>Hi <strong>${d.name}</strong>,</p><p>There's an update on your application for <strong>${d.role}</strong> at <strong>${d.company}</strong>.</p><p>New status: <strong style="color:#7C3AED">${d.status}</strong></p>`,
         "View details", `${base}/dashboard`) };
 
     case "SHORTLISTED":
