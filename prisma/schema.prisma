@@ -1088,3 +1088,28 @@ model ScrapeRun {
 
   @@index([sourceId, startedAt])
 }
+
+// ────────────────────────────────────────────────────────────────────
+// TESTING PLATFORM — internal QA dashboard at /testing-platform
+//
+// One row per checklist item (itemId is the stable string id from
+// app/testing-platform/data.ts). Status is "not_tested" / "pending"
+// / "done". A "not_tested" status is represented by an absent row,
+// so the table only stores actively-marked items.
+//
+// Multi-user friendly: testers share state. The most recent updater
+// wins; we record their userId + a free-form note so the next tester
+// knows what was found.
+// ────────────────────────────────────────────────────────────────────
+
+model TestingChecklistStatus {
+  id          String   @id @default(cuid())
+  itemId      String   @unique
+  status      String   // "pending" | "done"
+  notes       String?  // optional free-form note from the tester
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@index([status])
+}

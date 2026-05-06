@@ -137,7 +137,11 @@
       "Bash(git commit -m 'Phase A: Forms cleanup — restyled FormWrapper + 7 form pages *)",
       "Bash(openssl rand *)",
       "Bash(echo \"NEXTAUTH_SECRET=$\\(openssl rand -hex 32\\)\")",
-      "Bash(echo \"CRON_SECRET=$\\(openssl rand -hex 32\\)\")"
+      "Bash(echo \"CRON_SECRET=$\\(openssl rand -hex 32\\)\")",
+      "Bash(npm list *)",
+      "Bash(python \"C:\\\\Users\\\\Administrator\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\dee3d9ae-3b55-403e-82b7-8a10aea88da2\\\\49f85a32-7ab1-442a-9b3f-64b7f13cd4cb\\\\skills\\\\docx\\\\scripts\\\\office\\\\validate.py\" '/c/Users/Administrator/Desktop/All-App-information/AstraaHire-Project-Overview.docx')",
+      "Bash(PYTHONIOENCODING=utf-8 python -X utf8 \"C:\\\\Users\\\\Administrator\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\dee3d9ae-3b55-403e-82b7-8a10aea88da2\\\\49f85a32-7ab1-442a-9b3f-64b7f13cd4cb\\\\skills\\\\docx\\\\scripts\\\\office\\\\validate.py\" '/c/Users/Administrator/Desktop/All-App-information/AstraaHire-Project-Overview.docx')",
+      "Bash(pandoc -f markdown -t plain '/c/Users/Administrator/Desktop/crmlms/docs/PROJECT_OVERVIEW.md' -o '/c/Users/Administrator/Desktop/All-App-information/AstraaHire-Project-Overview.txt')"
     ]
   }
 }
