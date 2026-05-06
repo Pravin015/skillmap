@@ -60,7 +60,7 @@ export default function JobDetailPage() {
   const [applied, setApplied] = useState(false);
   const [coverNote, setCoverNote] = useState("");
   const [showApplyForm, setShowApplyForm] = useState(false);
-  const [applyMessage, setApplyMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [applyMessage, setApplyMessage] = useState<{ type: "success" | "error"; text: string; action?: { label: string; href: string } } | null>(null);
   const [showMentors, setShowMentors] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -108,7 +108,16 @@ export default function JobDetailPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setApplyMessage({ type: "error", text: data.error });
+        // Special-case: missing resume — give a clear path forward.
+        if (data.code === "NO_RESUME") {
+          setApplyMessage({
+            type: "error",
+            text: `${data.message} Open Profile → Resume to upload it (PDF, max 5 MB), then come back and try again.`,
+            action: { label: "Upload resume →", href: "/profile/edit?focus=resume" },
+          });
+        } else {
+          setApplyMessage({ type: "error", text: data.error });
+        }
       } else {
         setApplyMessage({ type: "success", text: `Applied successfully! Your skill match score: ${data.application.scoreMatch}%` });
         setApplied(true);
@@ -289,7 +298,12 @@ export default function JobDetailPage() {
             <div className="rounded-2xl border bg-white p-6 sticky top-20" style={{ borderColor: "var(--border)" }}>
               {applyMessage && (
                 <div className={`rounded-xl p-3 text-sm mb-4 ${applyMessage.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
-                  {applyMessage.text}
+                  <p>{applyMessage.text}</p>
+                  {applyMessage.action && (
+                    <Link href={applyMessage.action.href} className="inline-block mt-2 px-3 py-1.5 rounded-lg text-xs font-bold no-underline" style={{ background: "var(--primary)", color: "white" }}>
+                      {applyMessage.action.label}
+                    </Link>
+                  )}
                 </div>
               )}
 

@@ -21,8 +21,8 @@ interface App {
   appliedAt: string;
   job: { title: string; company: string };
   user: {
-    name: string; email: string;
-    profile: { profileNumber: string; profileScore: number; fieldOfInterest: string | null; collegeName: string | null; skills: string[] } | null;
+    name: string; email: string; phone: string | null;
+    profile: { profileNumber: string; profileScore: number; fieldOfInterest: string | null; collegeName: string | null; skills: string[]; resumeUrl: string | null } | null;
   };
 }
 
@@ -90,6 +90,22 @@ export default function ReceivedApplications() {
                   <div className="text-xs" style={{ color: "var(--muted)" }}>
                     Applied for: {app.job.title} · {app.user.profile?.collegeName || "—"}
                   </div>
+                  {/* Direct contact — always visible to HR even when profile is incomplete */}
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5 text-[0.7rem]">
+                    <a href={`mailto:${app.user.email}`} className="no-underline hover:underline" style={{ color: "var(--primary)" }}>
+                      ✉ {app.user.email}
+                    </a>
+                    {app.user.phone && (
+                      <a href={`tel:${app.user.phone}`} className="no-underline hover:underline" style={{ color: "var(--primary)" }}>
+                        📞 {app.user.phone}
+                      </a>
+                    )}
+                    {app.user.profile?.resumeUrl && (
+                      <a href={app.user.profile.resumeUrl} target="_blank" rel="noopener noreferrer" className="no-underline hover:underline font-semibold" style={{ color: "var(--primary)" }}>
+                        📄 Resume ↗
+                      </a>
+                    )}
+                  </div>
                   {app.user.profile?.skills && app.user.profile.skills.length > 0 && (
                     <div className="flex gap-1 mt-1 flex-wrap">
                       {app.user.profile.skills.slice(0, 4).map((s) => (
@@ -112,7 +128,11 @@ export default function ReceivedApplications() {
                     View Profile ↗
                   </a>
                 ) : (
-                  <span className="shrink-0 px-3 py-1.5 rounded-lg text-[0.7rem] font-medium" style={{ background: "var(--border)", color: "var(--muted)" }}>No profile</span>
+                  // No formal profile yet — but contact info above still works.
+                  // Show a softer label so HR knows they can still reach out.
+                  <span className="shrink-0 px-3 py-1.5 rounded-lg text-[0.7rem] font-medium" style={{ background: "var(--surface-alt)", color: "var(--muted)" }} title="Profile incomplete — but contact info above works">
+                    Profile pending
+                  </span>
                 )}
               </div>
               <div className="text-[0.65rem] mt-2" style={{ color: "var(--muted)" }}>Applied {new Date(app.appliedAt).toLocaleDateString()}</div>

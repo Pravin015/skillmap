@@ -23,7 +23,11 @@ export async function GET() {
     return NextResponse.json({ applications: apps });
   }
 
-  // HR sees apps for their jobs
+  // HR sees apps for their jobs.
+  // Email + phone are ALWAYS exposed to HR even when the student profile
+  // is incomplete — recruiters need a way to reach the candidate
+  // regardless of profile completeness. Resume URL also surfaced for the
+  // same reason (apply flow now mandates resume, so it should always exist).
   if (userRole === "HR") {
     const apps = await prisma.application.findMany({
       where: { job: { postedById: userId } },
@@ -31,8 +35,8 @@ export async function GET() {
         job: { select: { title: true, company: true } },
         user: {
           select: {
-            name: true, email: true,
-            profile: { select: { profileNumber: true, profileScore: true, fieldOfInterest: true, collegeName: true, skills: true, experienceLevel: true } },
+            name: true, email: true, phone: true,
+            profile: { select: { profileNumber: true, profileScore: true, fieldOfInterest: true, collegeName: true, skills: true, experienceLevel: true, resumeUrl: true } },
           },
         },
       },
@@ -41,11 +45,16 @@ export async function GET() {
     return NextResponse.json({ applications: apps });
   }
 
-  // ADMIN/ORG sees all
+  // ADMIN/ORG sees all + same direct-contact fields.
   const apps = await prisma.application.findMany({
     include: {
       job: { select: { title: true, company: true } },
-      user: { select: { name: true, email: true } },
+      user: {
+        select: {
+          name: true, email: true, phone: true,
+          profile: { select: { resumeUrl: true } },
+        },
+      },
     },
     orderBy: { appliedAt: "desc" },
   });
@@ -79,9 +88,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Already applied to this job" }, { status: 409 });
   }
 
+  // Mandatory resume check — every application must have a resume on file.
+  // We treat this as a hard gate: HR's most-requested artefact is the resume,
+  // and applications without one rarely convert.
+  const profile = await prisma.studentProfile.findUnique({ where: { userId } });
+  if (!profile?.resumeUrl) {
+    return NextResponse.json(
+      {
+        error: "Resume required",
+        code: "NO_RESUME",
+        message: "Upload your resume before applying. Recruiters use it to shortlist within minutes.",
+      },
+      { status: 400 }
+    );
+  }
+
   // Calculate score match based on student profile vs job skills
   let scoreMatch = 0;
-  const profile = await prisma.studentProfile.findUnique({ where: { userId } });
   if (profile && job.skills.length > 0) {
     const studentSkills = profile.skills.map((s) => s.toLowerCase());
     const matched = job.skills.filter((s) => studentSkills.some((ss) => ss.includes(s.toLowerCase()) || s.toLowerCase().includes(ss)));
