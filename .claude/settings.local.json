@@ -144,7 +144,13 @@
       "Bash(pandoc -f markdown -t plain '/c/Users/Administrator/Desktop/crmlms/docs/PROJECT_OVERVIEW.md' -o '/c/Users/Administrator/Desktop/All-App-information/AstraaHire-Project-Overview.txt')",
       "Bash(sed -i 's|https://ashpranix\\\\.in|https://astraahire.com|g' public/sitemap.xml)",
       "Bash(sed -i 's|\"background_color\": \"#0C1A1A\"|\"background_color\": \"#FAF7F2\"|g; s|\"theme_color\": \"#0C1A1A\"|\"theme_color\": \"#FAF7F2\"|g' public/manifest.json)",
-      "Bash(DATABASE_URL=\"postgresql://postgres:meTDEKcyaOYVgFrhFEbcbSLAAnapCrQa@metro.proxy.rlwy.net:40627/railway\" npx prisma db push)"
+      "Bash(DATABASE_URL=\"postgresql://postgres:meTDEKcyaOYVgFrhFEbcbSLAAnapCrQa@metro.proxy.rlwy.net:40627/railway\" npx prisma db push)",
+      "Bash(grep -rn 'href={`/jobs/${' --include=\"*.tsx\" -r app components)",
+      "Bash(grep -nA2 \"href={\\\\`/jobs/\" app/company/\\\\[slug\\\\]/page.tsx components/hr-dashboard/MyJobPosts.tsx)",
+      "Bash(grep -nA2 \"interface Job \" app/jobs/page.tsx components/hr-dashboard/MyJobPosts.tsx)",
+      "Bash(grep -nA1 \"interface Job\\\\|jobs:\" app/company/\\\\[slug\\\\]/page.tsx)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:meTDEKcyaOYVgFrhFEbcbSLAAnapCrQa@metro.proxy.rlwy.net:40627/railway\" npx prisma db push --accept-data-loss)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:meTDEKcyaOYVgFrhFEbcbSLAAnapCrQa@metro.proxy.rlwy.net:40627/railway\" npx tsx scripts/backfill-job-slugs.ts)"
     ]
   }
 }

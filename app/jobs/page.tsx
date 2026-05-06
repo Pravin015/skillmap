@@ -2,11 +2,13 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { DOMAINS_WITH_ALL } from "@/lib/domains";
 
 const heading = "font-[family-name:var(--font-heading)]";
 
 interface Job {
   id: string;
+  slug: string | null;
   title: string;
   company: string;
   location: string;
@@ -45,7 +47,7 @@ interface ExternalJob {
   source: { slug: string; displayName: string };
 }
 
-const domains = ["All", "Software Development", "Cybersecurity", "Cloud & DevOps", "Data & Analytics", "Consulting", "Other"];
+const domains = DOMAINS_WITH_ALL;
 const workModes = ["All", "On-site", "Remote", "Hybrid"];
 const experienceLevels = ["All", "Fresher", "1 year", "2 years", "3 years", "5 years", "10+ years"];
 const salaryRanges = [
@@ -192,7 +194,7 @@ export default function JobsPage() {
               {filteredInternal.map((job) => (
                 <Link
                   key={`int-${job.id}`}
-                  href={`/jobs/${job.id}`}
+                  href={`/jobs/${job.slug || job.id}`}
                   className="rounded-2xl border bg-white p-4 transition-all hover:-translate-y-1 hover:shadow-lg no-underline group flex flex-col"
                   style={{ borderColor: "var(--border)" }}
                 >

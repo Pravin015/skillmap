@@ -248,6 +248,11 @@ enum ApplicationStatus {
 
 model JobPosting {
   id              String        @id @default(cuid())
+  // SEO-friendly slug, e.g. "social-media-manager-edunueron-001".
+  // Generated on create from title + company; counter ensures uniqueness
+  // when same role is reposted by the same company.
+  // Optional initially so existing rows can be backfilled.
+  slug            String?       @unique
   postedById      String
   postedBy        User          @relation(fields: [postedById], references: [id], onDelete: Cascade)
 

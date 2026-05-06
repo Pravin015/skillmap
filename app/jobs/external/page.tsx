@@ -2,6 +2,7 @@
 // Public listing page for aggregated external jobs.
 // Apply button hits /api/external-jobs/[id]/apply which 302s to the source.
 import { useEffect, useState, useCallback } from "react";
+import { DOMAINS_WITH_ALL } from "@/lib/domains";
 
 const heading = "font-[family-name:var(--font-heading)]";
 
@@ -26,7 +27,7 @@ interface ExternalJob {
   source: { slug: string; displayName: string };
 }
 
-const DOMAINS = ["All", "Cybersecurity", "Data & Analytics", "Software Development", "Cloud & DevOps", "Consulting", "Other"];
+const DOMAINS = DOMAINS_WITH_ALL;
 const WORK_MODES = ["All", "On-site", "Remote", "Hybrid"];
 const VERTICALS = ["All", "FULLTIME", "INTERNSHIP"];
 

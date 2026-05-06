@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createNotification } from "@/lib/notifications";
+import { generateJobSlug } from "@/lib/slug";
 
 // GET — list jobs (filtered by role)
 export async function GET(req: NextRequest) {
@@ -71,8 +72,11 @@ export async function POST(req: NextRequest) {
     companyName = user?.organisation || user?.name || "Unknown";
   }
 
+  const slug = await generateJobSlug(title, companyName);
+
   const job = await prisma.jobPosting.create({
     data: {
+      slug,
       postedById: userId!,
       title,
       company: companyName,

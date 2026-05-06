@@ -118,7 +118,7 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
           <div>
             <label className={labelClass}>Domain</label>
             <select name="domain" className={inputClass} style={{ borderColor: "var(--border)" }}>
-              <option value="">Select</option><option>Software Development</option><option>Cybersecurity</option><option>Cloud & DevOps</option><option>Data & Analytics</option><option>Consulting</option><option>Other</option>
+              <option value="">Select</option><option>Software Development</option><option>Cybersecurity</option><option>Cloud & DevOps</option><option>Data & Analytics</option><option>Digital Marketing</option><option>Social Media</option><option>Sales</option><option>Consulting</option><option>Other</option>
             </select>
           </div>
           <div>

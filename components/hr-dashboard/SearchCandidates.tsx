@@ -57,7 +57,7 @@ export default function SearchCandidates() {
         <div className="flex gap-3 mt-4 flex-wrap">
           <select value={domain} onChange={(e) => setDomain(e.target.value)} className="rounded-lg border px-3 py-2 text-xs outline-none" style={{ borderColor: "var(--border)" }}>
             <option value="">All Domains</option>
-            <option>Software Development</option><option>Cybersecurity</option><option>Cloud & DevOps</option><option>Data & Analytics</option><option>Consulting & Finance</option>
+            <option>Software Development</option><option>Cybersecurity</option><option>Cloud & DevOps</option><option>Data & Analytics</option><option>Digital Marketing</option><option>Social Media</option><option>Sales</option><option>Consulting & Finance</option>
           </select>
           <select value={experience} onChange={(e) => setExperience(e.target.value)} className="rounded-lg border px-3 py-2 text-xs outline-none" style={{ borderColor: "var(--border)" }}>
             <option value="">All Experience</option>

@@ -10,7 +10,7 @@ const statusBadge: Record<string, string> = {
 };
 
 interface Job {
-  id: string; title: string; company: string; location: string; workMode: string;
+  id: string; slug: string | null; title: string; company: string; location: string; workMode: string;
   experienceLevel: string; jobType: string; status: string; createdAt: string;
   _count: { applications: number };
 }
@@ -77,7 +77,7 @@ export default function MyJobPosts({ onNavigate }: { onNavigate: (tab: string) =
                 </div>
                 <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full shrink-0 ${statusBadge[job.status] || ""}`}>{job.status}</span>
                 <div className="flex gap-2 shrink-0">
-                  <Link href={`/jobs/${job.id}`} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border no-underline hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>View</Link>
+                  <Link href={`/jobs/${job.slug || job.id}`} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border no-underline hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>View</Link>
                   <button onClick={() => toggleStatus(job.id, job.status)} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
                     {job.status === "ACTIVE" ? "Close" : "Reopen"}
                   </button>

@@ -13,7 +13,7 @@ interface CompanyData {
     founded: string | null; isVerified: boolean;
   };
   jobs: {
-    id: string; title: string; location: string; workMode: string;
+    id: string; slug: string | null; title: string; location: string; workMode: string;
     salaryMin: number | null; salaryMax: number | null; experienceLevel: string;
     skills: string[]; deadline: string | null; status: string;
     _count: { applications: number };
@@ -139,7 +139,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ slug:
                 {jobs.map((job) => (
                   <Link
                     key={job.id}
-                    href={`/jobs/${job.id}`}
+                    href={`/jobs/${job.slug || job.id}`}
                     className="block rounded-2xl border bg-white p-5 transition-all hover:-translate-y-0.5 hover:shadow-md no-underline"
                     style={{ borderColor: "var(--border)" }}
                   >

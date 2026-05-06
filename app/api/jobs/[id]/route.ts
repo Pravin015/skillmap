@@ -3,15 +3,17 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// GET single job with applications
+// GET single job with applications.
+// `id` param accepts EITHER the cuid id OR the SEO slug. We try id
+// first because old links / test data still use cuids; slug second.
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
 
-  const job = await prisma.jobPosting.findUnique({
-    where: { id },
+  const job = await prisma.jobPosting.findFirst({
+    where: { OR: [{ id }, { slug: id }] },
     include: {
       postedBy: { select: { name: true, email: true, organisation: true } },
       labTemplate: { select: { id: true, title: true, timeLimit: true, passingScore: true, difficulty: true } },
