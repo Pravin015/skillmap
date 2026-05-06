@@ -275,7 +275,7 @@ const children = [
   // Contact
   h1("Contact & Legal"),
   bulletWithBold("Email:", "support@astraahire.com"),
-  bulletWithBold("Website:", "astraahire.com (currently ashpranix.in during beta)"),
+  bulletWithBold("Website:", "astraahire.com"),
   bulletWithBold("Founded:", "2024"),
   bulletWithBold("Headquartered:", "India"),
   bulletWithBold("Legal:", "Privacy policy / Terms of service / Refund policy at /privacy /terms /refund-policy"),

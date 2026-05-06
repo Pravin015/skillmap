@@ -3,7 +3,7 @@ import LegalPage from "@/components/LegalPage";
 export default function RefundPolicy() {
   return (
     <LegalPage title="Refund & Cancellation Policy" lastUpdated="12 April 2026">
-      <p>This Refund & Cancellation Policy applies to all paid services on AstraaHire, accessible at ashpranix.in.</p>
+      <p>This Refund & Cancellation Policy applies to all paid services on AstraaHire, accessible at astraahire.com.</p>
 
       <h2>1. Subscription Plans</h2>
       <h3>1.1 Career Ready Plan (₹299/month)</h3>

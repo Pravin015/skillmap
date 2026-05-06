@@ -3,7 +3,7 @@ import LegalPage from "@/components/LegalPage";
 export default function PrivacyPolicy() {
   return (
     <LegalPage title="Privacy Policy" lastUpdated="12 April 2026">
-      <p>This Privacy Policy describes how AstraaHire (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects, uses, and protects your personal information when you use our platform at ashpranix.in (&quot;Platform&quot;).</p>
+      <p>This Privacy Policy describes how AstraaHire (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects, uses, and protects your personal information when you use our platform at astraahire.com (&quot;Platform&quot;).</p>
 
       <h2>1. Information We Collect</h2>
       <h3>1.1 Information You Provide</h3>

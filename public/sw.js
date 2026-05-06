@@ -1,4 +1,4 @@
-const CACHE_NAME = "skillmap-v1";
+const CACHE_NAME = "astraahire-v1";
 const OFFLINE_URL = "/";
 
 // Assets to pre-cache

@@ -191,7 +191,7 @@ AstraaHire is currently in **private beta**:
 ## Contact & Legal
 
 - **Email:** support@astraahire.com
-- **Website:** astraahire.com (currently ashpranix.in during beta)
+- **Website:** astraahire.com
 - **Founded:** 2024
 - **Headquartered:** India
 - **Legal:** Privacy policy · Terms of service · Refund policy at /privacy /terms /refund-policy

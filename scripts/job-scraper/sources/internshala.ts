@@ -1,4 +1,4 @@
-// Internshala — the canonical internship source in India. Powers Ashpranix internship listings.
+// Internshala — the canonical internship source in India. Powers AstraaHire internship listings.
 // We parse the public listing page HTML (internshala.com/internships/...).
 // Selectors: verified against the current public page structure as of 2026-04.
 // If Internshala changes layout, the run will log `itemsFound=0` — check scrape runs admin page.

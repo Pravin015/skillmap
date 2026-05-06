@@ -13,9 +13,9 @@ async function main() {
 
   // ═══ 1. STUDENT ═══
   const student = await prisma.user.upsert({
-    where: { email: "student@demo.skillmap.com" },
+    where: { email: "student@demo.astraahire.com" },
     update: {},
-    create: { name: "Aarav Sharma", email: "student@demo.skillmap.com", password: pwd, role: "STUDENT", phone: "+91 9876543210", degree: "B.Tech/BE", gradYear: "2025" },
+    create: { name: "Aarav Sharma", email: "student@demo.astraahire.com", password: pwd, role: "STUDENT", phone: "+91 9876543210", degree: "B.Tech/BE", gradYear: "2025" },
   });
   await prisma.studentProfile.upsert({
     where: { userId: student.id },
@@ -31,13 +31,13 @@ async function main() {
       profileScore: 78,
     },
   });
-  console.log("✅ Student: student@demo.skillmap.com / Demo@123");
+  console.log("✅ Student: student@demo.astraahire.com / Demo@123");
 
   // ═══ 2. MENTOR ═══
   const mentor = await prisma.user.upsert({
-    where: { email: "mentor@demo.skillmap.com" },
+    where: { email: "mentor@demo.astraahire.com" },
     update: {},
-    create: { name: "Rajesh Nair", email: "mentor@demo.skillmap.com", password: pwd, role: "MENTOR", phone: "+91 9876543211" },
+    create: { name: "Rajesh Nair", email: "mentor@demo.astraahire.com", password: pwd, role: "MENTOR", phone: "+91 9876543211" },
   });
   await prisma.mentorProfile.upsert({
     where: { userId: mentor.id },
@@ -55,31 +55,31 @@ async function main() {
       linkedinUrl: "https://linkedin.com/in/rajesh-nair-demo",
     },
   });
-  console.log("✅ Mentor: mentor@demo.skillmap.com / Demo@123");
+  console.log("✅ Mentor: mentor@demo.astraahire.com / Demo@123");
 
   // ═══ 3. HR ═══
   // First create company
   const company = await prisma.user.upsert({
-    where: { email: "company@demo.skillmap.com" },
+    where: { email: "company@demo.astraahire.com" },
     update: {},
-    create: { name: "TechCorp India", email: "company@demo.skillmap.com", password: pwd, role: "ORG", organisation: "TechCorp India", phone: "+91 9876543212" },
+    create: { name: "TechCorp India", email: "company@demo.astraahire.com", password: pwd, role: "ORG", organisation: "TechCorp India", phone: "+91 9876543212" },
   });
-  console.log("✅ Company: company@demo.skillmap.com / Demo@123");
+  console.log("✅ Company: company@demo.astraahire.com / Demo@123");
 
   const hr = await prisma.user.upsert({
-    where: { email: "hr@demo.skillmap.com" },
+    where: { email: "hr@demo.astraahire.com" },
     update: {},
-    create: { name: "Priya Kapoor", email: "hr@demo.skillmap.com", password: pwd, role: "HR", organisation: "TechCorp India", phone: "+91 9876543213" },
+    create: { name: "Priya Kapoor", email: "hr@demo.astraahire.com", password: pwd, role: "HR", organisation: "TechCorp India", phone: "+91 9876543213" },
   });
-  console.log("✅ HR: hr@demo.skillmap.com / Demo@123");
+  console.log("✅ HR: hr@demo.astraahire.com / Demo@123");
 
   // ═══ 4. INSTITUTION ═══
   const institution = await prisma.user.upsert({
-    where: { email: "institution@demo.skillmap.com" },
+    where: { email: "institution@demo.astraahire.com" },
     update: {},
-    create: { name: "Delhi Technical University", email: "institution@demo.skillmap.com", password: pwd, role: "INSTITUTION", organisation: "Delhi Technical University", phone: "+91 9876543214" },
+    create: { name: "Delhi Technical University", email: "institution@demo.astraahire.com", password: pwd, role: "INSTITUTION", organisation: "Delhi Technical University", phone: "+91 9876543214" },
   });
-  console.log("✅ Institution: institution@demo.skillmap.com / Demo@123");
+  console.log("✅ Institution: institution@demo.astraahire.com / Demo@123");
 
   // ═══ 5. DUMMY JOB POSTS ═══
   const job1 = await prisma.jobPosting.create({
@@ -201,7 +201,7 @@ async function main() {
 <p>At TechCorp India, we've streamlined our hiring to find the best talent efficiently. Here's exactly what happens when you apply.</p>
 
 <h2>Stage 1: Application Screening</h2>
-<p>We use SkillMap's AI matching to score every application. If your skill match is above 60%, you move to screening. We look at:</p>
+<p>We use AstraaHire's AI matching to score every application. If your skill match is above 60%, you move to screening. We look at:</p>
 <ul>
 <li>Relevant skills matching the JD</li>
 <li>Academic background</li>
@@ -210,7 +210,7 @@ async function main() {
 </ul>
 
 <h2>Stage 2: Technical Assessment</h2>
-<p>For technical roles, we use SkillMap's Lab module — a timed MCQ assessment. 10 questions, 30 minutes. You need 70% to pass.</p>
+<p>For technical roles, we use AstraaHire's Lab module — a timed MCQ assessment. 10 questions, 30 minutes. You need 70% to pass.</p>
 
 <h2>Stage 3: Technical Interview</h2>
 <p>45-minute video call with a senior engineer. We test problem-solving, not memorized answers. Expect scenario-based questions.</p>
@@ -219,7 +219,7 @@ async function main() {
 <p>Cultural fit, salary expectations, joining timeline. This is where we check if you'll thrive in our team.</p>
 
 <h2>Tips from Me</h2>
-<p><strong>Do:</strong> Keep your SkillMap profile complete, add real projects, get certified.</p>
+<p><strong>Do:</strong> Keep your AstraaHire profile complete, add real projects, get certified.</p>
 <p><strong>Don't:</strong> Apply to 100 jobs randomly. Target 5 companies, prepare deeply for each.</p>`,
       excerpt: "An insider look at TechCorp India's hiring process — from application to offer. Tips directly from our HR team.",
       authorId: hr.id, authorName: "Priya Kapoor", authorRole: "HR",
@@ -267,9 +267,9 @@ async function main() {
 
   // ═══ 10. SECOND STUDENT (for more realistic data) ═══
   const student2 = await prisma.user.upsert({
-    where: { email: "student2@demo.skillmap.com" },
+    where: { email: "student2@demo.astraahire.com" },
     update: {},
-    create: { name: "Meera Patel", email: "student2@demo.skillmap.com", password: pwd, role: "STUDENT", phone: "+91 9876543215", degree: "BCA", gradYear: "2026" },
+    create: { name: "Meera Patel", email: "student2@demo.astraahire.com", password: pwd, role: "STUDENT", phone: "+91 9876543215", degree: "BCA", gradYear: "2026" },
   });
   await prisma.studentProfile.upsert({
     where: { userId: student2.id },
@@ -291,19 +291,19 @@ async function main() {
     update: {},
     create: { jobId: job3.id, userId: student2.id, status: "APPLIED", scoreMatch: 85 },
   });
-  console.log("✅ Student 2: student2@demo.skillmap.com / Demo@123 (applied to Data Analyst)");
+  console.log("✅ Student 2: student2@demo.astraahire.com / Demo@123 (applied to Data Analyst)");
 
   console.log("\n══════════════════════════════════════");
   console.log("  DEMO ACCOUNTS SUMMARY");
   console.log("══════════════════════════════════════");
   console.log("  Password for all: Demo@123\n");
-  console.log("  🎓 Student:     student@demo.skillmap.com");
-  console.log("  🎓 Student 2:   student2@demo.skillmap.com");
-  console.log("  🧑‍🏫 Mentor:      mentor@demo.skillmap.com");
-  console.log("  👥 HR:          hr@demo.skillmap.com");
-  console.log("  🏢 Company:     company@demo.skillmap.com");
-  console.log("  🏫 Institution: institution@demo.skillmap.com");
-  console.log("  🛡️ Admin:       admin@skillmap.com / admin123");
+  console.log("  🎓 Student:     student@demo.astraahire.com");
+  console.log("  🎓 Student 2:   student2@demo.astraahire.com");
+  console.log("  🧑‍🏫 Mentor:      mentor@demo.astraahire.com");
+  console.log("  👥 HR:          hr@demo.astraahire.com");
+  console.log("  🏢 Company:     company@demo.astraahire.com");
+  console.log("  🏫 Institution: institution@demo.astraahire.com");
+  console.log("  🛡️ Admin:       admin@astraahire.com / admin123");
   console.log("══════════════════════════════════════\n");
   console.log("  📋 3 Job postings (Cyber, FullStack, Data)");
   console.log("  📩 2 Applications (Aarav→Cyber, Meera→Data)");

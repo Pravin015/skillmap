@@ -40,11 +40,11 @@ export default function PlatformSettings() {
           </div>
           <div>
             <label className="text-xs font-medium block mb-1" style={{ color: "var(--muted)" }}>Domain</label>
-            <div className="rounded-xl border px-4 py-3 text-sm font-medium" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>ashpranix.in</div>
+            <div className="rounded-xl border px-4 py-3 text-sm font-medium" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>astraahire.com</div>
           </div>
           <div>
             <label className="text-xs font-medium block mb-1" style={{ color: "var(--muted)" }}>Support Email</label>
-            <div className="rounded-xl border px-4 py-3 text-sm font-medium" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>support@ashpranix.in</div>
+            <div className="rounded-xl border px-4 py-3 text-sm font-medium" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>support@astraahire.com</div>
           </div>
           <div>
             <label className="text-xs font-medium block mb-1" style={{ color: "var(--muted)" }}>Framework</label>

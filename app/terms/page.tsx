@@ -3,7 +3,7 @@ import LegalPage from "@/components/LegalPage";
 export default function TermsAndConditions() {
   return (
     <LegalPage title="Terms & Conditions" lastUpdated="12 April 2026">
-      <p>Welcome to AstraaHire. By accessing or using our platform at ashpranix.in (&quot;Platform&quot;), you agree to be bound by these Terms and Conditions (&quot;Terms&quot;). Please read them carefully.</p>
+      <p>Welcome to AstraaHire. By accessing or using our platform at astraahire.com (&quot;Platform&quot;), you agree to be bound by these Terms and Conditions (&quot;Terms&quot;). Please read them carefully.</p>
 
       <h2>1. Acceptance of Terms</h2>
       <p>By creating an account or using our Platform, you confirm that you are at least 16 years old and agree to these Terms. If you are using the Platform on behalf of an organisation, you represent that you have authority to bind that organisation.</p>

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/lib/generated/prisma/client";
 
 // Public endpoint — no auth needed. Listing-only (users are redirected to source portal to apply).
-// Also consumed by the Ashpranix internship portal via ?vertical=INTERNSHIP.
+// Also consumed by the AstraaHire internship portal via ?vertical=INTERNSHIP.
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const vertical = searchParams.get("vertical"); // "INTERNSHIP" | "FULLTIME"

@@ -13,7 +13,7 @@ function layout(heading: string, body: string, ctaText?: string, ctaUrl?: string
   </div>
   <div style="text-align:center;padding:24px 0;font-size:12px;color:rgba(10,10,15,0.3)">
     <p>AstraaHire · India's job-readiness engine</p>
-    <p><a href="https://ashpranix.in" style="color:rgba(10,10,15,0.3)">ashpranix.in</a> · <a href="mailto:support@ashpranix.in" style="color:rgba(10,10,15,0.3)">support@ashpranix.in</a></p>
+    <p><a href="https://astraahire.com" style="color:rgba(10,10,15,0.3)">astraahire.com</a> · <a href="mailto:support@astraahire.com" style="color:rgba(10,10,15,0.3)">support@astraahire.com</a></p>
   </div>
 </div></body></html>`;
 }
@@ -21,7 +21,7 @@ function layout(heading: string, body: string, ctaText?: string, ctaUrl?: string
 export type TemplateData = Record<string, string | number | undefined>;
 
 export function getEmailTemplate(type: string, data: TemplateData): { subject: string; html: string } {
-  const base = "https://ashpranix.in";
+  const base = "https://astraahire.com";
   const d = data;
 
   switch (type) {
@@ -87,7 +87,7 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
 
     case "PASSWORD_CHANGED":
       return { subject: "Your password was changed", html: layout("Password Changed 🔐",
-        `<p>Hi <strong>${d.name}</strong>,</p><p>Your AstraaHire password was successfully changed. If you didn't make this change, please contact us immediately at <a href="mailto:support@ashpranix.in">support@ashpranix.in</a>.</p>`) };
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your AstraaHire password was successfully changed. If you didn't make this change, please contact us immediately at <a href="mailto:support@astraahire.com">support@astraahire.com</a>.</p>`) };
 
     case "INVITE_RECEIVED":
       return { subject: `${d.company} invited you to apply!`, html: layout("You've Been Invited! ✉️",

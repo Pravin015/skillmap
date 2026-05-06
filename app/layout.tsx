@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AstraaHire — Intelligence that gets you hired",
     description: "India's AI-powered career intelligence platform for fresh graduates.",
-    url: "https://ashpranix.in",
+    url: "https://astraahire.com",
     siteName: "AstraaHire",
     type: "website",
   },

@@ -3,7 +3,7 @@ import LegalPage from "@/components/LegalPage";
 export default function ShippingPolicy() {
   return (
     <LegalPage title="Shipping & Delivery Policy" lastUpdated="12 April 2026">
-      <p>AstraaHire (ashpranix.in) is a digital platform. All our products and services are delivered electronically. There are no physical goods involved.</p>
+      <p>AstraaHire (astraahire.com) is a digital platform. All our products and services are delivered electronically. There are no physical goods involved.</p>
 
       <h2>1. Digital Service Delivery</h2>
       <p>All services on AstraaHire are delivered digitally and are accessible immediately upon:</p>

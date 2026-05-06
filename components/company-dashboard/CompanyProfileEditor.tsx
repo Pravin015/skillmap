@@ -90,7 +90,7 @@ export default function CompanyProfileEditor() {
           <div>
             <label className="text-xs font-medium block mb-1" style={{ color: "var(--ink)" }}>URL Slug *</label>
             <div className="flex items-center rounded-xl border overflow-hidden" style={{ borderColor: "var(--border)" }}>
-              <span className="px-3 text-xs bg-gray-50" style={{ color: "var(--muted)" }}>ashpranix.in/company/</span>
+              <span className="px-3 text-xs bg-gray-50" style={{ color: "var(--muted)" }}>astraahire.com/company/</span>
               <input value={slug} onChange={(e) => setSlug(e.target.value)} required className="flex-1 px-3 py-2.5 text-sm outline-none" />
             </div>
           </div>

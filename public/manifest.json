@@ -4,8 +4,8 @@
   "description": "India's first job-readiness engine. Know what it takes to get hired at your dream company.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0C1A1A",
-  "theme_color": "#0C1A1A",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [
