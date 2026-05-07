@@ -89,27 +89,38 @@ input, select, textarea, button { font-family: inherit; }
 a { color: inherit; text-decoration: none; }
 
 /* ═══ TYPOGRAPHY ═══
-   Wrapped in @layer base so Tailwind utility classes (text-xl, text-base,
-   etc.) ALWAYS win, regardless of source order. Without @layer, our
-   :where() rules and Tailwind utilities are both specificity 0 and
-   the LATER-declared one wins — meaning every <h1> with text-xl was
-   rendering as the global 4rem default. The @layer base wrap fixes that.
+   Two-axis specificity puzzle:
+   1. Tailwind v4 preflight resets headings with `h1, h2, h3 { font-size: inherit }`
+      — plain element selectors, specificity (0,0,1).
+   2. Tailwind utilities (text-xl, etc.) compile to `:where(.text-xl)`,
+      specificity (0,0,0).
+
+   If we use `:where(h1)` for defaults (specificity 0), the preflight
+   wins → headings shrink to body size (visible on homepage hero where
+   the <h1> has no text-* class).
+
+   If we use plain `h1` (specificity 1), it beats the preflight, but
+   it would also beat Tailwind utility classes — except we put it in
+   @layer base. Tailwind utilities live in @layer utilities, which
+   ALWAYS cascades after @layer base regardless of specificity.
+
+   So: plain selectors inside @layer base = both problems solved.
 */
 @layer base {
-  :where(h1, h2, h3, h4, h5, h6) {
+  h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-body), 'Poppins', sans-serif;
     letter-spacing: -0.02em;
   }
-  :where(h1) { font-size: clamp(2.4rem, 5.5vw, 4rem); font-weight: 600; line-height: 1.05; letter-spacing: -0.035em; }
-  :where(h2) { font-size: clamp(1.8rem, 4vw, 2.75rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; }
-  :where(h3) { font-size: clamp(1.05rem, 1.8vw, 1.4rem); font-weight: 600; line-height: 1.3; }
-  :where(p)  { font-size: 0.95rem; line-height: 1.7; font-weight: 400; }
+  h1 { font-size: clamp(2.4rem, 5.5vw, 4rem); font-weight: 600; line-height: 1.05; letter-spacing: -0.035em; }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.75rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; }
+  h3 { font-size: clamp(1.05rem, 1.8vw, 1.4rem); font-weight: 600; line-height: 1.3; }
+  p  { font-size: 0.95rem; line-height: 1.7; font-weight: 400; }
 
   /* Mobile defaults — only apply if no Tailwind size class wins */
   @media (max-width: 640px) {
-    :where(h1) { font-size: clamp(1.85rem, 8vw, 2.5rem); line-height: 1.1; }
-    :where(h2) { font-size: clamp(1.4rem, 6vw, 2rem); line-height: 1.2; }
-    :where(h3) { font-size: clamp(1rem, 4.5vw, 1.2rem); }
+    h1 { font-size: clamp(1.85rem, 8vw, 2.5rem); line-height: 1.1; }
+    h2 { font-size: clamp(1.4rem, 6vw, 2rem); line-height: 1.2; }
+    h3 { font-size: clamp(1rem, 4.5vw, 1.2rem); }
   }
 }
 
