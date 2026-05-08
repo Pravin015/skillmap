@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { rateLimitAsync, getClientIP } from "@/lib/rate-limit";
 
 const VALID_TARGETS = new Set(["JOB", "BLOG_POST", "COURSE", "MENTOR_PROFILE", "USER", "COMPANY", "COMPETITION", "EVENT", "OTHER"]);
 const VALID_REASONS = new Set(["SPAM", "SCAM_OR_FRAUD", "HARASSMENT_OR_ABUSE", "IMPERSONATION", "OFFENSIVE_CONTENT", "COPYRIGHT", "MISLEADING_INFO", "OTHER"]);
@@ -22,11 +22,11 @@ export async function POST(req: NextRequest) {
 
   // Light rate limit — defeats spam-flooding the moderation queue.
   // 10 reports per user per hour, plus 30 per IP per hour.
-  const userOk = rateLimit(`report:user:${userId}`, 10, 60 * 60 * 1000);
+  const userOk = await rateLimitAsync(`report:user:${userId}`, 10, 60 * 60 * 1000);
   if (!userOk.allowed) {
     return NextResponse.json({ error: "Too many reports. Try again in an hour." }, { status: 429 });
   }
-  const ipOk = rateLimit(`report:ip:${getClientIP(req)}`, 30, 60 * 60 * 1000);
+  const ipOk = await rateLimitAsync(`report:ip:${getClientIP(req)}`, 30, 60 * 60 * 1000);
   if (!ipOk.allowed) {
     return NextResponse.json({ error: "Too many reports from your network." }, { status: 429 });
   }

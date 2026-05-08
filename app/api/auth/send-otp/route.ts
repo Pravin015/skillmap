@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
-import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { rateLimitAsync, getClientIP } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   const ip = getClientIP(req);
-  const { allowed } = rateLimit(`otp:${ip}`, 5, 60 * 1000); // 5 per minute
+  const { allowed } = await rateLimitAsync(`otp:${ip}`, 5, 60 * 1000); // 5 per minute
   if (!allowed) return NextResponse.json({ error: "Too many requests. Please wait a minute." }, { status: 429 });
   const { email } = await req.json();
   if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });

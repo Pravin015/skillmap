@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { rateLimitAsync, getClientIP } from "@/lib/rate-limit";
 import { createNotification } from "@/lib/notifications";
 
 const anthropic = new Anthropic();
@@ -108,14 +108,14 @@ export async function POST(req: NextRequest) {
   }
 
   // ─── 2. RATE LIMIT (per user + per IP) ────────────────────────────
-  const ipLimit = rateLimit(`offer-verify:ip:${getClientIP(req)}`, RATE_LIMIT_PER_IP_HOUR, ONE_HOUR_MS);
+  const ipLimit = await rateLimitAsync(`offer-verify:ip:${getClientIP(req)}`, RATE_LIMIT_PER_IP_HOUR, ONE_HOUR_MS);
   if (!ipLimit.allowed) {
     return NextResponse.json(
       { error: "Too many requests from your network. Try again in an hour." },
       { status: 429 }
     );
   }
-  const userLimit = rateLimit(`offer-verify:user:${userId}`, RATE_LIMIT_PER_USER_DAY, ONE_DAY_MS);
+  const userLimit = await rateLimitAsync(`offer-verify:user:${userId}`, RATE_LIMIT_PER_USER_DAY, ONE_DAY_MS);
   if (!userLimit.allowed) {
     return NextResponse.json(
       { error: `Daily limit reached (${RATE_LIMIT_PER_USER_DAY} verifications/day). Resets in 24 hours.` },
