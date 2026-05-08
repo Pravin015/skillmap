@@ -4,10 +4,14 @@
 //   2. Paste LinkedIn URL alongside (just stored as a link if no text)
 //   3. Skip — user fills manually
 //
-// Calls /api/profile/enrich (rate-limited 5/day). On success we POST
-// directly to /api/profile so the data is saved without forcing the
-// user through another form. They can still edit anything after.
+// Calls /api/profile/enrich (rate-limited 5/day). On success the
+// auto-save dispatches to the right backend per role:
+//   STUDENT  → POST /api/profile (StudentProfile fields)
+//   MENTOR   → POST /api/mentor/profile (MentorProfile fields)
+//   HR/ORG/INSTITUTION/ADMIN → PATCH /api/account (User fields only —
+//   they don't have a deep profile model)
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface EnrichedProfile {
   headline?: string | null;
@@ -24,15 +28,79 @@ interface EnrichedProfile {
   portfolioUrl?: string | null;
 }
 
-interface Props {
-  onImported?: (data: EnrichedProfile) => void;
-  // If true, the component saves directly to /api/profile after enrich.
-  // If false, it just hands the parsed data to onImported and lets the
-  // parent decide what to do with it.
-  autoSave?: boolean;
+// Saves enriched data to the right backend based on role. Each role
+// has a different profile model (or no profile model at all), so the
+// payload shape changes accordingly.
+async function persistByRole(role: string, e: EnrichedProfile): Promise<void> {
+  if (role === "STUDENT") {
+    await fetch("/api/profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        collegeName: e.collegeName,
+        fieldOfInterest: e.fieldOfInterest,
+        bio: e.bio,
+        academicScore: e.academicScore,
+        academicType: e.academicType,
+        skills: e.skills || [],
+        linkedinUrl: e.linkedinUrl,
+        githubUrl: e.githubUrl,
+        portfolioUrl: e.portfolioUrl,
+        experiences: e.experiences || [],
+        certifications: e.certifications || [],
+      }),
+    });
+    return;
+  }
+
+  if (role === "MENTOR") {
+    // Map the most recent experience entry into MentorProfile's
+    // currentCompany / currentRole fields, since mentors usually want
+    // their current job displayed (not historical entries).
+    const latest = e.experiences && e.experiences.length > 0 ? e.experiences[0] : null;
+    await fetch("/api/mentor/profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        headline: e.headline,
+        bio: e.bio,
+        currentCompany: latest?.company,
+        currentRole: latest?.role,
+        collegeName: e.collegeName,
+        areaOfExpertise: e.skills || [],
+        linkedinUrl: e.linkedinUrl,
+      }),
+    });
+    return;
+  }
+
+  // HR / ORG / INSTITUTION / ADMIN — no rich profile model. We can
+  // only update the User row's name + organisation + phone-equivalent
+  // fields. Skip if nothing useful was extracted.
+  const orgGuess = e.experiences?.[0]?.company || null;
+  if (orgGuess) {
+    await fetch("/api/account", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ organisation: orgGuess }),
+    });
+  }
 }
 
-export default function ImportProfile({ onImported, autoSave = true }: Props) {
+interface Props {
+  onImported?: (data: EnrichedProfile) => void;
+  // If true, the component auto-saves the enriched data to the appropriate
+  // backend endpoint based on the user's role. If false, just hands the
+  // parsed data to the parent via onImported.
+  autoSave?: boolean;
+  // Override the role detection (rare — used when caller knows better).
+  // Defaults to the user's session role.
+  role?: "STUDENT" | "MENTOR" | "HR" | "ORG" | "INSTITUTION" | "ADMIN";
+}
+
+export default function ImportProfile({ onImported, autoSave = true, role }: Props) {
+  const { data: session } = useSession();
+  const effectiveRole = role || (session?.user as { role?: string })?.role || "STUDENT";
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
@@ -66,28 +134,10 @@ export default function ImportProfile({ onImported, autoSave = true }: Props) {
       // Hand to parent first (so it can mirror into form state)
       onImported?.(data.enriched);
 
-      // Optionally also persist directly. The user can still edit
-      // afterwards — this just means the data isn't lost if they navigate
-      // away before submitting the full form.
+      // Auto-save dispatches by role to the right backend.
       if (autoSave) {
         try {
-          await fetch("/api/profile", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              collegeName: data.enriched.collegeName,
-              fieldOfInterest: data.enriched.fieldOfInterest,
-              bio: data.enriched.bio,
-              academicScore: data.enriched.academicScore,
-              academicType: data.enriched.academicType,
-              skills: data.enriched.skills || [],
-              linkedinUrl: data.enriched.linkedinUrl,
-              githubUrl: data.enriched.githubUrl,
-              portfolioUrl: data.enriched.portfolioUrl,
-              experiences: data.enriched.experiences || [],
-              certifications: data.enriched.certifications || [],
-            }),
-          });
+          await persistByRole(effectiveRole, data.enriched);
           setSaved(true);
         } catch {
           // Non-fatal — parent still got the data via onImported.

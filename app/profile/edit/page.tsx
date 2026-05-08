@@ -151,13 +151,14 @@ export default function ProfileEditPage() {
 
         {saved && <div className="rounded-xl p-4 text-sm font-medium mb-6" style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a", border: "1px solid rgba(34,197,94,0.3)" }}>Profile saved!</div>}
 
-        {/* Quick-import card — STUDENT role only. Saves directly via the
-            component's autoSave; user can refresh the page to see populated fields. */}
-        {userRole === "STUDENT" && (
-          <div className="mb-6">
-            <ImportProfile onImported={() => router.refresh()} />
-          </div>
-        )}
+        {/* Quick-import card — visible for ALL roles. ImportProfile
+            auto-routes saves by session role: STUDENT → /api/profile,
+            MENTOR → /api/mentor/profile, HR/ORG/INSTITUTION → /api/account
+            (organisation field only). User can still fill manually
+            below — this just pre-fills what we can extract. */}
+        <div className="mb-6">
+          <ImportProfile onImported={() => router.refresh()} />
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Photo */}
