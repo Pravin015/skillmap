@@ -7,12 +7,18 @@ const labelClass = `block text-sm font-medium mb-1.5 ${heading}`;
 const experienceLevels = ["Fresher", ...Array.from({ length: 30 }, (_, i) => `${i + 1} year${i + 1 > 1 ? "s" : ""}`)];
 
 interface LabOption { id: string; title: string; domain: string; difficulty: string; timeLimit: number; _count: { problems: number } }
+interface GamifyLab { id: string; slug: string; title: string; difficulty: string; category: string; timeLimit: number; maxScore: number }
 
 export default function CreateJobOpening({ companyName }: { companyName: string }) {
   const [saving, setSaving] = useState(false);
   const [labs, setLabs] = useState<LabOption[]>([]);
+  const [gamifyLabs, setGamifyLabs] = useState<GamifyLab[]>([]);
 
-  useEffect(() => { fetch("/api/labs?status=PUBLISHED").then((r) => r.json()).then((d) => setLabs(d.labs || [])).catch(() => {}); }, []);
+  useEffect(() => {
+    fetch("/api/labs?status=PUBLISHED").then((r) => r.json()).then((d) => setLabs(d.labs || [])).catch(() => {});
+    // Pull gamify labs too — only shown if any are configured.
+    fetch("/api/external-labs").then((r) => r.json()).then((d) => setGamifyLabs(d.labs || [])).catch(() => {});
+  }, []);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -45,6 +51,8 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
           deadline: data.get("deadline"),
           openings: data.get("openings"),
           labTemplateId: data.get("labTemplateId") || undefined,
+          gamifyLabSlug: (data.get("gamifyLabSlug") as string) || undefined,
+          gamifyMinScore: data.get("gamifyMinScore") ? Number(data.get("gamifyMinScore")) : undefined,
         }),
       });
       const result = await res.json();
@@ -133,12 +141,44 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
         {/* Lab Assessment */}
         {labs.length > 0 && (
           <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(124,58,237,0.2)", background: "rgba(124,58,237,0.05)" }}>
-            <label className={labelClass}>Attach Assessment Lab</label>
+            <label className={labelClass}>Attach Assessment Lab (MCQ)</label>
             <select name="labTemplateId" className={inputClass} style={{ borderColor: "var(--border)" }}>
               <option value="">No lab (optional)</option>
               {labs.map((l) => <option key={l.id} value={l.id}>{l.title} — {l.domain} · {l.difficulty} · {l._count.problems} Qs · {l.timeLimit}min</option>)}
             </select>
             <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Candidates must complete this lab when applying. Only passing candidates proceed.</p>
+          </div>
+        )}
+
+        {gamifyLabs.length > 0 && (
+          <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(16,185,129,0.2)", background: "rgba(16,185,129,0.05)" }}>
+            <div className="flex items-baseline gap-2 mb-1">
+              <label className={labelClass} style={{ marginBottom: 0 }}>Gate with Hands-on Lab</label>
+              <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: "rgba(16,185,129,0.15)", color: "#16a34a" }}>Recommended</span>
+            </div>
+            <select name="gamifyLabSlug" className={inputClass} style={{ borderColor: "var(--border)" }}>
+              <option value="">No hands-on lab (candidates can apply directly)</option>
+              {gamifyLabs.map((l) => (
+                <option key={l.id} value={l.slug}>
+                  {l.title} — {l.category} · {l.difficulty} · {l.timeLimit}min · max {l.maxScore} pts
+                </option>
+              ))}
+            </select>
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              <div>
+                <label className="text-xs font-medium" style={{ color: "var(--muted)" }}>Minimum score (0-100)</label>
+                <input type="number" name="gamifyMinScore" min={0} max={100} placeholder="e.g. 70" className={inputClass} style={{ borderColor: "var(--border)" }} />
+              </div>
+              <div className="text-[11px] flex items-center" style={{ color: "var(--muted)" }}>
+                <span>
+                  Leave blank to accept any completion.<br />
+                  Higher = stricter filter — fewer but better-qualified applications.
+                </span>
+              </div>
+            </div>
+            <p className="text-xs mt-2" style={{ color: "var(--muted)" }}>
+              📝 Students must complete this lab before they can submit an application. The score is shown on the application card.
+            </p>
           </div>
         )}
         <div>

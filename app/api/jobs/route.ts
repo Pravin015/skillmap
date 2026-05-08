@@ -59,7 +59,12 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { title, company, location, workMode, salaryMin, salaryMax, experienceLevel, urgency, jobType, domain, department, description, skills, perks, deadline, openings, labTemplateId } = body;
+  const {
+    title, company, location, workMode, salaryMin, salaryMax,
+    experienceLevel, urgency, jobType, domain, department,
+    description, skills, perks, deadline, openings, labTemplateId,
+    gamifyLabSlug, gamifyMinScore,
+  } = body;
 
   if (!title || !location || !workMode || !experienceLevel || !urgency || !jobType || !description) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -95,6 +100,8 @@ export async function POST(req: NextRequest) {
       deadline: deadline ? new Date(deadline) : null,
       openings: openings ? parseInt(openings) : 1,
       labTemplateId: labTemplateId || null,
+      gamifyLabSlug: gamifyLabSlug || null,
+      gamifyMinScore: gamifyMinScore && Number(gamifyMinScore) > 0 ? Number(gamifyMinScore) : null,
     },
   });
 

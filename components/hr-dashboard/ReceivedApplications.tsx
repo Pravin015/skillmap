@@ -18,8 +18,11 @@ interface App {
   id: string;
   status: string;
   scoreMatch: number;
+  gamifyScore: number | null;
+  gamifyMaxScore: number | null;
+  gamifySessionId: string | null;
   appliedAt: string;
-  job: { title: string; company: string };
+  job: { title: string; company: string; gamifyLabSlug: string | null; gamifyMinScore: number | null };
   user: {
     name: string; email: string; phone: string | null;
     profile: { profileNumber: string; profileScore: number; fieldOfInterest: string | null; collegeName: string | null; skills: string[]; resumeUrl: string | null } | null;
@@ -118,6 +121,24 @@ export default function ReceivedApplications() {
                   <div className={`${heading} text-lg font-bold`} style={{ color: scoreColor(app.scoreMatch) }}>{app.scoreMatch}%</div>
                   <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Match</div>
                 </div>
+                {/* Gamify lab score — only when the job required a lab. */}
+                {app.job.gamifyLabSlug && (
+                  <div className="text-center shrink-0 px-3 py-1 rounded-lg" style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)" }}>
+                    {app.gamifyScore !== null ? (
+                      <>
+                        <div className={`${heading} text-base font-bold`} style={{ color: app.job.gamifyMinScore && app.gamifyScore < app.job.gamifyMinScore ? "#dc2626" : "#7c3aed" }}>
+                          {app.gamifyScore}{app.gamifyMaxScore ? `/${app.gamifyMaxScore}` : ""}
+                        </div>
+                        <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Lab score</div>
+                      </>
+                    ) : (
+                      <>
+                        <div className={`${heading} text-base font-bold`} style={{ color: "var(--muted)" }}>—</div>
+                        <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>No lab</div>
+                      </>
+                    )}
+                  </div>
+                )}
                 <div className="shrink-0">
                   <select value={app.status} onChange={(e) => updateStatus(app.id, e.target.value)} className={`text-[0.65rem] font-bold px-2 py-1 rounded-full border-none cursor-pointer ${statusColors[app.status] || ""}`}>
                     {["APPLIED", "SCREENING", "INTERVIEW", "ASSESSMENT", "OFFER", "HIRED", "REJECTED"].map((s) => <option key={s} value={s}>{s}</option>)}

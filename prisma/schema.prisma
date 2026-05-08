@@ -51,6 +51,7 @@ model User {
   coursesCreated      Course[]      @relation("CourseCreator")
   courseEnrollments    CourseEnrollment[]
   abuseReports         AbuseReport[]
+  externalLabAttempts  ExternalLabAttempt[]
 }
 
 enum FormType {
@@ -277,9 +278,16 @@ model JobPosting {
   status          JobStatus     @default(ACTIVE)
   applications    Application[]
 
-  // Lab assessment
+  // Lab assessment — internal LabTemplate (legacy MCQ-style).
   labTemplateId   String?
   labTemplate     LabTemplate?  @relation("JobLab", fields: [labTemplateId], references: [id])
+
+  // External lab gating (gamify / outerlayerx). When set, students MUST
+  // complete this lab successfully before they can submit an application.
+  // The slug references a lab on the gamify side (their /api/v1/labs).
+  // HR sees the student's score on the application card.
+  gamifyLabSlug   String?
+  gamifyMinScore  Int?          // pass threshold; null = any completion counts
 
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -292,6 +300,7 @@ model JobPosting {
   @@index([location])
   @@index([workMode])
   @@index([postedById])
+  @@index([gamifyLabSlug])
 }
 
 model Application {
@@ -302,12 +311,47 @@ model Application {
   user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   status        ApplicationStatus @default(APPLIED)
-  scoreMatch    Int               @default(0)  // 0-100 match percentage
+  scoreMatch    Int               @default(0)  // 0-100 skill match percentage
+
+  // Gamify lab score — set when the student completed the gated lab
+  // before applying. Null if the job didn't require a lab.
+  gamifyScore     Int?
+  gamifyMaxScore  Int?
+  gamifySessionId String?         // jti from gamify webhook — for trace
+
   coverNote     String?
   appliedAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 
   @@unique([jobId, userId])       // one application per job per user
+}
+
+// External lab attempts — records every gamify session a student starts.
+// Webhook deliveries from gamify upsert this table; the score is then
+// joined into Application records when the student applies.
+//
+// One row per (userId, labSlug). Re-attempts overwrite — we keep the
+// best score (or latest, configurable later).
+model ExternalLabAttempt {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Gamify identifiers
+  labSlug       String
+  sessionId     String   @unique  // jti from gamify (one row per session)
+  status        String   // PENDING | RUNNING | FLAG_CAPTURED | COMPLETED | TIMED_OUT | ERRORED
+  score         Int?
+  maxScore      Int?
+  flagsCaptured Int?
+
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+  rawPayload    String?  // last webhook body for debugging
+
+  @@unique([userId, labSlug, sessionId])
+  @@index([userId, labSlug])
+  @@index([labSlug])
 }
 
 enum PaymentStatus {

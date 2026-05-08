@@ -28,11 +28,12 @@ export async function GET() {
   // is incomplete — recruiters need a way to reach the candidate
   // regardless of profile completeness. Resume URL also surfaced for the
   // same reason (apply flow now mandates resume, so it should always exist).
+  // gamifyScore + maxScore included so HR can see lab performance.
   if (userRole === "HR") {
     const apps = await prisma.application.findMany({
       where: { job: { postedById: userId } },
       include: {
-        job: { select: { title: true, company: true } },
+        job: { select: { title: true, company: true, gamifyLabSlug: true, gamifyMinScore: true } },
         user: {
           select: {
             name: true, email: true, phone: true,
@@ -103,6 +104,51 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Lab gate — if the job requires a gamify lab, the student must have
+  // a COMPLETED attempt with a passing score before they can apply.
+  // The webhook from gamify populates ExternalLabAttempt; we read it here.
+  let bestAttempt: { score: number | null; maxScore: number | null; sessionId: string | null } = { score: null, maxScore: null, sessionId: null };
+  if (job.gamifyLabSlug) {
+    const attempt = await prisma.externalLabAttempt.findFirst({
+      where: {
+        userId,
+        labSlug: job.gamifyLabSlug,
+        status: { in: ["COMPLETED", "FLAG_CAPTURED"] },
+      },
+      orderBy: [{ score: "desc" }, { completedAt: "desc" }],
+      select: { score: true, maxScore: true, sessionId: true },
+    });
+
+    if (!attempt) {
+      return NextResponse.json(
+        {
+          error: "Lab required",
+          code: "LAB_REQUIRED",
+          labSlug: job.gamifyLabSlug,
+          minScore: job.gamifyMinScore,
+          message: `This job requires you to complete a hands-on lab first. Open the lab below — once you complete it, come back here and apply.`,
+        },
+        { status: 400 }
+      );
+    }
+
+    if (job.gamifyMinScore && (attempt.score ?? 0) < job.gamifyMinScore) {
+      return NextResponse.json(
+        {
+          error: "Lab score too low",
+          code: "LAB_SCORE_LOW",
+          labSlug: job.gamifyLabSlug,
+          yourScore: attempt.score,
+          minScore: job.gamifyMinScore,
+          message: `You scored ${attempt.score} but ${job.gamifyMinScore}+ is required for this role. Try the lab again.`,
+        },
+        { status: 400 }
+      );
+    }
+
+    bestAttempt = attempt;
+  }
+
   // Calculate score match based on student profile vs job skills
   let scoreMatch = 0;
   if (profile && job.skills.length > 0) {
@@ -121,6 +167,9 @@ export async function POST(req: NextRequest) {
       userId: userId!,
       coverNote: coverNote || null,
       scoreMatch: Math.min(scoreMatch, 100),
+      gamifyScore: bestAttempt.score,
+      gamifyMaxScore: bestAttempt.maxScore,
+      gamifySessionId: bestAttempt.sessionId,
     },
   });
 

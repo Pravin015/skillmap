@@ -116,6 +116,21 @@ export default function JobDetailPage() {
             text: `${data.message} Open Profile → Resume to upload it (PDF, max 5 MB), then come back and try again.`,
             action: { label: "Upload resume →", href: "/profile/edit?focus=resume" },
           });
+        } else if (data.code === "LAB_REQUIRED") {
+          // Job requires a hands-on lab. Redirect them to /labs to find +
+          // start the lab. We can't auto-open it because gamify needs the
+          // student to click "Start" themselves (terms-of-use friction).
+          setApplyMessage({
+            type: "error",
+            text: data.message,
+            action: { label: "Open required lab →", href: `/labs?slug=${encodeURIComponent(data.labSlug)}` },
+          });
+        } else if (data.code === "LAB_SCORE_LOW") {
+          setApplyMessage({
+            type: "error",
+            text: data.message,
+            action: { label: "Retry the lab →", href: `/labs?slug=${encodeURIComponent(data.labSlug)}` },
+          });
         } else {
           setApplyMessage({ type: "error", text: data.error });
         }
