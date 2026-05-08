@@ -94,7 +94,7 @@ export default function MentorProfilePage() {
             <div className="flex items-start gap-4">
               {/* Avatar */}
               {m.user.profileImage ? (
-                <img src={m.user.profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover shrink-0" />
+                <img loading="lazy" decoding="async" src={m.user.profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover shrink-0" />
               ) : (
                 <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${heading} font-bold text-2xl shrink-0`} style={{ background: "var(--primary)", color: "white" }}>
                   {m.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
@@ -315,7 +315,7 @@ export default function MentorProfilePage() {
                 <div key={i} className="rounded-xl border overflow-hidden" style={{ borderColor: "var(--border)" }}>
                   {ach.imageUrl && (
                     <div className="h-40 overflow-hidden">
-                      <img src={ach.imageUrl} alt={ach.title} className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={ach.imageUrl} alt={ach.title} className="w-full h-full object-cover" />
                     </div>
                   )}
                   <div className="p-4">

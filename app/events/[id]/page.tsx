@@ -101,7 +101,7 @@ export default function EventDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {event.coverImageUrl && (
               <div className="rounded-2xl overflow-hidden border" style={{ borderColor: "var(--border)" }}>
-                <img src={event.coverImageUrl} alt={event.title} className="w-full h-48 md:h-64 object-cover" />
+                <img loading="lazy" decoding="async" src={event.coverImageUrl} alt={event.title} className="w-full h-48 md:h-64 object-cover" />
               </div>
             )}
             <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: "var(--border)" }}>

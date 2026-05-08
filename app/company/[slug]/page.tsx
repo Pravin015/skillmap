@@ -62,7 +62,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ slug:
         <div className="mx-auto max-w-5xl px-4 py-12">
           <div className="flex items-center gap-5 mb-4">
             {profile.logo ? (
-              <img src={profile.logo} alt={profile.name} className="w-16 h-16 rounded-2xl object-cover" />
+              <img loading="lazy" decoding="async" src={profile.logo} alt={profile.name} className="w-16 h-16 rounded-2xl object-cover" />
             ) : (
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-lg font-bold text-white" style={{ background: "rgba(255,255,255,0.1)" }}>
                 {profile.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}

@@ -116,7 +116,7 @@ export default function MentorsPage() {
                     <div className="flex items-center gap-4 mb-4">
                       {m.user.profileImage ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={m.user.profileImage} alt={m.user.name} className="w-14 h-14 rounded-full object-cover shrink-0" />
+                        <img loading="lazy" decoding="async" src={m.user.profileImage} alt={m.user.name} className="w-14 h-14 rounded-full object-cover shrink-0" />
                       ) : (
                         <span
                           className="w-14 h-14 rounded-full flex items-center justify-center text-white font-semibold text-base shrink-0"
@@ -186,7 +186,7 @@ export default function MentorsPage() {
             Are you a senior in tech / product / cybersecurity?
           </p>
           <p className="text-xs mb-5" style={{ color: "var(--muted)" }}>
-            Join 200+ verified mentors helping India&apos;s freshers. Set your own rate, mentor on your schedule, get paid via UPI.
+            Join our growing network of verified mentors helping India&apos;s freshers. Set your own rate, mentor on your schedule, get paid via UPI.
           </p>
           <Link href="/for-mentors" className="btn-primary">Apply to mentor</Link>
         </div>

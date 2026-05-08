@@ -254,7 +254,7 @@ export default function Header() {
                 >
                   {profileImg ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={profileImg} alt="" className="w-7 h-7 rounded-full object-cover" />
+                    <img loading="lazy" decoding="async" src={profileImg} alt="" className="w-7 h-7 rounded-full object-cover" />
                   ) : (
                     <span className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold" style={{ background: "var(--primary)" }}>
                       {(userName || "U")[0].toUpperCase()}

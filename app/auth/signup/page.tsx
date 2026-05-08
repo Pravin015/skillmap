@@ -267,7 +267,7 @@ function SignupInner() {
                 <label className={`block text-sm font-medium mb-1.5 ${heading}`}>Profile Photo *</label>
                 <div className="flex items-center gap-4">
                   {profilePhoto ? (
-                    <img src={profilePhoto} alt="" className="w-16 h-16 rounded-2xl object-cover" />
+                    <img loading="lazy" decoding="async" src={profilePhoto} alt="" className="w-16 h-16 rounded-2xl object-cover" />
                   ) : (
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>📷</div>
                   )}

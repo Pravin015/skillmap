@@ -81,7 +81,7 @@ export default function ForMentorsPage() {
       </Section>
 
       <DarkCTA
-        eyebrow="Join 200+ mentors"
+        eyebrow="Become a mentor"
         title={<>Ready to share what you know?</>}
         body="Application takes 5 minutes. We get back within 48 hours."
         primaryCta={{ label: "Apply to mentor", href: "/forms/mentor-onboarding" }}

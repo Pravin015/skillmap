@@ -231,7 +231,7 @@ export default function HomePage() {
 
           <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
             <Link href="/auth/signup" className="btn-primary">Get started — free</Link>
-            <Link href="/jobs" className="btn-outline">Browse 1,200+ openings</Link>
+            <Link href="/jobs" className="btn-outline">Browse openings</Link>
           </div>
 
           {/* Feature pills under CTA */}
@@ -409,7 +409,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/mentors" className="btn-outline">Browse all 200+ mentors</Link>
+            <Link href="/mentors" className="btn-outline">Browse all mentors</Link>
           </div>
         </div>
       </section>

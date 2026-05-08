@@ -72,7 +72,7 @@ export default function CoursesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {courses.map((course) => (
               <Link key={course.id} href={`/courses/${course.slug}`} className="card-dark no-underline" style={{ padding: "1.5rem" }}>
-                {course.coverImageUrl && <img src={course.coverImageUrl} alt={course.title} className="w-full h-40 object-cover rounded-lg mb-3" />}
+                {course.coverImageUrl && <img loading="lazy" decoding="async" src={course.coverImageUrl} alt={course.title} className="w-full h-40 object-cover rounded-lg mb-3" />}
                 <div className="flex items-center gap-2 mb-2">
                   <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${diffColors[course.difficulty] || "#6b7280"}15`, color: diffColors[course.difficulty] || "#6b7280" }}>{course.difficulty}</span>
                   {course.pricing === "FREE" ? (

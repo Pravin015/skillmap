@@ -116,7 +116,7 @@ export default function SettingsPage() {
           <h2 className={`${heading} font-bold text-base mb-4`}>Profile Photo</h2>
           <div className="flex items-center gap-4">
             {profileImage ? (
-              <img src={profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover" />
+              <img loading="lazy" decoding="async" src={profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover" />
             ) : (
               <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${heading} font-bold text-2xl text-white`} style={{ background: "var(--ink)" }}>
                 {name.charAt(0).toUpperCase()}

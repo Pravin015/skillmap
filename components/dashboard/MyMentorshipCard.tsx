@@ -99,7 +99,7 @@ function SessionCard({ s, onRate }: { s: Session; onRate?: () => void }) {
   return (
     <div className="flex items-center gap-3 p-3 rounded-xl border mb-2 transition-colors hover:bg-gray-50" style={{ borderColor: "var(--border)" }}>
       {s.mentor?.profileImage ? (
-        <img src={s.mentor.profileImage} alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
+        <img loading="lazy" decoding="async" src={s.mentor.profileImage} alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
       ) : (
         <div className={`w-10 h-10 rounded-full flex items-center justify-center font-[family-name:var(--font-heading)] font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>{s.mentor?.name?.charAt(0) || "M"}</div>
       )}

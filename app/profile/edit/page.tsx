@@ -155,7 +155,7 @@ export default function ProfileEditPage() {
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
             <h2 className={`${heading} font-bold text-base mb-4`}>Profile Photo</h2>
             <div className="flex items-center gap-4">
-              {profileImage ? <img src={profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover" /> : <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${heading} font-bold text-2xl text-white`} style={{ background: "var(--ink)" }}>{name.charAt(0)?.toUpperCase()}</div>}
+              {profileImage ? <img loading="lazy" decoding="async" src={profileImage} alt="" className="w-20 h-20 rounded-2xl object-cover" /> : <div className={`w-20 h-20 rounded-2xl flex items-center justify-center ${heading} font-bold text-2xl text-white`} style={{ background: "var(--ink)" }}>{name.charAt(0)?.toUpperCase()}</div>}
               <div><button type="button" onClick={() => fileRef.current?.click()} className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs`} style={{ background: "var(--primary)", color: "white" }}>{profileImage ? "Change" : "Upload"}</button><p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Max 500KB</p></div>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
             </div>

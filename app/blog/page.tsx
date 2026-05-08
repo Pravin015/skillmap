@@ -52,7 +52,7 @@ export default function BlogPage() {
               {posts.map((post) => (
                 <Link key={post.slug} href={`/blog/${post.slug}`} className="block rounded-2xl border bg-white overflow-hidden transition-all hover:-translate-y-1 hover:shadow-lg no-underline group" style={{ borderColor: "var(--border)" }}>
                   {post.coverImageUrl && (
-                    <div className="h-44 overflow-hidden"><img src={post.coverImageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" /></div>
+                    <div className="h-44 overflow-hidden"><img loading="lazy" decoding="async" src={post.coverImageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" /></div>
                   )}
                   {post.videoUrl && !post.coverImageUrl && (
                     <div className="h-44 flex items-center justify-center" style={{ background: "var(--ink)" }}><span className="text-4xl">▶️</span></div>

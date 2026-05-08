@@ -55,6 +55,40 @@ export async function POST(req: NextRequest) {
 
   if (!title || !description) return NextResponse.json({ error: "Title and description required" }, { status: 400 });
 
+  // Validate quiz JSON for any module that has hasQuiz=true. Without this,
+  // a malformed JSON string silently saves and breaks the course player at
+  // runtime (the quiz section just throws when the student opens the module).
+  if (modules && Array.isArray(modules)) {
+    type ModuleInput = { title?: string; hasQuiz?: boolean; quizQuestions?: string };
+    for (let i = 0; i < modules.length; i++) {
+      const m = modules[i] as ModuleInput;
+      if (!m.hasQuiz || !m.quizQuestions) continue;
+      try {
+        const parsed = JSON.parse(m.quizQuestions);
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+          return NextResponse.json({ error: `Module ${i + 1} (${m.title || "untitled"}): quiz must be a non-empty JSON array.` }, { status: 400 });
+        }
+        for (let q = 0; q < parsed.length; q++) {
+          const item = parsed[q] as { question?: unknown; options?: unknown; correctAnswer?: unknown };
+          if (typeof item?.question !== "string" || !item.question.trim()) {
+            return NextResponse.json({ error: `Module ${i + 1} quiz Q${q + 1}: 'question' must be a non-empty string.` }, { status: 400 });
+          }
+          if (!Array.isArray(item.options) || item.options.length < 2) {
+            return NextResponse.json({ error: `Module ${i + 1} quiz Q${q + 1}: 'options' must be an array of at least 2 strings.` }, { status: 400 });
+          }
+          if (item.options.some((o: unknown) => typeof o !== "string")) {
+            return NextResponse.json({ error: `Module ${i + 1} quiz Q${q + 1}: every option must be a string.` }, { status: 400 });
+          }
+          if (typeof item.correctAnswer !== "number" || item.correctAnswer < 0 || item.correctAnswer >= (item.options as string[]).length) {
+            return NextResponse.json({ error: `Module ${i + 1} quiz Q${q + 1}: 'correctAnswer' must be a 0-based index pointing to one of the options.` }, { status: 400 });
+          }
+        }
+      } catch (err) {
+        return NextResponse.json({ error: `Module ${i + 1} (${m.title || "untitled"}): quiz JSON is invalid — ${(err as Error).message}` }, { status: 400 });
+      }
+    }
+  }
+
   const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 60) + "-" + Date.now().toString(36);
 
   const course = await prisma.course.create({

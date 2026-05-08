@@ -55,7 +55,7 @@ export default function WriteBlogPage() {
           <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
             <h2 className={`${heading} font-bold text-base mb-4`}>Cover Image</h2>
             <div className="flex items-center gap-4">
-              {coverImage ? <img src={coverImage} alt="" className="w-40 h-24 rounded-xl object-cover" /> : <div className="w-40 h-24 rounded-xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>🖼️</div>}
+              {coverImage ? <img loading="lazy" decoding="async" src={coverImage} alt="" className="w-40 h-24 rounded-xl object-cover" /> : <div className="w-40 h-24 rounded-xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>🖼️</div>}
               <label className={`px-4 py-2 rounded-xl ${heading} font-bold text-xs cursor-pointer`} style={{ background: "var(--primary)", color: "white" }}>
                 {coverImage ? "Change" : "Upload"} <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (!f) return; if (f.size > 2 * 1024 * 1024) { alert("Max 2MB"); return; } const r = new FileReader(); r.onload = () => setCoverImage(r.result as string); r.readAsDataURL(f); }} />
               </label>

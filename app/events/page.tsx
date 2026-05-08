@@ -88,7 +88,7 @@ function EventCard({ event }: { event: Event }) {
     <Link href={`/events/${event.id}`} className="block rounded-2xl border bg-white overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg no-underline group" style={{ borderColor: "var(--border)" }}>
       {event.coverImageUrl && (
         <div className="h-40 overflow-hidden">
-          <img src={event.coverImageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <img loading="lazy" decoding="async" src={event.coverImageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         </div>
       )}
       <div className="p-5">

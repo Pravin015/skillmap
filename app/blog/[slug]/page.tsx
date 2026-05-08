@@ -36,7 +36,7 @@ export default function BlogPostPage() {
         {/* Cover image */}
         {post.coverImageUrl && (
           <div className="rounded-2xl overflow-hidden mb-8 border" style={{ borderColor: "var(--border)" }}>
-            <img src={post.coverImageUrl} alt={post.title} className="w-full h-64 md:h-80 object-cover" />
+            <img loading="lazy" decoding="async" src={post.coverImageUrl} alt={post.title} className="w-full h-64 md:h-80 object-cover" />
           </div>
         )}
 

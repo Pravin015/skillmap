@@ -22,20 +22,33 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === "update") {
-    // Update violation counts
+    // Update violation counts.
+    // SECURITY NOTE: counters come from the client and CAN be tampered with
+    // (a determined cheater can replace fetch() to always send 0). Server
+    // now enforces MONOTONIC INCREASE — the new value must be >= the stored
+    // value. Catches naive tampering. Cheating-resistant proctoring needs
+    // periodic webcam-frame uploads to GCS as well — separate follow-up;
+    // we have lib/gcs.ts ready.
     if (!sessionId) return NextResponse.json({ error: "sessionId required" }, { status: 400 });
 
     const existing = await prisma.proctoringLog.findFirst({ where: { sessionId, userId } });
     if (!existing) return NextResponse.json({ error: "Log not found" }, { status: 404 });
 
-    const flagged = (tabSwitches || 0) >= 3 || (fullscreenExits || 0) >= 3 || (copyAttempts || 0) >= 5;
+    const safeMax = (incoming: number | undefined, stored: number) =>
+      incoming === undefined ? stored : Math.max(Number(incoming) || 0, stored);
+
+    const newTabSwitches = safeMax(tabSwitches, existing.tabSwitches);
+    const newFullscreenExits = safeMax(fullscreenExits, existing.fullscreenExits);
+    const newCopyAttempts = safeMax(copyAttempts, existing.copyAttempts);
+
+    const flagged = newTabSwitches >= 3 || newFullscreenExits >= 3 || newCopyAttempts >= 5;
 
     const log = await prisma.proctoringLog.update({
       where: { id: existing.id },
       data: {
-        ...(tabSwitches !== undefined && { tabSwitches }),
-        ...(fullscreenExits !== undefined && { fullscreenExits }),
-        ...(copyAttempts !== undefined && { copyAttempts }),
+        tabSwitches: newTabSwitches,
+        fullscreenExits: newFullscreenExits,
+        copyAttempts: newCopyAttempts,
         ...(events && { events }),
         flagged,
       },

@@ -24,13 +24,18 @@ export async function GET() {
     orderBy: { createdAt: "desc" },
   });
 
-  // Get application counts for each student
-  const studentsWithApps = await Promise.all(
-    students.map(async (s) => {
-      const appCount = await prisma.application.count({ where: { userId: s.userId } });
-      return { ...s, applicationCount: appCount };
-    })
-  );
+  // Application counts — was N+1 (one count() per student). Now one
+  // groupBy across all student userIds — single round-trip.
+  const userIds = students.map((s) => s.userId);
+  const appCounts = userIds.length
+    ? await prisma.application.groupBy({
+        by: ["userId"],
+        where: { userId: { in: userIds } },
+        _count: { _all: true },
+      })
+    : [];
+  const countByUserId = new Map(appCounts.map((c) => [c.userId, c._count._all]));
+  const studentsWithApps = students.map((s) => ({ ...s, applicationCount: countByUserId.get(s.userId) ?? 0 }));
 
   return NextResponse.json({ students: studentsWithApps });
 }

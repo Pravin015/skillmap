@@ -8,6 +8,7 @@
 //   Header: x-cron-secret: <value of CRON_SECRET>
 //   Schedule: every 6h
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { runSource } from "@/scripts/job-scraper/lib/run";
 import type { SourceAdapter } from "@/scripts/job-scraper/lib/types";
 import { prisma } from "@/lib/prisma";
@@ -30,8 +31,14 @@ export async function POST(req: NextRequest) {
   if (!secret) {
     return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 500 });
   }
-  const header = req.headers.get("x-cron-secret");
-  if (header !== secret) {
+  // Accept either x-cron-secret header or Authorization: Bearer <secret>
+  // so we play nicely with both Railway's UI and curl-based cron.
+  const headerVal = req.headers.get("x-cron-secret") || req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") || "";
+  // Constant-time comparison defeats timing-based brute-force on the secret.
+  const headerBuf = Buffer.from(headerVal);
+  const secretBuf = Buffer.from(secret);
+  const ok = headerBuf.length === secretBuf.length && crypto.timingSafeEqual(headerBuf, secretBuf);
+  if (!ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

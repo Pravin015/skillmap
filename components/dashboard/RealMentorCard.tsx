@@ -48,7 +48,7 @@ export default function RealMentorCard() {
           {mentors.slice(0, 5).map((m) => (
             <Link key={m.mentorNumber} href={`/mentor/${m.mentorNumber}`} className="flex items-center gap-3 p-3 rounded-xl border no-underline transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>
               {m.user.profileImage ? (
-                <img src={m.user.profileImage} alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
+                <img loading="lazy" decoding="async" src={m.user.profileImage} alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
               ) : (
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${heading} font-bold text-xs text-white shrink-0`} style={{ background: "var(--ink)" }}>
                   {m.user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}

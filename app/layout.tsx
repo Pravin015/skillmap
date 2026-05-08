@@ -13,9 +13,26 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "AstraaHire — Intelligence that gets you hired",
+  metadataBase: new URL("https://astraahire.com"),
+  title: {
+    default: "AstraaHire — Intelligence that gets you hired",
+    template: "%s | AstraaHire",
+  },
   description:
     "India's AI-powered career intelligence platform. AI roadmaps, mock interviews, mentor sessions, and offer verification for fresh graduates.",
+  keywords: [
+    "fresher jobs India",
+    "career intelligence",
+    "AI mock interview",
+    "TCS jobs",
+    "Razorpay jobs",
+    "offer letter verification",
+    "campus placement",
+    "fresh graduate jobs",
+    "internship India",
+    "AstraaHire",
+  ],
+  authors: [{ name: "AstraaHire" }],
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -32,6 +49,25 @@ export const metadata: Metadata = {
     url: "https://astraahire.com",
     siteName: "AstraaHire",
     type: "website",
+    locale: "en_IN",
+    images: [
+      { url: "/icons/icon.svg", width: 1200, height: 630, alt: "AstraaHire — Career intelligence platform" },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AstraaHire — Intelligence that gets you hired",
+    description: "India's AI-powered career intelligence platform for fresh graduates.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

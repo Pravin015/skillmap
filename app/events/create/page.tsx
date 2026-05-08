@@ -53,7 +53,7 @@ export default function CreateEventPage() {
             <h2 className={`${heading} font-bold text-base mb-4`}>Cover Image</h2>
             <div className="flex items-center gap-4">
               {coverImage ? (
-                <img src={coverImage} alt="" className="w-32 h-20 rounded-xl object-cover" />
+                <img loading="lazy" decoding="async" src={coverImage} alt="" className="w-32 h-20 rounded-xl object-cover" />
               ) : (
                 <div className="w-32 h-20 rounded-xl flex items-center justify-center text-2xl" style={{ background: "var(--border)" }}>🖼️</div>
               )}

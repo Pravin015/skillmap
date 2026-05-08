@@ -254,7 +254,7 @@ export default function JobsPage() {
                   <div className="flex items-start gap-3 mb-3">
                     {job.companyLogoUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={job.companyLogoUrl} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0 bg-white border" style={{ borderColor: "var(--border)" }} />
+                      <img loading="lazy" decoding="async" src={job.companyLogoUrl} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0 bg-white border" style={{ borderColor: "var(--border)" }} />
                     ) : (
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center font-semibold text-sm text-white shrink-0" style={{ background: "var(--muted)" }}>{job.company.charAt(0)}</div>
                     )}
