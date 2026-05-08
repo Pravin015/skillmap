@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import ReportButton from "@/components/ReportButton";
 
 const heading = "font-[family-name:var(--font-heading)]";
 
@@ -253,6 +254,11 @@ export default function JobDetailPage() {
                 <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{job.perks}</p>
               </div>
             )}
+
+            {/* Report this listing — small subdued link, not a primary CTA */}
+            <div className="flex justify-end">
+              <ReportButton targetType="JOB" targetId={job.id} compact />
+            </div>
 
             {/* Connect with mentors */}
             <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>

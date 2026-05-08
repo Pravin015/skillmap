@@ -24,6 +24,7 @@ import PaymentsTab from "@/components/admin-dashboard/PaymentsTab";
 import BulkNotificationsTab from "@/components/admin-dashboard/BulkNotificationsTab";
 import CompetitionsTab from "@/components/admin-dashboard/CompetitionsTab";
 import CoursesAdminTab from "@/components/admin-dashboard/CoursesAdminTab";
+import ReportsTab from "@/components/admin-dashboard/ReportsTab";
 
 const heading = "font-[family-name:var(--font-heading)]";
 
@@ -84,6 +85,7 @@ const sidebarCategories: SidebarCategory[] = [
     label: "Approvals & Requests",
     items: [
       { id: "forms", label: "Form Submissions", icon: "📋" },
+      { id: "reports", label: "Abuse Reports", icon: "🚩" },
     ],
   },
   {
@@ -159,6 +161,7 @@ export default function AdminPage() {
       case "payments": return <PaymentsTab />;
       case "competitions": return <CompetitionsTab />;
       case "courses": return <CoursesAdminTab />;
+      case "reports": return <ReportsTab />;
       case "notifications": return <BulkNotificationsTab />;
       case "settings": return <PlatformSettings />;
       default: return <AdminOverview stats={stats} onNavigate={setActiveTab} />;

@@ -165,7 +165,8 @@
       "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && grep -n \"return \\(\" 'app/competitions/[slug]/page.tsx' | head -3)",
       "Bash(grep -nB1 -A30 \"enum NotificationType\" prisma/schema.prisma)",
       "Bash(grep -nA15 \"model MentorSession \" prisma/schema.prisma)",
-      "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && sed -i 's|updated\\\\.requestedDate|updated.preferredDate|g' 'app/api/sessions/[id]/route.ts' && grep -n \"preferredDate\\\\|requestedDate\" 'app/api/sessions/[id]/route.ts' app/api/sessions/route.ts | head)"
+      "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && sed -i 's|updated\\\\.requestedDate|updated.preferredDate|g' 'app/api/sessions/[id]/route.ts' && grep -n \"preferredDate\\\\|requestedDate\" 'app/api/sessions/[id]/route.ts' app/api/sessions/route.ts | head)",
+      "Bash(grep -nA1 \"courseEnrollments\" prisma/schema.prisma)"
     ]
   }
 }

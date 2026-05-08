@@ -50,6 +50,7 @@ model User {
   competitionsCreated Competition[] @relation("CompetitionCreator")
   coursesCreated      Course[]      @relation("CourseCreator")
   courseEnrollments    CourseEnrollment[]
+  abuseReports         AbuseReport[]
 }
 
 enum FormType {
@@ -1135,4 +1136,68 @@ model TestingChecklistStatus {
   createdAt   DateTime @default(now())
 
   @@index([status])
+}
+
+// ────────────────────────────────────────────────────────────────────
+// ABUSE REPORTS — content/user flagging
+//
+// Logged-in users can flag any user-generated content (jobs, blog
+// posts, courses, mentor profiles, comments) or another user.
+// Targets are stored as { targetType, targetId } so we don't need
+// FK relations to every model. Admins triage from /admin → Reports.
+// ────────────────────────────────────────────────────────────────────
+
+enum ReportTargetType {
+  JOB
+  BLOG_POST
+  COURSE
+  MENTOR_PROFILE
+  USER
+  COMPANY
+  COMPETITION
+  EVENT
+  OTHER
+}
+
+enum ReportReason {
+  SPAM
+  SCAM_OR_FRAUD          // fake offer, payment scam, etc.
+  HARASSMENT_OR_ABUSE
+  IMPERSONATION
+  OFFENSIVE_CONTENT
+  COPYRIGHT
+  MISLEADING_INFO
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  UNDER_REVIEW
+  ACTION_TAKEN
+  DISMISSED
+}
+
+model AbuseReport {
+  id          String           @id @default(cuid())
+  reporterId  String
+  reporter    User             @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  targetType  ReportTargetType
+  targetId    String           // id/slug of the reported entity
+  targetUrl   String?          // exact URL the user was on (helpful context)
+
+  reason      ReportReason
+  details     String?          // free-form description from reporter
+
+  status      ReportStatus     @default(OPEN)
+  resolution  String?          // admin notes when closing
+  resolvedAt  DateTime?
+  resolvedById String?
+
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([status, createdAt])
+  @@index([targetType, targetId])
+  @@index([reporterId])
 }
