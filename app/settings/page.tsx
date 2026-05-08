@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import PhotoCropper from "@/components/PhotoCropper";
 
 const heading = "font-[family-name:var(--font-heading)]";
@@ -8,7 +9,39 @@ const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none tran
 
 export default function SettingsPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [showDeleteForm, setShowDeleteForm] = useState(false);
+  const [deleteEmail, setDeleteEmail] = useState("");
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  async function handleDeleteAccount(e: React.FormEvent) {
+    e.preventDefault();
+    if (!confirm("This will permanently delete your account and ALL associated data — applications, courses, certificates, mentor sessions, payment history. This cannot be undone. Continue?")) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch("/api/account", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: deleteEmail, password: deletePassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setDeleteError(data.error || "Couldn't delete account");
+        return;
+      }
+      // Sign out + send to homepage with a tombstone query so we could later show a "deleted" message there.
+      await signOut({ redirect: false });
+      router.push("/?account=deleted");
+    } catch {
+      setDeleteError("Network error — try again.");
+    } finally {
+      setDeleting(false);
+    }
+  }
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -131,6 +164,81 @@ export default function SettingsPage() {
           </div>
           <button type="submit" disabled={saving} className={`mt-5 px-6 py-3 rounded-xl ${heading} font-bold text-sm disabled:opacity-50`} style={{ background: "var(--primary)", color: "white" }}>{saving ? "Changing..." : "Change Password"}</button>
         </form>
+
+        {/* Danger Zone — account deletion */}
+        <div className="rounded-2xl border bg-white p-6 mt-6" style={{ borderColor: "#fecaca" }}>
+          <h2 className={`${heading} font-bold text-base mb-1`} style={{ color: "#dc2626" }}>Delete Account</h2>
+          <p className="text-xs mb-4" style={{ color: "var(--muted)" }}>
+            Permanently remove your AstraaHire account and all related data — applications, courses, certificates,
+            mentor sessions, payment history. This action cannot be undone.
+          </p>
+
+          {!showDeleteForm ? (
+            <button
+              onClick={() => setShowDeleteForm(true)}
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold border"
+              style={{ borderColor: "#fecaca", color: "#dc2626", background: "#fef2f2" }}
+            >
+              Delete my account
+            </button>
+          ) : (
+            <form onSubmit={handleDeleteAccount} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--ink)" }}>
+                  Type your email to confirm
+                </label>
+                <input
+                  type="email"
+                  value={deleteEmail}
+                  onChange={(e) => setDeleteEmail(e.target.value)}
+                  required
+                  placeholder={email}
+                  className={inputClass}
+                  style={{ borderColor: "var(--border)" }}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--ink)" }}>
+                  Current password
+                </label>
+                <input
+                  type="password"
+                  value={deletePassword}
+                  onChange={(e) => setDeletePassword(e.target.value)}
+                  required
+                  placeholder="Enter your password"
+                  className={inputClass}
+                  style={{ borderColor: "var(--border)" }}
+                />
+              </div>
+
+              {deleteError && (
+                <div className="rounded-xl p-3 text-sm" style={{ background: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca" }}>
+                  {deleteError}
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={deleting || !deleteEmail || !deletePassword}
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50"
+                  style={{ background: "#dc2626", color: "white" }}
+                >
+                  {deleting ? "Deleting…" : "Permanently delete account"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setShowDeleteForm(false); setDeleteEmail(""); setDeletePassword(""); setDeleteError(null); }}
+                  className="px-5 py-2.5 rounded-xl text-sm font-medium border"
+                  style={{ borderColor: "var(--border)", color: "var(--ink-soft)" }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
       </div>
     </div>
     </>
