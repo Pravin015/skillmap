@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import SocialSignIn from "@/components/SocialSignIn";
 
 const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--ink)]";
@@ -252,6 +253,17 @@ function SignupInner() {
                 <Link href={`/auth/login?role=${activeRole}`} className={`font-bold no-underline ${heading}`} style={{ color: "var(--ink)" }}>Sign in</Link>
               </p>
             </form>
+
+            {activeRole === "STUDENT" && (
+              <div className="mt-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
+                  <span className="text-[10px] uppercase tracking-wider" style={{ color: "var(--muted)" }}>or sign up faster with</span>
+                  <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
+                </div>
+                <SocialSignIn callbackUrl="/onboarding" />
+              </div>
+            )}
           </>
         )}
 
