@@ -18,12 +18,28 @@ interface Job {
   experienceLevel: string;
   jobType: string;
   domain: string | null;
+  department: string | null;
+  description: string;
   skills: string[];
   status: string;
   openings: number;
   createdAt: string;
   deadline: string | null;
   _count: { applications: number };
+}
+
+// "Posted 2d ago" relative-time helper
+function relativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const days = Math.floor(diff / 86400_000);
+  if (days < 1) {
+    const hours = Math.floor(diff / 3600_000);
+    if (hours < 1) return "Just now";
+    return `${hours}h ago`;
+  }
+  if (days < 7) return `${days}d ago`;
+  if (days < 30) return `${Math.floor(days / 7)}w ago`;
+  return `${Math.floor(days / 30)}mo ago`;
 }
 
 interface ExternalJob {
@@ -39,6 +55,7 @@ interface ExternalJob {
   experienceLevel: string | null;
   jobType: string | null;
   domain: string | null;
+  description: string | null;
   skills: string[];
   externalUrl: string;
   postedAt: string | null;
@@ -190,105 +207,253 @@ export default function JobsPage() {
               <p className="text-sm" style={{ color: "var(--muted)" }}>Try adjusting your search or filters to see more results</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredInternal.map((job) => (
-                <Link
-                  key={`int-${job.id}`}
-                  href={`/jobs/${job.slug || job.id}`}
-                  className="rounded-2xl border bg-white p-4 transition-all hover:-translate-y-1 hover:shadow-lg no-underline group flex flex-col"
-                  style={{ borderColor: "var(--border)" }}
-                >
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center font-semibold text-sm text-white shrink-0" style={{ background: "var(--ink)" }}>{job.company.charAt(0)}</div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[10px] uppercase tracking-wide font-medium" style={{ color: "var(--muted)" }}>{job.company}</p>
-                      <p className="text-[9px] mt-0.5 flex items-center gap-1" style={{ color: "var(--muted)" }}>📍 {job.location}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              {filteredInternal.map((job) => {
+                // Salary normalised — handle case where HR entered raw
+                // rupees instead of LPA. Same logic as detail page.
+                const toLPA = (n: number) => (n > 1000 ? n / 100000 : n);
+                const fmtLPA = (n: number) => {
+                  const v = toLPA(n);
+                  return v % 1 === 0 ? String(v) : v.toFixed(1);
+                };
+                const salary = (job.salaryMin || job.salaryMax)
+                  ? job.salaryMin && job.salaryMax
+                    ? `₹${fmtLPA(job.salaryMin)} – ${fmtLPA(job.salaryMax)} LPA`
+                    : job.salaryMax
+                      ? `Up to ₹${fmtLPA(job.salaryMax)} LPA`
+                      : `₹${fmtLPA(job.salaryMin!)}+ LPA`
+                  : null;
+
+                const isDeadlineSoon = job.deadline
+                  ? new Date(job.deadline).getTime() - Date.now() < 7 * 86400_000
+                  : false;
+
+                return (
+                  <Link
+                    key={`int-${job.id}`}
+                    href={`/jobs/${job.slug || job.id}`}
+                    className="rounded-2xl border bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-lg no-underline group flex flex-col"
+                    style={{ borderColor: "var(--border)" }}
+                  >
+                    {/* Top: logo + company + location + posted-time */}
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center font-semibold text-base text-white shrink-0" style={{ background: "var(--ink)" }}>
+                        {job.company.charAt(0)}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold truncate" style={{ color: "var(--ink)" }}>
+                          {job.company}
+                        </p>
+                        <div className="flex items-center gap-2 text-xs mt-0.5" style={{ color: "var(--muted)" }}>
+                          <span className="truncate">📍 {job.location}</span>
+                          <span>·</span>
+                          <span className="shrink-0">{relativeTime(job.createdAt)}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
 
-                  <p className="text-sm font-semibold mb-3 line-clamp-2 leading-snug group-hover:text-[var(--primary)] transition-colors" style={{ color: "var(--ink)" }}>
-                    {job.title}
-                  </p>
+                    {/* Title — text-base, NO h2/h3 (avoids global-rule oversize) */}
+                    <p className="text-base font-semibold mb-2 line-clamp-2 leading-snug group-hover:text-[var(--primary)] transition-colors" style={{ color: "var(--ink)" }}>
+                      {job.title}
+                    </p>
 
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {job.workMode && <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full" style={{ background: job.workMode === "Remote" ? "rgba(34,197,94,0.1)" : job.workMode === "Hybrid" ? "rgba(124,58,237,0.1)" : "rgba(59,130,246,0.1)", color: job.workMode === "Remote" ? "#16a34a" : job.workMode === "Hybrid" ? "#7c3aed" : "#2563eb" }}>{job.workMode}</span>}
-                    <span className="text-[9px] font-medium px-2 py-0.5 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>{job.jobType}</span>
-                    {job.experienceLevel && <span className="text-[9px] font-medium px-2 py-0.5 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>{job.experienceLevel}</span>}
-                  </div>
+                    {/* Department / domain badge if either present */}
+                    {(job.department || job.domain) && (
+                      <p className="text-xs mb-3" style={{ color: "var(--primary)" }}>
+                        {job.department || job.domain}
+                      </p>
+                    )}
 
-                  {job.skills.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {job.skills.slice(0, 3).map((s) => <span key={s} className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: "var(--surface-alt)", color: "var(--muted)" }}>{s}</span>)}
-                      {job.skills.length > 3 && <span className="text-[9px]" style={{ color: "var(--muted)" }}>+{job.skills.length - 3}</span>}
-                    </div>
-                  )}
+                    {/* Description preview — the biggest readability win */}
+                    {job.description && (
+                      <p className="text-xs leading-relaxed mb-4 line-clamp-3" style={{ color: "var(--ink-soft)" }}>
+                        {job.description}
+                      </p>
+                    )}
 
-                  <div className="mt-auto pt-3 border-t flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
-                    <div>
-                      {(job.salaryMin || job.salaryMax) ? (
-                        <>
-                          <p className="text-sm font-semibold" style={{ color: "var(--ink)" }}>
-                            {job.salaryMin && job.salaryMax ? `₹${job.salaryMin}-${job.salaryMax}` : job.salaryMax ? `≤₹${job.salaryMax}` : `₹${job.salaryMin}+`}
-                          </p>
-                          <p className="text-[9px]" style={{ color: "var(--muted)" }}>LPA</p>
-                        </>
-                      ) : (
-                        <p className="text-[10px]" style={{ color: "var(--muted)" }}>Salary undisclosed</p>
+                    {/* Pills row — work mode + job type + experience */}
+                    <div className="flex flex-wrap gap-1.5 mb-4">
+                      {job.workMode && (
+                        <span
+                          className="text-[10px] font-semibold px-2.5 py-1 rounded-full"
+                          style={{
+                            background:
+                              job.workMode === "Remote" ? "rgba(34,197,94,0.1)" :
+                              job.workMode === "Hybrid" ? "rgba(124,58,237,0.1)" :
+                              "rgba(59,130,246,0.1)",
+                            color:
+                              job.workMode === "Remote" ? "#16a34a" :
+                              job.workMode === "Hybrid" ? "#7c3aed" :
+                              "#2563eb",
+                          }}
+                        >
+                          {job.workMode}
+                        </span>
+                      )}
+                      <span className="text-[10px] font-medium px-2.5 py-1 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--ink-soft)" }}>
+                        {job.jobType}
+                      </span>
+                      {job.experienceLevel && (
+                        <span className="text-[10px] font-medium px-2.5 py-1 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--ink-soft)" }}>
+                          {job.experienceLevel}
+                        </span>
+                      )}
+                      {job.openings > 1 && (
+                        <span className="text-[10px] font-medium px-2.5 py-1 rounded-full" style={{ background: "var(--surface-alt)", color: "var(--ink-soft)" }}>
+                          {job.openings} openings
+                        </span>
                       )}
                     </div>
-                    <div className="text-right">
-                      <p className="text-[9px]" style={{ color: "var(--muted)" }}>{job._count.applications} applied</p>
-                      {job.deadline && <p className="text-[9px] font-medium" style={{ color: "var(--ink)" }}>By {new Date(job.deadline).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}</p>}
+
+                    {/* Skills — show 5 with +N overflow */}
+                    {job.skills.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-4">
+                        {job.skills.slice(0, 5).map((s) => (
+                          <span key={s} className="text-[10px] px-2 py-0.5 rounded-md" style={{ background: "var(--surface-alt)", color: "var(--ink-soft)" }}>
+                            {s}
+                          </span>
+                        ))}
+                        {job.skills.length > 5 && (
+                          <span className="text-[10px] py-0.5 font-medium" style={{ color: "var(--muted)" }}>
+                            +{job.skills.length - 5} more
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Footer: salary + applied count + deadline. Bigger now. */}
+                    <div className="mt-auto pt-4 border-t flex items-end justify-between" style={{ borderColor: "var(--border)" }}>
+                      <div>
+                        {salary ? (
+                          <>
+                            <p className="text-sm font-semibold" style={{ color: "var(--ink)" }}>
+                              {salary}
+                            </p>
+                            <p className="text-[10px] mt-0.5" style={{ color: "var(--muted)" }}>
+                              {job._count.applications} {job._count.applications === 1 ? "applicant" : "applicants"}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-xs font-medium" style={{ color: "var(--muted)" }}>
+                              Salary undisclosed
+                            </p>
+                            <p className="text-[10px] mt-0.5" style={{ color: "var(--muted)" }}>
+                              {job._count.applications} applicants
+                            </p>
+                          </>
+                        )}
+                      </div>
+                      {job.deadline && (
+                        <div className="text-right">
+                          <p className="text-[9px] uppercase tracking-wide font-semibold" style={{ color: isDeadlineSoon ? "#dc2626" : "var(--muted)" }}>
+                            {isDeadlineSoon ? "⏰ Closing soon" : "Apply by"}
+                          </p>
+                          <p className="text-xs font-semibold" style={{ color: isDeadlineSoon ? "#dc2626" : "var(--ink)" }}>
+                            {new Date(job.deadline).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
 
               {filteredExternal.map((job) => (
                 <button
                   key={`ext-${job.id}`}
                   onClick={() => openExternal(job)}
-                  className="text-left rounded-2xl border bg-white p-4 transition-all hover:-translate-y-1 hover:shadow-lg group flex flex-col"
+                  className="text-left rounded-2xl border bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-lg group flex flex-col"
                   style={{ borderColor: "var(--border)" }}
                 >
-                  <div className="flex items-start gap-3 mb-3">
+                  <div className="flex items-start gap-3 mb-4">
                     {job.companyLogoUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img loading="lazy" decoding="async" src={job.companyLogoUrl} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0 bg-white border" style={{ borderColor: "var(--border)" }} />
+                      <img loading="lazy" decoding="async" src={job.companyLogoUrl} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0 bg-white border" style={{ borderColor: "var(--border)" }} />
                     ) : (
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center font-semibold text-sm text-white shrink-0" style={{ background: "var(--muted)" }}>{job.company.charAt(0)}</div>
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center font-semibold text-base text-white shrink-0" style={{ background: "var(--muted)" }}>
+                        {job.company.charAt(0)}
+                      </div>
                     )}
                     <div className="min-w-0 flex-1">
-                      <p className="text-[10px] uppercase tracking-wide font-medium truncate" style={{ color: "var(--muted)" }}>{job.company}</p>
-                      <p className="text-[9px] mt-0.5 truncate" style={{ color: "var(--muted)" }}>📍 {job.location}</p>
+                      <p className="text-sm font-semibold truncate" style={{ color: "var(--ink)" }}>{job.company}</p>
+                      <div className="flex items-center gap-2 text-xs mt-0.5" style={{ color: "var(--muted)" }}>
+                        <span className="truncate">📍 {job.location}</span>
+                        {job.postedAt && <><span>·</span><span className="shrink-0">{relativeTime(job.postedAt)}</span></>}
+                      </div>
                     </div>
-                    <span className="text-[8px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wide shrink-0" style={{ background: "rgba(124,58,237,0.1)", color: "var(--primary)" }}>via {job.source.displayName.split(" ")[0]}</span>
+                    <span className="text-[9px] font-bold px-2 py-1 rounded-full uppercase tracking-wide shrink-0" style={{ background: "rgba(124,58,237,0.1)", color: "var(--primary)" }}>
+                      via {job.source.displayName.split(" ")[0]}
+                    </span>
                   </div>
 
-                  <p className="text-sm font-semibold mb-3 line-clamp-2 leading-snug group-hover:text-[var(--primary)] transition-colors" style={{ color: "var(--ink)" }}>
+                  <p className="text-base font-semibold mb-2 line-clamp-2 leading-snug group-hover:text-[var(--primary)] transition-colors" style={{ color: "var(--ink)" }}>
                     {job.title}
                   </p>
 
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {job.workMode && <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full" style={{ background: job.workMode === "Remote" ? "rgba(34,197,94,0.1)" : job.workMode === "Hybrid" ? "rgba(124,58,237,0.1)" : "rgba(59,130,246,0.1)", color: job.workMode === "Remote" ? "#16a34a" : job.workMode === "Hybrid" ? "#7c3aed" : "#2563eb" }}>{job.workMode}</span>}
-                    {job.jobType && <span className="text-[9px] font-medium px-2 py-0.5 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>{job.jobType}</span>}
+                  {job.domain && (
+                    <p className="text-xs mb-3" style={{ color: "var(--primary)" }}>
+                      {job.domain}
+                    </p>
+                  )}
+
+                  {job.description && (
+                    <p className="text-xs leading-relaxed mb-4 line-clamp-3" style={{ color: "var(--ink-soft)" }}>
+                      {job.description}
+                    </p>
+                  )}
+
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {job.workMode && (
+                      <span
+                        className="text-[10px] font-semibold px-2.5 py-1 rounded-full"
+                        style={{
+                          background:
+                            job.workMode === "Remote" ? "rgba(34,197,94,0.1)" :
+                            job.workMode === "Hybrid" ? "rgba(124,58,237,0.1)" :
+                            "rgba(59,130,246,0.1)",
+                          color:
+                            job.workMode === "Remote" ? "#16a34a" :
+                            job.workMode === "Hybrid" ? "#7c3aed" :
+                            "#2563eb",
+                        }}
+                      >
+                        {job.workMode}
+                      </span>
+                    )}
+                    {job.jobType && (
+                      <span className="text-[10px] font-medium px-2.5 py-1 rounded-full border" style={{ borderColor: "var(--border)", color: "var(--ink-soft)" }}>
+                        {job.jobType}
+                      </span>
+                    )}
                   </div>
 
                   {job.skills.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {job.skills.slice(0, 3).map((s) => <span key={s} className="text-[9px] px-1.5 py-0.5 rounded" style={{ background: "var(--surface-alt)", color: "var(--muted)" }}>{s}</span>)}
+                    <div className="flex flex-wrap gap-1.5 mb-4">
+                      {job.skills.slice(0, 5).map((s) => (
+                        <span key={s} className="text-[10px] px-2 py-0.5 rounded-md" style={{ background: "var(--surface-alt)", color: "var(--ink-soft)" }}>
+                          {s}
+                        </span>
+                      ))}
+                      {job.skills.length > 5 && (
+                        <span className="text-[10px] py-0.5 font-medium" style={{ color: "var(--muted)" }}>
+                          +{job.skills.length - 5} more
+                        </span>
+                      )}
                     </div>
                   )}
 
-                  <div className="mt-auto pt-3 border-t flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
+                  <div className="mt-auto pt-4 border-t flex items-end justify-between" style={{ borderColor: "var(--border)" }}>
                     <div>
                       {job.salaryText ? (
-                        <p className="text-xs font-semibold truncate" style={{ color: "var(--ink)" }}>{job.salaryText}</p>
+                        <p className="text-sm font-semibold" style={{ color: "var(--ink)" }}>{job.salaryText}</p>
                       ) : (
-                        <p className="text-[9px]" style={{ color: "var(--muted)" }}>Salary on portal</p>
+                        <p className="text-xs" style={{ color: "var(--muted)" }}>Salary on source portal</p>
                       )}
                     </div>
-                    <span className="text-[10px] font-semibold" style={{ color: "var(--primary)" }}>Apply ↗</span>
+                    <span className="text-xs font-bold flex items-center gap-1" style={{ color: "var(--primary)" }}>
+                      Apply on {job.source.displayName.split(" ")[0]} ↗
+                    </span>
                   </div>
                 </button>
               ))}

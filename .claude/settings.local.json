@@ -167,7 +167,8 @@
       "Bash(grep -nA15 \"model MentorSession \" prisma/schema.prisma)",
       "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && sed -i 's|updated\\\\.requestedDate|updated.preferredDate|g' 'app/api/sessions/[id]/route.ts' && grep -n \"preferredDate\\\\|requestedDate\" 'app/api/sessions/[id]/route.ts' app/api/sessions/route.ts | head)",
       "Bash(grep -nA1 \"courseEnrollments\" prisma/schema.prisma)",
-      "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && grep -rln \"no-img-element\" --include=\"*.tsx\" app components | head)"
+      "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && grep -rln \"no-img-element\" --include=\"*.tsx\" app components | head)",
+      "Bash(grep -nA15 \"interface ExternalJob\" app/jobs/page.tsx)"
     ]
   }
 }
