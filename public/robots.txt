@@ -11,4 +11,4 @@ Disallow: /settings
 Disallow: /notifications
 Disallow: /profile/edit
 
-Sitemap: https://ashpranix.in/sitemap.xml
+Sitemap: https://astraahire.com/sitemap.xml
