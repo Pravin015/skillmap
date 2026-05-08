@@ -12,7 +12,7 @@ export async function GET() {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, email: true, phone: true, role: true, organisation: true, profileImage: true, createdAt: true },
+    select: { id: true, name: true, email: true, phone: true, role: true, organisation: true, profileImage: true, createdAt: true, mustChangePassword: true },
   });
 
   return NextResponse.json({ user });
@@ -24,12 +24,15 @@ export async function PATCH(req: NextRequest) {
   const userId = (session?.user as { id?: string })?.id;
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { name, phone, currentPassword, newPassword } = await req.json();
+  const { name, phone, organisation, currentPassword, newPassword } = await req.json();
 
   const updateData: Record<string, unknown> = {};
 
   if (name) updateData.name = name;
   if (phone !== undefined) updateData.phone = phone || null;
+  // Org/HR/Institution accounts can update their organisation name from
+  // their respective dashboards. Skip if undefined to preserve current value.
+  if (organisation !== undefined) updateData.organisation = organisation || null;
 
   // Password change requires current password
   if (newPassword) {
