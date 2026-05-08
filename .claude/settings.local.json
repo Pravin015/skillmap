@@ -168,7 +168,8 @@
       "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && sed -i 's|updated\\\\.requestedDate|updated.preferredDate|g' 'app/api/sessions/[id]/route.ts' && grep -n \"preferredDate\\\\|requestedDate\" 'app/api/sessions/[id]/route.ts' app/api/sessions/route.ts | head)",
       "Bash(grep -nA1 \"courseEnrollments\" prisma/schema.prisma)",
       "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && grep -rln \"no-img-element\" --include=\"*.tsx\" app components | head)",
-      "Bash(grep -nA15 \"interface ExternalJob\" app/jobs/page.tsx)"
+      "Bash(grep -nA15 \"interface ExternalJob\" app/jobs/page.tsx)",
+      "Bash(ls '/c/Users/Administrator/Desktop/gamify' 2>&1 | head -20; echo \"---ashpanix---\"; ls '/c/Users/Administrator/Desktop/ashpanix-institute' 2>&1 | head -20)"
     ]
   }
 }
