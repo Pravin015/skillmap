@@ -20,11 +20,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       data: { status: "ACCEPTED", meetingLink: body.meetingLink || null, mentorNotes: body.mentorNotes || null },
     });
     const mentor = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } });
+    const student = await prisma.user.findUnique({ where: { id: updated.studentId }, select: { name: true } });
     createNotification({
       userId: updated.studentId,
-      type: "GENERAL",
+      type: "MENTOR_SESSION_CONFIRMED",
       title: `Session accepted by ${mentor?.name}!`,
       message: `Your ${updated.sessionType === "GROUP" ? "group" : "1-on-1"} session has been accepted.${updated.meetingLink ? " Join link is ready in your dashboard." : " Mentor will share the meeting link."}`,
+      data: {
+        name: student?.name || "there",
+        mentorName: mentor?.name || "your mentor",
+        requestedDate: updated.preferredDate.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+        meetingLink: updated.meetingLink || "",
+      },
     }).catch(() => {});
     return NextResponse.json({ session: updated });
   }
@@ -33,11 +40,19 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (body.action === "reject") {
     const updated = await prisma.mentorSession.update({ where: { id }, data: { status: "REJECTED", rejectedReason: body.reason || null } });
     const mentor = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } });
+    const student = await prisma.user.findUnique({ where: { id: updated.studentId }, select: { name: true } });
     createNotification({
       userId: updated.studentId,
-      type: "GENERAL",
+      type: "MENTOR_SESSION_CANCELLED",
       title: `Session declined by ${mentor?.name}`,
       message: `Your session request was declined.${body.reason ? ` Reason: ${body.reason}` : ""} You can try booking with another mentor.`,
+      data: {
+        name: student?.name || "there",
+        otherParty: mentor?.name || "the mentor",
+        requestedDate: updated.preferredDate.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+        reason: body.reason || "",
+        refunded: updated.isPaid ? "true" : "",
+      },
     }).catch(() => {});
     return NextResponse.json({ session: updated });
   }

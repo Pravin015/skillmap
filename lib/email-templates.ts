@@ -205,6 +205,39 @@ export function getEmailTemplate(type: string, data: TemplateData): { subject: s
         `<p>Hi <strong>${d.name}</strong>,</p><p>Your mentor account on AstraaHire has been created by the admin team. You're already <strong>verified</strong>!</p><p>Log in with the temporary password shared with you and set a new one.</p>`,
         "Login now", `${base}/auth/login`) };
 
+    // ═══ MENTOR SESSIONS ═══
+    case "MENTOR_SESSION_REQUESTED":
+      return { subject: `Session request from ${d.studentName}`, html: layout("New session request 🎯",
+        `<p>Hi <strong>${d.name}</strong>,</p><p><strong>${d.studentName}</strong> wants a ${d.sessionType || "1-on-1"} session on <strong>${d.requestedDate}</strong>.</p>${d.price ? `<p>Payment: <strong>₹${d.price}</strong></p>` : "<p>Free session.</p>"}${d.message ? `<p style="background:#FAF7F2;padding:12px;border-radius:8px;border-left:3px solid #7C3AED">"${d.message}"</p>` : ""}<p>Approve or decline from your dashboard.</p>`,
+        "Review request", `${base}/mentor-dashboard`) };
+
+    case "MENTOR_SESSION_CONFIRMED":
+      return { subject: `Session confirmed: ${d.mentorName}`, html: layout("Session confirmed ✓",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Great news — <strong>${d.mentorName}</strong> accepted your session request for <strong>${d.requestedDate}</strong>.</p>${d.meetingLink ? `<p>Meeting link: <a href="${d.meetingLink}" style="color:#7C3AED">${d.meetingLink}</a></p>` : "<p>You'll get the meeting link 30 minutes before the session.</p>"}<p>Make a list of what you want to ask — most students get the most out of sessions when they come prepared.</p>`,
+        "View booking", `${base}/dashboard`) };
+
+    case "MENTOR_SESSION_CANCELLED":
+      return { subject: `Session cancelled${d.reason ? ` — ${d.reason}` : ""}`, html: layout("Session cancelled",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your session with <strong>${d.otherParty}</strong> on <strong>${d.requestedDate}</strong> has been cancelled.</p>${d.reason ? `<p>Reason: <em>${d.reason}</em></p>` : ""}${d.refunded ? "<p>Your payment will be refunded within 5 working days.</p>" : ""}<p>You can request another session anytime.</p>`,
+        "Find a mentor", `${base}/mentors`) };
+
+    // ═══ PAYMENTS ═══
+    case "PAYMENT_SUCCESS":
+      return { subject: `Payment received — ${d.plan} active`, html: layout("Payment received 💳",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Thanks — your payment of <strong>₹${d.amount}</strong> for <strong>${d.plan}</strong> went through.</p>${d.expiresAt ? `<p>Active until: <strong>${d.expiresAt}</strong>.</p>` : ""}<p>Your premium features are unlocked. The first thing most students do: run a mock interview for their dream company.</p>`,
+        "Start a mock interview", `${base}/mock-interview`) };
+
+    case "PAYMENT_FAILED":
+      return { subject: "Payment didn't go through", html: layout("Payment failed",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>Your payment of <strong>₹${d.amount}</strong> for <strong>${d.plan}</strong> didn't go through.</p>${d.reason ? `<p>Reason: <em>${d.reason}</em></p>` : ""}<p>If money was deducted, it'll be auto-refunded within 5 working days. You can retry anytime — no charge until success.</p>`,
+        "Retry payment", `${base}/pricing`) };
+
+    // ═══ OFFER VERIFIER ═══
+    case "OFFER_VERIFY_COMPLETE":
+      return { subject: `Offer letter analysed: ${d.verdict}`, html: layout("Offer analysis ready 🛡️",
+        `<p>Hi <strong>${d.name}</strong>,</p><p>We've analysed the offer letter you uploaded for <strong>${d.companyName}</strong>.</p><p style="font-size:18px;text-align:center;margin:20px 0"><strong style="color:${d.trustScore && Number(d.trustScore) >= 70 ? "#16a34a" : Number(d.trustScore) >= 40 ? "#ca8a04" : "#dc2626"}">Trust Score: ${d.trustScore}/100 — ${d.verdict}</strong></p>${d.recommendation ? `<p>${d.recommendation}</p>` : ""}<p>See the full breakdown (20 parameters, red flags, green flags) in your dashboard.</p>`,
+        "View full report", `${base}/offer-verify`) };
+
     default:
       return { subject: d.title as string || "Notification from AstraaHire", html: layout(d.title as string || "Notification",
         `<p>${d.message || ""}</p>`) };

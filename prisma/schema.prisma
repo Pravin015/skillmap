@@ -476,6 +476,15 @@ enum NotificationType {
   MENTOR_EVENT_REJECTED
   MENTOR_EVENT_REGISTRATION
   MENTOR_ACCOUNT_CREATED
+  // Mentor sessions (1:1 booking flow)
+  MENTOR_SESSION_REQUESTED   // mentor receives — student wants a session
+  MENTOR_SESSION_CONFIRMED   // student receives — mentor accepted
+  MENTOR_SESSION_CANCELLED   // either party — session cancelled
+  // Payments
+  PAYMENT_SUCCESS            // student receives — premium activated
+  PAYMENT_FAILED             // student receives — checkout failed
+  // Offer verifier
+  OFFER_VERIFY_COMPLETE      // student receives — analysis result
   GENERAL
 }
 

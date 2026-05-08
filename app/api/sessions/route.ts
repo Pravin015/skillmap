@@ -96,11 +96,30 @@ export async function POST(req: NextRequest) {
 
   const studentUser = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } });
 
+  // Mentor receives the request (typed template gets the polished email).
+  const mentorUser = await prisma.user.findUnique({ where: { id: mentorProfile.userId }, select: { name: true } });
   createNotification({
     userId: mentorProfile.userId,
-    type: "GENERAL",
+    type: "MENTOR_SESSION_REQUESTED",
     title: `New session request from ${studentUser?.name}`,
     message: `${studentUser?.name} wants a ${sessionType === "GROUP" ? "group" : "1-on-1"} session on ${requestedDate.toLocaleDateString()}.${isPaid ? ` Payment: ₹${price / 100}` : " Free"}${message ? ` — "${message}"` : ""}`,
+    data: {
+      name: mentorUser?.name || "Mentor",
+      studentName: studentUser?.name || "A student",
+      sessionType: sessionType === "GROUP" ? "group" : "1-on-1",
+      requestedDate: requestedDate.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+      price: isPaid ? String(price / 100) : "",
+      message: message || "",
+    },
+  }).catch(() => {});
+
+  // Student also gets a confirmation that the request was sent — closes
+  // the loop so they're not left wondering whether it went through.
+  createNotification({
+    userId: userId!,
+    type: "GENERAL",
+    title: `Session request sent`,
+    message: `Your request for a ${sessionType === "GROUP" ? "group" : "1-on-1"} session on ${requestedDate.toLocaleDateString()} has been sent. The mentor will respond within 48 hours.`,
   }).catch(() => {});
 
   return NextResponse.json({ session: mentorSession }, { status: 201 });

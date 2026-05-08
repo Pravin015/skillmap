@@ -19,6 +19,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/notifications";
 import crypto from "crypto";
 
 const PLAN_PERIOD_DAYS: Record<string, number> = {
@@ -110,6 +111,22 @@ export async function POST(req: NextRequest) {
       create: { userId, plan: payment.plan, active: true, expiresAt },
     }),
   ]);
+
+  // Email + in-app receipt for the user. Best-effort — don't fail the
+  // request if Resend has an outage.
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } });
+  createNotification({
+    userId,
+    type: "PAYMENT_SUCCESS",
+    title: `Payment received — ${payment.plan} active`,
+    message: `Your payment of ₹${(payment.amount / 100).toFixed(0)} was successful. Premium features are unlocked until ${expiresAt.toLocaleDateString()}.`,
+    data: {
+      name: user?.name || "there",
+      amount: (payment.amount / 100).toFixed(0),
+      plan: payment.plan,
+      expiresAt: expiresAt.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+    },
+  }).catch(() => {});
 
   return NextResponse.json({ success: true, plan: payment.plan });
 }

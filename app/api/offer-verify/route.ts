@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { createNotification } from "@/lib/notifications";
 
 const anthropic = new Anthropic();
 
@@ -239,6 +240,23 @@ export async function POST(req: NextRequest) {
         recommendation: analysis.recommendation || "",
       },
     });
+
+    // Email + in-app receipt — students often run the verifier and
+    // close the tab; this gets the result back to them.
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } });
+    createNotification({
+      userId,
+      type: "OFFER_VERIFY_COMPLETE",
+      title: `Offer analysis ready — Trust score ${analysis.trustScore}%`,
+      message: `Verdict: ${analysis.verdict}. ${analysis.recommendation || ""}`.slice(0, 500),
+      data: {
+        name: user?.name || "there",
+        companyName,
+        trustScore: String(analysis.trustScore || 0),
+        verdict: String(analysis.verdict || "SUSPICIOUS"),
+        recommendation: String(analysis.recommendation || "").slice(0, 400),
+      },
+    }).catch(() => {});
 
     return NextResponse.json({
       id: verification.id,
