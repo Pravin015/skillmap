@@ -160,7 +160,9 @@
       "Bash(grep -nB1 -A1 \"status \" prisma/schema.prisma)",
       "Bash(rm '/c/Users/Administrator/Desktop/crmlms/public/sitemap.xml')",
       "Bash(sed -i 's|Sitemap: https://ashpranix.in/sitemap.xml|Sitemap: https://astraahire.com/sitemap.xml|g' '/c/Users/Administrator/Desktop/crmlms/public/robots.txt')",
-      "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && cat lib/rate-limit.ts)"
+      "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && cat lib/rate-limit.ts)",
+      "Bash(grep -nA20 \"^model Payment \" prisma/schema.prisma)",
+      "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && grep -n \"return \\(\" 'app/competitions/[slug]/page.tsx' | head -3)"
     ]
   }
 }

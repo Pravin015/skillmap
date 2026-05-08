@@ -1,10 +1,32 @@
 "use client";
 
 import Link from "next/link";
+import Script from "next/script";
 import { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
 
 const heading = "font-[family-name:var(--font-heading)]";
+
+// Razorpay SDK is loaded by the <Script> tag below. We don't redeclare
+// window.Razorpay globally (other pages do that); instead we cast at
+// use-site to avoid TS interface-merge conflicts.
+interface RzpOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (r: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void;
+  prefill: { name?: string; email?: string };
+  theme: { color: string };
+  modal: { ondismiss: () => void };
+}
+interface RzpInstance {
+  open: () => void;
+  on: (event: string, handler: (r: unknown) => void) => void;
+}
+type RzpCtor = new (options: RzpOptions) => RzpInstance;
 
 interface Competition {
   id: string; title: string; slug: string; description: string; rules: string | null;
@@ -45,12 +67,90 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
   async function handleRegister() {
     if (!session) { window.location.href = "/auth/login"; return; }
     setRegistering(true); setMsg("");
-    const res = await fetch(`/api/competitions/${slug}/register`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) });
+
+    // Step 1: ask the server to either register us (free) or hand back
+    // Razorpay checkout details (paid).
+    const res = await fetch(`/api/competitions/${slug}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    });
     const data = await res.json();
-    if (data.requiresPayment) { setMsg(`This competition requires ₹${data.amount / 100} entry fee. Payment integration coming soon.`); }
-    else if (res.ok) { setIsRegistered(true); setMsg("Successfully registered!"); }
-    else { setMsg(data.error || "Registration failed"); }
-    setRegistering(false);
+
+    if (res.ok && !data.requiresPayment) {
+      setIsRegistered(true);
+      setMsg("Successfully registered!");
+      setRegistering(false);
+      return;
+    }
+
+    if (!data.requiresPayment) {
+      setMsg(data.error || "Registration failed");
+      setRegistering(false);
+      return;
+    }
+
+    // Step 2 (paid): open Razorpay checkout. SDK is loaded by <Script> below.
+    const Rzp = (typeof window !== "undefined"
+      ? (window as unknown as { Razorpay?: RzpCtor }).Razorpay
+      : undefined);
+    if (!Rzp) {
+      setMsg("Payment SDK is still loading. Try again in a moment.");
+      setRegistering(false);
+      return;
+    }
+
+    const rzp = new Rzp({
+      key: data.keyId,
+      amount: data.amount,
+      currency: data.currency || "INR",
+      name: "AstraaHire",
+      description: `Entry fee — ${data.title}`,
+      order_id: data.orderId,
+      prefill: { name: data.name, email: data.email },
+      theme: { color: "#7C3AED" },
+      modal: {
+        ondismiss: () => {
+          setMsg("Payment cancelled. You can retry anytime.");
+          setRegistering(false);
+        },
+      },
+      // Step 3: SDK fires this on capture. We POST proof back to the
+      // register endpoint, which verifies the signature and creates the
+      // participant row.
+      handler: async (response) => {
+        try {
+          const verifyRes = await fetch(`/api/competitions/${slug}/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyRes.ok) {
+            setIsRegistered(true);
+            setMsg("Payment received — you're registered!");
+          } else {
+            setMsg(verifyData.error || "Payment verified but registration failed. Contact support with your payment ID.");
+          }
+        } catch {
+          setMsg("Network error after payment. Don't pay again — contact support with your Razorpay payment ID.");
+        } finally {
+          setRegistering(false);
+        }
+      },
+    });
+
+    rzp.on("payment.failed", (resp: unknown) => {
+      const r = resp as { error?: { description?: string } };
+      setMsg(r.error?.description || "Payment failed. Try again.");
+      setRegistering(false);
+    });
+
+    rzp.open();
   }
 
   if (loading || !comp) {
@@ -63,6 +163,9 @@ export default function CompetitionDetailPage({ params }: { params: Promise<{ sl
 
   return (
     <div className="min-h-screen" style={{ background: "var(--surface)" }}>
+      {/* Razorpay SDK — only loads on this page; needed for paid entry. */}
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+
       {/* Header */}
       <section style={{ background: "var(--ink)" }}>
         <div className="mx-auto max-w-4xl px-4 py-10">
