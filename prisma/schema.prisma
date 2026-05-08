@@ -282,6 +282,15 @@ model JobPosting {
 
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+
+  // Indexes for the /jobs filter queries — without these the listing
+  // page does full table scans once the JobPosting table grows.
+  // Composite (status, createdAt) covers the default homepage query.
+  @@index([status, createdAt])
+  @@index([domain])
+  @@index([location])
+  @@index([workMode])
+  @@index([postedById])
 }
 
 model Application {
