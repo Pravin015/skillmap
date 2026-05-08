@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import ImportProfile from "@/components/ImportProfile";
 
 const heading = "font-[family-name:var(--font-heading)]";
 const inputClass = "w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-[var(--ink)] transition-colors";
@@ -149,6 +150,14 @@ export default function ProfileEditPage() {
         </div>
 
         {saved && <div className="rounded-xl p-4 text-sm font-medium mb-6" style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a", border: "1px solid rgba(34,197,94,0.3)" }}>Profile saved!</div>}
+
+        {/* Quick-import card — STUDENT role only. Saves directly via the
+            component's autoSave; user can refresh the page to see populated fields. */}
+        {userRole === "STUDENT" && (
+          <div className="mb-6">
+            <ImportProfile onImported={() => router.refresh()} />
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Photo */}

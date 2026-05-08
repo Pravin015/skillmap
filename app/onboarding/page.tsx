@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { companies, COMPANY_COLORS, DOMAIN_MAP } from "@/lib/data";
 import { UserProfile } from "@/lib/types";
+import ImportProfile from "@/components/ImportProfile";
 
 const degrees = [
   "B.Tech/BE",
@@ -125,6 +126,15 @@ export default function OnboardingPage() {
           <p className="mt-2 text-gray-600">
             Help us tailor recommendations to your profile.
           </p>
+
+          {/* Quick-import card — pasted text + Claude → pre-fills the form below.
+              Field-level state on this page can't be programmatically updated
+              without lifting state up; for now the import saves directly to
+              the DB and the user sees their populated profile on /profile/edit
+              after onboarding completes. */}
+          <div className="mt-6">
+            <ImportProfile />
+          </div>
 
           <div className="mt-8 space-y-5">
             <div>
