@@ -3,8 +3,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
 
 const anthropic = new Anthropic();
+
+// Hard caps to prevent abuse against our Anthropic bill.
+// Claude Vision charges per token of base64 input — a 5 MB image
+// can run ~$0.30 per call, so unbounded POSTs are a real DoS surface.
+const MAX_OFFER_TEXT_CHARS = 30_000;          // ~7,500 tokens — covers 99% of legit offers
+const MAX_FILE_BASE64_BYTES = 7 * 1024 * 1024; // ~5 MB binary after base64 inflation
+const RATE_LIMIT_PER_USER_DAY = 10;            // 10 verifications / day per logged-in user
+const RATE_LIMIT_PER_IP_HOUR = 5;              // 5 anonymous requests / hour per IP (also rejects guests entirely)
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const ONE_HOUR_MS = 60 * 60 * 1000;
 
 const ANALYSIS_PROMPT = `You are an expert fraud analyst specializing in detecting fake job offer letters in India.
 You have analyzed thousands of offer letters and know every trick scammers use.
@@ -81,22 +92,75 @@ CRITICAL SCAM INDICATORS (any ONE of these = trustScore below 25):
 BE STRICT. Real companies don't ask for money. Protect Indian fresh graduates who are vulnerable to these scams.`;
 
 export async function POST(req: NextRequest) {
+  // ─── 1. AUTH GATE ─────────────────────────────────────────────────
+  // Was previously open to anyone. Each call hits Claude Sonnet (paid)
+  // so we can't accept anonymous traffic — students must be signed in.
+  // Defence-in-depth: also rate limit by IP for the small window
+  // between auth check and DB write.
   const session = await getServerSession(authOptions);
   const userId = (session?.user as { id?: string })?.id;
-
-  const { companyName, offerText, communicationChannel, fileData, fileType } = await req.json();
-
-  if (!companyName) {
-    return NextResponse.json({ error: "Company name is required" }, { status: 400 });
+  if (!userId) {
+    return NextResponse.json(
+      { error: "Sign in to verify offer letters. Free tier allows 10 checks/day." },
+      { status: 401 }
+    );
   }
 
-  // Must provide either text or file
+  // ─── 2. RATE LIMIT (per user + per IP) ────────────────────────────
+  const ipLimit = rateLimit(`offer-verify:ip:${getClientIP(req)}`, RATE_LIMIT_PER_IP_HOUR, ONE_HOUR_MS);
+  if (!ipLimit.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests from your network. Try again in an hour." },
+      { status: 429 }
+    );
+  }
+  const userLimit = rateLimit(`offer-verify:user:${userId}`, RATE_LIMIT_PER_USER_DAY, ONE_DAY_MS);
+  if (!userLimit.allowed) {
+    return NextResponse.json(
+      { error: `Daily limit reached (${RATE_LIMIT_PER_USER_DAY} verifications/day). Resets in 24 hours.` },
+      { status: 429 }
+    );
+  }
+
+  // ─── 3. PARSE + VALIDATE PAYLOAD SIZE ─────────────────────────────
+  let body: { companyName?: string; offerText?: string; communicationChannel?: string; fileData?: string; fileType?: string };
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+  const { companyName, offerText, communicationChannel, fileData, fileType } = body;
+
+  if (!companyName || typeof companyName !== "string" || companyName.length > 200) {
+    return NextResponse.json({ error: "Company name is required (max 200 chars)" }, { status: 400 });
+  }
+
   if (!offerText && !fileData) {
     return NextResponse.json({ error: "Please paste the offer letter text or upload the file" }, { status: 400 });
   }
 
-  if (offerText && !fileData && offerText.length < 50) {
-    return NextResponse.json({ error: "Please paste the complete offer letter text (minimum 50 characters)" }, { status: 400 });
+  if (offerText) {
+    if (typeof offerText !== "string") {
+      return NextResponse.json({ error: "Invalid offerText" }, { status: 400 });
+    }
+    if (!fileData && offerText.length < 50) {
+      return NextResponse.json({ error: "Please paste the complete offer letter text (minimum 50 characters)" }, { status: 400 });
+    }
+    if (offerText.length > MAX_OFFER_TEXT_CHARS) {
+      return NextResponse.json(
+        { error: `Offer text too long (max ${MAX_OFFER_TEXT_CHARS.toLocaleString()} characters). Trim or upload as image instead.` },
+        { status: 413 }
+      );
+    }
+  }
+
+  if (fileData) {
+    if (typeof fileData !== "string" || fileData.length > MAX_FILE_BASE64_BYTES) {
+      return NextResponse.json(
+        { error: "File too large. Maximum upload size is 5 MB." },
+        { status: 413 }
+      );
+    }
   }
 
   try {
@@ -132,10 +196,18 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Prompt caching — the 80-line ANALYSIS_PROMPT is identical on every
+    // call. Marking it ephemeral cuts input-token cost ~80% on cache hits.
     const result = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 2048,
-      system: ANALYSIS_PROMPT,
+      system: [
+        {
+          type: "text",
+          text: ANALYSIS_PROMPT,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
       messages: [{ role: "user", content: messageContent }],
     });
 
@@ -151,10 +223,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "AI analysis failed to parse. Please try again." }, { status: 500 });
     }
 
-    // Save to database
+    // Save to database (userId is now guaranteed by the auth gate above)
     const verification = await prisma.offerVerification.create({
       data: {
-        userId: userId || null,
+        userId,
         companyName,
         offerText: offerText || "[Uploaded document — analyzed via AI Vision]",
         trustScore: analysis.trustScore || 0,

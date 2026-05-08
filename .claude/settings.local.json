@@ -159,7 +159,8 @@
       "Bash(grep -nB1 -A5 \"enum MentorStatus\" prisma/schema.prisma)",
       "Bash(grep -nB1 -A1 \"status \" prisma/schema.prisma)",
       "Bash(rm '/c/Users/Administrator/Desktop/crmlms/public/sitemap.xml')",
-      "Bash(sed -i 's|Sitemap: https://ashpranix.in/sitemap.xml|Sitemap: https://astraahire.com/sitemap.xml|g' '/c/Users/Administrator/Desktop/crmlms/public/robots.txt')"
+      "Bash(sed -i 's|Sitemap: https://ashpranix.in/sitemap.xml|Sitemap: https://astraahire.com/sitemap.xml|g' '/c/Users/Administrator/Desktop/crmlms/public/robots.txt')",
+      "Bash(cd '/c/Users/Administrator/Desktop/crmlms' && cat lib/rate-limit.ts)"
     ]
   }
 }
