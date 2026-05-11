@@ -1,0 +1,501 @@
+job_id,title,org,skills,salary_min,salary_max,posted_ts,remote
+J_0001,Data Engineer Intern,Ola,iceberg|scala|gcp|pyspark|airflow,25000,33116,2026-03-15T16:58:34Z,True
+J_0002,Data Analytics Intern,Unacademy,pandas|dbt|iceberg|azure,15000,26603,2026-01-26T07:49:32Z,True
+J_0003,Data Scientist,upGrad,pandas|pyspark|snowflake|numpy|python,25000,38539,2026-02-14T16:26:30Z,False
+J_0004,Full-stack Intern,upGrad,iceberg|kafka|aws|sql,60000,71970,2026-03-25T15:53:39Z,True
+J_0005,Backend Intern,Meesho,pyspark|spark|numpy|hadoop|scala|delta,15000,33238,2026-01-06T09:26:30Z,True
+J_0006,ML Engineer,Meesho,tableau|iceberg|scala|azure|airflow|delta,15000,27695,2026-01-25T07:30:24Z,True
+J_0007,SDE-1,Zomato,iceberg|hadoop|pandas|python,30000,38984,2026-03-14T01:38:46Z,False
+J_0008,Analytics Engineer,Razorpay,azure|snowflake|aws|iceberg,30000,60575,2026-02-01T03:54:31Z,False
+J_0009,ML Engineer,Zomato,kafka|python|azure|iceberg,20000,59411,2026-02-28T17:44:36Z,False
+J_0010,Frontend Intern,Ola,pyspark|airflow|delta|python|iceberg|tableau|hadoop,20000,27561,2026-03-22T05:37:13Z,False
+J_0011,Frontend Intern,Swiggy,kafka|pyspark|python|numpy,20000,47771,2025-12-23T11:45:08Z,False
+J_0012,Data Engineer Intern,Ola,gcp|pandas|numpy|python,25000,30682,2026-02-09T23:19:43Z,True
+J_0013,Frontend Intern,CRED,python|pyspark|aws|numpy|hadoop,60000,78510,2026-01-24T03:16:09Z,True
+J_0014,Frontend Intern,Meesho,aws|hadoop|azure|pyspark|scala|gcp|kafka,25000,54159,2026-03-22T04:42:46Z,False
+J_0015,Data Scientist,CRED,airflow|tableau|kafka|pandas|delta|scala,15000,31823,2026-02-24T05:34:43Z,True
+J_0016,ML Engineer,CRED,kafka|spark|hadoop|sql|tableau|pyspark,25000,59820,2026-01-31T20:11:39Z,True
+J_0017,Analytics Engineer,PhonePe,pyspark|aws|snowflake,60000,66357,2026-03-29T15:11:51Z,True
+J_0018,Data Analytics Intern,PhonePe,spark|iceberg|hadoop|numpy,60000,65884,2026-04-18T04:12:39Z,True
+J_0019,Full-stack Intern,Razorpay,hadoop|dbt|azure|gcp,40000,55691,2026-02-19T07:28:56Z,False
+J_0020,ML Engineer,Paytm,tableau|iceberg|pyspark,30000,36389,2026-04-11T08:29:41Z,True
+J_0021,Frontend Intern,Freshworks,gcp|hadoop|python|azure|pyspark|dbt|tableau,40000,72992,2026-02-04T03:59:06Z,True
+J_0022,Frontend Intern,Paytm,pyspark|dbt|airflow|sql|tableau|azure,25000,48468,2026-02-09T14:49:29Z,True
+J_0023,Full-stack Intern,Freshworks,spark|sql|hadoop|tableau|kafka,40000,79765,2026-02-13T23:30:49Z,True
+J_0024,SDE-1,PhonePe,pandas|scala|pyspark|hadoop|delta,60000,89190,2026-02-27T11:08:31Z,True
+J_0025,ML Engineer,PhonePe,hadoop|aws|azure|scala|snowflake,15000,51354,2026-04-06T22:17:45Z,True
+J_0026,SDE-1,Ola,spark|numpy|hadoop|tableau,40000,70232,2026-02-10T12:43:27Z,False
+J_0027,SDE-1,Accenture,numpy|hadoop|delta|kafka|azure|iceberg,30000,67578,2026-01-05T09:15:22Z,False
+J_0028,Analytics Engineer,Paytm,spark|gcp|delta|scala|sql|pyspark,40000,68704,2026-04-19T10:38:35Z,True
+J_0029,Full-stack Intern,Accenture,pyspark|sql|scala|airflow,15000,29132,2026-02-21T18:36:40Z,False
+J_0030,Analytics Engineer,Infosys,kafka|delta|sql|scala,20000,34030,2026-03-28T05:38:30Z,True
+J_0031,Data Analytics Intern,Infosys,sql|pyspark|spark|delta|gcp,30000,45366,2026-04-14T03:19:28Z,True
+J_0032,ML Engineer,Razorpay,spark|python|gcp|tableau,25000,41955,2026-01-18T18:44:16Z,True
+J_0033,Analytics Engineer,Byju's,gcp|numpy|azure|aws|snowflake|scala,60000,65865,2026-02-23T07:33:34Z,True
+J_0034,Data Analytics Intern,Swiggy,airflow|snowflake|tableau|python|kafka|gcp|numpy,20000,54772,2026-01-02T09:26:47Z,False
+J_0035,Analytics Engineer,Byju's,gcp|airflow|iceberg|sql,40000,79177,2026-02-05T16:26:30Z,True
+J_0036,Backend Intern,TCS,sql|delta|aws|spark|gcp|scala|iceberg,60000,70059,2026-01-19T00:55:47Z,False
+J_0037,SDE-1,TCS,sql|scala|gcp|pyspark,25000,47689,2026-03-29T22:48:55Z,True
+J_0038,Full-stack Intern,Unacademy,delta|pandas|airflow,15000,26977,2026-04-07T07:35:27Z,True
+J_0039,Data Analytics Intern,Byju's,tableau|kafka|sql|pyspark,40000,62640,2026-04-03T11:41:17Z,True
+J_0040,Data Scientist,Swiggy,numpy|spark|pandas,40000,45555,2026-02-09T17:53:41Z,False
+J_0041,Analytics Engineer,Meesho,aws|scala|hadoop|snowflake|numpy,30000,41381,2026-02-14T15:56:44Z,False
+J_0042,Analytics Engineer,Freshworks,hadoop|python|aws|delta|pandas|snowflake|tableau,60000,75565,2026-03-21T13:46:58Z,False
+J_0043,Data Engineer Intern,Paytm,hadoop|airflow|numpy|delta,15000,28598,2026-02-13T04:02:57Z,False
+J_0044,SDE-1,Swiggy,delta|kafka|spark|dbt|pandas|numpy,25000,62605,2026-04-01T02:03:18Z,True
+J_0045,Frontend Intern,Razorpay,pyspark|azure|numpy|spark|hadoop|snowflake,20000,29467,2026-02-24T14:33:32Z,False
+J_0046,Data Engineer Intern,Razorpay,azure|iceberg|dbt|hadoop,25000,58969,2026-03-23T17:28:07Z,True
+J_0047,Data Scientist,Swiggy,pandas|aws|gcp|dbt|tableau,40000,53453,2026-01-24T09:35:39Z,False
+J_0048,Full-stack Intern,upGrad,gcp|snowflake|azure,40000,62224,2026-04-11T17:07:03Z,True
+J_0049,Backend Intern,Zomato,pyspark|pandas|aws|spark,60000,91167,2026-04-05T19:53:41Z,True
+J_0050,Data Scientist,Razorpay,azure|tableau|snowflake|sql|dbt,30000,46814,2026-03-29T23:03:37Z,False
+J_0051,Backend Intern,TCS,spark|numpy|snowflake|pandas|delta,30000,48935,2026-01-17T12:39:24Z,True
+J_0052,Data Scientist,Swiggy,hadoop|dbt|tableau|numpy|pyspark|airflow|pandas,25000,32052,2025-12-24T06:46:35Z,False
+J_0053,Full-stack Intern,Infosys,kafka|sql|tableau|gcp|python|aws,15000,47716,2026-02-26T14:25:00Z,False
+J_0054,ML Engineer,Razorpay,spark|iceberg|aws|sql,60000,84551,2026-01-22T08:13:34Z,False
+J_0055,Backend Intern,Ola,sql|spark|gcp|airflow,40000,64457,2026-03-19T01:13:10Z,True
+J_0056,SDE-1,Accenture,tableau|airflow|gcp|snowflake|scala|pandas,25000,55502,2026-04-18T01:42:57Z,True
+J_0057,ML Engineer,Unacademy,python|hadoop|azure|dbt|spark,15000,52731,2026-02-17T13:25:58Z,True
+J_0058,SDE-1,Ola,python|azure|hadoop|numpy|delta|snowflake|pandas,60000,71386,2026-04-12T21:57:47Z,True
+J_0059,Backend Intern,Infosys,airflow|aws|kafka|tableau|pyspark|gcp|numpy,60000,65941,2026-02-07T02:28:49Z,False
+J_0060,Frontend Intern,Byju's,pyspark|dbt|azure|kafka|snowflake|airflow|aws,15000,47908,2026-01-08T09:51:07Z,False
+J_0061,ML Engineer,Wipro,scala|airflow|snowflake|iceberg|kafka|gcp,15000,38679,2026-01-25T01:07:55Z,False
+J_0062,Data Engineer Intern,Razorpay,spark|python|gcp,60000,71794,2026-01-13T14:35:08Z,True
+J_0063,Data Scientist,Swiggy,gcp|kafka|delta|aws|dbt,60000,89974,2026-03-28T18:23:11Z,True
+J_0064,Data Engineer Intern,upGrad,gcp|aws|python|airflow|snowflake|pyspark,30000,68263,2026-02-23T22:18:28Z,False
+J_0065,Frontend Intern,Byju's,delta|python|gcp|snowflake|azure|dbt,60000,75051,2026-02-06T07:08:35Z,False
+J_0066,ML Engineer,Infosys,tableau|aws|kafka|pandas,25000,55776,2026-04-09T23:36:55Z,False
+J_0067,SDE-1,CRED,numpy|snowflake|airflow|kafka|pyspark|sql,20000,33279,2026-01-12T01:59:31Z,True
+J_0068,SDE-1,Ola,airflow|numpy|kafka|sql|azure|python|dbt,60000,65756,2025-12-25T19:04:36Z,True
+J_0069,Analytics Engineer,Razorpay,aws|python|hadoop|delta|numpy|gcp|airflow,15000,32226,2026-03-04T10:48:55Z,True
+J_0070,Backend Intern,Paytm,iceberg|sql|tableau|snowflake|spark|numpy,25000,31516,2025-12-28T12:00:44Z,True
+J_0071,Data Scientist,Freshworks,hadoop|pandas|iceberg,15000,31837,2026-04-01T23:37:38Z,True
+J_0072,Full-stack Intern,Meesho,pyspark|dbt|python|kafka|sql|delta,30000,40001,2026-03-10T03:57:00Z,False
+J_0073,Full-stack Intern,Wipro,airflow|pandas|python|azure,30000,46709,2025-12-30T20:13:09Z,True
+J_0074,Full-stack Intern,upGrad,tableau|python|airflow|iceberg|scala|hadoop,15000,27968,2026-03-13T13:16:34Z,True
+J_0075,Data Analytics Intern,PhonePe,scala|pyspark|kafka|python,40000,66465,2026-03-24T02:14:25Z,True
+J_0076,ML Engineer,Ola,dbt|kafka|spark|airflow|scala,15000,39288,2026-01-19T07:25:07Z,False
+J_0077,Analytics Engineer,TCS,iceberg|airflow|kafka|numpy,30000,53421,2026-02-02T17:17:55Z,True
+J_0078,Frontend Intern,CRED,dbt|gcp|azure|kafka,40000,62804,2026-02-17T02:31:25Z,True
+J_0079,SDE-1,Infosys,scala|tableau|spark|delta,40000,55960,2026-04-13T10:40:02Z,False
+J_0080,SDE-1,Byju's,snowflake|scala|aws|python|sql|spark|airflow,40000,73140,2026-03-14T21:34:26Z,False
+J_0081,Data Engineer Intern,Meesho,scala|hadoop|numpy|sql|python,20000,45879,2026-04-17T21:11:52Z,False
+J_0082,Data Scientist,Unacademy,tableau|spark|aws|hadoop,20000,38905,2026-01-07T14:46:46Z,True
+J_0083,Analytics Engineer,Ola,spark|gcp|snowflake|airflow|dbt|azure|pyspark,15000,32918,2026-04-10T08:34:08Z,False
+J_0084,Data Analytics Intern,Ola,pyspark|tableau|azure|spark|pandas|airflow,30000,60090,2026-03-05T02:11:39Z,True
+J_0085,Data Analytics Intern,Zomato,pandas|hadoop|aws|python|iceberg|gcp,25000,32563,2026-02-13T11:38:58Z,True
+J_0086,Data Scientist,Freshworks,pandas|iceberg|numpy|aws|airflow|kafka,15000,25227,2026-01-01T22:45:15Z,False
+J_0087,Data Analytics Intern,TCS,azure|dbt|pyspark|gcp|airflow,30000,41733,2026-04-14T07:30:26Z,True
+J_0088,Data Analytics Intern,PhonePe,numpy|gcp|delta,15000,31153,2026-04-02T21:48:45Z,True
+J_0089,Full-stack Intern,Zomato,iceberg|sql|pyspark,60000,68145,2026-02-19T21:54:20Z,True
+J_0090,Full-stack Intern,TCS,airflow|hadoop|azure|sql|spark,25000,50927,2026-03-22T06:15:48Z,False
+J_0091,Data Scientist,Freshworks,snowflake|delta|dbt|numpy|tableau|hadoop|airflow,60000,96634,2026-03-07T03:33:13Z,True
+J_0092,Frontend Intern,Razorpay,tableau|delta|kafka|scala|sql,25000,34924,2026-01-13T22:58:13Z,True
+J_0093,Data Analytics Intern,Meesho,aws|kafka|dbt|sql|airflow|pyspark,20000,59579,2026-01-10T04:55:31Z,False
+J_0094,Data Scientist,PhonePe,pyspark|hadoop|delta|azure|airflow|kafka|dbt,25000,63650,2026-03-11T13:51:18Z,False
+J_0095,Data Engineer Intern,Ola,airflow|pandas|pyspark|spark|delta|sql,20000,32222,2026-03-04T06:53:52Z,True
+J_0096,ML Engineer,Ola,dbt|snowflake|azure,30000,58065,2026-02-27T10:18:49Z,True
+J_0097,Data Engineer Intern,upGrad,kafka|hadoop|aws|iceberg|tableau|azure,40000,66871,2026-04-09T16:16:13Z,False
+J_0098,Full-stack Intern,Freshworks,aws|gcp|kafka,25000,49267,2026-03-14T05:06:03Z,False
+J_0099,Frontend Intern,Accenture,gcp|pyspark|sql|numpy|snowflake|dbt|tableau,20000,32548,2026-04-09T16:21:37Z,True
+J_0100,Frontend Intern,Paytm,tableau|pyspark|iceberg,40000,59841,2026-01-31T10:37:00Z,False
+J_0101,Data Engineer Intern,Paytm,dbt|kafka|airflow|aws|pyspark,30000,57782,2026-02-23T01:51:27Z,False
+J_0102,Data Analytics Intern,Freshworks,snowflake|dbt|pandas|gcp,60000,80638,2026-03-17T22:39:32Z,False
+J_0103,Data Engineer Intern,CRED,numpy|azure|hadoop|python,60000,96103,2026-01-26T21:44:11Z,False
+J_0104,ML Engineer,Ola,airflow|python|scala,15000,51052,2025-12-27T18:16:58Z,True
+J_0105,Backend Intern,Accenture,sql|python|pandas,30000,49961,2026-01-08T00:04:06Z,True
+J_0106,Data Engineer Intern,Freshworks,numpy|azure|dbt|scala|airflow,20000,41865,2026-01-15T12:46:37Z,False
+J_0107,Data Scientist,Zomato,pandas|numpy|dbt|sql|hadoop,25000,64033,2026-04-15T23:24:14Z,True
+J_0108,Backend Intern,PhonePe,dbt|python|delta|pandas|scala,30000,63227,2026-02-09T04:58:55Z,True
+J_0109,Data Engineer Intern,Meesho,pyspark|iceberg|azure|dbt|snowflake|spark,60000,82387,2026-02-11T06:15:52Z,False
+J_0110,SDE-1,Ola,kafka|sql|numpy|gcp|pandas,30000,43058,2026-01-25T19:55:55Z,False
+J_0111,Full-stack Intern,Byju's,python|dbt|hadoop,40000,75560,2026-03-21T19:53:17Z,False
+J_0112,Analytics Engineer,CRED,dbt|pandas|spark|aws|hadoop,40000,46021,2026-01-21T20:52:04Z,True
+J_0113,Frontend Intern,Freshworks,dbt|pandas|python,20000,53201,2026-02-10T14:22:14Z,True
+J_0114,Frontend Intern,PhonePe,pandas|snowflake|hadoop|sql|scala,15000,37738,2026-03-23T07:13:47Z,True
+J_0115,Data Engineer Intern,Byju's,sql|dbt|scala|pyspark,30000,60312,2026-01-27T22:42:45Z,False
+J_0116,Frontend Intern,Byju's,pandas|airflow|gcp|numpy|snowflake|aws|tableau,15000,29121,2026-03-12T06:13:54Z,False
+J_0117,SDE-1,Meesho,pandas|spark|tableau|dbt|numpy,20000,55222,2026-01-04T00:14:41Z,True
+J_0118,SDE-1,Freshworks,snowflake|azure|numpy|iceberg,30000,58432,2026-01-19T01:11:47Z,False
+J_0119,Data Scientist,Infosys,azure|python|snowflake|aws|kafka|sql,30000,44213,2025-12-21T12:55:14Z,False
+J_0120,Analytics Engineer,upGrad,tableau|pandas|sql|aws,20000,50733,2026-03-26T13:05:48Z,False
+J_0121,Data Analytics Intern,Wipro,azure|sql|spark|python|hadoop|numpy|snowflake,60000,86855,2025-12-25T14:10:35Z,True
+J_0122,Data Scientist,Unacademy,pyspark|snowflake|sql,25000,43439,2026-01-09T18:02:07Z,True
+J_0123,Data Scientist,PhonePe,hadoop|pandas|snowflake|scala,40000,45422,2026-01-15T19:56:43Z,True
+J_0124,Data Engineer Intern,Zomato,pyspark|snowflake|tableau|dbt,15000,33388,2026-03-30T21:09:23Z,False
+J_0125,Analytics Engineer,Wipro,sql|pyspark|pandas|kafka|delta|spark,15000,35396,2026-01-03T20:06:14Z,False
+J_0126,Data Scientist,Freshworks,hadoop|python|airflow|spark|gcp|scala,40000,60773,2026-03-17T20:07:43Z,True
+J_0127,Data Scientist,Byju's,pyspark|dbt|scala|numpy|hadoop,30000,60636,2026-02-04T01:56:42Z,True
+J_0128,SDE-1,Infosys,python|pandas|azure|sql,30000,60521,2026-04-17T20:38:42Z,False
+J_0129,Data Scientist,Swiggy,hadoop|azure|snowflake|tableau|python,15000,30375,2026-02-09T12:46:31Z,True
+J_0130,Analytics Engineer,TCS,spark|airflow|hadoop|snowflake|numpy|scala|pandas,25000,52235,2026-01-20T18:39:36Z,True
+J_0131,Frontend Intern,TCS,dbt|aws|tableau,25000,41821,2025-12-29T03:27:51Z,False
+J_0132,Full-stack Intern,upGrad,aws|spark|sql|python|gcp|scala|snowflake,20000,40184,2026-04-01T06:05:21Z,True
+J_0133,Data Scientist,Unacademy,delta|pyspark|airflow|scala,30000,60171,2026-01-28T10:23:48Z,True
+J_0134,Frontend Intern,Freshworks,spark|azure|scala,15000,21930,2026-03-17T04:47:17Z,False
+J_0135,Data Scientist,TCS,tableau|kafka|snowflake|hadoop,15000,52184,2026-01-25T01:01:59Z,False
+J_0136,Backend Intern,CRED,snowflake|kafka|spark|pandas|python|numpy,20000,31304,2026-03-11T11:26:12Z,True
+J_0137,Data Analytics Intern,upGrad,tableau|spark|numpy|snowflake|dbt|scala,20000,59613,2026-01-13T15:39:17Z,True
+J_0138,Data Scientist,upGrad,tableau|hadoop|spark|delta|kafka,20000,49649,2026-04-06T05:43:59Z,True
+J_0139,Analytics Engineer,Byju's,pyspark|dbt|delta,20000,28373,2025-12-24T04:51:20Z,False
+J_0140,Backend Intern,Byju's,aws|scala|spark|gcp|azure,15000,30345,2026-02-23T01:30:05Z,True
+J_0141,Backend Intern,Byju's,sql|pyspark|dbt|azure|hadoop|numpy,40000,46964,2026-04-13T17:35:20Z,False
+J_0142,Frontend Intern,Meesho,sql|hadoop|kafka|iceberg|gcp,30000,56601,2026-04-07T21:31:42Z,True
+J_0143,Data Engineer Intern,Swiggy,spark|gcp|tableau|azure|iceberg,30000,66376,2026-03-25T20:39:05Z,False
+J_0144,Data Analytics Intern,Freshworks,dbt|snowflake|delta,60000,87954,2026-01-26T04:59:31Z,False
+J_0145,Backend Intern,Zomato,python|kafka|aws,25000,31185,2026-01-02T17:10:56Z,False
+J_0146,SDE-1,TCS,gcp|tableau|hadoop|sql,15000,48701,2026-03-28T02:06:54Z,False
+J_0147,Backend Intern,Unacademy,sql|delta|snowflake|tableau|pandas|python,25000,44884,2026-01-29T18:58:32Z,True
+J_0148,Backend Intern,Swiggy,sql|hadoop|azure,15000,31835,2026-02-24T03:00:27Z,True
+J_0149,Full-stack Intern,Paytm,hadoop|aws|dbt|numpy|sql,25000,35033,2026-04-05T04:03:12Z,False
+J_0150,Backend Intern,Accenture,delta|azure|pandas|airflow|aws,40000,64181,2026-03-03T13:55:07Z,False
+J_0151,Analytics Engineer,Freshworks,scala|gcp|dbt,25000,48335,2026-04-04T18:24:54Z,True
+J_0152,Analytics Engineer,Paytm,tableau|kafka|pyspark|airflow|scala,20000,34303,2026-04-13T00:50:41Z,True
+J_0153,Data Scientist,Wipro,python|dbt|sql,60000,82714,2026-02-25T00:34:43Z,False
+J_0154,Data Engineer Intern,Swiggy,aws|dbt|python|gcp|kafka,25000,55209,2026-01-23T18:43:05Z,True
+J_0155,Backend Intern,TCS,gcp|sql|pandas|python,20000,47793,2026-04-14T22:52:05Z,False
+J_0156,Backend Intern,Zomato,gcp|tableau|sql|aws|dbt,25000,55435,2026-02-23T04:31:59Z,False
+J_0157,Analytics Engineer,Ola,aws|azure|delta|spark,30000,35995,2026-02-24T11:50:34Z,False
+J_0158,Backend Intern,Byju's,aws|sql|iceberg|airflow|hadoop,15000,36417,2025-12-22T22:31:07Z,True
+J_0159,Frontend Intern,Unacademy,airflow|azure|snowflake|python|delta,15000,20581,2026-01-19T10:14:04Z,True
+J_0160,Data Scientist,Meesho,sql|spark|iceberg|azure|pandas|dbt,25000,50580,2026-04-07T13:32:09Z,False
+J_0161,Frontend Intern,Ola,dbt|hadoop|delta|numpy|spark,20000,34627,2025-12-21T00:08:52Z,True
+J_0162,Data Engineer Intern,Swiggy,snowflake|azure|numpy|python,20000,39939,2026-04-08T04:35:30Z,False
+J_0163,Data Analytics Intern,upGrad,sql|delta|scala|tableau|azure|iceberg|snowflake,25000,37417,2026-01-10T18:24:07Z,True
+J_0164,Backend Intern,Unacademy,scala|gcp|spark|numpy|kafka|hadoop|dbt,20000,26618,2026-02-15T14:12:39Z,False
+J_0165,SDE-1,upGrad,pandas|python|airflow|dbt|snowflake|hadoop,25000,39834,2025-12-26T04:40:50Z,True
+J_0166,Backend Intern,Unacademy,snowflake|scala|kafka|dbt|gcp|pandas|python,15000,29835,2026-02-04T23:59:37Z,True
+J_0167,Backend Intern,Infosys,pyspark|snowflake|sql|pandas|delta|numpy|iceberg,15000,54100,2026-01-24T08:42:36Z,False
+J_0168,Backend Intern,Byju's,numpy|delta|scala|pyspark,25000,59872,2026-02-17T20:50:58Z,True
+J_0169,Backend Intern,Wipro,scala|spark|tableau|iceberg|azure|sql,60000,88743,2026-01-15T23:40:36Z,True
+J_0170,SDE-1,Paytm,hadoop|delta|gcp|numpy|pandas|azure|spark,30000,52057,2026-02-23T07:01:06Z,False
+J_0171,Data Engineer Intern,Razorpay,gcp|snowflake|hadoop|pandas|delta|numpy,25000,42982,2026-03-16T01:31:56Z,False
+J_0172,ML Engineer,Freshworks,iceberg|dbt|pyspark|spark|gcp|python,15000,48273,2026-04-15T08:28:17Z,True
+J_0173,ML Engineer,TCS,scala|hadoop|aws|tableau|iceberg|pyspark,15000,39227,2026-03-27T21:16:54Z,False
+J_0174,Data Engineer Intern,Swiggy,scala|azure|gcp,25000,59475,2026-01-25T09:32:13Z,False
+J_0175,ML Engineer,CRED,snowflake|spark|hadoop|azure|python|pandas|aws,30000,59240,2026-01-21T22:24:37Z,False
+J_0176,Data Scientist,CRED,iceberg|pyspark|delta|hadoop|dbt|airflow|python,25000,63926,2026-01-08T00:25:13Z,False
+J_0177,Full-stack Intern,TCS,airflow|hadoop|sql|gcp|scala,25000,43807,2026-01-26T09:32:57Z,False
+J_0178,Full-stack Intern,Freshworks,pandas|airflow|pyspark|hadoop|azure,40000,76892,2026-01-24T18:29:59Z,True
+J_0179,Frontend Intern,Ola,pyspark|delta|iceberg|spark|sql|tableau|dbt,20000,58338,2026-03-18T05:05:27Z,True
+J_0180,Data Analytics Intern,Meesho,dbt|python|scala,40000,58313,2026-02-24T06:32:32Z,False
+J_0181,Data Scientist,PhonePe,pandas|pyspark|snowflake|delta|kafka|azure,60000,82239,2026-04-03T03:11:07Z,True
+J_0182,Data Engineer Intern,upGrad,delta|spark|numpy,25000,40271,2026-01-11T12:55:42Z,False
+J_0183,Data Scientist,Razorpay,sql|gcp|pyspark|azure|scala,25000,64163,2026-02-17T08:12:58Z,True
+J_0184,Data Analytics Intern,Zomato,hadoop|aws|delta|numpy,40000,57823,2026-02-27T11:40:39Z,False
+J_0185,Data Scientist,CRED,pandas|hadoop|kafka|numpy|sql|iceberg,20000,39037,2026-04-19T09:05:52Z,False
+J_0186,Data Scientist,Meesho,sql|gcp|iceberg|pandas,15000,44922,2025-12-27T14:50:02Z,True
+J_0187,Full-stack Intern,Accenture,airflow|pandas|delta|azure|hadoop|numpy|dbt,60000,97127,2026-02-02T20:10:08Z,False
+J_0188,Data Scientist,Byju's,delta|pyspark|pandas,40000,72498,2026-01-23T04:01:24Z,False
+J_0189,SDE-1,Freshworks,azure|numpy|pyspark|airflow,20000,51089,2026-03-26T03:12:26Z,False
+J_0190,SDE-1,Paytm,pandas|iceberg|kafka,30000,61804,2026-04-08T04:38:11Z,False
+J_0191,Full-stack Intern,Infosys,azure|gcp|aws|hadoop|python|tableau,25000,61818,2026-03-08T11:37:39Z,False
+J_0192,Data Analytics Intern,Byju's,gcp|delta|airflow|iceberg|pyspark|aws,60000,72229,2025-12-21T21:47:47Z,False
+J_0193,Analytics Engineer,Zomato,aws|spark|numpy,20000,48114,2026-01-02T15:19:35Z,True
+J_0194,Data Analytics Intern,Meesho,tableau|kafka|airflow|gcp|iceberg,60000,90921,2026-03-06T11:13:27Z,False
+J_0195,Full-stack Intern,Unacademy,kafka|delta|python|dbt|gcp|azure,20000,59508,2026-03-31T02:13:08Z,False
+J_0196,Data Analytics Intern,CRED,pandas|python|delta|numpy|aws,30000,51207,2026-04-13T10:34:59Z,False
+J_0197,Data Engineer Intern,TCS,hadoop|iceberg|spark|sql|azure|snowflake,60000,92222,2026-04-16T02:04:29Z,True
+J_0198,Analytics Engineer,PhonePe,aws|kafka|pandas,60000,86215,2026-01-27T10:38:42Z,True
+J_0199,Frontend Intern,Wipro,pyspark|iceberg|dbt|kafka,25000,49086,2026-01-26T14:13:26Z,True
+J_0200,SDE-1,Ola,pandas|snowflake|delta|kafka|python|dbt,20000,50797,2026-02-06T14:55:00Z,True
+J_0201,Backend Intern,Zomato,delta|azure|scala|tableau|pandas|sql,30000,55356,2026-02-14T10:44:19Z,True
+J_0202,Data Engineer Intern,Freshworks,airflow|kafka|dbt|pandas|pyspark|sql|spark,60000,91423,2025-12-21T06:57:20Z,False
+J_0203,Backend Intern,Swiggy,iceberg|gcp|pandas|scala|airflow|spark,40000,47392,2026-02-16T13:58:02Z,False
+J_0204,Frontend Intern,Meesho,dbt|tableau|numpy|snowflake|pyspark|airflow|delta,15000,51653,2026-01-10T02:34:39Z,True
+J_0205,SDE-1,Razorpay,hadoop|python|airflow|iceberg|scala|sql,15000,30891,2026-03-12T16:12:01Z,False
+J_0206,Data Analytics Intern,Infosys,airflow|snowflake|dbt|spark|scala|iceberg,15000,47403,2026-02-01T10:38:05Z,True
+J_0207,Data Engineer Intern,Infosys,iceberg|snowflake|numpy|pandas|airflow,25000,40875,2026-03-23T12:28:49Z,False
+J_0208,Backend Intern,upGrad,iceberg|dbt|azure|pyspark|airflow|scala|aws,40000,53869,2026-03-19T02:35:41Z,False
+J_0209,Full-stack Intern,Infosys,hadoop|dbt|spark|python,15000,40436,2026-03-14T13:22:26Z,True
+J_0210,Data Engineer Intern,Wipro,pyspark|sql|azure|pandas|spark,60000,69375,2026-02-10T22:46:18Z,True
+J_0211,Data Analytics Intern,Meesho,pandas|gcp|tableau|airflow|dbt,25000,56428,2026-03-01T12:46:55Z,True
+J_0212,ML Engineer,Freshworks,iceberg|airflow|tableau|pandas,15000,26705,2026-03-26T09:30:59Z,False
+J_0213,Frontend Intern,Accenture,airflow|python|delta|pyspark,25000,35985,2025-12-21T14:14:53Z,True
+J_0214,ML Engineer,Accenture,numpy|spark|sql,20000,33976,2026-01-10T15:16:51Z,False
+J_0215,Data Scientist,Unacademy,snowflake|pyspark|delta|iceberg|kafka,30000,59727,2026-02-04T03:18:03Z,False
+J_0216,Frontend Intern,Unacademy,spark|kafka|airflow|numpy|gcp|hadoop|scala,25000,39364,2026-01-25T02:17:56Z,False
+J_0217,Frontend Intern,Freshworks,gcp|scala|airflow|python|tableau|dbt|delta,30000,57674,2026-01-27T15:39:13Z,True
+J_0218,Analytics Engineer,Meesho,scala|airflow|python|pyspark|delta|snowflake,40000,79472,2026-03-13T03:45:12Z,True
+J_0219,Frontend Intern,Unacademy,scala|iceberg|python,40000,62893,2026-04-13T11:44:51Z,False
+J_0220,Data Scientist,TCS,iceberg|tableau|sql,60000,66994,2026-01-18T13:52:11Z,False
+J_0221,ML Engineer,Accenture,pyspark|sql|scala|python|pandas|dbt|spark,30000,46593,2026-03-25T10:28:30Z,True
+J_0222,Data Engineer Intern,Swiggy,sql|numpy|pyspark|gcp|iceberg|hadoop,30000,47725,2025-12-21T18:32:06Z,True
+J_0223,Full-stack Intern,CRED,scala|snowflake|python|numpy|kafka|gcp|azure,25000,34029,2026-04-07T09:17:18Z,True
+J_0224,ML Engineer,Ola,airflow|azure|sql,40000,63056,2025-12-22T20:02:58Z,True
+J_0225,Analytics Engineer,Infosys,python|pandas|iceberg|dbt,60000,87982,2026-03-28T03:24:38Z,False
+J_0226,Data Engineer Intern,Wipro,pyspark|spark|airflow,30000,40663,2026-03-14T22:46:01Z,False
+J_0227,Data Analytics Intern,CRED,kafka|scala|azure,40000,50326,2026-03-03T02:08:42Z,False
+J_0228,Backend Intern,PhonePe,sql|aws|pandas|spark|hadoop,60000,74202,2025-12-31T06:43:23Z,False
+J_0229,Backend Intern,Meesho,kafka|airflow|pandas|hadoop|scala,30000,63809,2026-02-27T15:07:49Z,True
+J_0230,Full-stack Intern,upGrad,snowflake|azure|airflow|python|gcp,30000,60275,2026-03-20T18:21:57Z,True
+J_0231,SDE-1,upGrad,kafka|numpy|iceberg|sql|dbt,60000,78809,2026-02-28T20:38:11Z,True
+J_0232,Frontend Intern,Swiggy,snowflake|airflow|dbt,30000,44162,2026-01-19T06:28:19Z,False
+J_0233,SDE-1,Swiggy,pyspark|scala|python|spark|kafka,25000,61162,2026-02-14T00:07:37Z,False
+J_0234,Data Engineer Intern,CRED,pandas|airflow|azure|iceberg|spark,60000,66425,2026-01-24T18:04:17Z,False
+J_0235,SDE-1,TCS,delta|iceberg|scala|pandas|airflow|tableau,40000,71289,2026-02-20T17:05:28Z,True
+J_0236,Analytics Engineer,Freshworks,gcp|iceberg|aws|pandas|python|spark,20000,58567,2026-03-18T16:35:28Z,False
+J_0237,Analytics Engineer,Meesho,hadoop|tableau|numpy|aws|python|sql|snowflake,40000,54270,2026-02-11T19:02:45Z,False
+J_0238,ML Engineer,Wipro,hadoop|kafka|airflow,30000,54744,2026-02-19T06:49:18Z,True
+J_0239,Backend Intern,Meesho,spark|delta|hadoop|numpy|iceberg|aws,20000,49527,2026-04-19T00:57:21Z,False
+J_0240,Full-stack Intern,Freshworks,tableau|aws|kafka|azure|delta|numpy,20000,49660,2026-01-20T00:00:30Z,True
+J_0241,SDE-1,PhonePe,hadoop|aws|numpy|azure|tableau,15000,47826,2025-12-25T02:03:48Z,False
+J_0242,Data Engineer Intern,upGrad,python|delta|airflow|aws|pyspark|dbt,40000,68742,2026-02-13T00:10:48Z,True
+J_0243,SDE-1,Razorpay,hadoop|dbt|kafka|python,40000,58843,2026-02-20T08:52:03Z,False
+J_0244,Full-stack Intern,TCS,gcp|hadoop|pandas|snowflake,15000,45350,2026-01-16T15:59:57Z,True
+J_0245,SDE-1,CRED,aws|snowflake|pyspark|delta,25000,35415,2026-02-11T18:11:11Z,True
+J_0246,SDE-1,Zomato,numpy|hadoop|aws|tableau,60000,94798,2026-04-17T17:59:35Z,False
+J_0247,SDE-1,Infosys,pandas|gcp|iceberg,60000,72599,2025-12-23T18:51:08Z,False
+J_0248,Full-stack Intern,Accenture,tableau|scala|pyspark|aws|spark,40000,72791,2026-01-06T18:02:40Z,False
+J_0249,Data Engineer Intern,PhonePe,numpy|iceberg|kafka,60000,98744,2025-12-21T16:07:44Z,False
+J_0250,Data Analytics Intern,Wipro,sql|pyspark|dbt|delta|airflow,30000,38281,2025-12-24T14:55:41Z,False
+J_0251,SDE-1,Unacademy,python|iceberg|airflow|hadoop|dbt,25000,57332,2026-04-16T14:21:21Z,False
+J_0252,Frontend Intern,Swiggy,pyspark|scala|sql|iceberg|snowflake|kafka|tableau,25000,41484,2026-04-03T16:18:48Z,True
+J_0253,ML Engineer,Accenture,iceberg|scala|azure|snowflake|pandas|pyspark,20000,59311,2025-12-30T11:56:59Z,False
+J_0254,Data Engineer Intern,Unacademy,sql|hadoop|pyspark|kafka|iceberg,15000,25161,2026-02-13T09:51:54Z,False
+J_0255,SDE-1,Zomato,iceberg|spark|gcp|sql,30000,47559,2025-12-30T03:26:10Z,False
+J_0256,Analytics Engineer,Paytm,scala|dbt|kafka,25000,58635,2026-02-25T15:24:04Z,True
+J_0257,Analytics Engineer,Swiggy,aws|airflow|pandas|hadoop|python|kafka|pyspark,25000,31226,2026-01-29T13:06:23Z,True
+J_0258,Frontend Intern,Wipro,numpy|pyspark|delta|snowflake|python|scala|airflow,25000,44487,2026-04-07T15:01:55Z,False
+J_0259,Data Scientist,Infosys,numpy|aws|dbt|azure|iceberg|python|airflow,60000,87321,2026-02-16T22:21:24Z,False
+J_0260,ML Engineer,Wipro,kafka|airflow|aws|hadoop|tableau|python,30000,40151,2026-01-15T12:33:59Z,False
+J_0261,Backend Intern,upGrad,pandas|numpy|azure|snowflake|delta,15000,21937,2026-03-20T17:27:04Z,True
+J_0262,Full-stack Intern,Infosys,python|pandas|dbt|pyspark|kafka|iceberg,40000,53630,2026-02-05T12:23:38Z,True
+J_0263,SDE-1,Meesho,pyspark|pandas|airflow|gcp,15000,30427,2026-02-01T02:39:42Z,False
+J_0264,Backend Intern,Infosys,iceberg|numpy|scala|snowflake|sql|azure|aws,25000,50825,2026-01-12T11:05:27Z,False
+J_0265,SDE-1,Accenture,pandas|azure|airflow|snowflake|gcp|spark,20000,51217,2026-02-22T23:55:20Z,True
+J_0266,Full-stack Intern,Wipro,pyspark|aws|gcp|kafka,40000,71889,2026-03-14T07:46:45Z,True
+J_0267,Backend Intern,PhonePe,snowflake|spark|gcp|python|airflow|pandas|pyspark,40000,55909,2025-12-30T10:50:28Z,False
+J_0268,Data Engineer Intern,upGrad,aws|snowflake|kafka,60000,75576,2026-01-21T02:38:33Z,False
+J_0269,Backend Intern,CRED,kafka|numpy|hadoop|dbt|sql|python,60000,78566,2025-12-28T20:10:43Z,False
+J_0270,Backend Intern,Wipro,airflow|azure|pyspark|aws,30000,56709,2026-03-20T01:45:51Z,True
+J_0271,Data Engineer Intern,Zomato,gcp|snowflake|dbt,30000,60252,2026-04-06T08:04:21Z,False
+J_0272,Analytics Engineer,Freshworks,tableau|python|azure|delta|gcp|scala|snowflake,25000,49199,2026-02-01T15:20:12Z,True
+J_0273,SDE-1,Wipro,pyspark|tableau|hadoop|gcp|dbt|aws,25000,37325,2026-03-18T04:37:12Z,False
+J_0274,Full-stack Intern,PhonePe,dbt|kafka|iceberg|sql,30000,56628,2026-04-05T14:48:40Z,False
+J_0275,Data Scientist,Paytm,numpy|pandas|azure|airflow|aws,60000,94515,2026-02-28T21:59:51Z,False
+J_0276,Data Analytics Intern,PhonePe,snowflake|pandas|python|pyspark,40000,69304,2025-12-31T13:42:58Z,False
+J_0277,Frontend Intern,Byju's,pandas|dbt|azure|numpy,60000,84325,2026-03-21T00:15:06Z,True
+J_0278,Frontend Intern,TCS,delta|python|kafka|pandas|hadoop,20000,34723,2025-12-27T13:16:07Z,True
+J_0279,Full-stack Intern,TCS,airflow|scala|hadoop|pandas|gcp|iceberg,25000,50597,2026-01-08T09:04:16Z,False
+J_0280,Data Scientist,CRED,dbt|airflow|tableau|azure|kafka|python|numpy,30000,39243,2026-02-12T12:27:15Z,True
+J_0281,Backend Intern,Paytm,iceberg|pyspark|kafka|airflow,25000,62688,2026-01-20T19:24:21Z,True
+J_0282,Analytics Engineer,Paytm,scala|sql|aws|numpy,60000,71477,2026-02-15T00:20:55Z,True
+J_0283,Analytics Engineer,Razorpay,azure|snowflake|delta,25000,46036,2026-03-01T06:37:04Z,True
+J_0284,Backend Intern,Paytm,airflow|sql|iceberg|dbt|hadoop|snowflake,60000,77452,2026-04-07T15:16:53Z,True
+J_0285,Frontend Intern,Swiggy,delta|tableau|dbt|snowflake,40000,51440,2026-01-05T17:42:29Z,True
+J_0286,Data Engineer Intern,Meesho,pyspark|azure|spark|delta|tableau|sql,25000,44089,2025-12-24T19:44:57Z,False
+J_0287,Data Analytics Intern,Infosys,azure|kafka|tableau,25000,30032,2026-03-02T02:46:14Z,False
+J_0288,Frontend Intern,Accenture,numpy|snowflake|dbt|iceberg,40000,63596,2026-02-20T19:35:21Z,False
+J_0289,Backend Intern,Unacademy,tableau|snowflake|pandas|numpy|delta,40000,52305,2026-03-15T14:58:43Z,False
+J_0290,Full-stack Intern,Accenture,airflow|tableau|spark|aws|kafka|numpy,15000,39964,2026-04-01T15:16:53Z,False
+J_0291,Analytics Engineer,CRED,pyspark|delta|kafka|hadoop,25000,62884,2026-02-19T16:48:30Z,False
+J_0292,Data Scientist,Freshworks,kafka|hadoop|numpy|spark|pyspark,40000,70967,2026-03-17T15:27:36Z,True
+J_0293,ML Engineer,Unacademy,dbt|gcp|iceberg|pyspark|hadoop|delta|snowflake,40000,69300,2026-03-22T20:18:50Z,False
+J_0294,Full-stack Intern,Unacademy,pandas|gcp|aws|dbt|kafka|python,25000,56481,2026-04-09T06:14:56Z,False
+J_0295,ML Engineer,Wipro,python|kafka|snowflake|numpy|scala,25000,46772,2026-02-21T18:08:49Z,False
+J_0296,Full-stack Intern,Infosys,numpy|kafka|snowflake|pandas|iceberg|delta,15000,37954,2026-03-30T06:06:54Z,True
+J_0297,ML Engineer,Unacademy,dbt|sql|aws|scala|azure|delta,20000,41373,2026-02-24T14:26:27Z,False
+J_0298,Data Engineer Intern,Swiggy,iceberg|scala|azure|dbt|hadoop,15000,27276,2026-01-18T09:03:44Z,True
+J_0299,Data Engineer Intern,Unacademy,hadoop|tableau|pandas|dbt|pyspark|iceberg,60000,70767,2026-01-24T21:33:18Z,True
+J_0300,Analytics Engineer,Ola,snowflake|pandas|python|spark|aws|gcp|sql,25000,50575,2026-02-08T20:32:53Z,False
+J_0301,Backend Intern,CRED,azure|delta|tableau|airflow|dbt,60000,78040,2026-02-28T16:51:08Z,False
+J_0302,Data Analytics Intern,PhonePe,gcp|tableau|aws,40000,76873,2026-04-10T16:09:33Z,True
+J_0303,Full-stack Intern,Zomato,gcp|sql|numpy|aws|iceberg|delta|hadoop,40000,66872,2026-04-06T23:14:50Z,True
+J_0304,Data Engineer Intern,Freshworks,airflow|snowflake|spark|pandas|delta|azure|numpy,40000,57510,2026-04-05T19:24:22Z,False
+J_0305,Data Scientist,Wipro,numpy|spark|airflow|tableau,25000,52269,2026-01-21T19:59:15Z,False
+J_0306,SDE-1,Byju's,aws|python|snowflake,15000,34760,2026-02-16T09:34:49Z,False
+J_0307,Frontend Intern,Paytm,numpy|azure|kafka|aws|gcp|pandas|airflow,20000,35001,2026-03-14T07:54:27Z,True
+J_0308,Frontend Intern,CRED,python|sql|hadoop,20000,47840,2026-04-06T13:11:35Z,False
+J_0309,Backend Intern,Meesho,pandas|airflow|gcp|hadoop,25000,45268,2026-03-08T19:36:28Z,False
+J_0310,ML Engineer,Wipro,aws|python|azure,15000,33669,2026-02-05T03:07:50Z,True
+J_0311,Data Scientist,TCS,kafka|aws|pyspark|sql,30000,46475,2026-01-11T14:35:29Z,True
+J_0312,Backend Intern,Freshworks,scala|numpy|gcp|pyspark|azure|sql,20000,58220,2026-02-09T02:56:17Z,False
+J_0313,Analytics Engineer,Freshworks,python|tableau|aws|dbt|kafka|gcp,25000,36557,2026-02-10T03:03:59Z,False
+J_0314,Data Engineer Intern,Infosys,delta|spark|aws|azure|tableau,25000,31038,2026-02-25T15:43:49Z,False
+J_0315,ML Engineer,Paytm,python|hadoop|snowflake|spark,15000,50789,2026-04-12T10:17:23Z,True
+J_0316,Backend Intern,Byju's,gcp|airflow|tableau|spark|azure,40000,78986,2026-03-21T14:30:57Z,True
+J_0317,Data Engineer Intern,CRED,dbt|kafka|pandas,25000,56453,2026-02-06T12:50:10Z,False
+J_0318,Full-stack Intern,Zomato,numpy|python|dbt,40000,47242,2026-03-22T23:19:24Z,False
+J_0319,Analytics Engineer,TCS,snowflake|airflow|tableau|sql|python|dbt|pyspark,15000,26037,2026-01-28T11:12:15Z,True
+J_0320,Data Scientist,Wipro,tableau|azure|hadoop|gcp|pandas|aws,15000,20047,2026-02-18T12:37:37Z,False
+J_0321,Frontend Intern,PhonePe,tableau|scala|pyspark|delta|azure,30000,47863,2026-03-26T13:34:33Z,True
+J_0322,ML Engineer,PhonePe,spark|pyspark|aws|hadoop,40000,51896,2026-03-02T11:56:48Z,True
+J_0323,ML Engineer,Byju's,azure|snowflake|iceberg|aws|spark,25000,51492,2026-01-28T01:14:24Z,False
+J_0324,ML Engineer,Swiggy,sql|kafka|airflow|python|spark|numpy,60000,67235,2026-03-04T19:38:06Z,True
+J_0325,Full-stack Intern,Zomato,dbt|tableau|scala|pyspark|numpy|pandas|kafka,30000,64629,2026-03-09T06:47:27Z,False
+J_0326,Frontend Intern,Wipro,iceberg|snowflake|numpy,40000,67102,2026-03-14T19:41:20Z,False
+J_0327,Data Scientist,Wipro,numpy|snowflake|iceberg,25000,34136,2026-02-08T01:00:33Z,False
+J_0328,Data Analytics Intern,PhonePe,delta|azure|pyspark,60000,72882,2026-01-03T02:38:54Z,False
+J_0329,Full-stack Intern,Byju's,gcp|spark|airflow|kafka|tableau|iceberg,20000,37771,2026-03-23T11:35:28Z,True
+J_0330,Backend Intern,upGrad,hadoop|snowflake|sql|aws|iceberg|airflow|gcp,15000,35101,2026-01-06T21:57:59Z,True
+J_0331,ML Engineer,Freshworks,delta|hadoop|gcp|dbt,25000,43251,2026-02-24T22:27:45Z,True
+J_0332,Frontend Intern,TCS,gcp|dbt|azure|airflow|spark|scala|hadoop,30000,35023,2026-04-05T11:04:42Z,False
+J_0333,Analytics Engineer,Byju's,spark|sql|gcp|tableau,60000,74423,2026-01-16T14:41:38Z,True
+J_0334,SDE-1,CRED,aws|kafka|delta|gcp|airflow|sql,20000,39831,2026-02-25T08:43:54Z,True
+J_0335,Data Engineer Intern,PhonePe,azure|hadoop|iceberg|aws,30000,56461,2026-04-17T21:48:46Z,True
+J_0336,Frontend Intern,Freshworks,dbt|delta|azure|hadoop|gcp|sql|iceberg,40000,74777,2026-03-21T03:48:55Z,True
+J_0337,Full-stack Intern,Ola,aws|iceberg|pyspark,60000,95574,2026-01-27T07:06:47Z,True
+J_0338,Data Scientist,Byju's,snowflake|pyspark|spark|scala,60000,88760,2026-03-04T03:29:43Z,False
+J_0339,SDE-1,Infosys,pyspark|iceberg|snowflake,60000,81493,2026-01-11T09:22:15Z,False
+J_0340,Frontend Intern,upGrad,python|pyspark|dbt,30000,50908,2025-12-27T06:02:54Z,False
+J_0341,SDE-1,Ola,dbt|aws|snowflake,20000,27759,2025-12-24T04:03:02Z,True
+J_0342,Data Engineer Intern,Freshworks,delta|scala|gcp,40000,70804,2026-04-12T06:12:58Z,False
+J_0343,Data Scientist,Wipro,snowflake|sql|aws|gcp|dbt|numpy|scala,60000,93298,2026-04-15T00:30:23Z,True
+J_0344,ML Engineer,Zomato,pyspark|pandas|gcp|aws|python,40000,74925,2026-03-01T18:32:18Z,False
+J_0345,Full-stack Intern,upGrad,iceberg|azure|sql|airflow,60000,95028,2026-02-27T21:31:19Z,True
+J_0346,Analytics Engineer,Unacademy,scala|airflow|dbt|gcp|sql|snowflake,20000,48055,2025-12-21T07:21:19Z,True
+J_0347,Frontend Intern,Freshworks,aws|numpy|dbt,25000,42202,2026-02-04T16:30:21Z,True
+J_0348,Data Scientist,upGrad,azure|scala|airflow|spark|dbt,25000,31043,2026-03-29T08:27:46Z,True
+J_0349,Frontend Intern,Byju's,tableau|airflow|aws|pandas|scala|sql|pyspark,40000,51118,2026-04-02T10:02:34Z,False
+J_0350,ML Engineer,Unacademy,scala|aws|hadoop|azure|kafka|sql|tableau,25000,49261,2025-12-21T21:15:20Z,True
+J_0351,Backend Intern,Wipro,delta|hadoop|iceberg,25000,31727,2026-01-13T23:29:46Z,True
+J_0352,Backend Intern,Paytm,azure|kafka|hadoop|python,60000,84450,2026-03-03T16:22:05Z,True
+J_0353,Data Scientist,Wipro,tableau|kafka|gcp|spark|dbt|iceberg,40000,71189,2025-12-29T06:10:36Z,False
+J_0354,Frontend Intern,upGrad,gcp|scala|snowflake|azure|pyspark,60000,85981,2026-01-05T01:41:51Z,False
+J_0355,ML Engineer,Unacademy,tableau|hadoop|pyspark|azure,15000,53256,2026-01-17T14:54:06Z,False
+J_0356,Backend Intern,upGrad,delta|azure|iceberg|pandas|gcp|python|tableau,15000,48696,2026-01-13T11:11:34Z,False
+J_0357,ML Engineer,Zomato,azure|sql|scala|delta|gcp|dbt|spark,15000,24179,2026-02-10T04:19:09Z,True
+J_0358,Frontend Intern,Ola,dbt|gcp|hadoop,60000,90968,2026-03-09T05:04:34Z,False
+J_0359,Analytics Engineer,Byju's,delta|snowflake|gcp|spark|aws,25000,50608,2026-04-18T16:25:29Z,True
+J_0360,Full-stack Intern,Freshworks,spark|snowflake|gcp,60000,75564,2026-03-13T05:00:36Z,True
+J_0361,ML Engineer,CRED,dbt|pyspark|numpy,40000,50839,2026-04-01T17:10:34Z,False
+J_0362,SDE-1,Infosys,dbt|hadoop|numpy|spark|sql|snowflake,40000,68275,2026-03-16T13:12:19Z,False
+J_0363,Data Scientist,Razorpay,iceberg|aws|kafka|pyspark,25000,53016,2026-04-04T03:51:50Z,False
+J_0364,Data Engineer Intern,Ola,sql|tableau|scala,30000,41258,2026-03-18T06:40:20Z,True
+J_0365,Data Analytics Intern,Zomato,aws|pandas|python|tableau|snowflake,40000,69565,2026-04-06T12:37:22Z,True
+J_0366,Data Scientist,CRED,kafka|scala|pyspark|gcp|numpy|spark|pandas,20000,49521,2025-12-29T13:02:10Z,True
+J_0367,ML Engineer,PhonePe,python|sql|pyspark|aws|hadoop|gcp,30000,42063,2026-02-11T05:17:26Z,True
+J_0368,Analytics Engineer,CRED,dbt|kafka|hadoop,40000,67111,2026-01-21T17:05:53Z,False
+J_0369,Data Engineer Intern,Razorpay,delta|scala|hadoop|pyspark|gcp,30000,67162,2026-03-14T10:16:17Z,False
+J_0370,Full-stack Intern,Swiggy,pyspark|snowflake|spark|numpy|azure|airflow,15000,54559,2025-12-31T16:14:43Z,False
+J_0371,Backend Intern,Byju's,hadoop|azure|kafka|tableau|numpy,40000,72939,2026-01-31T12:06:51Z,False
+J_0372,Data Engineer Intern,Accenture,dbt|pyspark|numpy,30000,66726,2025-12-22T14:45:49Z,False
+J_0373,Data Scientist,Byju's,snowflake|sql|kafka,25000,35844,2026-02-19T08:43:05Z,True
+J_0374,Full-stack Intern,Swiggy,python|sql|pandas|kafka|pyspark|airflow|iceberg,60000,68436,2026-01-25T18:19:36Z,True
+J_0375,Full-stack Intern,Swiggy,pyspark|azure|airflow|snowflake,40000,59520,2026-02-16T19:14:42Z,True
+J_0376,Backend Intern,Accenture,python|sql|aws|pyspark,60000,72623,2026-02-22T14:26:38Z,True
+J_0377,Full-stack Intern,CRED,delta|scala|aws|python|spark|gcp,20000,41133,2026-02-28T20:46:10Z,False
+J_0378,Frontend Intern,Meesho,gcp|python|tableau|dbt|kafka,60000,89715,2026-02-25T00:01:20Z,True
+J_0379,Frontend Intern,Zomato,sql|azure|hadoop|numpy|scala|pyspark,30000,39621,2026-03-28T18:56:56Z,True
+J_0380,Data Scientist,Razorpay,tableau|numpy|airflow|scala,20000,41809,2026-02-01T16:13:57Z,False
+J_0381,Frontend Intern,Byju's,iceberg|pyspark|snowflake|kafka|gcp|dbt|sql,40000,77634,2026-03-12T00:15:34Z,True
+J_0382,Data Analytics Intern,Accenture,pyspark|tableau|delta|python|gcp|kafka,40000,57089,2026-04-03T18:21:31Z,True
+J_0383,SDE-1,upGrad,hadoop|azure|sql|numpy|iceberg|aws,20000,37384,2026-03-10T03:19:08Z,False
+J_0384,Data Analytics Intern,PhonePe,iceberg|airflow|scala|delta|pyspark,15000,23698,2026-02-03T00:21:17Z,False
+J_0385,Frontend Intern,Razorpay,airflow|kafka|numpy|dbt,20000,53761,2026-04-15T02:02:55Z,False
+J_0386,Backend Intern,Byju's,airflow|hadoop|numpy|python|sql|dbt|gcp,15000,46864,2026-01-09T09:43:29Z,True
+J_0387,ML Engineer,Unacademy,sql|hadoop|pyspark|numpy|dbt,40000,45386,2026-02-04T23:25:01Z,True
+J_0388,Data Analytics Intern,TCS,pyspark|delta|sql|pandas|iceberg|dbt|python,40000,76223,2025-12-30T00:39:18Z,False
+J_0389,SDE-1,Wipro,dbt|iceberg|scala|numpy,25000,59817,2026-01-16T23:05:48Z,True
+J_0390,Analytics Engineer,upGrad,hadoop|pandas|airflow|kafka,30000,51856,2026-03-19T20:52:13Z,False
+J_0391,Data Analytics Intern,Infosys,hadoop|sql|azure|kafka|scala,60000,79875,2026-01-31T21:28:05Z,True
+J_0392,Full-stack Intern,Meesho,gcp|tableau|azure|scala|delta|snowflake,60000,90456,2026-01-19T23:51:13Z,False
+J_0393,Full-stack Intern,TCS,snowflake|kafka|delta|pyspark,25000,42515,2025-12-30T15:07:36Z,True
+J_0394,Full-stack Intern,Wipro,gcp|scala|pandas|pyspark|kafka|spark|delta,60000,72120,2026-01-04T14:14:06Z,False
+J_0395,SDE-1,Swiggy,kafka|numpy|airflow|snowflake,25000,55184,2026-01-09T12:16:17Z,False
+J_0396,Data Scientist,Zomato,aws|airflow|iceberg|scala,20000,35214,2026-01-31T23:07:12Z,True
+J_0397,SDE-1,Unacademy,delta|hadoop|dbt|airflow|pandas|aws,20000,59772,2026-04-13T03:28:57Z,True
+J_0398,Data Engineer Intern,Zomato,sql|numpy|spark,15000,40532,2026-02-09T17:40:29Z,True
+J_0399,ML Engineer,Meesho,spark|scala|numpy|pandas|gcp,60000,94269,2026-01-17T17:55:58Z,False
+J_0400,ML Engineer,Byju's,pyspark|airflow|hadoop|spark|kafka,60000,72762,2026-01-06T15:16:42Z,False
+J_0401,Analytics Engineer,Accenture,delta|pyspark|hadoop|azure|tableau,20000,31361,2026-04-12T08:29:01Z,True
+J_0402,Data Scientist,TCS,airflow|python|scala|azure|delta|pandas,30000,46916,2026-01-23T03:16:31Z,True
+J_0403,Full-stack Intern,Unacademy,scala|spark|airflow,30000,43843,2026-02-20T17:24:42Z,False
+J_0404,Data Engineer Intern,Meesho,pandas|spark|scala|tableau|aws,20000,57423,2026-04-16T21:38:31Z,False
+J_0405,Full-stack Intern,Ola,snowflake|iceberg|python|delta,20000,45877,2026-03-18T14:16:26Z,True
+J_0406,Backend Intern,Byju's,azure|gcp|numpy|python|hadoop,60000,95021,2026-04-04T10:02:06Z,False
+J_0407,Data Analytics Intern,PhonePe,python|tableau|pandas|kafka|pyspark|delta|azure,40000,70453,2026-04-13T00:18:23Z,False
+J_0408,SDE-1,Unacademy,snowflake|gcp|tableau|scala|airflow,60000,73673,2026-02-11T18:24:32Z,False
+J_0409,Backend Intern,Accenture,iceberg|spark|azure|dbt|numpy,40000,50557,2026-02-17T03:09:06Z,True
+J_0410,ML Engineer,Freshworks,spark|airflow|scala|sql,15000,30092,2025-12-29T22:42:43Z,True
+J_0411,Data Engineer Intern,Zomato,numpy|spark|hadoop,15000,50196,2026-02-14T17:53:29Z,True
+J_0412,Data Engineer Intern,Swiggy,kafka|spark|airflow|sql,40000,51002,2026-04-19T06:05:57Z,False
+J_0413,Backend Intern,Meesho,spark|aws|numpy,60000,99690,2026-03-13T14:14:21Z,False
+J_0414,Data Scientist,CRED,pandas|sql|azure|spark|iceberg|python,20000,30213,2026-03-16T20:28:32Z,True
+J_0415,ML Engineer,Meesho,spark|kafka|airflow,25000,51063,2026-03-06T18:46:08Z,True
+J_0416,Frontend Intern,Infosys,pandas|kafka|gcp|hadoop|dbt|airflow|scala,30000,50779,2026-01-06T23:27:14Z,True
+J_0417,Frontend Intern,Byju's,spark|sql|tableau|delta,60000,87559,2026-04-08T06:29:50Z,False
+J_0418,Data Scientist,Zomato,numpy|scala|spark,15000,37199,2026-02-17T01:03:15Z,False
+J_0419,Data Scientist,upGrad,pandas|dbt|numpy|iceberg|scala|pyspark,25000,44949,2025-12-26T23:18:51Z,True
+J_0420,Full-stack Intern,Infosys,azure|numpy|aws|delta|gcp|tableau,15000,49633,2026-03-21T08:26:14Z,True
+J_0421,SDE-1,Infosys,hadoop|numpy|aws,60000,74790,2026-02-01T10:34:34Z,False
+J_0422,SDE-1,CRED,airflow|kafka|pyspark|python,15000,45643,2026-01-18T06:58:39Z,True
+J_0423,Full-stack Intern,Meesho,dbt|aws|airflow,25000,49891,2026-01-03T07:56:35Z,False
+J_0424,Backend Intern,Accenture,dbt|gcp|snowflake|tableau|spark|delta|numpy,20000,28916,2026-02-10T09:10:46Z,True
+J_0425,Full-stack Intern,Accenture,pandas|hadoop|delta|iceberg|dbt|aws|pyspark,15000,47285,2026-01-14T18:04:21Z,True
+J_0426,ML Engineer,Unacademy,gcp|pyspark|hadoop|iceberg|dbt,25000,52354,2026-02-06T12:02:28Z,True
+J_0427,Data Scientist,Razorpay,azure|scala|gcp,25000,46129,2026-03-10T07:51:52Z,False
+J_0428,Backend Intern,Unacademy,iceberg|numpy|snowflake|scala|pyspark|spark,60000,86091,2025-12-29T21:00:20Z,True
+J_0429,Backend Intern,Paytm,dbt|python|numpy|iceberg|sql|kafka,60000,74722,2026-02-16T12:58:46Z,True
+J_0430,Data Scientist,Wipro,iceberg|spark|azure|kafka|aws|pyspark|hadoop,40000,54377,2026-02-08T08:39:04Z,True
+J_0431,Backend Intern,Paytm,numpy|scala|dbt,30000,44576,2026-02-26T00:51:28Z,False
+J_0432,Full-stack Intern,Meesho,pyspark|pandas|sql|scala,30000,47775,2026-01-08T08:18:11Z,False
+J_0433,SDE-1,Infosys,pandas|iceberg|kafka,20000,34441,2026-02-21T12:03:30Z,True
+J_0434,SDE-1,Razorpay,azure|hadoop|tableau|numpy|kafka,15000,30287,2025-12-25T16:28:54Z,False
+J_0435,Data Engineer Intern,Ola,iceberg|kafka|azure|hadoop|spark|pandas,25000,38423,2026-02-16T07:37:33Z,True
+J_0436,Data Analytics Intern,Unacademy,dbt|scala|hadoop|airflow|gcp|snowflake|kafka,15000,21668,2026-01-25T16:12:13Z,False
+J_0437,ML Engineer,Unacademy,sql|pandas|numpy|snowflake|aws|azure|python,30000,68535,2026-04-09T03:40:39Z,True
+J_0438,Data Engineer Intern,Razorpay,hadoop|pyspark|airflow|scala,30000,50401,2026-04-02T03:54:15Z,False
+J_0439,Full-stack Intern,Razorpay,numpy|spark|dbt|kafka|iceberg|python,25000,64385,2026-01-29T03:39:18Z,False
+J_0440,ML Engineer,Razorpay,azure|airflow|pyspark|aws,60000,82088,2026-03-06T20:15:26Z,True
+J_0441,Analytics Engineer,Zomato,delta|dbt|sql,15000,22764,2026-03-08T11:22:55Z,True
+J_0442,ML Engineer,Unacademy,aws|tableau|python|iceberg|snowflake,20000,43981,2026-01-14T10:03:17Z,True
+J_0443,SDE-1,Razorpay,kafka|sql|tableau,60000,80040,2025-12-27T20:14:19Z,False
+J_0444,Full-stack Intern,Razorpay,scala|snowflake|airflow|kafka|pyspark|spark|iceberg,15000,20481,2026-02-24T08:30:04Z,False
+J_0445,Full-stack Intern,TCS,kafka|iceberg|numpy|pyspark,40000,66434,2026-02-28T10:43:09Z,False
+J_0446,Frontend Intern,Wipro,azure|snowflake|aws,15000,33408,2026-03-15T02:37:13Z,True
+J_0447,SDE-1,Freshworks,kafka|pandas|tableau|azure,15000,39881,2026-02-08T21:54:20Z,False
+J_0448,Backend Intern,Ola,snowflake|python|pandas|tableau,15000,34183,2026-03-15T20:51:21Z,False
+J_0449,Data Scientist,TCS,azure|aws|airflow|tableau|delta,20000,56468,2026-01-01T02:20:37Z,False
+J_0450,Backend Intern,Razorpay,pyspark|python|snowflake|pandas|dbt|gcp|hadoop,60000,65000,2026-02-20T01:50:12Z,False
+J_0451,ML Engineer,Freshworks,scala|kafka|snowflake,30000,62732,2026-02-06T14:31:43Z,True
+J_0452,SDE-1,Zomato,sql|pyspark|pandas|spark|hadoop,25000,59945,2026-03-11T06:11:15Z,True
+J_0453,Data Analytics Intern,Accenture,python|pyspark|spark|scala,60000,80388,2026-01-21T14:24:24Z,False
+J_0454,Data Analytics Intern,Accenture,hadoop|kafka|spark,25000,56053,2026-02-05T17:04:19Z,True
+J_0455,Data Scientist,Infosys,gcp|airflow|python|pandas|dbt|numpy,15000,24129,2026-02-24T11:16:14Z,False
+J_0456,Data Scientist,Meesho,python|iceberg|kafka|pyspark|scala,60000,94359,2026-04-19T14:55:09Z,True
+J_0457,SDE-1,Accenture,sql|pandas|scala|tableau,40000,69071,2026-01-21T09:41:10Z,False
+J_0458,ML Engineer,upGrad,tableau|hadoop|numpy|scala|dbt,40000,67727,2026-01-30T23:14:06Z,True
+J_0459,SDE-1,upGrad,scala|pandas|hadoop|gcp|numpy|aws,40000,77408,2026-01-04T16:50:43Z,False
+J_0460,SDE-1,Razorpay,iceberg|hadoop|numpy|azure|airflow|dbt|delta,25000,59541,2026-01-05T07:05:28Z,True
+J_0461,Full-stack Intern,PhonePe,numpy|airflow|hadoop|gcp|aws|pyspark|scala,15000,45975,2026-04-04T03:02:54Z,False
+J_0462,Analytics Engineer,Swiggy,pyspark|python|iceberg|azure|dbt|numpy|spark,15000,34862,2026-02-13T23:15:15Z,False
+J_0463,Full-stack Intern,upGrad,aws|snowflake|tableau|pyspark|pandas|airflow|scala,15000,46738,2026-03-30T08:00:58Z,True
+J_0464,Data Scientist,PhonePe,python|snowflake|pyspark|delta,60000,74460,2026-04-05T23:29:34Z,False
+J_0465,SDE-1,Byju's,tableau|pyspark|kafka|python,20000,26062,2026-04-13T23:04:32Z,False
+J_0466,Backend Intern,CRED,spark|iceberg|azure,15000,27795,2026-01-28T01:43:19Z,False
+J_0467,SDE-1,Zomato,pandas|numpy|aws|airflow|pyspark|hadoop|kafka,60000,96355,2025-12-21T14:48:35Z,True
+J_0468,Data Scientist,Swiggy,numpy|scala|python|hadoop|snowflake|delta,60000,90149,2026-01-05T07:59:51Z,True
+J_0469,Full-stack Intern,Accenture,aws|sql|dbt,30000,40690,2026-01-17T18:56:14Z,False
+J_0470,Data Engineer Intern,Razorpay,pyspark|azure|aws|scala,40000,67110,2026-03-04T03:05:39Z,False
+J_0471,Full-stack Intern,Byju's,azure|kafka|gcp|sql|python|numpy|spark,15000,21850,2026-01-11T16:29:48Z,False
+J_0472,Analytics Engineer,CRED,iceberg|aws|sql|hadoop|pandas|dbt,15000,53864,2026-01-14T15:18:46Z,True
+J_0473,Frontend Intern,CRED,pandas|numpy|gcp,30000,42187,2026-03-20T22:35:51Z,True
+J_0474,Data Scientist,Accenture,python|aws|airflow|snowflake,20000,49688,2026-04-11T11:31:46Z,False
+J_0475,Backend Intern,Unacademy,dbt|delta|azure|aws|scala|sql|tableau,20000,35776,2026-03-23T23:15:23Z,True
+J_0476,Data Analytics Intern,Wipro,scala|gcp|python|tableau|iceberg|azure,60000,89136,2026-01-04T11:10:41Z,True
+J_0477,Data Scientist,Swiggy,gcp|tableau|spark|sql|azure,30000,52221,2026-02-09T13:15:54Z,False
+J_0478,Analytics Engineer,Paytm,pyspark|python|airflow|sql,30000,47241,2026-03-12T20:09:52Z,False
+J_0479,Analytics Engineer,upGrad,iceberg|dbt|spark|aws|numpy|snowflake|pandas,60000,92083,2026-03-28T12:06:03Z,True
+J_0480,Backend Intern,PhonePe,hadoop|aws|python|airflow|dbt,20000,58436,2026-04-17T15:18:19Z,True
+J_0481,Frontend Intern,Zomato,hadoop|numpy|delta|gcp|dbt,40000,58995,2026-03-14T08:44:53Z,False
+J_0482,Data Scientist,Meesho,airflow|aws|spark,30000,44575,2026-03-26T08:20:39Z,True
+J_0483,Data Scientist,Razorpay,airflow|delta|gcp|dbt|numpy|tableau|pyspark,15000,37201,2026-01-31T02:04:43Z,True
+J_0484,Data Analytics Intern,Unacademy,python|kafka|scala|snowflake|delta|pandas,30000,49727,2026-03-26T06:36:59Z,False
+J_0485,Analytics Engineer,Infosys,delta|snowflake|pandas|tableau,40000,49918,2026-01-25T23:16:42Z,True
+J_0486,Data Engineer Intern,Razorpay,sql|scala|iceberg|kafka,30000,53404,2026-01-19T19:14:25Z,False
+J_0487,Analytics Engineer,Unacademy,dbt|snowflake|tableau|kafka|aws,25000,38995,2026-01-18T20:46:22Z,False
+J_0488,Data Scientist,Unacademy,snowflake|spark|iceberg|numpy|hadoop|gcp|aws,15000,53653,2026-03-06T18:10:42Z,False
+J_0489,Backend Intern,Meesho,pandas|kafka|numpy|iceberg|dbt,25000,56970,2026-02-24T21:59:34Z,False
+J_0490,SDE-1,Meesho,hadoop|pandas|kafka|numpy|azure|airflow|scala,40000,66046,2026-03-11T07:07:36Z,False
+J_0491,Analytics Engineer,CRED,pandas|delta|kafka,40000,67110,2026-03-15T10:47:44Z,False
+J_0492,Backend Intern,TCS,iceberg|azure|numpy|spark|hadoop|pandas,25000,34721,2026-03-01T23:05:55Z,True
+J_0493,Analytics Engineer,TCS,spark|kafka|iceberg,30000,67443,2026-01-21T16:39:44Z,False
+J_0494,SDE-1,Meesho,sql|gcp|dbt|pandas|tableau,40000,76219,2026-01-25T02:37:48Z,False
+J_0495,Data Engineer Intern,PhonePe,pyspark|scala|sql|python,25000,34605,2026-02-25T03:25:39Z,True
+J_0496,Analytics Engineer,Ola,pyspark|gcp|kafka|python,40000,48924,2026-04-18T02:04:03Z,True
+J_0497,Frontend Intern,Byju's,delta|tableau|snowflake|pandas|azure|gcp,25000,47480,2026-01-02T16:37:26Z,False
+J_0498,ML Engineer,Zomato,numpy|delta|airflow|aws|gcp|kafka|pyspark,20000,26142,2026-03-19T20:30:06Z,True
+J_0499,Frontend Intern,Accenture,pyspark|delta|gcp,40000,59481,2026-03-04T00:05:03Z,False
+J_0500,ML Engineer,CRED,iceberg|pyspark|python|snowflake,40000,65217,2026-01-25T11:51:09Z,False
