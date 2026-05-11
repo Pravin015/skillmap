@@ -250,25 +250,8 @@ export default function JobDetailPage() {
               </div>
             </div>
 
-            {/* Skills */}
-            {job.skills.length > 0 && (
-              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${heading} font-bold text-base mb-4`}>Required Skills</h2>
-                <div className="flex flex-wrap gap-2">
-                  {job.skills.map((s) => (
-                    <span key={s} className={`text-xs font-medium px-3 py-1.5 rounded-full ${heading}`} style={{ background: "var(--primary)", color: "white" }}>{s}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Perks */}
-            {job.perks && (
-              <div className="rounded-2xl border bg-white p-6" style={{ borderColor: "var(--border)" }}>
-                <h2 className={`${heading} font-bold text-base mb-3`}>Perks & Benefits</h2>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>{job.perks}</p>
-              </div>
-            )}
+            {/* Skills + Perks moved into the sidebar — see below. Keeps the
+                main column focused on the long description + mentors. */}
 
             {/* Report this listing — small subdued link, not a primary CTA */}
             <div className="flex justify-end">
@@ -412,6 +395,28 @@ export default function JobDetailPage() {
                 <div className="flex justify-between"><span style={{ color: "var(--muted)" }}>Status</span><span className={`font-bold ${heading}`} style={{ color: job.status === "ACTIVE" ? "#22c55e" : "var(--muted)" }}>{job.status}</span></div>
               </div>
             </div>
+
+            {/* Required Skills — sidebar card. Used to live in the main
+                column but it left huge whitespace under the Job meta card
+                on widescreens, so moved here to balance the layout. */}
+            {job.skills.length > 0 && (
+              <div className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
+                <h3 className={`${heading} font-bold text-sm mb-3`}>Required Skills</h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {job.skills.map((s) => (
+                    <span key={s} className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${heading}`} style={{ background: "var(--primary)", color: "white" }}>{s}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Perks & Benefits — sidebar card. */}
+            {job.perks && (
+              <div className="rounded-2xl border bg-white p-5" style={{ borderColor: "var(--border)" }}>
+                <h3 className={`${heading} font-bold text-sm mb-2`}>Perks & Benefits</h3>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{job.perks}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
