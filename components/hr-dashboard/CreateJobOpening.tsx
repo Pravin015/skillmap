@@ -23,6 +23,13 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
   // want to gate the application behind. Empty = no gate.
   const [selectedLabIds, setSelectedLabIds] = useState<string[]>([]);
   const [selectedGamifySlugs, setSelectedGamifySlugs] = useState<string[]>([]);
+  // Search/filter state for the hands-on lab list. Gamify catalog can be
+  // 300+ rows — without filters HR has to scroll forever. Filters apply
+  // client-side because the full catalog is already in memory.
+  const [gamifySearch, setGamifySearch] = useState("");
+  const [gamifyCategory, setGamifyCategory] = useState("");
+  const [gamifyDifficulty, setGamifyDifficulty] = useState("");
+  const [gamifyOnlySelected, setGamifyOnlySelected] = useState(false);
 
   useEffect(() => {
     fetch("/api/labs?status=PUBLISHED").then((r) => r.json()).then((d) => setLabs(d.labs || [])).catch(() => {});
@@ -215,9 +222,30 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
           </div>
         )}
 
-        {gamifyLabs.length > 0 && (
+        {gamifyLabs.length > 0 && (() => {
+          // Derive filter options from the loaded catalog so we don't have
+          // to hardcode categories — gamify can add new ones over time.
+          const categories = Array.from(new Set(gamifyLabs.map((l) => l.category).filter(Boolean))).sort();
+          const difficulties = Array.from(new Set(gamifyLabs.map((l) => l.difficulty).filter(Boolean))).sort();
+          const q = gamifySearch.trim().toLowerCase();
+
+          // Apply search + category + difficulty + "only selected" filters.
+          // Always keep currently-selected slugs visible when the user is
+          // typing — confusing if their tick disappears mid-filter.
+          const filtered = gamifyLabs.filter((l) => {
+            if (gamifyOnlySelected && !selectedGamifySlugs.includes(l.slug)) return false;
+            if (gamifyCategory && l.category !== gamifyCategory) return false;
+            if (gamifyDifficulty && l.difficulty !== gamifyDifficulty) return false;
+            if (q) {
+              const hay = `${l.title} ${l.slug} ${l.category} ${l.difficulty}`.toLowerCase();
+              if (!hay.includes(q)) return false;
+            }
+            return true;
+          });
+
+          return (
           <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(16,185,129,0.2)", background: "rgba(16,185,129,0.05)" }}>
-            <div className="flex items-baseline gap-2 mb-2">
+            <div className="flex items-baseline gap-2 mb-2 flex-wrap">
               <label className={labelClass} style={{ marginBottom: 0 }}>Gate with Hands-on Labs</label>
               <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: "rgba(16,185,129,0.15)", color: "#16a34a" }}>Recommended</span>
               {selectedGamifySlugs.length > 0 && (
@@ -225,9 +253,70 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
                   {selectedGamifySlugs.length} selected
                 </span>
               )}
+              <span className="text-[10px] ml-auto" style={{ color: "var(--muted)" }}>
+                {filtered.length} of {gamifyLabs.length} shown
+              </span>
             </div>
-            <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
-              {gamifyLabs.map((l) => {
+
+            {/* Search + category + difficulty filters. Cheap client-side
+                pass over the in-memory catalog. */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mb-3">
+              <input
+                type="text"
+                value={gamifySearch}
+                onChange={(e) => setGamifySearch(e.target.value)}
+                placeholder="Search by title, slug, category…"
+                className="md:col-span-6 rounded-lg border px-3 py-2 text-xs"
+                style={{ borderColor: "var(--border)", background: "white" }}
+              />
+              <select
+                value={gamifyCategory}
+                onChange={(e) => setGamifyCategory(e.target.value)}
+                className="md:col-span-3 rounded-lg border px-3 py-2 text-xs"
+                style={{ borderColor: "var(--border)", background: "white" }}
+              >
+                <option value="">All categories</option>
+                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <select
+                value={gamifyDifficulty}
+                onChange={(e) => setGamifyDifficulty(e.target.value)}
+                className="md:col-span-3 rounded-lg border px-3 py-2 text-xs"
+                style={{ borderColor: "var(--border)", background: "white" }}
+              >
+                <option value="">All difficulties</option>
+                {difficulties.map((d) => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
+
+            <div className="flex items-center justify-between gap-2 mb-2 text-[11px]">
+              <label className="flex items-center gap-1.5 cursor-pointer" style={{ color: "var(--muted)" }}>
+                <input
+                  type="checkbox"
+                  checked={gamifyOnlySelected}
+                  onChange={(e) => setGamifyOnlySelected(e.target.checked)}
+                  disabled={selectedGamifySlugs.length === 0}
+                />
+                Show only selected ({selectedGamifySlugs.length})
+              </label>
+              {(gamifySearch || gamifyCategory || gamifyDifficulty || gamifyOnlySelected) && (
+                <button
+                  type="button"
+                  onClick={() => { setGamifySearch(""); setGamifyCategory(""); setGamifyDifficulty(""); setGamifyOnlySelected(false); }}
+                  className="font-medium"
+                  style={{ color: "#16a34a" }}
+                >
+                  Clear filters
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
+              {filtered.length === 0 ? (
+                <div className="text-center py-6 text-xs" style={{ color: "var(--muted)" }}>
+                  No labs match your filters. <button type="button" onClick={() => { setGamifySearch(""); setGamifyCategory(""); setGamifyDifficulty(""); }} className="underline">Clear them?</button>
+                </div>
+              ) : filtered.map((l) => {
                 const checked = selectedGamifySlugs.includes(l.slug);
                 return (
                   <label key={l.id} className="flex items-start gap-2 p-2 rounded-lg cursor-pointer text-xs" style={{ background: checked ? "rgba(16,185,129,0.08)" : "white", border: "1px solid var(--border)" }}>
@@ -263,7 +352,8 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
               📝 Students must complete <strong>every</strong> selected lab before they can submit an application. Per-lab scores are shown on each application card.
             </p>
           </div>
-        )}
+          );
+        })()}
         <div>
           <label className={labelClass}>Required Skills</label>
           <input name="skills" type="text" placeholder="Python, SQL, AWS (comma separated)" className={inputClass} style={{ borderColor: "var(--border)" }} />
