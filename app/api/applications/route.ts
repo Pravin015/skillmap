@@ -150,6 +150,14 @@ export async function POST(req: NextRequest) {
     }
 
     if (missing.length > 0) {
+      // Record the intent so the cron can nag the student every 3h until
+      // they finish the lab (or the job's deadline passes).
+      await prisma.pendingApplyIntent.upsert({
+        where: { userId_jobId: { userId: userId!, jobId } },
+        create: { userId: userId!, jobId, lastBlockedLab: missing[0] },
+        update: { lastBlockedLab: missing[0], updatedAt: new Date() },
+      }).catch(() => {});
+
       return NextResponse.json(
         {
           error: "Lab required",
@@ -166,6 +174,12 @@ export async function POST(req: NextRequest) {
     }
 
     if (tooLow.length > 0) {
+      await prisma.pendingApplyIntent.upsert({
+        where: { userId_jobId: { userId: userId!, jobId } },
+        create: { userId: userId!, jobId, lastBlockedLab: tooLow[0].slug },
+        update: { lastBlockedLab: tooLow[0].slug, updatedAt: new Date() },
+      }).catch(() => {});
+
       const first = tooLow[0];
       return NextResponse.json(
         {
@@ -201,6 +215,12 @@ export async function POST(req: NextRequest) {
   if (profile?.profileScore) {
     scoreMatch = Math.round(scoreMatch * 0.6 + profile.profileScore * 0.4);
   }
+
+  // Apply succeeded — clear any lingering pending-intent so the cron stops
+  // nagging the student about this job.
+  await prisma.pendingApplyIntent.deleteMany({
+    where: { userId: userId!, jobId },
+  }).catch(() => {});
 
   const application = await prisma.application.create({
     data: {

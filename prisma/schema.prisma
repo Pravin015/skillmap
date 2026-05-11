@@ -54,6 +54,7 @@ model User {
   externalLabAttempts  ExternalLabAttempt[]
   inviteLinksCreated   InviteLink[]         @relation("InviteLinkSender")
   b2bPartnersCreated   B2BPartner[]         @relation("B2BPartnerCreator")
+  pendingApplyIntents  PendingApplyIntent[] @relation("UserApplyIntents")
 }
 
 enum InviteLinkKind {
@@ -316,6 +317,7 @@ model JobPosting {
 
   status          JobStatus     @default(ACTIVE)
   applications    Application[]
+  applyIntents    PendingApplyIntent[] @relation("JobApplyIntents")
 
   // Lab assessment — internal LabTemplate (legacy MCQ-style).
   // labTemplateId kept for backward compat with rows created before multi-lab
@@ -1395,4 +1397,39 @@ model JobReferral {
   @@index([ref, landedAt])
   @@index([institute])
   @@index([externalJobId])
+}
+
+// ============================================================
+// PENDING APPLY INTENTS
+// When a student tries to apply but is blocked by a lab gate
+// (LAB_REQUIRED / LAB_SCORE_LOW), we record their intent so we can
+// remind them every few hours until they either complete the labs
+// or the job's deadline passes.
+// Resolved (deleted) when:
+//   - the student successfully applies (apply route deletes their intent)
+//   - the job is closed / deleted
+//   - the job's deadline passes  (cron skips and cleans them up)
+// ============================================================
+
+model PendingApplyIntent {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation("UserApplyIntents", fields: [userId], references: [id], onDelete: Cascade)
+  jobId         String
+  job           JobPosting @relation("JobApplyIntents", fields: [jobId], references: [id], onDelete: Cascade)
+  /// Last lab the student was blocked on. Mostly for UX copy ("you need to
+  /// finish SQL Injection Lab before applying") — the actual gating check
+  /// re-evaluates against job.gamifyLabSlugs at apply-time.
+  lastBlockedLab String?
+  /// Latest reminder cycle. The cron uses this to decide who gets the next
+  /// 3-hour push. createdAt covers the first reminder by definition.
+  remindersSent  Int      @default(0)
+  lastRemindedAt DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, jobId])
+  @@index([userId])
+  @@index([jobId])
+  @@index([lastRemindedAt])
 }

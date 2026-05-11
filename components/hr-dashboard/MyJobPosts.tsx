@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import EditJobModal from "./EditJobModal";
 
 const heading = "font-[family-name:var(--font-heading)]";
 
@@ -18,6 +19,7 @@ interface Job {
 export default function MyJobPosts({ onNavigate }: { onNavigate: (tab: string) => void }) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingJobId, setEditingJobId] = useState<string | null>(null);
 
   useEffect(() => { fetchJobs(); }, []);
 
@@ -78,6 +80,7 @@ export default function MyJobPosts({ onNavigate }: { onNavigate: (tab: string) =
                 <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full shrink-0 ${statusBadge[job.status] || ""}`}>{job.status}</span>
                 <div className="flex gap-2 shrink-0">
                   <Link href={`/jobs/${job.slug || job.id}`} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border no-underline hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--ink)" }}>View</Link>
+                  <button onClick={() => setEditingJobId(job.id)} className={`px-3 py-1.5 rounded-lg text-[0.7rem] ${heading} font-bold`} style={{ background: "var(--primary)", color: "white" }}>Edit</button>
                   <button onClick={() => toggleStatus(job.id, job.status)} className="px-3 py-1.5 rounded-lg text-[0.7rem] font-medium border hover:bg-gray-50" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
                     {job.status === "ACTIVE" ? "Close" : "Reopen"}
                   </button>
@@ -88,6 +91,14 @@ export default function MyJobPosts({ onNavigate }: { onNavigate: (tab: string) =
             </div>
           ))}
         </div>
+      )}
+
+      {editingJobId && (
+        <EditJobModal
+          jobId={editingJobId}
+          onClose={() => setEditingJobId(null)}
+          onSaved={fetchJobs}
+        />
       )}
     </div>
   );

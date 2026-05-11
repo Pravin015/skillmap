@@ -11,6 +11,7 @@ import OpeningsSection from "@/components/dashboard/OpeningsSection";
 import ApplicationsCard from "@/components/dashboard/ApplicationsCard";
 import HRInterestCard from "@/components/dashboard/HRInterestCard";
 import ResumeCard from "@/components/dashboard/ResumeCard";
+import PendingLabsBanner from "@/components/dashboard/PendingLabsBanner";
 import ProfileScoreCard from "@/components/dashboard/ProfileScoreCard";
 import CoursesCard from "@/components/dashboard/CoursesCard";
 import LabsPrepCard from "@/components/dashboard/LabsPrepCard";
@@ -149,6 +150,11 @@ export default function DashboardPage() {
           </p>
         </div>
 
+        {/* Red reminder banner — shown when the student has open
+            PendingApplyIntents (tried to apply but blocked by lab gate).
+            Self-hides when empty. */}
+        <PendingLabsBanner />
+
         {/* Sections */}
         <div className="space-y-6">
           {/* Row 1: AI Mentor + Profile Score */}
@@ -181,9 +187,12 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Resume */}
-          <div id="section-resume">
-            <ResumeCard />
+          {/* Resume — also exposes #resume anchor so /jobs/[id]'s
+              "Upload resume" CTA can scroll directly to it. */}
+          <div id="resume" className="scroll-mt-24">
+            <div id="section-resume">
+              <ResumeCard />
+            </div>
           </div>
 
           {/* Events */}

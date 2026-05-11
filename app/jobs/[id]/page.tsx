@@ -111,10 +111,12 @@ export default function JobDetailPage() {
       if (!res.ok) {
         // Special-case: missing resume — give a clear path forward.
         if (data.code === "NO_RESUME") {
+          // Redirect to /dashboard where ResumeCard lives. The #resume hash
+          // tells the dashboard to scroll the card into view + flash it.
           setApplyMessage({
             type: "error",
-            text: `${data.message} Open Profile → Resume to upload it (PDF, max 5 MB), then come back and try again.`,
-            action: { label: "Upload resume →", href: "/profile/edit?focus=resume" },
+            text: `${data.message} Click below to upload your resume — once uploaded, come back to this page and apply again.`,
+            action: { label: "Upload resume →", href: "/dashboard#resume" },
           });
         } else if (data.code === "LAB_REQUIRED") {
           // Job requires a hands-on lab. Redirect them to /labs to find +
