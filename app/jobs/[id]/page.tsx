@@ -171,8 +171,8 @@ export default function JobDetailPage() {
   const isExpired = job.deadline && new Date(job.deadline) < new Date();
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] py-8 px-4 md:px-8" style={{ background: "var(--surface)" }}>
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-[calc(100vh-4rem)] py-8 px-4 md:px-8 lg:px-12" style={{ background: "var(--surface)" }}>
+      <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
         <div className="mb-6 flex items-center gap-2 text-xs" style={{ color: "var(--muted)" }}>
           <Link href="/jobs" className="no-underline hover:underline" style={{ color: "var(--muted)" }}>Jobs</Link>
