@@ -1,11 +1,12 @@
 "use client";
-// Red reminder banner shown on the student dashboard when they have one or
-// more PendingApplyIntents — i.e. they tried to apply for a job but were
-// blocked by a lab gate and haven't completed the labs yet.
+// Reminder banner shown on the student dashboard when they have one or
+// more PendingApplyIntents — i.e. they've applied to a job whose lab
+// gates aren't fully cleared yet. Since labs are soft-gated now (apply
+// succeeds either way), this is purely a nudge: "your HR card looks
+// incomplete; finish your labs so the recruiter sees real performance".
 //
-// Pulls from /api/pending-applications. The endpoint already cross-checks
-// against actual lab attempts, so this component just renders whatever it
-// gets back.
+// Pulls from /api/pending-applications which cross-checks against actual
+// lab attempts, so this component just renders whatever comes back.
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -34,7 +35,12 @@ export default function PendingLabsBanner() {
   if (dismissed || pending.length === 0) return null;
 
   const totalRemaining = pending.reduce((sum, p) => sum + p.remainingLabs.length, 0);
-  const readyCount = pending.filter((p) => p.readyToApply).length;
+  // "readyToApply" is API legacy naming — under soft-gate it means "all
+  // gated labs cleared, HR card now shows full scores, banner can drop".
+  // We hide rows that are fully cleared so the banner doesn't shout when
+  // there's nothing left to do.
+  const open = pending.filter((p) => !p.readyToApply);
+  if (open.length === 0) return null;
 
   return (
     <div
@@ -50,14 +56,10 @@ export default function PendingLabsBanner() {
           <div className="flex items-start justify-between gap-2 flex-wrap">
             <div>
               <h3 className={`${heading} font-bold text-base`} style={{ color: "#dc2626" }}>
-                {readyCount > 0 && readyCount === pending.length
-                  ? `You're ready to apply to ${pending.length} job${pending.length === 1 ? "" : "s"}!`
-                  : `${totalRemaining} hands-on lab${totalRemaining === 1 ? "" : "s"} still needed`}
+                {totalRemaining} hands-on lab{totalRemaining === 1 ? "" : "s"} still pending
               </h3>
               <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
-                {readyCount === pending.length
-                  ? "Your labs are complete — head back to the job page and submit your application."
-                  : `You started applying for ${pending.length} job${pending.length === 1 ? "" : "s"} but the lab gates are still open. Finish the labs below to unlock your application${pending.length === 1 ? "" : "s"}.`}
+                You&apos;ve applied to {open.length} job{open.length === 1 ? "" : "s"} that asked for hands-on labs. Your application is in — but finish the labs so the recruiter sees your real performance instead of an empty score slot.
               </p>
             </div>
             <button
@@ -71,7 +73,7 @@ export default function PendingLabsBanner() {
           </div>
 
           <div className="space-y-2 mt-3">
-            {pending.map((p) => (
+            {open.map((p) => (
               <div
                 key={p.id}
                 className="rounded-xl border p-3 flex items-center gap-3 flex-wrap bg-white"
@@ -95,32 +97,22 @@ export default function PendingLabsBanner() {
                   )}
                 </div>
                 <div className="flex gap-2 shrink-0">
-                  {p.readyToApply ? (
-                    <Link
-                      href={`/jobs/${p.jobSlug || p.jobId}`}
-                      className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-xs no-underline`}
-                      style={{ background: "#16a34a", color: "white" }}
-                    >
-                      Apply now →
-                    </Link>
-                  ) : (
-                    <>
-                      <Link
-                        href="/labs"
-                        className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-xs no-underline`}
-                        style={{ background: "var(--primary)", color: "white" }}
-                      >
-                        Open labs →
-                      </Link>
-                      <Link
-                        href={`/jobs/${p.jobSlug || p.jobId}`}
-                        className="px-3 py-1.5 rounded-lg text-xs border no-underline"
-                        style={{ borderColor: "var(--border)", color: "var(--muted)" }}
-                      >
-                        View job
-                      </Link>
-                    </>
-                  )}
+                  {/* Job-scoped lab list — student only sees the labs HR
+                      attached to this job, not the entire catalog. */}
+                  <Link
+                    href={`/labs?job=${p.jobId}`}
+                    className={`px-3 py-1.5 rounded-lg ${heading} font-bold text-xs no-underline`}
+                    style={{ background: "var(--primary)", color: "white" }}
+                  >
+                    Open required labs →
+                  </Link>
+                  <Link
+                    href={`/jobs/${p.jobSlug || p.jobId}`}
+                    className="px-3 py-1.5 rounded-lg text-xs border no-underline"
+                    style={{ borderColor: "var(--border)", color: "var(--muted)" }}
+                  >
+                    View job
+                  </Link>
                 </div>
               </div>
             ))}

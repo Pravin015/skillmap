@@ -132,11 +132,14 @@ export default function ReceivedApplications() {
                   const slugs = app.job.gamifyLabSlugs?.length ? app.job.gamifyLabSlugs : (app.job.gamifyLabSlug ? [app.job.gamifyLabSlug] : []);
                   if (slugs.length === 0) return null;
 
-                  // Build a slug -> attempt map. Prefer the per-lab snapshot;
-                  // for single-lab apps, synthesise from legacy fields.
-                  const attempts = new Map<string, { score: number | null; maxScore: number | null }>();
+                  // Build a slug -> attempt map. Prefer the per-lab snapshot
+                  // (which carries explicit `status` since the soft-gate
+                  // change); for legacy single-lab apps, synthesise from
+                  // the top-level gamify* fields.
+                  type Attempt = { score: number | null; maxScore: number | null; status?: "passed" | "below_threshold" | "not_attempted" };
+                  const attempts = new Map<string, Attempt>();
                   if (app.gamifyAttempts?.length) {
-                    for (const a of app.gamifyAttempts) attempts.set(a.slug, { score: a.score, maxScore: a.maxScore });
+                    for (const a of app.gamifyAttempts) attempts.set(a.slug, a as Attempt);
                   } else if (app.job.gamifyLabSlug) {
                     attempts.set(app.job.gamifyLabSlug, { score: app.gamifyScore, maxScore: app.gamifyMaxScore });
                   }
@@ -147,12 +150,26 @@ export default function ReceivedApplications() {
                         const a = attempts.get(slug);
                         const score = a?.score ?? null;
                         const maxScore = a?.maxScore ?? null;
-                        const failed = app.job.gamifyMinScore && score !== null && score < app.job.gamifyMinScore;
+                        // Prefer the explicit status field when present.
+                        // Fall back to inference for legacy rows that
+                        // predate the soft-gate change.
+                        const status = a?.status ?? (
+                          score === null ? "not_attempted" :
+                          (app.job.gamifyMinScore && score < app.job.gamifyMinScore ? "below_threshold" : "passed")
+                        );
                         const shortSlug = slug.length > 18 ? slug.slice(0, 16) + "…" : slug;
+
+                        const palette: Record<"passed" | "below_threshold" | "not_attempted", { bg: string; border: string; color: string; label: string }> = {
+                          passed:            { bg: "rgba(34,197,94,0.08)",  border: "rgba(34,197,94,0.3)",  color: "#16a34a", label: "" },
+                          below_threshold:   { bg: "rgba(239,68,68,0.08)",  border: "rgba(239,68,68,0.3)",  color: "#dc2626", label: "" },
+                          not_attempted:     { bg: "rgba(245,158,11,0.08)", border: "rgba(245,158,11,0.3)", color: "#d97706", label: "Pending" },
+                        };
+                        const p = palette[status];
+
                         return (
-                          <div key={slug} className="text-center px-2 py-1 rounded-lg" style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)" }} title={slug}>
-                            <div className={`${heading} text-sm font-bold`} style={{ color: failed ? "#dc2626" : score !== null ? "#7c3aed" : "var(--muted)" }}>
-                              {score !== null ? <>{score}{maxScore ? `/${maxScore}` : ""}</> : "—"}
+                          <div key={slug} className="text-center px-2 py-1 rounded-lg" style={{ background: p.bg, border: `1px solid ${p.border}` }} title={slug}>
+                            <div className={`${heading} text-sm font-bold`} style={{ color: p.color }}>
+                              {score !== null ? <>{score}{maxScore ? `/${maxScore}` : ""}</> : p.label}
                             </div>
                             <div className="text-[0.55rem]" style={{ color: "var(--muted)" }}>{shortSlug}</div>
                           </div>

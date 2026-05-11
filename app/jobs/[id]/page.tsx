@@ -23,6 +23,9 @@ interface JobDetail {
   department: string | null;
   labTemplateId: string | null;
   labTemplate: { id: string; title: string; timeLimit: number; passingScore: number; difficulty: string } | null;
+  gamifyLabSlug: string | null;
+  gamifyLabSlugs: string[];
+  gamifyMinScore: number | null;
   description: string;
   skills: string[];
   perks: string | null;
@@ -109,35 +112,31 @@ export default function JobDetailPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        // Special-case: missing resume — give a clear path forward.
+        // Resume is the only remaining hard gate. Labs are soft-gated now
+        // (apply always succeeds; HR sees pending status on the card).
         if (data.code === "NO_RESUME") {
-          // Redirect to /dashboard where ResumeCard lives. The #resume hash
-          // tells the dashboard to scroll the card into view + flash it.
           setApplyMessage({
             type: "error",
             text: `${data.message} Click below to upload your resume — once uploaded, come back to this page and apply again.`,
             action: { label: "Upload resume →", href: "/dashboard#resume" },
           });
-        } else if (data.code === "LAB_REQUIRED") {
-          // Job requires a hands-on lab. Redirect them to /labs to find +
-          // start the lab. We can't auto-open it because gamify needs the
-          // student to click "Start" themselves (terms-of-use friction).
-          setApplyMessage({
-            type: "error",
-            text: data.message,
-            action: { label: "Open required lab →", href: `/labs?slug=${encodeURIComponent(data.labSlug)}` },
-          });
-        } else if (data.code === "LAB_SCORE_LOW") {
-          setApplyMessage({
-            type: "error",
-            text: data.message,
-            action: { label: "Retry the lab →", href: `/labs?slug=${encodeURIComponent(data.labSlug)}` },
-          });
         } else {
           setApplyMessage({ type: "error", text: data.error });
         }
       } else {
-        setApplyMessage({ type: "success", text: `Applied successfully! Your skill match score: ${data.application.scoreMatch}%` });
+        // If the job had gated labs and they're not all clear yet, gently
+        // remind the student to finish. They've already submitted — this
+        // is just a follow-up nudge so HR has a complete picture.
+        const requiredSlugs = (job?.gamifyLabSlugs?.length ? job.gamifyLabSlugs : (job?.gamifyLabSlug ? [job.gamifyLabSlug] : [])) as string[];
+        if (requiredSlugs.length > 0) {
+          setApplyMessage({
+            type: "success",
+            text: `Applied successfully! Skill match: ${data.application.scoreMatch}%. This role asked for ${requiredSlugs.length} hands-on lab${requiredSlugs.length === 1 ? "" : "s"} — complete them so HR can see your real performance.`,
+            action: { label: "Open required labs →", href: `/labs?job=${job?.id}` },
+          });
+        } else {
+          setApplyMessage({ type: "success", text: `Applied successfully! Your skill match score: ${data.application.scoreMatch}%` });
+        }
         setApplied(true);
         setShowApplyForm(false);
       }
