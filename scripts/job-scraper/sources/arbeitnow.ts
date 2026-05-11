@@ -27,10 +27,17 @@ export const arbeitnow: SourceAdapter = {
   displayName: "Arbeitnow (Remote + Tech)",
   baseUrl: "https://www.arbeitnow.com",
   vertical: "FULLTIME",
-  defaultQuery: { pages: 3 },
+  // Arbeitnow's API has no keyword filter, so we pull the global feed and
+  // drop everything that isn't a cybersecurity-flavoured role. Match against
+  // title + tags + a description snippet so we catch SOC analyst, pen-tester,
+  // GRC, infosec, etc., not just exact-string "cyber security".
+  // `pages` is bumped to 5 because we now discard most rows.
+  defaultQuery: { pages: 5, keywords: "cyber|security|infosec|soc|pen[- ]?test|grc|threat|vulnerab|siem|firewall|incident response" },
 
   async *scrape({ query, maxItems = 100 }) {
-    const pages = Math.min(Number(query?.pages ?? 3), 5);
+    const pages = Math.min(Number(query?.pages ?? 5), 5);
+    const keywordSrc = String(query?.keywords ?? "cyber|security|infosec|soc|pen[- ]?test|grc|threat|vulnerab|siem|firewall|incident response");
+    const keywordRe = new RegExp(keywordSrc, "i");
     let emitted = 0;
 
     for (let page = 1; page <= pages; page++) {
@@ -48,6 +55,12 @@ export const arbeitnow: SourceAdapter = {
 
       for (const j of rows) {
         if (emitted >= maxItems) return;
+
+        // Filter: keep only rows whose title, tags, or first 500 chars of
+        // description match the cybersecurity regex.
+        const haystack = `${j.title} ${(j.tags ?? []).join(" ")} ${(j.description ?? "").slice(0, 500)}`;
+        if (!keywordRe.test(haystack)) continue;
+
         const types = (j.job_types ?? []).join(" ").toLowerCase();
         const isIntern = /\bintern(ship)?\b/i.test(j.title) || /intern/.test(types);
 

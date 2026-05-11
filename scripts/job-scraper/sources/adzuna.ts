@@ -31,7 +31,9 @@ export const adzuna: SourceAdapter = {
   displayName: "Adzuna India",
   baseUrl: "https://api.adzuna.com",
   vertical: "FULLTIME",
-  defaultQuery: { country: "in", where: "India", what: "", pages: 3 },
+  // Focused on cybersecurity. Adzuna's `what` field is free-text against title +
+  // description; broad phrasing captures SOC, infosec, pen-testing, etc.
+  defaultQuery: { country: "in", where: "India", what: "cyber security", pages: 3 },
 
   async *scrape({ query, maxItems = 120 }) {
     const appId = process.env.ADZUNA_APP_ID;

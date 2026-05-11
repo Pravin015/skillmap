@@ -28,7 +28,9 @@ export const remotive: SourceAdapter = {
   displayName: "Remotive",
   baseUrl: "https://remotive.com",
   vertical: "FULLTIME",
-  defaultQuery: { category: "software-dev", limit: 40 },
+  // Remotive doesn't have a dedicated cybersecurity category — use free-text
+  // search instead, which matches title + description + tags.
+  defaultQuery: { search: "cyber security", limit: 40 },
 
   async *scrape({ query, maxItems = 40 }) {
     const params = new URLSearchParams();

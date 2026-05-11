@@ -12,7 +12,9 @@ export const internshala: SourceAdapter = {
   displayName: "Internshala",
   baseUrl: "https://internshala.com",
   vertical: "INTERNSHIP",
-  defaultQuery: { keywords: "", location: "" },
+  // Cybersecurity internships only — keywords become a URL path segment on
+  // Internshala's listing page (e.g. /internships/keywords-cyber-security/).
+  defaultQuery: { keywords: "cyber security", location: "" },
 
   async *scrape({ query, maxItems = 40 }) {
     // Build URL: keywords + location become URL path segments per Internshala's scheme.

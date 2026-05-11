@@ -13,10 +13,11 @@ export const linkedinGuest: SourceAdapter = {
   displayName: "LinkedIn",
   baseUrl: "https://www.linkedin.com",
   vertical: "FULLTIME",
-  defaultQuery: { keywords: "software engineer", location: "India", start: 0 },
+  // Focused on cybersecurity roles for AstraaHire's primary domain.
+  defaultQuery: { keywords: "cyber security", location: "India", start: 0 },
 
   async *scrape({ query, maxItems = 40 }) {
-    const keywords = encodeURIComponent(String(query?.keywords ?? "software engineer"));
+    const keywords = encodeURIComponent(String(query?.keywords ?? "cyber security"));
     const location = encodeURIComponent(String(query?.location ?? "India"));
     const pageSize = 25;
     let start = Number(query?.start ?? 0);

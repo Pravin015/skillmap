@@ -24,10 +24,12 @@ export const indeedRss: SourceAdapter = {
   displayName: "Indeed India",
   baseUrl: "https://in.indeed.com",
   vertical: "FULLTIME",
-  defaultQuery: { q: "software engineer", l: "India" },
+  // Focused on cybersecurity roles. Change the q value below if AstraaHire pivots
+  // to a different domain — Indeed's RSS endpoint just does free-text matching.
+  defaultQuery: { q: "cyber security", l: "India" },
 
   async *scrape({ query, maxItems = 40 }) {
-    const q = encodeURIComponent(String(query?.q ?? "software engineer"));
+    const q = encodeURIComponent(String(query?.q ?? "cyber security"));
     const l = encodeURIComponent(String(query?.l ?? "India"));
     const url = `https://in.indeed.com/rss?q=${q}&l=${l}&sort=date`;
 

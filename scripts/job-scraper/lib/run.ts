@@ -76,6 +76,18 @@ export async function runSource(
   return { sourceSlug: adapter.slug, status, itemsFound: found, itemsInserted: inserted, itemsUpdated: updated, itemsSkipped: skipped, durationMs, error: errorMessage };
 }
 
+// Cybersecurity domain inference. All adapters are currently configured to
+// pull cybersecurity-focused queries, so the resulting rows should be tagged
+// with `domain: "Cybersecurity"` for the partner API + frontend filters —
+// unless the adapter explicitly already classified the row (e.g. as "DevOps"
+// because the listing happened to surface a cloud-security role).
+function inferDomain(raw: RawJob): string {
+  if (raw.domain && /\bsecurity|infosec|soc|cyber\b/i.test(raw.domain)) return raw.domain;
+  // Trust the adapter if it set something specific and non-empty.
+  if (raw.domain && raw.domain.length > 2) return raw.domain;
+  return "Cybersecurity";
+}
+
 async function upsertExternalJob(sourceId: string, sourceSlug: string, raw: RawJob): Promise<"inserted" | "updated" | "skipped"> {
   const dedupeHash = makeDedupeHash(sourceSlug, raw.title, raw.company, raw.location);
   const { min, max } = parseSalary(raw.salaryText);
@@ -93,7 +105,7 @@ async function upsertExternalJob(sourceId: string, sourceSlug: string, raw: RawJ
     salaryMax: max,
     experienceLevel: raw.experienceLevel ?? null,
     jobType: raw.jobType ?? null,
-    domain: raw.domain ?? null,
+    domain: inferDomain(raw),
     description: cleanText(raw.description, 800),
     skills: raw.skills ?? [],
     vertical: raw.vertical,
