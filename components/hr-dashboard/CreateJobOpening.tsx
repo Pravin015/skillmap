@@ -13,11 +13,23 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
   const [saving, setSaving] = useState(false);
   const [labs, setLabs] = useState<LabOption[]>([]);
   const [gamifyLabs, setGamifyLabs] = useState<GamifyLab[]>([]);
+  // `null` = still loading. `false` = env vars not set on the server.
+  // `true` = gamify reachable; gamifyLabs.length tells us if it has any labs.
+  // Surfaced as a transparent hint card below so HR knows *why* the hands-on
+  // section is missing (and what to do about it).
+  const [gamifyConfigured, setGamifyConfigured] = useState<boolean | null>(null);
+  const [gamifyError, setGamifyError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/labs?status=PUBLISHED").then((r) => r.json()).then((d) => setLabs(d.labs || [])).catch(() => {});
-    // Pull gamify labs too — only shown if any are configured.
-    fetch("/api/external-labs").then((r) => r.json()).then((d) => setGamifyLabs(d.labs || [])).catch(() => {});
+    fetch("/api/external-labs")
+      .then((r) => r.json())
+      .then((d) => {
+        setGamifyLabs(d.labs || []);
+        setGamifyConfigured(d.configured ?? false);
+        if (d.error) setGamifyError(d.error);
+      })
+      .catch(() => { setGamifyConfigured(false); });
   }, []);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -147,6 +159,26 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
               {labs.map((l) => <option key={l.id} value={l.id}>{l.title} — {l.domain} · {l.difficulty} · {l._count.problems} Qs · {l.timeLimit}min</option>)}
             </select>
             <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Candidates must complete this lab when applying. Only passing candidates proceed.</p>
+          </div>
+        )}
+
+        {/* Hands-on lab section. Three states:
+              1. gamifyConfigured=false → env vars missing on the server. Show
+                 a "Not configured" hint so admins know what to set.
+              2. configured but gamifyLabs.length=0 → integration works but no
+                 labs exist on the gamify side yet. Show an empty-state hint.
+              3. labs present → render the picker (existing UI). */}
+        {gamifyConfigured === false && (
+          <div className="rounded-xl p-3 border text-xs" style={{ borderColor: "var(--border)", background: "var(--surface)", color: "var(--muted)" }}>
+            🔌 <strong>Hands-on Lab integration not configured.</strong>{" "}
+            Set <code>GAMIFY_API_URL</code> + <code>GAMIFY_API_KEY</code> on Railway to enable it.
+            Without it, you can still gate jobs with the MCQ assessment above.
+          </div>
+        )}
+        {gamifyConfigured === true && gamifyLabs.length === 0 && (
+          <div className="rounded-xl p-3 border text-xs" style={{ borderColor: "var(--border)", background: "var(--surface)", color: "var(--muted)" }}>
+            🧪 Hands-on Lab platform is connected, but no labs are published yet.
+            {gamifyError ? <> <em>({gamifyError})</em></> : <> Create labs in the gamify admin to gate jobs with them.</>}
           </div>
         )}
 
