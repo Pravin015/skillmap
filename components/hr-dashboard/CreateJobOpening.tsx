@@ -204,7 +204,7 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
         {gamifyConfigured === false && (
           <div className="rounded-xl p-3 border text-xs" style={{ borderColor: "var(--border)", background: "var(--surface)", color: "var(--muted)" }}>
             🔌 <strong>Hands-on Lab integration not configured.</strong>{" "}
-            Set <code>GAMIFY_API_URL</code> + <code>GAMIFY_API_KEY</code> on Railway to enable it.
+            Set <code>GAMIFY_API_URL</code>, <code>GAMIFY_LAUNCH_SECRET</code> and <code>GAMIFY_STATUS_TOKEN</code> on Railway to enable it.
             Without it, you can still gate jobs with the MCQ assessment above.
           </div>
         )}

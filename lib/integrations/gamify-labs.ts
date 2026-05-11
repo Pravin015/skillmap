@@ -1,23 +1,38 @@
 // Adapter for gamify (outerlayerx) — the lab platform.
-// Their API is purpose-built for LMS integration:
-//   - GET  /api/v1/labs                   list published labs
-//   - POST /api/v1/sessions               start a session for our user (returns embedUrl)
-//   - GET  /api/v1/sessions/:id           current session state
-//   - POST /api/v1/sessions/:id/end       force-end a session
 //
-// Auth: Authorization: Bearer <api_key>. Provisioned in their admin
-// panel (admin/api-clients) — one key per LMS.
+// Auth model (per qna.md Q1/Q2 + outerlayerx codebase):
+//   - `GET /api/v1/labs`            Bearer GAMIFY_STATUS_TOKEN
+//   - `GET /launch?token=<jwt>`     student lands here; JWT signed HS256 with
+//                                   GAMIFY_LAUNCH_SECRET, payload identifies
+//                                   the student + lab. Gamify verifies, spins
+//                                   up a container, iframes the lab.
+//   - `GET /api/v1/launches/:jti/status`  Bearer GAMIFY_STATUS_TOKEN
 //
-// Setup:
-//   GAMIFY_API_URL=https://gamify.example.com   (no trailing slash)
-//   GAMIFY_API_KEY=<bearer-token>
+// On lab completion gamify POSTs a signed webhook to
+// /api/integrations/gamify-webhook (HMAC-SHA256 with GAMIFY_WEBHOOK_SECRET).
 //
-// If env vars aren't set, the adapter returns a stub error so the
-// rest of the app stays functional.
+// Env vars (Railway):
+//   GAMIFY_API_URL         = https://outerlayerx.com         (no trailing slash)
+//   GAMIFY_CLIENT_ID       = cmp102qkb0000kwemmtuj93kg
+//   GAMIFY_LAUNCH_SECRET   = <hex>  — used to mint JWTs
+//   GAMIFY_WEBHOOK_SECRET  = <hex>  — used to verify webhooks (in webhook handler)
+//   GAMIFY_STATUS_TOKEN    = st_…   — used to authenticate catalog + status reads
+//
+// If env vars aren't set, the adapter returns gamifyConfigured=false and
+// the rest of the app stays functional (UI shows a "not configured" hint).
+
+import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
 const BASE = (process.env.GAMIFY_API_URL || "").replace(/\/$/, "");
-const KEY = process.env.GAMIFY_API_KEY || "";
-const HAS_GAMIFY = Boolean(BASE && KEY);
+const CLIENT_ID = process.env.GAMIFY_CLIENT_ID || "";
+const LAUNCH_SECRET = process.env.GAMIFY_LAUNCH_SECRET || "";
+const STATUS_TOKEN = process.env.GAMIFY_STATUS_TOKEN || "";
+
+// We consider the integration "configured" when the three things we actually
+// need at runtime are all present. WEBHOOK_SECRET is checked separately in
+// the webhook handler — it's not needed for outbound calls.
+const HAS_GAMIFY = Boolean(BASE && LAUNCH_SECRET && STATUS_TOKEN);
 
 export interface GamifyLab {
   id: string;
@@ -37,12 +52,14 @@ export interface GamifyLab {
   };
 }
 
-export interface GamifySession {
-  sessionId: string;
-  status: string;              // queued | running | completed | failed | timeout
-  labUrl?: string;             // direct lab URL (full-page redirect)
-  embedUrl?: string;           // iframe-friendly URL
-  expiresAt?: string;
+export interface LaunchStatus {
+  jti: string;
+  status: string;              // PENDING | RUNNING | FLAG_CAPTURED | COMPLETED | TIMED_OUT | ERRORED
+  score?: number | null;
+  maxScore?: number | null;
+  passed?: boolean | null;
+  startedAt?: string | null;
+  completedAt?: string | null;
 }
 
 class GamifyError extends Error {
@@ -50,66 +67,114 @@ class GamifyError extends Error {
   constructor(msg: string, status: number) { super(msg); this.status = status; }
 }
 
-async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
-  if (!HAS_GAMIFY) {
-    throw new GamifyError("GAMIFY_API_URL / GAMIFY_API_KEY not configured", 500);
-  }
-  const res = await fetch(`${BASE}${path}`, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${KEY}`,
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      ...init.headers,
-    },
-    // Hard timeout — never hang Next.js server-side render on a slow gamify.
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new GamifyError(`Gamify ${res.status}: ${text.slice(0, 200)}`, res.status);
-  }
-  return (await res.json()) as T;
-}
-
-/** GET /api/v1/labs — paginated list of published labs. */
+/**
+ * GET /api/v1/labs — catalog listing.
+ *
+ * Per qna.md Q2 Option A, gamify will accept the per-client `statusToken` as
+ * an alternative to the legacy `apiKey` on this endpoint. Until they ship
+ * that change, this call returns 401 and the UI shows the "platform connected
+ * but no labs published yet" hint — which is the correct fallback.
+ */
 export async function listLabs(filters?: { category?: string; difficulty?: string }): Promise<GamifyLab[]> {
+  if (!HAS_GAMIFY) throw new GamifyError("Gamify env vars not configured", 500);
+
   const qs = new URLSearchParams();
   if (filters?.category) qs.set("category", filters.category);
   if (filters?.difficulty) qs.set("difficulty", filters.difficulty);
   const query = qs.toString() ? `?${qs}` : "";
-  const data = await call<{ labs: GamifyLab[]; count: number }>(`/api/v1/labs${query}`);
-  return data.labs;
+
+  const res = await fetch(`${BASE}/api/v1/labs${query}`, {
+    headers: {
+      Authorization: `Bearer ${STATUS_TOKEN}`,
+      Accept: "application/json",
+    },
+    // Hard timeout — never hang Next's server-side render on a slow gamify.
+    signal: AbortSignal.timeout(15_000),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new GamifyError(`Gamify /api/v1/labs ${res.status}: ${text.slice(0, 200)}`, res.status);
+  }
+
+  const data = (await res.json()) as { labs: GamifyLab[]; count?: number };
+  return data.labs ?? [];
 }
 
 /**
- * POST /api/v1/sessions — start a lab for our student.
- * The student's AstraaHire userId is passed as `externalUserId` so
- * gamify scopes their gamify-side state per AstraaHire identity.
+ * Mint a launch URL the student opens to start a lab. Self-contained — no
+ * HTTP call to gamify here; gamify verifies the JWT on its /launch endpoint.
+ *
+ * JWT payload (matches gamify's verifyLaunchToken expectations):
+ *   { iss, sub: studentId, aud?, exp, iat, jti, lab: slug, email?, name?, lesson? }
+ *
+ * `jti` is the gamify-side session identifier — webhook deliveries reference
+ * it so we can correlate the completion back to the right student + lab.
  */
-export async function startLabSession(params: {
+export function mintLaunchUrl(params: {
   labSlug: string;
-  externalUserId: string;        // AstraaHire User.id
-  externalUserEmail?: string;
-  externalUserName?: string;
-  callbackUrl?: string;          // override webhook
-  metadata?: Record<string, unknown>;
-}): Promise<GamifySession> {
-  return call<GamifySession>("/api/v1/sessions", {
-    method: "POST",
-    body: JSON.stringify(params),
+  studentId: string;              // AstraaHire User.id
+  studentEmail?: string;
+  studentName?: string;
+  parentOrigin?: string;          // optional `aud` claim for CSP frame-ancestors
+}): { url: string; jti: string } {
+  if (!HAS_GAMIFY) throw new GamifyError("Gamify env vars not configured", 500);
+
+  const jti = crypto.randomUUID();
+  const now = Math.floor(Date.now() / 1000);
+
+  const payload: Record<string, unknown> = {
+    iss: "astraahire",
+    sub: params.studentId,
+    iat: now,
+    exp: now + 15 * 60,            // 15-minute launch window
+    jti,
+    lab: params.labSlug,
+  };
+  if (params.studentEmail) payload.email = params.studentEmail;
+  if (params.studentName) payload.name = params.studentName;
+  if (params.parentOrigin) payload.aud = params.parentOrigin;
+
+  // HS256 with the launchSecret. Gamify's verifyLaunchToken tries each
+  // API_CLIENT's launchSecret until one verifies, so we don't need to set
+  // `kid` — but it speeds up their lookup if we do, since they prefer
+  // `kid = apiClient.id` when present.
+  const signOpts: jwt.SignOptions = { algorithm: "HS256" };
+  if (CLIENT_ID) {
+    signOpts.header = { alg: "HS256", typ: "JWT", kid: CLIENT_ID } as jwt.JwtHeader;
+  }
+
+  const token = jwt.sign(payload, LAUNCH_SECRET, signOpts);
+
+  return { url: `${BASE}/launch?token=${token}`, jti };
+}
+
+/**
+ * GET /api/v1/launches/:jti/status — poll latest state if the webhook is
+ * delayed or we want to sync before showing a result page.
+ *
+ * Same auth as listLabs() — Bearer statusToken. Returns the launch's current
+ * state including (when completed) score + maxScore + passed.
+ */
+export async function getLaunchStatus(jti: string): Promise<LaunchStatus> {
+  if (!HAS_GAMIFY) throw new GamifyError("Gamify env vars not configured", 500);
+
+  const res = await fetch(`${BASE}/api/v1/launches/${encodeURIComponent(jti)}/status`, {
+    headers: {
+      Authorization: `Bearer ${STATUS_TOKEN}`,
+      Accept: "application/json",
+    },
+    signal: AbortSignal.timeout(10_000),
   });
-}
 
-/** GET /api/v1/sessions/:id — poll session state if webhook hasn't fired. */
-export async function getSessionStatus(sessionId: string): Promise<GamifySession> {
-  return call<GamifySession>(`/api/v1/sessions/${sessionId}`);
-}
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new GamifyError(`Gamify /launches/${jti}/status ${res.status}: ${text.slice(0, 200)}`, res.status);
+  }
 
-/** POST /api/v1/sessions/:id/end — force-end (used when student cancels). */
-export async function endLabSession(sessionId: string): Promise<{ ok: boolean }> {
-  return call<{ ok: boolean }>(`/api/v1/sessions/${sessionId}/end`, { method: "POST" });
+  return (await res.json()) as LaunchStatus;
 }
 
 export const gamifyConfigured = HAS_GAMIFY;
+export const gamifyBaseUrl = BASE;
 export { GamifyError };

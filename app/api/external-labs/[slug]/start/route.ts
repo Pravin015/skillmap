@@ -1,11 +1,16 @@
-// POST /api/external-labs/[slug]/start — start a gamify lab session for the
-// signed-in student. Returns the iframe-friendly embedUrl + sessionId.
+// POST /api/external-labs/[slug]/start
 //
-// We pass our User.id as gamify's externalUserId so they scope state correctly.
+// Mints a JWT-signed launch URL for the signed-in student and returns it.
+// The student then opens that URL in a new tab; gamify's /launch endpoint
+// verifies the JWT, spins up the lab container, and iframes it.
+//
+// On completion gamify POSTs a signed webhook to
+// /api/integrations/gamify-webhook → writes an ExternalLabAttempt row →
+// the student's next Apply call is no longer gated.
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { startLabSession, gamifyConfigured, GamifyError } from "@/lib/integrations/gamify-labs";
+import { mintLaunchUrl, gamifyConfigured, GamifyError } from "@/lib/integrations/gamify-labs";
 import { rateLimitAsync } from "@/lib/rate-limit";
 
 export async function POST(
@@ -27,7 +32,7 @@ export async function POST(
     return NextResponse.json({ error: "Sign in to start a lab" }, { status: 401 });
   }
 
-  // Rate limit — 10 lab starts per user per hour. Each launches a Docker
+  // Rate limit — 10 lab starts per user per hour. Each spawns a Docker
   // container on gamify; uncapped traffic could starve their cluster.
   const rl = await rateLimitAsync(`lab-start:user:${userId}`, 10, 60 * 60 * 1000);
   if (!rl.allowed) {
@@ -40,20 +45,23 @@ export async function POST(
   const { slug } = await params;
 
   try {
-    const result = await startLabSession({
+    // No HTTP call to gamify here — the launch URL is self-contained.
+    // Gamify creates the LabLaunch row + container when the student opens it.
+    const { url, jti } = mintLaunchUrl({
       labSlug: slug,
-      externalUserId: userId,
-      externalUserEmail: userEmail || undefined,
-      externalUserName: userName || undefined,
-      metadata: { platform: "astraahire" },
+      studentId: userId,
+      studentEmail: userEmail || undefined,
+      studentName: userName || undefined,
     });
 
+    // Return both shapes so the existing client code that reads `embedUrl`
+    // OR `labUrl` keeps working with no UI changes.
     return NextResponse.json({
-      sessionId: result.sessionId,
-      embedUrl: result.embedUrl,
-      labUrl: result.labUrl,
-      status: result.status,
-      expiresAt: result.expiresAt,
+      sessionId: jti,
+      jti,
+      embedUrl: url,
+      labUrl: url,
+      status: "PENDING",
     });
   } catch (err) {
     if (err instanceof GamifyError) {
