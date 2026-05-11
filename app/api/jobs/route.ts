@@ -62,13 +62,32 @@ export async function POST(req: NextRequest) {
   const {
     title, company, location, workMode, salaryMin, salaryMax,
     experienceLevel, urgency, jobType, domain, department,
-    description, skills, perks, deadline, openings, labTemplateId,
-    gamifyLabSlug, gamifyMinScore,
+    description, skills, perks, deadline, openings,
+    // Lab fields. The form now sends arrays (`labTemplateIds`,
+    // `gamifyLabSlugs`); the singletons are kept for back-compat with
+    // older clients / external posters.
+    labTemplateId, labTemplateIds,
+    gamifyLabSlug, gamifyLabSlugs, gamifyMinScore,
   } = body;
 
   if (!title || !location || !workMode || !experienceLevel || !urgency || !jobType || !description) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
+
+  // Normalise lab inputs into deduped arrays. We always store both shapes:
+  //   - canonical: `labTemplateIds[]` / `gamifyLabSlugs[]`
+  //   - legacy: `labTemplateId` / `gamifyLabSlug` = first element (or null)
+  // so any reader still on the old field keeps working.
+  const labIds: string[] = Array.from(new Set(
+    Array.isArray(labTemplateIds)
+      ? labTemplateIds.filter((s: unknown): s is string => typeof s === "string" && s.length > 0)
+      : (labTemplateId ? [String(labTemplateId)] : [])
+  ));
+  const labSlugs: string[] = Array.from(new Set(
+    Array.isArray(gamifyLabSlugs)
+      ? gamifyLabSlugs.filter((s: unknown): s is string => typeof s === "string" && s.length > 0)
+      : (gamifyLabSlug ? [String(gamifyLabSlug)] : [])
+  ));
 
   // Auto-fill company from user profile if not provided
   let companyName = company;
@@ -99,8 +118,10 @@ export async function POST(req: NextRequest) {
       perks: perks || null,
       deadline: deadline ? new Date(deadline) : null,
       openings: openings ? parseInt(openings) : 1,
-      labTemplateId: labTemplateId || null,
-      gamifyLabSlug: gamifyLabSlug || null,
+      labTemplateId: labIds[0] || null,
+      labTemplateIds: labIds,
+      gamifyLabSlug: labSlugs[0] || null,
+      gamifyLabSlugs: labSlugs,
       gamifyMinScore: gamifyMinScore && Number(gamifyMinScore) > 0 ? Number(gamifyMinScore) : null,
     },
   });

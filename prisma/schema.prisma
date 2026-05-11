@@ -318,15 +318,21 @@ model JobPosting {
   applications    Application[]
 
   // Lab assessment — internal LabTemplate (legacy MCQ-style).
+  // labTemplateId kept for backward compat with rows created before multi-lab
+  // landed; new code reads/writes labTemplateIds[].
   labTemplateId   String?
   labTemplate     LabTemplate?  @relation("JobLab", fields: [labTemplateId], references: [id])
+  labTemplateIds  String[]      @default([])  // multi-select MCQ labs — student must clear ALL
 
-  // External lab gating (gamify / outerlayerx). When set, students MUST
-  // complete this lab successfully before they can submit an application.
-  // The slug references a lab on the gamify side (their /api/v1/labs).
-  // HR sees the student's score on the application card.
+  // External lab gating (gamify / outerlayerx). When non-empty, students MUST
+  // complete EVERY listed lab successfully before submitting an application.
+  // Slugs reference labs on the gamify side (their /api/v1/labs).
+  // gamifyLabSlug (single) is the legacy field — new code uses gamifyLabSlugs[].
+  // gamifyMinScore is the shared pass threshold applied to every gated lab
+  // (null = any completion counts).
   gamifyLabSlug   String?
-  gamifyMinScore  Int?          // pass threshold; null = any completion counts
+  gamifyLabSlugs  String[]      @default([])
+  gamifyMinScore  Int?
 
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -354,9 +360,15 @@ model Application {
 
   // Gamify lab score — set when the student completed the gated lab
   // before applying. Null if the job didn't require a lab.
+  // Single-field versions kept for back-compat with single-lab jobs.
   gamifyScore     Int?
   gamifyMaxScore  Int?
   gamifySessionId String?         // jti from gamify webhook — for trace
+  // Per-lab snapshot for multi-lab jobs. JSON shape:
+  //   [{ slug, score, maxScore, sessionId, completedAt }]
+  // Captured at apply-time so HR sees exactly what the candidate had then,
+  // even if they re-attempt the lab later.
+  gamifyAttempts  Json?
 
   coverNote     String?
   appliedAt     DateTime          @default(now())

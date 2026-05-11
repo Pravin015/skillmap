@@ -19,6 +19,10 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
   // section is missing (and what to do about it).
   const [gamifyConfigured, setGamifyConfigured] = useState<boolean | null>(null);
   const [gamifyError, setGamifyError] = useState<string | null>(null);
+  // Multi-select lab state. Both arrays start empty; HR ticks the labs they
+  // want to gate the application behind. Empty = no gate.
+  const [selectedLabIds, setSelectedLabIds] = useState<string[]>([]);
+  const [selectedGamifySlugs, setSelectedGamifySlugs] = useState<string[]>([]);
 
   useEffect(() => {
     fetch("/api/labs?status=PUBLISHED").then((r) => r.json()).then((d) => setLabs(d.labs || [])).catch(() => {});
@@ -62,8 +66,10 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
           perks: data.get("perks"),
           deadline: data.get("deadline"),
           openings: data.get("openings"),
-          labTemplateId: data.get("labTemplateId") || undefined,
-          gamifyLabSlug: (data.get("gamifyLabSlug") as string) || undefined,
+          // Multi-select labs. Server stores both arrays + legacy singletons
+          // so existing readers keep working — see app/api/jobs/route.ts.
+          labTemplateIds: selectedLabIds,
+          gamifyLabSlugs: selectedGamifySlugs,
           gamifyMinScore: data.get("gamifyMinScore") ? Number(data.get("gamifyMinScore")) : undefined,
         }),
       });
@@ -71,6 +77,8 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
       if (!res.ok) { setMessage({ type: "error", text: result.error }); return; }
       setMessage({ type: "success", text: `Job "${result.job.title}" posted successfully!` });
       form.reset();
+      setSelectedLabIds([]);
+      setSelectedGamifySlugs([]);
     } catch { setMessage({ type: "error", text: "Failed to post job" }); }
     finally { setSaving(false); }
   }
@@ -150,15 +158,40 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
             <input name="openings" type="number" placeholder="e.g. 5" min="1" defaultValue="1" className={inputClass} style={{ borderColor: "var(--border)" }} />
           </div>
         </div>
-        {/* Lab Assessment */}
+        {/* Lab Assessment — multi-select. HR can tick any number of MCQ labs;
+            candidates must clear ALL of them before applying. */}
         {labs.length > 0 && (
           <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(124,58,237,0.2)", background: "rgba(124,58,237,0.05)" }}>
-            <label className={labelClass}>Attach Assessment Lab (MCQ)</label>
-            <select name="labTemplateId" className={inputClass} style={{ borderColor: "var(--border)" }}>
-              <option value="">No lab (optional)</option>
-              {labs.map((l) => <option key={l.id} value={l.id}>{l.title} — {l.domain} · {l.difficulty} · {l._count.problems} Qs · {l.timeLimit}min</option>)}
-            </select>
-            <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>Candidates must complete this lab when applying. Only passing candidates proceed.</p>
+            <div className="flex items-baseline gap-2 mb-2">
+              <label className={labelClass} style={{ marginBottom: 0 }}>Attach Assessment Labs (MCQ)</label>
+              {selectedLabIds.length > 0 && (
+                <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: "rgba(124,58,237,0.15)", color: "#7c3aed" }}>
+                  {selectedLabIds.length} selected
+                </span>
+              )}
+            </div>
+            <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+              {labs.map((l) => {
+                const checked = selectedLabIds.includes(l.id);
+                return (
+                  <label key={l.id} className="flex items-start gap-2 p-2 rounded-lg cursor-pointer text-xs" style={{ background: checked ? "rgba(124,58,237,0.08)" : "white", border: "1px solid var(--border)" }}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) => {
+                        setSelectedLabIds((prev) => e.target.checked ? [...prev, l.id] : prev.filter((x) => x !== l.id));
+                      }}
+                      className="mt-0.5 cursor-pointer"
+                    />
+                    <span className="flex-1">
+                      <span className="font-medium">{l.title}</span>
+                      <span style={{ color: "var(--muted)" }}> — {l.domain} · {l.difficulty} · {l._count.problems} Qs · {l.timeLimit}min</span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            <p className="text-xs mt-2" style={{ color: "var(--muted)" }}>Pick one or more labs. Candidates must clear <strong>every</strong> selected lab before applying.</p>
           </div>
         )}
 
@@ -184,18 +217,36 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
 
         {gamifyLabs.length > 0 && (
           <div className="rounded-xl p-4 border" style={{ borderColor: "rgba(16,185,129,0.2)", background: "rgba(16,185,129,0.05)" }}>
-            <div className="flex items-baseline gap-2 mb-1">
-              <label className={labelClass} style={{ marginBottom: 0 }}>Gate with Hands-on Lab</label>
+            <div className="flex items-baseline gap-2 mb-2">
+              <label className={labelClass} style={{ marginBottom: 0 }}>Gate with Hands-on Labs</label>
               <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: "rgba(16,185,129,0.15)", color: "#16a34a" }}>Recommended</span>
+              {selectedGamifySlugs.length > 0 && (
+                <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: "rgba(16,185,129,0.15)", color: "#16a34a" }}>
+                  {selectedGamifySlugs.length} selected
+                </span>
+              )}
             </div>
-            <select name="gamifyLabSlug" className={inputClass} style={{ borderColor: "var(--border)" }}>
-              <option value="">No hands-on lab (candidates can apply directly)</option>
-              {gamifyLabs.map((l) => (
-                <option key={l.id} value={l.slug}>
-                  {l.title} — {l.category} · {l.difficulty} · {l.timeLimit}min · max {l.maxScore} pts
-                </option>
-              ))}
-            </select>
+            <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+              {gamifyLabs.map((l) => {
+                const checked = selectedGamifySlugs.includes(l.slug);
+                return (
+                  <label key={l.id} className="flex items-start gap-2 p-2 rounded-lg cursor-pointer text-xs" style={{ background: checked ? "rgba(16,185,129,0.08)" : "white", border: "1px solid var(--border)" }}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) => {
+                        setSelectedGamifySlugs((prev) => e.target.checked ? [...prev, l.slug] : prev.filter((x) => x !== l.slug));
+                      }}
+                      className="mt-0.5 cursor-pointer"
+                    />
+                    <span className="flex-1">
+                      <span className="font-medium">{l.title}</span>
+                      <span style={{ color: "var(--muted)" }}> — {l.category} · {l.difficulty} · {l.timeLimit}min · max {l.maxScore} pts</span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
             <div className="grid grid-cols-2 gap-3 mt-3">
               <div>
                 <label className="text-xs font-medium" style={{ color: "var(--muted)" }}>Minimum score (0-100)</label>
@@ -209,7 +260,7 @@ export default function CreateJobOpening({ companyName }: { companyName: string 
               </div>
             </div>
             <p className="text-xs mt-2" style={{ color: "var(--muted)" }}>
-              📝 Students must complete this lab before they can submit an application. The score is shown on the application card.
+              📝 Students must complete <strong>every</strong> selected lab before they can submit an application. Per-lab scores are shown on each application card.
             </p>
           </div>
         )}

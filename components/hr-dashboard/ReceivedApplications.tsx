@@ -21,8 +21,11 @@ interface App {
   gamifyScore: number | null;
   gamifyMaxScore: number | null;
   gamifySessionId: string | null;
+  // Per-lab snapshot for multi-lab jobs. Captured at apply-time so HR sees
+  // exactly what the candidate had then. Null for single-lab jobs.
+  gamifyAttempts: Array<{ slug: string; score: number | null; maxScore: number | null; sessionId: string | null; completedAt: string | null }> | null;
   appliedAt: string;
-  job: { title: string; company: string; gamifyLabSlug: string | null; gamifyMinScore: number | null };
+  job: { title: string; company: string; gamifyLabSlug: string | null; gamifyLabSlugs: string[]; gamifyMinScore: number | null };
   user: {
     name: string; email: string; phone: string | null;
     profile: { profileNumber: string; profileScore: number; fieldOfInterest: string | null; collegeName: string | null; skills: string[]; resumeUrl: string | null } | null;
@@ -121,24 +124,43 @@ export default function ReceivedApplications() {
                   <div className={`${heading} text-lg font-bold`} style={{ color: scoreColor(app.scoreMatch) }}>{app.scoreMatch}%</div>
                   <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Match</div>
                 </div>
-                {/* Gamify lab score — only when the job required a lab. */}
-                {app.job.gamifyLabSlug && (
-                  <div className="text-center shrink-0 px-3 py-1 rounded-lg" style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)" }}>
-                    {app.gamifyScore !== null ? (
-                      <>
-                        <div className={`${heading} text-base font-bold`} style={{ color: app.job.gamifyMinScore && app.gamifyScore < app.job.gamifyMinScore ? "#dc2626" : "#7c3aed" }}>
-                          {app.gamifyScore}{app.gamifyMaxScore ? `/${app.gamifyMaxScore}` : ""}
-                        </div>
-                        <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>Lab score</div>
-                      </>
-                    ) : (
-                      <>
-                        <div className={`${heading} text-base font-bold`} style={{ color: "var(--muted)" }}>—</div>
-                        <div className="text-[0.6rem]" style={{ color: "var(--muted)" }}>No lab</div>
-                      </>
-                    )}
-                  </div>
-                )}
+                {/* Gamify lab scores. Two render modes:
+                      - Multi-lab (gamifyAttempts present): one violet pill per
+                        gated lab, slug truncated to keep the card compact.
+                      - Single-lab (legacy): same single pill as before. */}
+                {(() => {
+                  const slugs = app.job.gamifyLabSlugs?.length ? app.job.gamifyLabSlugs : (app.job.gamifyLabSlug ? [app.job.gamifyLabSlug] : []);
+                  if (slugs.length === 0) return null;
+
+                  // Build a slug -> attempt map. Prefer the per-lab snapshot;
+                  // for single-lab apps, synthesise from legacy fields.
+                  const attempts = new Map<string, { score: number | null; maxScore: number | null }>();
+                  if (app.gamifyAttempts?.length) {
+                    for (const a of app.gamifyAttempts) attempts.set(a.slug, { score: a.score, maxScore: a.maxScore });
+                  } else if (app.job.gamifyLabSlug) {
+                    attempts.set(app.job.gamifyLabSlug, { score: app.gamifyScore, maxScore: app.gamifyMaxScore });
+                  }
+
+                  return (
+                    <div className="flex gap-1.5 flex-wrap shrink-0 max-w-[260px]">
+                      {slugs.map((slug) => {
+                        const a = attempts.get(slug);
+                        const score = a?.score ?? null;
+                        const maxScore = a?.maxScore ?? null;
+                        const failed = app.job.gamifyMinScore && score !== null && score < app.job.gamifyMinScore;
+                        const shortSlug = slug.length > 18 ? slug.slice(0, 16) + "…" : slug;
+                        return (
+                          <div key={slug} className="text-center px-2 py-1 rounded-lg" style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)" }} title={slug}>
+                            <div className={`${heading} text-sm font-bold`} style={{ color: failed ? "#dc2626" : score !== null ? "#7c3aed" : "var(--muted)" }}>
+                              {score !== null ? <>{score}{maxScore ? `/${maxScore}` : ""}</> : "—"}
+                            </div>
+                            <div className="text-[0.55rem]" style={{ color: "var(--muted)" }}>{shortSlug}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
                 <div className="shrink-0">
                   <select value={app.status} onChange={(e) => updateStatus(app.id, e.target.value)} className={`text-[0.65rem] font-bold px-2 py-1 rounded-full border-none cursor-pointer ${statusColors[app.status] || ""}`}>
                     {["APPLIED", "SCREENING", "INTERVIEW", "ASSESSMENT", "OFFER", "HIRED", "REJECTED"].map((s) => <option key={s} value={s}>{s}</option>)}

@@ -33,7 +33,7 @@ export async function GET() {
     const apps = await prisma.application.findMany({
       where: { job: { postedById: userId } },
       include: {
-        job: { select: { title: true, company: true, gamifyLabSlug: true, gamifyMinScore: true } },
+        job: { select: { title: true, company: true, gamifyLabSlug: true, gamifyLabSlugs: true, gamifyMinScore: true } },
         user: {
           select: {
             name: true, email: true, phone: true,
@@ -104,49 +104,90 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Lab gate — if the job requires a gamify lab, the student must have
-  // a COMPLETED attempt with a passing score before they can apply.
-  // The webhook from gamify populates ExternalLabAttempt; we read it here.
+  // Lab gate — if the job lists one or more gamify labs, the student must have
+  // a COMPLETED attempt with a passing score for EVERY listed lab before
+  // applying. Webhooks from gamify populate ExternalLabAttempt; we read it
+  // per-lab here.
+  //
+  // Required slugs come from the new array field, falling back to the legacy
+  // single field for rows created before multi-lab landed.
+  const requiredLabSlugs: string[] = (job.gamifyLabSlugs?.length ? job.gamifyLabSlugs : (job.gamifyLabSlug ? [job.gamifyLabSlug] : []));
+
+  interface AttemptSnap { slug: string; score: number | null; maxScore: number | null; sessionId: string | null; completedAt: Date | null }
+  const attemptsBySlug: AttemptSnap[] = [];
+  // Legacy single-field result, kept populated for back-compat with readers
+  // built before multi-lab (HR cards, analytics).
   let bestAttempt: { score: number | null; maxScore: number | null; sessionId: string | null } = { score: null, maxScore: null, sessionId: null };
-  if (job.gamifyLabSlug) {
-    const attempt = await prisma.externalLabAttempt.findFirst({
+
+  if (requiredLabSlugs.length > 0) {
+    const allAttempts = await prisma.externalLabAttempt.findMany({
       where: {
         userId,
-        labSlug: job.gamifyLabSlug,
+        labSlug: { in: requiredLabSlugs },
         status: { in: ["COMPLETED", "FLAG_CAPTURED"] },
       },
       orderBy: [{ score: "desc" }, { completedAt: "desc" }],
-      select: { score: true, maxScore: true, sessionId: true },
+      select: { labSlug: true, score: true, maxScore: true, sessionId: true, completedAt: true },
     });
 
-    if (!attempt) {
+    // Keep highest-scoring attempt per slug (first occurrence after the sort).
+    const bestPerSlug = new Map<string, typeof allAttempts[number]>();
+    for (const a of allAttempts) {
+      if (!bestPerSlug.has(a.labSlug)) bestPerSlug.set(a.labSlug, a);
+    }
+
+    const missing: string[] = [];
+    const tooLow: { slug: string; yourScore: number | null; minScore: number }[] = [];
+
+    for (const slug of requiredLabSlugs) {
+      const a = bestPerSlug.get(slug);
+      if (!a) { missing.push(slug); continue; }
+      if (job.gamifyMinScore && (a.score ?? 0) < job.gamifyMinScore) {
+        tooLow.push({ slug, yourScore: a.score, minScore: job.gamifyMinScore });
+        continue;
+      }
+      attemptsBySlug.push({ slug, score: a.score, maxScore: a.maxScore, sessionId: a.sessionId, completedAt: a.completedAt });
+    }
+
+    if (missing.length > 0) {
       return NextResponse.json(
         {
           error: "Lab required",
           code: "LAB_REQUIRED",
-          labSlug: job.gamifyLabSlug,
+          labSlugs: missing,
+          labSlug: missing[0],                     // legacy
           minScore: job.gamifyMinScore,
-          message: `This job requires you to complete a hands-on lab first. Open the lab below — once you complete it, come back here and apply.`,
+          message: missing.length === 1
+            ? `This job requires you to complete a hands-on lab first. Open the lab below — once you complete it, come back here and apply.`
+            : `This job requires ${requiredLabSlugs.length} hands-on labs. You still need to complete ${missing.length} of them before applying.`,
         },
         { status: 400 }
       );
     }
 
-    if (job.gamifyMinScore && (attempt.score ?? 0) < job.gamifyMinScore) {
+    if (tooLow.length > 0) {
+      const first = tooLow[0];
       return NextResponse.json(
         {
           error: "Lab score too low",
           code: "LAB_SCORE_LOW",
-          labSlug: job.gamifyLabSlug,
-          yourScore: attempt.score,
-          minScore: job.gamifyMinScore,
-          message: `You scored ${attempt.score} but ${job.gamifyMinScore}+ is required for this role. Try the lab again.`,
+          labSlugs: tooLow.map((t) => t.slug),
+          labSlug: first.slug,                     // legacy
+          yourScore: first.yourScore,
+          minScore: first.minScore,
+          message: tooLow.length === 1
+            ? `You scored ${first.yourScore} on ${first.slug} but ${first.minScore}+ is required. Try the lab again.`
+            : `${tooLow.length} of your lab scores are below the ${first.minScore}+ threshold required for this role. Retry them and re-apply.`,
         },
         { status: 400 }
       );
     }
 
-    bestAttempt = attempt;
+    // All required labs cleared. Legacy single-field = top-scoring across all.
+    const topAttempt = attemptsBySlug.slice().sort((x, y) => (y.score ?? 0) - (x.score ?? 0))[0];
+    if (topAttempt) {
+      bestAttempt = { score: topAttempt.score, maxScore: topAttempt.maxScore, sessionId: topAttempt.sessionId };
+    }
   }
 
   // Calculate score match based on student profile vs job skills
@@ -170,6 +211,19 @@ export async function POST(req: NextRequest) {
       gamifyScore: bestAttempt.score,
       gamifyMaxScore: bestAttempt.maxScore,
       gamifySessionId: bestAttempt.sessionId,
+      // Per-lab snapshot for multi-lab jobs. Captured at apply-time so HR
+      // sees exactly what the candidate had then, even if they re-attempt
+      // a lab later. Null for jobs with zero or one required lab — the
+      // legacy single fields above already cover that case.
+      gamifyAttempts: attemptsBySlug.length > 1
+        ? attemptsBySlug.map((a) => ({
+            slug: a.slug,
+            score: a.score,
+            maxScore: a.maxScore,
+            sessionId: a.sessionId,
+            completedAt: a.completedAt?.toISOString() || null,
+          }))
+        : undefined,
     },
   });
 
