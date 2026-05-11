@@ -8,12 +8,14 @@ import AddStudent from "@/components/institution-dashboard/AddStudent";
 import SearchCompanies from "@/components/institution-dashboard/SearchCompanies";
 import InstitutionAnalytics from "@/components/institution-dashboard/InstitutionAnalytics";
 import InstitutionSettings from "@/components/institution-dashboard/InstitutionSettings";
+import InviteLinksManager from "@/components/InviteLinksManager";
 
 const heading = "font-[family-name:var(--font-heading)]";
 const tabs = [
   { id: "overview", label: "Overview", icon: "📊" },
   { id: "students", label: "Students", icon: "🎓" },
   { id: "add-student", label: "Add Student", icon: "➕" },
+  { id: "invite-links", label: "Invite Links", icon: "🔗" },
   { id: "companies", label: "Companies", icon: "🏢" },
   { id: "courses", label: "Courses", icon: "📚" },
   { id: "analytics", label: "Analytics", icon: "📈" },
@@ -56,6 +58,7 @@ export default function InstitutionDashboardPage() {
       case "overview": return <InstitutionOverview studentCount={students.length} orgName={orgName} onNavigate={setActiveTab} />;
       case "students": return <MyStudents students={students} onRefresh={fetchStudents} onNavigate={setActiveTab} />;
       case "add-student": return <AddStudent onRefresh={fetchStudents} />;
+      case "invite-links": return <div className="space-y-4"><div><h2 className={`${heading} font-bold text-xl`}>Invite Links</h2><p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Share a link — students sign up and get linked to {orgName} automatically.</p></div><InviteLinksManager allowedKinds={["INSTITUTE_STUDENT"]} /></div>;
       case "companies": return <SearchCompanies />;
       case "courses": return <div className="space-y-4"><div className="flex items-center justify-between"><div><h2 className={`${heading} font-bold text-xl`}>Your Courses</h2><p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Create and manage courses for your students</p></div><a href="/courses/create" className="btn-primary no-underline text-xs" style={{ padding: "0.5rem 1rem" }}>+ Create Course</a></div><InstitutionCourses /></div>;
       case "analytics": return <InstitutionAnalytics studentCount={students.length} />;

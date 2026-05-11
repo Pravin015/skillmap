@@ -25,6 +25,8 @@ import BulkNotificationsTab from "@/components/admin-dashboard/BulkNotifications
 import CompetitionsTab from "@/components/admin-dashboard/CompetitionsTab";
 import CoursesAdminTab from "@/components/admin-dashboard/CoursesAdminTab";
 import ReportsTab from "@/components/admin-dashboard/ReportsTab";
+import InviteLinksManager from "@/components/InviteLinksManager";
+import B2BPartnersTab from "@/components/admin-dashboard/B2BPartnersTab";
 
 const heading = "font-[family-name:var(--font-heading)]";
 
@@ -43,6 +45,7 @@ const sidebarCategories: SidebarCategory[] = [
     items: [
       { id: "users", label: "All Users", icon: "👤" },
       { id: "add-user", label: "Add User", icon: "➕" },
+      { id: "invite-links", label: "Invite Links", icon: "🔗" },
       { id: "students", label: "Students", icon: "🎓" },
       { id: "hrs", label: "HR Accounts", icon: "👥" },
       { id: "mentors", label: "Mentors", icon: "🧑‍🏫" },
@@ -95,6 +98,12 @@ const sidebarCategories: SidebarCategory[] = [
     ],
   },
   {
+    label: "Integrations",
+    items: [
+      { id: "b2b-partners", label: "B2B Partners", icon: "🤝" },
+    ],
+  },
+  {
     label: "System",
     items: [
       { id: "settings", label: "Platform Settings", icon: "⚙️" },
@@ -142,6 +151,7 @@ export default function AdminPage() {
       case "overview": return <AdminOverview stats={stats} onNavigate={setActiveTab} />;
       case "users": return <UserManagement users={users} onRefresh={fetchUsers} />;
       case "add-user": return <AddUserTab onRefresh={fetchUsers} />;
+      case "invite-links": return <div className="space-y-4"><div><h2 className={`${heading} font-bold text-xl`}>Invite Links</h2><p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Generate sign-up links for any role. Reusable for 14 days.</p></div><InviteLinksManager allowedKinds={["MENTOR", "HR", "INSTITUTE_STUDENT", "CANDIDATE"]} defaultKind="MENTOR" /></div>;
       case "companies": return <CompaniesTab />;
       case "hrs": return <HRsTab users={users} onRefresh={fetchUsers} />;
       case "mentors": return <MentorsTab />;
@@ -163,6 +173,7 @@ export default function AdminPage() {
       case "courses": return <CoursesAdminTab />;
       case "reports": return <ReportsTab />;
       case "notifications": return <BulkNotificationsTab />;
+      case "b2b-partners": return <B2BPartnersTab />;
       case "settings": return <PlatformSettings />;
       default: return <AdminOverview stats={stats} onNavigate={setActiveTab} />;
     }

@@ -14,6 +14,7 @@ import Leaderboard from "@/components/hr-dashboard/Leaderboard";
 import MyJobPosts from "@/components/hr-dashboard/MyJobPosts";
 import JDMatcher from "@/components/hr-dashboard/JDMatcher";
 import CandidatePipeline from "@/components/hr-dashboard/CandidatePipeline";
+import InviteLinksManager from "@/components/InviteLinksManager";
 
 const heading = "font-[family-name:var(--font-heading)]";
 
@@ -26,6 +27,7 @@ const sidebarItems = [
   { id: "search", label: "Search", icon: "🔍" },
   { id: "jd-match", label: "AI JD Match", icon: "🤖" },
   { id: "invite", label: "Invite", icon: "✉️" },
+  { id: "invite-links", label: "Invite Links", icon: "🔗" },
   { id: "hackathon", label: "Hackathon", icon: "🏆" },
   { id: "leaderboard", label: "Leaderboard", icon: "🏅" },
 ];
@@ -62,6 +64,7 @@ export default function HRDashboardPage() {
       case "search": return <SearchCandidates />;
       case "jd-match": return <JDMatcher />;
       case "invite": return <InviteCandidates />;
+      case "invite-links": return <div className="space-y-4"><div><h2 className={`${heading} font-bold text-xl`}>Candidate Invite Links</h2><p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Generate a shareable signup link. Candidates who use it join under {companyName || "your company"}.</p></div><InviteLinksManager allowedKinds={["CANDIDATE"]} /></div>;
       case "hackathon": return <CreateHackathon />;
       case "leaderboard": return <Leaderboard />;
       default: return <HROverview onNavigate={setActiveTab} />;

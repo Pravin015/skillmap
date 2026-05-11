@@ -9,12 +9,14 @@ import HRTracker from "@/components/company-dashboard/HRTracker";
 import HiringAnalytics from "@/components/company-dashboard/HiringAnalytics";
 import CompanySettings from "@/components/company-dashboard/CompanySettings";
 import CompanyProfileEditor from "@/components/company-dashboard/CompanyProfileEditor";
+import InviteLinksManager from "@/components/InviteLinksManager";
 
 const heading = "font-[family-name:var(--font-heading)]";
 
 const sidebarItems = [
   { id: "overview", label: "Overview", icon: "📊" },
   { id: "manage-hr", label: "Manage HR", icon: "👥" },
+  { id: "invite-links", label: "Invite Links", icon: "🔗" },
   { id: "hr-tracker", label: "HR Tracker", icon: "📈" },
   { id: "profile", label: "Company Profile", icon: "🏢" },
   { id: "analytics", label: "Analytics", icon: "📉" },
@@ -68,6 +70,7 @@ export default function CompanyDashboardPage() {
     switch (activeTab) {
       case "overview": return <CompanyOverview orgName={orgName} hrCount={hrs.length} onNavigate={setActiveTab} />;
       case "manage-hr": return <ManageHR hrs={hrs} onRefresh={fetchHrs} />;
+      case "invite-links": return <div className="space-y-4"><div><h2 className={`${heading} font-bold text-xl`}>HR Invite Links</h2><p className="text-xs mt-0.5" style={{ color: "var(--muted)" }}>Share a signup link — new HR users join under {orgName} automatically.</p></div><InviteLinksManager allowedKinds={["HR"]} /></div>;
       case "hr-tracker": return <HRTracker hrs={hrs} />;
       case "profile": return <CompanyProfileEditor />;
       case "analytics": return <HiringAnalytics hrCount={hrs.length} />;
