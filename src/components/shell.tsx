@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Bell, Briefcase, Building2, LayoutDashboard, LogOut, MessageSquare, Newspaper, Settings, ShieldCheck, Users } from "lucide-react";
+import { Bell, Briefcase, Building2, CreditCard, LayoutDashboard, LogOut, MessageSquare, Newspaper, Settings, ShieldCheck, Tag, Users } from "lucide-react";
 import { getCurrentUser, isStaff } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logout } from "@/lib/actions/auth";
@@ -30,6 +30,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
             <NavLink href="/trainers" icon={<Users size={16} />}>Trainers</NavLink>
             <NavLink href="/requirements" icon={<Briefcase size={16} />}>Requirements</NavLink>
             <NavLink href="/companies" icon={<Building2 size={16} />}>Companies</NavLink>
+            <NavLink href="/pricing" icon={<Tag size={16} />}>Pricing</NavLink>
           </nav>
           <div className="ml-auto flex items-center gap-1.5">
             {user ? (
@@ -59,6 +60,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
                     {user.trainerProfile ? <MenuLink href={`/trainers/${user.trainerProfile.slug}`} icon={<Briefcase size={15} />}>My public profile</MenuLink> : null}
                     {user.membership ? <MenuLink href={`/companies/${user.membership.company.slug}`} icon={<Building2 size={15} />}>Company page</MenuLink> : null}
                     <MenuLink href="/settings" icon={<Settings size={15} />}>Settings</MenuLink>
+                    {user.role === "TRAINER" || user.membership ? <MenuLink href="/settings/billing" icon={<CreditCard size={15} />}>Plan & billing</MenuLink> : null}
                     {isStaff(user) ? <MenuLink href="/admin" icon={<ShieldCheck size={15} />}>Admin console</MenuLink> : null}
                     <div className="hairline my-1" />
                     <form action={logout}>
@@ -86,6 +88,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
             <Link href="/trainers" className="hover:text-ink">Trainers</Link>
             <Link href="/requirements" className="hover:text-ink">Requirements</Link>
             <Link href="/companies" className="hover:text-ink">Companies</Link>
+            <Link href="/pricing" className="hover:text-ink">Pricing</Link>
           </div>
         </div>
       </footer>

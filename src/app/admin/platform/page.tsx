@@ -4,6 +4,7 @@ import { createAdmin, removeAdmin, updateSetting, upsertTaxonomy } from "@/lib/a
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Avatar, Badge, Button, Card, Chip, Field, Input, PageHeader, Stat } from "@/components/ui";
 import { fmtDate, timeAgo } from "@/lib/utils";
+import { ACTIVE_STATUSES, inr, planByCode } from "@/lib/billing";
 
 export const metadata = { title: "Platform" };
 
@@ -31,6 +32,8 @@ export default async function PlatformPage() {
       db.application.count({ where: { status: "AWARDED" } }),
     ]),
   ]);
+  const activeSubs = await db.subscription.findMany({ where: { status: { in: ACTIVE_STATUSES } }, include: { user: { select: { name: true } }, company: { select: { name: true } } }, orderBy: { createdAt: "desc" } });
+  const mrr = activeSubs.reduce((n, x) => n + (x.interval === "YEARLY" ? Math.round(x.amount / 12) : x.amount), 0);
   const s = Object.fromEntries(settings.map((x) => [x.key, x.value]));
   const [newUsers, newReqs, newApps, awarded] = growth;
 
@@ -40,6 +43,16 @@ export default async function PlatformPage() {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="New users · 30d" value={newUsers} /><Stat label="Requirements · 30d" value={newReqs} tone="violet" /><Stat label="Applications · 30d" value={newApps} tone="amber" /><Stat label="Awarded all-time" value={awarded} tone="lime" />
       </div>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <Stat label="Active subscriptions" value={activeSubs.length} tone="lime" /><Stat label="Monthly recurring" value={inr(mrr)} tone="lime" /><Stat label="Trainer Pro" value={activeSubs.filter((x) => x.plan === "TRAINER_PRO").length} /><Stat label="Company plans" value={activeSubs.filter((x) => x.plan !== "TRAINER_PRO").length} tone="violet" />
+      </div>
+      {activeSubs.length ? (
+        <Card className="p-6">
+          <h2 className="text-lg font-bold">Subscriptions</h2>
+          <div className="mt-3 overflow-x-auto"><table className="w-full text-sm"><thead><tr className="mono text-left text-[11px] uppercase tracking-wider text-muted"><th className="py-2 pr-4">Subscriber</th><th className="py-2 pr-4">Plan</th><th className="py-2 pr-4">Amount</th><th className="py-2 pr-4">Status</th><th className="py-2">Renews</th></tr></thead>
+          <tbody className="divide-y divide-line">{activeSubs.map((x) => <tr key={x.id}><td className="py-2 pr-4">{x.company?.name ?? x.user?.name}</td><td className="py-2 pr-4">{planByCode(x.plan).name} · {x.interval.toLowerCase()}</td><td className="py-2 pr-4 tabular-nums">{inr(x.amount)}</td><td className="py-2 pr-4"><Badge tone={x.simulated ? "amber" : "lime"}>{x.simulated ? "simulated" : x.status.toLowerCase()}</Badge></td><td className="py-2 text-muted">{x.currentPeriodEnd ? fmtDate(x.currentPeriodEnd) : "—"}</td></tr>)}</tbody></table></div>
+        </Card>
+      ) : null}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="p-6">

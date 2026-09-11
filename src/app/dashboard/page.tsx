@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/auth";
 import { Avatar, Badge, ButtonLink, Card, Empty, PageHeader, Stat } from "@/components/ui";
 import { RequirementCard, reqTone } from "@/components/cards";
 import { appStatusLabel, fmtDate, reqStatusLabel, timeAgo } from "@/lib/utils";
+import { entitlementsFor } from "@/lib/billing";
 
 export const metadata = { title: "Dashboard" };
 
@@ -14,6 +15,14 @@ export default async function Dashboard() {
   if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") redirect("/admin");
   const notifications = await db.notification.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 6 });
   const pendingConns = await db.connection.count({ where: { addresseeId: user.id, status: "PENDING" } });
+  const ent = await entitlementsFor(user);
+  const planCard = (
+    <Card className="p-5">
+      <div className="flex items-center justify-between"><p className="font-semibold">Plan</p><Badge tone={ent.plan ? "lime" : "neutral"}>{ent.planName}</Badge></div>
+      <p className="mt-2 text-sm text-muted">{ent.plan ? "Thank you for subscribing. Manage billing in Settings." : user.role === "TRAINER" ? "Free plan: 5 applications a month. Trainer Pro removes the limit and features you in search." : "Free plan: 2 open requirements. Growth removes the limit and lets you message any trainer."}</p>
+      <ButtonLink href={ent.plan ? "/settings/billing" : "/pricing"} variant={ent.plan ? "secondary" : user.role === "COMPANY" ? "violet" : "primary"} size="sm" className="mt-3 w-full">{ent.plan ? "Manage plan" : "See plans"}</ButtonLink>
+    </Card>
+  );
 
   if (user.trainerProfile) {
     const profile = await db.trainerProfile.findUnique({ where: { id: user.trainerProfile.id }, include: { skills: true, certifications: true, applications: { include: { requirement: { include: { company: { select: { name: true } } } } }, orderBy: { createdAt: "desc" } } } });
@@ -65,6 +74,7 @@ export default async function Dashboard() {
               <ul className="mt-3 space-y-1.5 text-sm">{checklist.map(([l, ok]) => <li key={l} className={ok ? "text-muted line-through" : "text-ink"}><span className={`mr-2 ${ok ? "text-lime" : "text-dim"}`}>{ok ? "✓" : "○"}</span>{l}</li>)}</ul>
               <ButtonLink href="/settings" variant="secondary" size="sm" className="mt-3 w-full">Edit profile</ButtonLink>
             </Card>
+            {planCard}
             <NotifCard notifications={notifications} />
           </aside>
         </div>
@@ -116,6 +126,7 @@ export default async function Dashboard() {
               {c.saved.length ? <ul className="mt-3 space-y-2">{c.saved.map((s) => <li key={s.trainerId}><Link href={`/trainers/${s.trainer.slug}`} className="flex items-center gap-2 text-sm hover:text-cyan"><Avatar name={s.trainer.user.name} src={s.trainer.user.avatarUrl} size={28} /><span className="truncate">{s.trainer.user.name}</span></Link></li>)}</ul> : <p className="mt-1 text-sm text-muted">Save trainers from their profile to build a bench.</p>}
               <ButtonLink href="/trainers" variant="secondary" size="sm" className="mt-3 w-full">Find trainers</ButtonLink>
             </Card>
+            {planCard}
             <NotifCard notifications={notifications} />
           </aside>
         </div>

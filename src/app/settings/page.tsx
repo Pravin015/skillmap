@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { addCertification, deleteCertification, inviteMember, removeMember, updateAccount, updateCompany, updateTrainerProfile } from "@/lib/actions/profile";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
-import { Alert, Avatar, Badge, Button, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
+import { Alert, Avatar, Badge, Button, ButtonLink, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { certStatusLabel, COMPANY_SIZES, CURRENCIES, DELIVERY_MODES, fmtDate, modeLabel } from "@/lib/utils";
 import { unlinkProvider } from "@/lib/actions/oauth";
 import { PROVIDER_LIST, providerName } from "@/lib/oauth";
@@ -19,7 +19,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
-      <PageHeader eyebrow="Settings" title={user.trainerProfile ? "Your trainer profile" : user.membership ? "Company page & team" : "Account"} body={welcome ? "Welcome aboard. Complete the essentials below so people can find you." : undefined} />
+      <PageHeader eyebrow="Settings" title={user.trainerProfile ? "Your trainer profile" : user.membership ? "Company page & team" : "Account"} body={welcome ? "Welcome aboard. Complete the essentials below so people can find you." : undefined} actions={user.trainerProfile || user.membership ? <ButtonLink href="/settings/billing" variant="secondary" size="sm">Plan & billing</ButtonLink> : null} />
       {welcome ? <Alert tone="cyan">Account created. {user.trainerProfile ? "Add your skills, rate and certifications to get verified." : "Complete your company page, then post your first requirement."}</Alert> : null}
 
       {user.trainerProfile ? <TrainerSettings userId={user.id} profileId={user.trainerProfile.id} /> : null}

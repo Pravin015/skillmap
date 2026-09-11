@@ -98,6 +98,73 @@ model User {
   postComments     PostComment[]
   following        Follow[] @relation("Follower")
   followers        Follow[] @relation("FollowedUser")
+  subscriptions    Subscription[]
+}
+
+enum PlanCode {
+  TRAINER_PRO
+  COMPANY_GROWTH
+  PARTNER
+}
+
+enum BillingInterval {
+  MONTHLY
+  YEARLY
+}
+
+enum SubStatus {
+  CREATED
+  AUTHENTICATED
+  ACTIVE
+  PENDING
+  HALTED
+  CANCELLED
+  COMPLETED
+  EXPIRED
+}
+
+model Subscription {
+  id                     String          @id @default(cuid())
+  userId                 String?
+  user                   User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId              String?
+  company                Company?        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  plan                   PlanCode
+  interval               BillingInterval
+  status                 SubStatus       @default(CREATED)
+  amount                 Int
+  currency               String          @default("INR")
+  razorpaySubscriptionId String?         @unique
+  razorpayPlanId         String?
+  razorpayCustomerId     String?
+  currentPeriodEnd       DateTime?
+  cancelAtPeriodEnd      Boolean         @default(false)
+  simulated              Boolean         @default(false)
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+
+  payments Payment[]
+}
+
+model Payment {
+  id                String       @id @default(cuid())
+  subscriptionId    String
+  subscription      Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  razorpayPaymentId String?      @unique
+  amount            Int
+  currency          String       @default("INR")
+  status            String
+  method            String?
+  invoiceId         String?
+  createdAt         DateTime     @default(now())
+}
+
+model WebhookEvent {
+  id          String   @id @default(cuid())
+  eventId     String   @unique
+  type        String
+  payload     Json
+  processedAt DateTime @default(now())
 }
 
 model Post {
@@ -230,6 +297,7 @@ model Company {
   saved        SavedTrainer[]
   posts        Post[]
   followers    Follow[]
+  subscriptions Subscription[]
 }
 
 model CompanyMember {

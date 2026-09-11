@@ -44,6 +44,8 @@ export async function seedFeed(db: PrismaClient) {
   await like(p5, [rahul, meera, priya]);
   await like(p7, [kavya, rahul, ananya]);
   await like(p9, [sana, ananya, karan]);
+  await like(p6, [priya, sana]);
+  await like(p8, [vikram, rahul]);
 
   const cmt = (post: { id: string }, u: { id: string }, body: string, h: number) => db.postComment.create({ data: { postId: post.id, authorId: u.id, body, createdAt: hoursAgo(h) } });
   await cmt(p1, sandeep, "The bank's ops lead mentioned the checklist unprompted on the feedback call. Keep doing that.", 28);

@@ -12,6 +12,7 @@ import { loadPosts } from "@/lib/feed";
 import { PostCard } from "@/components/post-card";
 import { FollowButton } from "@/components/post-actions";
 import { isStaff } from "@/lib/auth";
+import { proTrainerUserIds } from "@/lib/billing";
 
 export default async function TrainerPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -35,10 +36,11 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
     user?.membership ? db.savedTrainer.findUnique({ where: { companyId_trainerId: { companyId: user.membership.company.id, trainerId: t.id } } }) : null,
     user?.membership ? db.requirement.findMany({ where: { companyId: user.membership.company.id, status: { in: ["OPEN", "SHORTLISTING"] }, invitedTrainers: { none: { id: t.id } } }, select: { id: true, title: true } }) : [],
   ]);
-  const [follow, followerCount, feed] = await Promise.all([
+  const [follow, followerCount, feed, pro] = await Promise.all([
     user && !isSelf ? db.follow.findUnique({ where: { followerId_followingUserId: { followerId: user.id, followingUserId: t.userId } } }) : null,
     db.follow.count({ where: { followingUserId: t.userId } }),
     loadPosts({ authorId: t.userId }, 5, user?.id),
+    proTrainerUserIds(),
   ]);
   const ratings = t.user.ratingsReceived;
   const avg = ratings.length ? ratings.reduce((a, r) => a + r.score, 0) / ratings.length : null;
@@ -58,7 +60,7 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
                 <span className="flex items-center gap-1.5"><Languages size={14} />{t.languages.join(", ") || "English"}</span>
                 {avg ? <span className="flex items-center gap-1 text-amber"><Star size={14} className="fill-amber" />{avg.toFixed(1)} · {ratings.length} rating{ratings.length > 1 ? "s" : ""}</span> : null}
               </div>
-              <div className="mt-3 flex flex-wrap gap-1.5">{t.deliveryModes.map((m) => <Badge key={m} tone="cyan">{modeLabel[m]}</Badge>)}{t.verifiedAt ? <Badge tone="lime">verified {fmtDate(t.verifiedAt)}</Badge> : null}</div>
+              <div className="mt-3 flex flex-wrap gap-1.5">{t.deliveryModes.map((m) => <Badge key={m} tone="cyan">{modeLabel[m]}</Badge>)}{t.verifiedAt ? <Badge tone="lime">verified {fmtDate(t.verifiedAt)}</Badge> : null}{pro.has(t.userId) ? <Badge tone="cyan">Trainer Pro</Badge> : null}</div>
             </div>
           </div>
           {t.bio ? <p className="mt-5 max-w-3xl whitespace-pre-line leading-relaxed text-ink/90">{t.bio}</p> : null}

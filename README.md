@@ -65,9 +65,25 @@ prisma/schema.prisma            data model · prisma/seed.ts demo data
 
 `/feed` shows posts from followed people, followed companies and accepted connections ("Following"), or everything ("Everyone"). Posts take text plus an optional image (8 MB) or document (15 MB). Likes, comments, reposts with a note, and follow buttons on trainer and company pages. Staff remove posts from the admin console; removals are audit-logged and the author is notified. `pnpm db:seed:feed` adds demo posts to an existing database.
 
+## Subscriptions (Razorpay)
+
+Plans live in `src/lib/billing.ts`: Trainer Pro (₹999/mo), Company Growth (₹4,999/mo), Training Partner (₹14,999/mo), each with a yearly price at 10x monthly. Razorpay plan objects are created on first checkout and cached in the Setting table, so only the keys are needed:
+
+```
+RAZORPAY_KEY_ID=rzp_test_xxx
+RAZORPAY_KEY_SECRET=xxx
+RAZORPAY_WEBHOOK_SECRET=xxx   # set when creating the webhook in the dashboard
+```
+
+Webhook URL: `https://<your-domain>/api/billing/webhook` with events `subscription.authenticated`, `subscription.activated`, `subscription.charged`, `subscription.pending`, `subscription.halted`, `subscription.cancelled`, `subscription.completed`, `subscription.expired`, `payment.captured`. For local testing expose port 3210 with a tunnel (for example `ngrok http 3210`) and use that URL.
+
+Flow: `/pricing` → `startCheckout` creates the Razorpay subscription → Checkout.js modal → success handler posts the payment id and signature to `confirmCheckout`, which verifies `HMAC_SHA256(payment_id|subscription_id)` → the webhook moves the subscription to `ACTIVE` and records each charge → `/settings/billing` shows status, history and cancel (at cycle end).
+
+Without keys in development the pricing page runs a **simulator** that activates plans locally so limits and badges can be tested. Plan limits are enforced in `entitlementsFor()`: applications per month, open requirements, team size, direct messaging and featured search placement.
+
 ## Phase 2 backlog
 
-Recommendations, LinkedIn profile import, paid plans (Razorpay / Stripe), email delivery (Resend), S3-compatible uploads, Meilisearch.
+Recommendations, LinkedIn profile import, email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
 
 ## Google and LinkedIn sign-in
 

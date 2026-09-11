@@ -8,6 +8,7 @@ import { requireUser } from "@/lib/auth";
 import { notify } from "@/lib/notify";
 import { parseList } from "@/lib/utils";
 import { saveUpload } from "@/lib/uploads";
+import { entitlementsFor } from "@/lib/billing";
 import type { ActionState } from "@/lib/types";
 
 export async function updateTrainerProfile(_p: ActionState, fd: FormData): Promise<ActionState> {
@@ -80,6 +81,9 @@ export async function inviteMember(_p: ActionState, fd: FormData): Promise<Actio
   const parsed = z.object({ name: z.string().trim().min(2), email: z.string().trim().toLowerCase().email(), role: z.enum(["OWNER", "RECRUITER"]) }).safeParse(Object.fromEntries(fd));
   if (!parsed.success) return { error: "Enter a name, a valid email and a role." };
   const { name, email, role } = parsed.data;
+  const ent = await entitlementsFor(user);
+  const members = await db.companyMember.count({ where: { companyId: user.membership.company.id } });
+  if (members >= ent.memberLimit) return { error: `Your plan allows ${ent.memberLimit} team members. Upgrade on the Pricing page to add more.` };
   const existing = await db.user.findUnique({ where: { email }, include: { membership: true } });
   if (existing?.membership) return { error: "That person already belongs to a company." };
   if (existing && existing.role !== "COMPANY") return { error: "That email belongs to a trainer or staff account." };

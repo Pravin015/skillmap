@@ -9,7 +9,7 @@ export const reqTone: Record<ReqStatus, "cyan" | "amber" | "violet" | "lime" | "
 };
 
 export function TrainerCard({ t, showRate }: {
-  t: TrainerProfile & { user: Pick<User, "name" | "avatarUrl">; skills: Skill[]; _count?: { applications: number }; avg?: number | null; ratings?: number };
+  t: TrainerProfile & { user: Pick<User, "name" | "avatarUrl">; skills: Skill[]; _count?: { applications: number }; avg?: number | null; ratings?: number; pro?: boolean };
   showRate: boolean;
 }) {
   return (
@@ -20,6 +20,7 @@ export function TrainerCard({ t, showRate }: {
           <p className="flex items-center gap-1.5 font-display font-semibold">
             <span className="truncate">{t.user.name}</span>
             {t.verifiedAt ? <BadgeCheck size={16} className="shrink-0 text-cyan" aria-label="Verified" /> : null}
+            {t.pro ? <Badge tone="cyan">pro</Badge> : null}
           </p>
           <p className="line-clamp-2 text-sm text-muted">{t.headline}</p>
         </div>

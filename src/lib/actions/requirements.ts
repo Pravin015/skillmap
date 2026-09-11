@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { notify } from "@/lib/notify";
 import { daysBetween } from "@/lib/utils";
+import { entitlementsFor } from "@/lib/billing";
 import type { ActionState } from "@/lib/types";
 
 const reqSchema = z.object({
@@ -43,10 +44,11 @@ export async function createRequirement(_p: ActionState, fd: FormData): Promise<
   if (d.mode !== "VIRTUAL" && !d.city) return { error: "Onsite and hybrid requirements need a city" };
   if (d.budgetMin && d.budgetMax && d.budgetMax < d.budgetMin) return { error: "Budget max must be at least budget min" };
 
-  const openFreeLimit = Number((await db.setting.findUnique({ where: { key: "free_open_requirements" } }))?.value ?? 2);
-  const openCount = await db.requirement.count({ where: { companyId: ctx.companyId, status: { in: ["OPEN", "SHORTLISTING"] } } });
-  if (openCount >= openFreeLimit && ctx.user.membership!.company.type !== "TRAINING_PARTNER") {
-    return { error: `Free plan allows ${openFreeLimit} open requirements. Close one or upgrade to post more.` };
+  const ent = await entitlementsFor(ctx.user);
+  if (!ent.unlimitedRequirements) {
+    const openFreeLimit = Number((await db.setting.findUnique({ where: { key: "free_open_requirements" } }))?.value ?? 2);
+    const openCount = await db.requirement.count({ where: { companyId: ctx.companyId, status: { in: ["OPEN", "SHORTLISTING"] } } });
+    if (openCount >= openFreeLimit) return { error: `The free plan allows ${openFreeLimit} open requirements. Close one, or upgrade to Company Growth for unlimited posts (see Pricing).` };
   }
 
   const skillSlugs = fd.getAll("skills").map(String).filter(Boolean);
@@ -129,10 +131,13 @@ export async function apply(_p: ActionState, fd: FormData): Promise<ActionState>
   if (req.visibility === "INVITE_ONLY" && !req.invitedTrainers.some((t) => t.id === user.trainerProfile!.id)) return { error: "This requirement is invite-only." };
   if (await db.application.findUnique({ where: { requirementId_trainerId: { requirementId, trainerId: user.trainerProfile.id } } })) return { error: "You already applied." };
 
-  const limit = Number((await db.setting.findUnique({ where: { key: "free_applications_per_month" } }))?.value ?? 5);
-  const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0);
-  const used = await db.application.count({ where: { trainerId: user.trainerProfile.id, createdAt: { gte: monthStart } } });
-  if (used >= limit) return { error: `Free plan allows ${limit} applications a month. Upgrade to Trainer Pro for unlimited.` };
+  const ent = await entitlementsFor(user);
+  if (!ent.unlimitedApplications) {
+    const limit = Number((await db.setting.findUnique({ where: { key: "free_applications_per_month" } }))?.value ?? 5);
+    const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0);
+    const used = await db.application.count({ where: { trainerId: user.trainerProfile.id, createdAt: { gte: monthStart } } });
+    if (used >= limit) return { error: `The free plan allows ${limit} applications a month. Upgrade to Trainer Pro for unlimited applications (see Pricing).` };
+  }
 
   await db.application.create({ data: { requirementId, trainerId: user.trainerProfile.id, coverNote, proposedRate } });
   await notify(req.company.members.map((m) => m.userId), "application", "New application", `${user.name} applied to ${req.title}`, `/dashboard/requirements/${requirementId}/applicants`);

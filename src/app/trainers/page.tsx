@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { Button, Empty, Input, PageHeader, Select } from "@/components/ui";
 import { TrainerCard } from "@/components/cards";
 import { DELIVERY_MODES, modeLabel } from "@/lib/utils";
+import { proTrainerUserIds } from "@/lib/billing";
 
 export const metadata = { title: "Trainers" };
 
@@ -23,11 +24,14 @@ export default async function TrainersPage({ searchParams }: { searchParams: Pro
     ...(sp.mode ? { deliveryModes: { has: sp.mode as "ONSITE" | "VIRTUAL" | "HYBRID" } } : {}),
     ...(sp.verified ? { verifiedAt: { not: null } } : {}),
   };
-  const [trainers, skills, ratings] = await Promise.all([
+  const [trainersRaw, skills, ratings, pro] = await Promise.all([
     db.trainerProfile.findMany({ where, include: { user: { select: { name: true, avatarUrl: true } }, skills: true }, orderBy: sp.sort === "experience" ? { yearsExperience: "desc" } : [{ verifiedAt: { sort: "desc", nulls: "last" } }, { createdAt: "asc" }] }),
     db.skill.findMany({ orderBy: { name: "asc" } }),
     db.rating.groupBy({ by: ["toUserId"], _avg: { score: true }, _count: true }),
+    proTrainerUserIds(),
   ]);
+  // Trainer Pro members are featured: they sort ahead of everyone else within the chosen order.
+  const trainers = [...trainersRaw].sort((a, b) => Number(pro.has(b.userId)) - Number(pro.has(a.userId)));
   const cities = Array.from(new Set((await db.trainerProfile.findMany({ select: { cities: true } })).flatMap((t) => t.cities))).sort();
   const avg = new Map(ratings.map((r) => [r.toUserId, r._avg.score]));
 
@@ -48,7 +52,7 @@ export default async function TrainersPage({ searchParams }: { searchParams: Pro
       <p className="mono mb-4 text-[11px] uppercase tracking-wider text-dim">{trainers.length} trainer{trainers.length === 1 ? "" : "s"}</p>
       {trainers.length ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {trainers.map((t) => <TrainerCard key={t.id} t={{ ...t, avg: avg.get(t.userId) ?? null }} showRate={showRate} />)}
+          {trainers.map((t) => <TrainerCard key={t.id} t={{ ...t, avg: avg.get(t.userId) ?? null, pro: pro.has(t.userId) }} showRate={showRate} />)}
         </div>
       ) : (
         <Empty title="No trainers match those filters" body="Try a broader skill or clear the city filter." />
