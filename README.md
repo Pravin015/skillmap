@@ -61,9 +61,13 @@ src/lib
 prisma/schema.prisma            data model · prisma/seed.ts demo data
 ```
 
+## Feed
+
+`/feed` shows posts from followed people, followed companies and accepted connections ("Following"), or everything ("Everyone"). Posts take text plus an optional image (8 MB) or document (15 MB). Likes, comments, reposts with a note, and follow buttons on trainer and company pages. Staff remove posts from the admin console; removals are audit-logged and the author is notified. `pnpm db:seed:feed` adds demo posts to an existing database.
+
 ## Phase 2 backlog
 
-Feed and posts, follow, recommendations, LinkedIn profile import, paid plans (Razorpay / Stripe), email delivery (Resend), S3-compatible uploads, Meilisearch.
+Recommendations, LinkedIn profile import, paid plans (Razorpay / Stripe), email delivery (Resend), S3-compatible uploads, Meilisearch.
 
 ## Google and LinkedIn sign-in
 

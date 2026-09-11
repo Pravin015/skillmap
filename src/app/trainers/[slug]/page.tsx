@@ -8,6 +8,10 @@ import { requestConnection, startConversation, toggleSaveTrainer } from "@/lib/a
 import { inviteTrainer } from "@/lib/actions/requirements";
 import { Avatar, Badge, Button, Card, Chip, Select } from "@/components/ui";
 import { certStatusLabel, fmtDate, modeLabel, rateRange } from "@/lib/utils";
+import { loadPosts } from "@/lib/feed";
+import { PostCard } from "@/components/post-card";
+import { FollowButton } from "@/components/post-actions";
+import { isStaff } from "@/lib/auth";
 
 export default async function TrainerPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -30,6 +34,11 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
     user && !isSelf ? canMessage(user.id, t.userId) : false,
     user?.membership ? db.savedTrainer.findUnique({ where: { companyId_trainerId: { companyId: user.membership.company.id, trainerId: t.id } } }) : null,
     user?.membership ? db.requirement.findMany({ where: { companyId: user.membership.company.id, status: { in: ["OPEN", "SHORTLISTING"] }, invitedTrainers: { none: { id: t.id } } }, select: { id: true, title: true } }) : [],
+  ]);
+  const [follow, followerCount, feed] = await Promise.all([
+    user && !isSelf ? db.follow.findUnique({ where: { followerId_followingUserId: { followerId: user.id, followingUserId: t.userId } } }) : null,
+    db.follow.count({ where: { followingUserId: t.userId } }),
+    loadPosts({ authorId: t.userId }, 5, user?.id),
   ]);
   const ratings = t.user.ratingsReceived;
   const avg = ratings.length ? ratings.reduce((a, r) => a + r.score, 0) / ratings.length : null;
@@ -54,6 +63,13 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
           </div>
           {t.bio ? <p className="mt-5 max-w-3xl whitespace-pre-line leading-relaxed text-ink/90">{t.bio}</p> : null}
         </Card>
+
+        {feed.posts.length ? (
+          <section>
+            <h2 className="mb-3 text-lg font-bold">Recent posts</h2>
+            <div className="space-y-3">{feed.posts.map((p) => <PostCard key={p.id} post={p} viewerId={user?.id} liked={feed.liked.has(p.repostOfId ?? p.id)} isStaff={isStaff(user)} compact />)}</div>
+          </section>
+        ) : null}
 
         <section>
           <h2 className="mb-3 text-lg font-bold">Skills</h2>
@@ -115,6 +131,7 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
           {t.availabilityNote ? <p className="mt-3 rounded-lg bg-surface-2 px-3 py-2 text-sm text-muted">{t.availabilityNote}</p> : null}
           {!isSelf && user ? (
             <div className="mt-4 space-y-2">
+              <FollowButton userId={t.userId} following={!!follow} />
               {conn?.status === "ACCEPTED" ? <Badge tone="lime" className="w-full justify-center py-1.5">Connected</Badge>
                 : conn?.status === "PENDING" ? <Badge tone="amber" className="w-full justify-center py-1.5">{conn.requesterId === user.id ? "Request sent" : "Wants to connect with you"}</Badge>
                 : (<form action={requestConnection}><input type="hidden" name="userId" value={t.userId} /><Button className="w-full" variant="secondary"><UserPlus size={15} /> Connect</Button></form>)}
@@ -137,7 +154,7 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
             </form>
           </Card>
         ) : null}
-        <p className="mono px-1 text-[11px] uppercase tracking-wider text-dim">Member since {fmtDate(t.user.createdAt)}</p>
+        <p className="mono px-1 text-[11px] uppercase tracking-wider text-dim">{followerCount} follower{followerCount === 1 ? "" : "s"} · member since {fmtDate(t.user.createdAt)}</p>
       </aside>
     </div>
   );

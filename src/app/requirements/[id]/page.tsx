@@ -209,8 +209,8 @@ function CommentRow({ c, isCompany, staff }: { c: { id: string; body: string; cr
     <div className="flex items-start gap-3">
       <Avatar name={c.author.name} src={c.author.avatarUrl} size={32} tone={isCompany ? "violet" : c.author.role === "TRAINER" ? "cyan" : "amber"} />
       <div className="min-w-0 flex-1">
-        <p className="flex flex-wrap items-center gap-2 text-sm"><span className="font-semibold">{c.author.name}</span>{isCompany ? <Badge tone="violet">company</Badge> : null}<span className="text-xs text-dim">{timeAgo(c.createdAt)}</span>
-          {staff ? <form action={moderateComment} className="ml-auto"><input type="hidden" name="id" value={c.id} /><button className="text-xs text-rose hover:underline">Remove</button></form> : null}</p>
+        <div className="flex flex-wrap items-center gap-2 text-sm"><span className="font-semibold">{c.author.name}</span>{isCompany ? <Badge tone="violet">company</Badge> : null}<span className="text-xs text-dim">{timeAgo(c.createdAt)}</span>
+          {staff ? <form action={moderateComment} className="ml-auto"><input type="hidden" name="id" value={c.id} /><button className="text-xs text-rose hover:underline">Remove</button></form> : null}</div>
         <p className="mt-1 whitespace-pre-line text-[15px] text-ink/90">{c.body}</p>
       </div>
     </div>

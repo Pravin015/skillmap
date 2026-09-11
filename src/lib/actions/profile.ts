@@ -1,27 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { notify } from "@/lib/notify";
 import { parseList } from "@/lib/utils";
+import { saveUpload } from "@/lib/uploads";
 import type { ActionState } from "@/lib/types";
-
-async function saveUpload(file: File | null, folder: string) {
-  if (!file || !file.size) return null;
-  if (file.size > 5 * 1024 * 1024) throw new Error("File must be under 5 MB");
-  const ext = path.extname(file.name).toLowerCase();
-  if (![".pdf", ".png", ".jpg", ".jpeg", ".webp"].includes(ext)) throw new Error("Upload a PDF or image");
-  const dir = path.join(process.cwd(), "public", "uploads", folder);
-  await mkdir(dir, { recursive: true });
-  const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
-  await writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));
-  return `/uploads/${folder}/${name}`;
-}
 
 export async function updateTrainerProfile(_p: ActionState, fd: FormData): Promise<ActionState> {
   const user = await requireUser();
@@ -32,7 +19,7 @@ export async function updateTrainerProfile(_p: ActionState, fd: FormData): Promi
   const min = Number(fd.get("dayRateMin") || 0) || null, max = Number(fd.get("dayRateMax") || 0) || null;
   if (min && max && max < min) return { error: "Max day rate must be at least the min." };
   let avatarUrl: string | null | undefined;
-  try { avatarUrl = await saveUpload(fd.get("avatar") as File | null, "avatars"); } catch (e) { return { error: (e as Error).message }; }
+  try { avatarUrl = await saveUpload(fd.get("avatar") as File | null, "avatars", ["image"]); } catch (e) { return { error: (e as Error).message }; }
 
   await db.user.update({ where: { id: user.id }, data: { name: String(fd.get("name") ?? user.name).trim() || user.name, ...(avatarUrl ? { avatarUrl } : {}) } });
   await db.trainerProfile.update({
@@ -54,7 +41,7 @@ export async function addCertification(_p: ActionState, fd: FormData): Promise<A
   const name = String(fd.get("name") ?? "").trim(), issuer = String(fd.get("issuer") ?? "").trim();
   if (!name || !issuer) return { error: "Certification name and issuer are required." };
   let fileUrl: string | null = null;
-  try { fileUrl = await saveUpload(fd.get("file") as File | null, "certs"); } catch (e) { return { error: (e as Error).message }; }
+  try { fileUrl = await saveUpload(fd.get("file") as File | null, "certs", ["image", "doc"]); } catch (e) { return { error: (e as Error).message }; }
   const issuedOn = String(fd.get("issuedOn") || ""), expiresOn = String(fd.get("expiresOn") || "");
   await db.certification.create({ data: { trainerId: user.trainerProfile.id, name, issuer, credentialId: String(fd.get("credentialId") ?? "").trim() || null, issuedOn: issuedOn ? new Date(issuedOn) : null, expiresOn: expiresOn ? new Date(expiresOn) : null, fileUrl } });
   const staff = await db.user.findMany({ where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } }, select: { id: true } });
@@ -76,7 +63,7 @@ export async function updateCompany(_p: ActionState, fd: FormData): Promise<Acti
   const name = String(fd.get("name") ?? "").trim();
   if (name.length < 2) return { error: "Company name is required." };
   let logoUrl: string | null | undefined;
-  try { logoUrl = await saveUpload(fd.get("logo") as File | null, "logos"); } catch (e) { return { error: (e as Error).message }; }
+  try { logoUrl = await saveUpload(fd.get("logo") as File | null, "logos", ["image"]); } catch (e) { return { error: (e as Error).message }; }
   const website = String(fd.get("website") ?? "").trim();
   await db.company.update({
     where: { id: user.membership.company.id },

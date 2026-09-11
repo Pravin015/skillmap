@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Bell, Briefcase, Building2, LayoutDashboard, LogOut, MessageSquare, Settings, ShieldCheck, Users } from "lucide-react";
+import { Bell, Briefcase, Building2, LayoutDashboard, LogOut, MessageSquare, Newspaper, Settings, ShieldCheck, Users } from "lucide-react";
 import { getCurrentUser, isStaff } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logout } from "@/lib/actions/auth";
@@ -26,6 +26,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-8 px-4 md:px-6">
           <Logo />
           <nav className="hidden items-center gap-1 text-[15px] font-medium text-muted md:flex">
+            <NavLink href="/feed" icon={<Newspaper size={16} />}>Feed</NavLink>
             <NavLink href="/trainers" icon={<Users size={16} />}>Trainers</NavLink>
             <NavLink href="/requirements" icon={<Briefcase size={16} />}>Requirements</NavLink>
             <NavLink href="/companies" icon={<Building2 size={16} />}>Companies</NavLink>
@@ -52,6 +53,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
                     </div>
                     <div className="hairline my-1" />
                     <MenuLink href="/dashboard" icon={<LayoutDashboard size={15} />}>Dashboard</MenuLink>
+                    <MenuLink href="/feed" icon={<Newspaper size={15} />}>Feed</MenuLink>
                     <MenuLink href="/network" icon={<Users size={15} />}>Network</MenuLink>
                     <MenuLink href="/messages" icon={<MessageSquare size={15} />}>Messages</MenuLink>
                     {user.trainerProfile ? <MenuLink href={`/trainers/${user.trainerProfile.slug}`} icon={<Briefcase size={15} />}>My public profile</MenuLink> : null}

@@ -6,6 +6,10 @@ import { getCurrentUser } from "@/lib/auth";
 import { Avatar, Badge, Card, Empty } from "@/components/ui";
 import { RequirementCard } from "@/components/cards";
 import { fmtDate } from "@/lib/utils";
+import { loadPosts } from "@/lib/feed";
+import { PostCard } from "@/components/post-card";
+import { FollowButton } from "@/components/post-actions";
+import { isStaff } from "@/lib/auth";
 
 export default async function CompanyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -19,6 +23,11 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
   });
   if (!c) notFound();
   const isMember = !!user?.membership && user.membership.company.id === c.id;
+  const [follow, followerCount, feed] = await Promise.all([
+    user && !isMember ? db.follow.findUnique({ where: { followerId_companyId: { followerId: user.id, companyId: c.id } } }) : null,
+    db.follow.count({ where: { companyId: c.id } }),
+    loadPosts({ companyId: c.id }, 5, user?.id),
+  ]);
   const ratings = await db.rating.findMany({ where: { toUserId: { in: c.members.map((m) => m.userId) } }, include: { fromUser: { select: { name: true } }, requirement: { select: { title: true } } }, orderBy: { createdAt: "desc" } });
   const avg = ratings.length ? ratings.reduce((a, r) => a + r.score, 0) / ratings.length : null;
   const open = c.requirements.filter((r) => ["OPEN", "SHORTLISTING"].includes(r.status));
@@ -41,13 +50,22 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
               <span className="flex items-center gap-1.5"><MapPin size={14} />{c.cities.join(", ") || "—"}</span>
               {c.website ? <a href={c.website} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-ink"><Globe size={14} />{c.website.replace(/^https?:\/\//, "")}</a> : null}
               <span className="flex items-center gap-1.5"><Users size={14} />{c.members.length} member{c.members.length > 1 ? "s" : ""}</span>
+              <span>{followerCount} follower{followerCount === 1 ? "" : "s"}</span>
               <span>Since {fmtDate(c.createdAt)}</span>
             </div>
             {c.description ? <p className="mt-4 max-w-3xl leading-relaxed text-ink/90">{c.description}</p> : null}
             {isMember ? <Link href="/settings" className="mt-3 inline-block text-sm text-violet hover:underline">Edit company page</Link> : null}
+            {user && !isMember ? <FollowButton companyId={c.id} following={!!follow} className="mt-4 inline-block w-44" /> : null}
           </div>
         </div>
       </Card>
+
+      {feed.posts.length ? (
+        <section>
+          <h2 className="mb-3 text-lg font-bold">Recent posts</h2>
+          <div className="grid gap-3 lg:grid-cols-2">{feed.posts.map((p) => <PostCard key={p.id} post={p} viewerId={user?.id} liked={feed.liked.has(p.repostOfId ?? p.id)} isStaff={isStaff(user)} compact />)}</div>
+        </section>
+      ) : null}
 
       <section>
         <h2 className="mb-3 text-lg font-bold">Open requirements</h2>

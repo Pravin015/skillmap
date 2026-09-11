@@ -93,6 +93,67 @@ model User {
   auditLogs        AuditLog[]
   reviewedCerts    Certification[] @relation("CertReviewer")
   oauthAccounts    OAuthAccount[]
+  posts            Post[]
+  postLikes        PostLike[]
+  postComments     PostComment[]
+  following        Follow[] @relation("Follower")
+  followers        Follow[] @relation("FollowedUser")
+}
+
+model Post {
+  id         String    @id @default(cuid())
+  authorId   String
+  author     User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  companyId  String?
+  company    Company?  @relation(fields: [companyId], references: [id])
+  body       String
+  imageUrl   String?
+  docUrl     String?
+  docName    String?
+  repostOfId String?
+  repostOf   Post?     @relation("Reposts", fields: [repostOfId], references: [id], onDelete: Cascade)
+  reposts    Post[]    @relation("Reposts")
+  likes      PostLike[]
+  comments   PostComment[]
+  createdAt  DateTime  @default(now())
+  deletedAt  DateTime?
+
+  @@index([createdAt])
+}
+
+model PostLike {
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([postId, userId])
+}
+
+model PostComment {
+  id        String    @id @default(cuid())
+  postId    String
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+}
+
+model Follow {
+  id              String   @id @default(cuid())
+  followerId      String
+  follower        User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followingUserId String?
+  followingUser   User?    @relation("FollowedUser", fields: [followingUserId], references: [id], onDelete: Cascade)
+  companyId       String?
+  company         Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+
+  @@unique([followerId, followingUserId])
+  @@unique([followerId, companyId])
 }
 
 model OAuthAccount {
@@ -167,6 +228,8 @@ model Company {
   members      CompanyMember[]
   requirements Requirement[]
   saved        SavedTrainer[]
+  posts        Post[]
+  followers    Follow[]
 }
 
 model CompanyMember {
