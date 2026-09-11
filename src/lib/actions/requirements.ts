@@ -60,6 +60,14 @@ export async function createRequirement(_p: ActionState, fd: FormData): Promise<
     },
   });
 
+  const inviteTrainerId = String(fd.get("inviteTrainerId") || "");
+  if (inviteTrainerId) {
+    const tr = await db.trainerProfile.findUnique({ where: { id: inviteTrainerId }, select: { userId: true } });
+    if (tr) {
+      await db.requirement.update({ where: { id: req.id }, data: { invitedTrainers: { connect: { id: inviteTrainerId } } } });
+      await notify(tr.userId, "invite", "A company requested one of your courses", `${ctx.companyName}: ${d.title}`, `/requirements/${req.id}`);
+    }
+  }
   if (d.visibility === "PUBLIC" && skillSlugs.length) {
     const matching = await db.trainerProfile.findMany({ where: { skills: { some: { slug: { in: skillSlugs } } } }, select: { userId: true } });
     await notify(matching.map((m) => m.userId), "requirement", "New requirement matches your skills", `${ctx.companyName}: ${d.title}`, `/requirements/${req.id}`);
@@ -90,6 +98,7 @@ export async function setRequirementStatus(fd: FormData) {
   if (!req) return;
   await db.requirement.update({ where: { id }, data: { status } });
   if (status === "CANCELLED") {
+    await db.availabilityBlock.deleteMany({ where: { requirementId: id } });
     await notify(req.applications.map((a) => a.trainer.userId), "requirement", "Requirement cancelled", `${ctx.companyName} cancelled: ${req.title}`, `/requirements/${id}`);
   }
   if (status === "COMPLETED") {
@@ -173,6 +182,7 @@ export async function decideApplication(fd: FormData) {
   }
   if (decision === "AWARDED") {
     await db.requirement.update({ where: { id: reqId }, data: { status: "AWARDED" } });
+    await db.availabilityBlock.create({ data: { trainerId: app.trainerId, startDate: app.requirement.startDate, endDate: app.requirement.endDate, kind: "BOOKED", requirementId: reqId, note: app.requirement.title } });
     const others = await db.application.findMany({ where: { requirementId: reqId, id: { not: id }, status: { in: ["APPLIED", "SHORTLISTED"] } }, include: { trainer: { select: { userId: true } } } });
     await db.application.updateMany({ where: { requirementId: reqId, id: { not: id }, status: { in: ["APPLIED", "SHORTLISTED"] } }, data: { status: "DECLINED", declineReason: "The requirement was awarded to another trainer.", statusChangedAt: new Date() } });
     await notify(app.trainer.userId, "application", "🎉 You were awarded the engagement", `${ctx.companyName}: ${app.requirement.title}. Check messages for next steps.`, "/dashboard/applications");

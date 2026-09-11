@@ -11,6 +11,12 @@ import { PostCard } from "@/components/post-card";
 import { FollowButton } from "@/components/post-actions";
 import { isStaff } from "@/lib/auth";
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const c = await db.company.findUnique({ where: { slug }, select: { name: true, industry: true } });
+  return c ? { title: c.name, description: `${c.name}${c.industry ? ` · ${c.industry}` : ""} hires freelance corporate trainers on CorpGurus.` } : { title: "Company" };
+}
+
 export default async function CompanyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const user = await getCurrentUser();

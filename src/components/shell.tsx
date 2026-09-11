@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Bell, Briefcase, Building2, CreditCard, LayoutDashboard, LogOut, MessageSquare, Newspaper, Settings, ShieldCheck, Tag, Users } from "lucide-react";
+import { Bell, Briefcase, Building2, CreditCard, LayoutDashboard, LogOut, Menu, MessageSquare, Newspaper, Search, Settings, ShieldCheck, Tag, Users } from "lucide-react";
 import { getCurrentUser, isStaff } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logout } from "@/lib/actions/auth";
@@ -32,7 +32,11 @@ export async function Shell({ children }: { children: React.ReactNode }) {
             <NavLink href="/companies" icon={<Building2 size={16} />}>Companies</NavLink>
             <NavLink href="/pricing" icon={<Tag size={16} />}>Pricing</NavLink>
           </nav>
-          <div className="ml-auto flex items-center gap-1.5">
+          <form action="/search" className="ml-auto hidden lg:block">
+            <div className="relative"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" /><input name="q" placeholder="Search" className="h-9 w-56 rounded-lg border border-line bg-surface-2 pl-9 pr-3 text-sm placeholder:text-dim focus:border-cyan focus:bg-white focus:outline-none" /></div>
+          </form>
+          <div className="flex items-center gap-1.5 lg:ml-0 ml-auto">
+            <Link href="/search" className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-ink lg:hidden" aria-label="Search"><Search size={19} /></Link>
             {user ? (
               <>
                 <Link href="/dashboard/notifications" className="relative rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-ink" aria-label="Notifications">
@@ -77,6 +81,16 @@ export async function Shell({ children }: { children: React.ReactNode }) {
                 <ButtonLink href="/signup" size="sm">Join CorpGurus</ButtonLink>
               </>
             )}
+            <details className="relative md:hidden">
+              <summary className="flex cursor-pointer items-center rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-ink" aria-label="Menu"><Menu size={20} /></summary>
+              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-line bg-white p-1.5 shadow-lg shadow-navy/10">
+                <MenuLink href="/feed" icon={<Newspaper size={15} />}>Feed</MenuLink>
+                <MenuLink href="/trainers" icon={<Users size={15} />}>Trainers</MenuLink>
+                <MenuLink href="/requirements" icon={<Briefcase size={15} />}>Requirements</MenuLink>
+                <MenuLink href="/companies" icon={<Building2 size={15} />}>Companies</MenuLink>
+                <MenuLink href="/pricing" icon={<Tag size={15} />}>Pricing</MenuLink>
+              </div>
+            </details>
           </div>
         </div>
       </header>

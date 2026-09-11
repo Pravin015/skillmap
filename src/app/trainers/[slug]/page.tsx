@@ -7,12 +7,22 @@ import { canMessage } from "@/lib/messaging";
 import { requestConnection, startConversation, toggleSaveTrainer } from "@/lib/actions/network";
 import { inviteTrainer } from "@/lib/actions/requirements";
 import { Avatar, Badge, Button, Card, Chip, Select } from "@/components/ui";
-import { certStatusLabel, fmtDate, modeLabel, rateRange } from "@/lib/utils";
+import { certStatusLabel, fmtDate, modeLabel, money, rateRange } from "@/lib/utils";
 import { loadPosts } from "@/lib/feed";
 import { PostCard } from "@/components/post-card";
 import { FollowButton } from "@/components/post-actions";
 import { isStaff } from "@/lib/auth";
 import { proTrainerUserIds } from "@/lib/billing";
+import { learnerScore, recordProfileView } from "@/lib/stats";
+import { AvailabilityStrip } from "@/components/availability";
+import { ReportButton } from "@/components/report-button";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const t = await db.trainerProfile.findUnique({ where: { slug }, select: { headline: true, user: { select: { name: true } } } });
+  return t ? { title: `${t.user.name} · ${t.headline}`, description: `${t.user.name}, freelance corporate trainer on CorpGurus. ${t.headline}` } : { title: "Trainer" };
+}
 
 export default async function TrainerPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -36,11 +46,15 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
     user?.membership ? db.savedTrainer.findUnique({ where: { companyId_trainerId: { companyId: user.membership.company.id, trainerId: t.id } } }) : null,
     user?.membership ? db.requirement.findMany({ where: { companyId: user.membership.company.id, status: { in: ["OPEN", "SHORTLISTING"] }, invitedTrainers: { none: { id: t.id } } }, select: { id: true, title: true } }) : [],
   ]);
-  const [follow, followerCount, feed, pro] = await Promise.all([
+  if (!isSelf) await recordProfileView(t.id);
+  const [follow, followerCount, feed, pro, learners, blocks, courses] = await Promise.all([
     user && !isSelf ? db.follow.findUnique({ where: { followerId_followingUserId: { followerId: user.id, followingUserId: t.userId } } }) : null,
     db.follow.count({ where: { followingUserId: t.userId } }),
     loadPosts({ authorId: t.userId }, 5, user?.id),
     proTrainerUserIds(),
+    learnerScore(t.id),
+    db.availabilityBlock.findMany({ where: { trainerId: t.id, endDate: { gte: new Date() } }, select: { startDate: true, endDate: true, kind: true } }),
+    db.course.findMany({ where: { trainerId: t.id, published: true }, include: { skills: true, category: true }, orderBy: { createdAt: "desc" } }),
   ]);
   const ratings = t.user.ratingsReceived;
   const avg = ratings.length ? ratings.reduce((a, r) => a + r.score, 0) / ratings.length : null;
@@ -58,13 +72,33 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
                 <span className="flex items-center gap-1.5"><MapPin size={14} />{t.cities.join(", ") || "Location flexible"}</span>
                 <span className="flex items-center gap-1.5"><Clock size={14} />{t.yearsExperience} years</span>
                 <span className="flex items-center gap-1.5"><Languages size={14} />{t.languages.join(", ") || "English"}</span>
-                {avg ? <span className="flex items-center gap-1 text-amber"><Star size={14} className="fill-amber" />{avg.toFixed(1)} · {ratings.length} rating{ratings.length > 1 ? "s" : ""}</span> : null}
+                {avg ? <span className="flex items-center gap-1 text-amber"><Star size={14} className="fill-amber" />{avg.toFixed(1)} · {ratings.length} client rating{ratings.length > 1 ? "s" : ""}</span> : null}
+                {learners.count ? <span className="flex items-center gap-1 text-lime" title="Anonymous participant feedback collected through CorpGurus">Learner score {learners.avg!.toFixed(1)} · {learners.count} participant{learners.count > 1 ? "s" : ""} · {learners.recommendPct}% recommend</span> : null}
               </div>
               <div className="mt-3 flex flex-wrap gap-1.5">{t.deliveryModes.map((m) => <Badge key={m} tone="cyan">{modeLabel[m]}</Badge>)}{t.verifiedAt ? <Badge tone="lime">verified {fmtDate(t.verifiedAt)}</Badge> : null}{pro.has(t.userId) ? <Badge tone="cyan">Trainer Pro</Badge> : null}</div>
             </div>
           </div>
           {t.bio ? <p className="mt-5 max-w-3xl whitespace-pre-line leading-relaxed text-ink/90">{t.bio}</p> : null}
         </Card>
+
+        {courses.length ? (
+          <section id="courses">
+            <h2 className="mb-3 text-lg font-bold">Courses {t.user.name.split(" ")[0]} delivers</h2>
+            <div className="grid gap-3 md:grid-cols-2">{courses.map((c) => (
+              <div key={c.id} className="flex flex-col rounded-2xl border border-line bg-white p-4">
+                <p className="font-display font-semibold">{c.title}</p>
+                <p className="mt-0.5 text-xs text-muted">{c.durationDays} day{c.durationDays > 1 ? "s" : ""} · {c.level.toLowerCase()} · {c.modes.map((m) => modeLabel[m]).join(" · ") || "any mode"}{c.maxParticipants ? ` · up to ${c.maxParticipants}` : ""}{showRate && c.indicativeRate ? ` · ${money(c.indicativeRate, c.currency)} / day` : ""}</p>
+                <p className="mt-2 text-sm text-ink/90">{c.summary}</p>
+                {c.outline ? <details className="mt-2 text-sm"><summary className="cursor-pointer text-cyan hover:underline">Outline</summary><p className="mt-1 whitespace-pre-line text-muted">{c.outline}</p></details> : null}
+                <div className="mt-2 flex flex-wrap gap-1">{c.skills.map((s) => <Chip key={s.id}>{s.name}</Chip>)}</div>
+                <div className="mt-3 flex items-center gap-2">
+                  {c.outlineUrl ? <a href={c.outlineUrl} target="_blank" rel="noreferrer" className="text-xs text-cyan hover:underline">Outline PDF</a> : null}
+                  {user?.membership ? <Link href={`/requirements/new?course=${c.id}`} className="ml-auto inline-flex h-8 items-center rounded-lg bg-violet px-3 text-xs font-semibold text-white hover:bg-[#3d3384]">Request this course</Link> : !user ? <Link href={`/login?next=/trainers/${t.slug}`} className="ml-auto text-xs text-muted hover:text-ink">Sign in as a company to request</Link> : null}
+                </div>
+              </div>
+            ))}</div>
+          </section>
+        ) : null}
 
         {feed.posts.length ? (
           <section>
@@ -127,6 +161,11 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
 
       <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
         <Card className="p-5">
+          <p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Availability · next 12 weeks</p>
+          <div className="mt-2"><AvailabilityStrip blocks={blocks} /></div>
+          {isSelf ? <Link href="/settings/availability" className="mt-2 block text-xs text-cyan hover:underline">Edit availability</Link> : null}
+        </Card>
+        <Card className="p-5">
           <p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Day rate</p>
           <p className="mt-1 font-display text-xl font-bold text-cyan">{showRate ? rateRange(t.dayRateMin, t.dayRateMax, t.currency) : "Visible to companies"}</p>
           {!user ? <p className="mt-1 text-xs text-dim">Sign in with a company account to see rates and message trainers.</p> : null}
@@ -157,6 +196,7 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
           </Card>
         ) : null}
         <p className="mono px-1 text-[11px] uppercase tracking-wider text-dim">{followerCount} follower{followerCount === 1 ? "" : "s"} · member since {fmtDate(t.user.createdAt)}</p>
+        {user && !isSelf ? <ReportButton targetType="USER" targetId={t.userId} /> : null}
       </aside>
     </div>
   );

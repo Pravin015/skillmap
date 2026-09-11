@@ -10,6 +10,17 @@ import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Avatar, Badge, Button, ButtonLink, Card, Chip, Field, Input, Select, Textarea } from "@/components/ui";
 import { reqTone } from "@/components/cards";
 import { appStatusLabel, dateRange, fmtDate, modeLabel, rateRange, reqStatusLabel, timeAgo } from "@/lib/utils";
+import { createFeedbackLink } from "@/lib/actions/feedback";
+import { overlapping } from "@/components/availability";
+import { ReportButton } from "@/components/report-button";
+import { appUrl } from "@/lib/oauth";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const r = await db.requirement.findUnique({ where: { id }, select: { title: true, visibility: true, company: { select: { name: true } } } });
+  return r && r.visibility === "PUBLIC" ? { title: r.title, description: `Training requirement from ${r.company.name} on CorpGurus.` } : { title: "Requirement" };
+}
 
 export default async function RequirementPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -35,6 +46,10 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
   if (r.visibility === "INVITE_ONLY" && !isMember && !staff && !invited) notFound();
   const acceptsApps = ["OPEN", "SHORTLISTING"].includes(r.status);
   const awarded = r.applications.find((a) => a.status === "AWARDED");
+  const clashes = user?.trainerProfile && acceptsApps && !myApp
+    ? overlapping(await db.availabilityBlock.findMany({ where: { trainerId: user.trainerProfile.id, endDate: { gte: r.startDate }, startDate: { lte: r.endDate } } }), r.startDate, r.endDate)
+    : [];
+  const feedbackLink = awarded && (isMember || user?.id === awarded.trainer.user.id) ? await db.feedbackLink.findFirst({ where: { requirementId: r.id }, include: { _count: { select: { responses: true } }, responses: { select: { score: true, wouldRecommend: true } } } }) : null;
   const topLevel = r.comments.filter((c) => !c.parentId);
   const replies = (pid: string) => r.comments.filter((c) => c.parentId === pid);
 
@@ -148,6 +163,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
               <>
                 <p className="mono text-[11px] uppercase tracking-[0.12em] text-cyan">Apply</p>
                 <h3 className="mt-1 font-bold">Tell {r.company.name} why you fit</h3>
+                {clashes.length ? <p className="mt-2 rounded-lg border border-amber/40 bg-amber/10 px-3 py-2 text-xs text-amber">Heads up: these dates overlap {clashes.length === 1 ? "a block" : `${clashes.length} blocks`} on your calendar ({clashes.map((c) => `${dateRange(c.startDate, c.endDate)} · ${c.kind.toLowerCase()}`).join("; ")}). You can still apply.</p> : null}
                 <ActionForm action={apply} className="mt-3 space-y-3">
                   <input type="hidden" name="requirementId" value={r.id} />
                   <Field label="Cover note"><Textarea name="coverNote" required placeholder="Relevant batches you've delivered, what you bring, anything you need from them." /></Field>
@@ -180,6 +196,26 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
         ) : awarded ? (
           <Card className="p-5"><p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Awarded to</p><Link href={`/trainers/${awarded.trainer.slug}`} className="mt-2 flex items-center gap-2 hover:text-cyan"><Avatar name={awarded.trainer.user.name} src={awarded.trainer.user.avatarUrl} size={30} />{awarded.trainer.user.name}</Link></Card>
         ) : null}
+
+        {awarded && ["AWARDED", "COMPLETED"].includes(r.status) && (isMember || user?.id === awarded.trainer.user.id) ? (
+          <Card className="p-5">
+            <p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Participant feedback</p>
+            {feedbackLink ? (
+              <>
+                <p className="mt-1 text-sm text-muted">Share this link with the learners. No account needed, answers are anonymous, open until {fmtDate(feedbackLink.expiresAt)}.</p>
+                <Input readOnly value={`${appUrl()}/feedback/${feedbackLink.token}`} className="mt-2 text-xs" onFocus={undefined} />
+                <p className="mt-2 text-sm">{feedbackLink._count.responses ? <><span className="font-display text-xl font-bold text-lime">{(feedbackLink.responses.reduce((n, x) => n + x.score, 0) / feedbackLink.responses.length).toFixed(1)}</span><span className="text-muted"> / 5 from {feedbackLink._count.responses} participant{feedbackLink._count.responses > 1 ? "s" : ""} · {Math.round((feedbackLink.responses.filter((x) => x.wouldRecommend).length / feedbackLink.responses.length) * 100)}% would recommend</span></> : <span className="text-muted">No responses yet.</span>}</p>
+              </>
+            ) : (
+              <>
+                <p className="mt-1 text-sm text-muted">Create a link for learners to rate this session. Scores build the trainer&apos;s public learner score.</p>
+                <form action={createFeedbackLink} className="mt-3"><input type="hidden" name="requirementId" value={r.id} /><Button variant="secondary" size="sm" className="w-full">Create feedback link</Button></form>
+              </>
+            )}
+          </Card>
+        ) : null}
+
+        {user && !isMember ? <ReportButton targetType="REQUIREMENT" targetId={r.id} /> : null}
 
         {staff && r.status !== "CANCELLED" ? (
           <form action={moderateRequirement}><input type="hidden" name="id" value={r.id} /><Button variant="danger" size="sm" className="w-full">Take down (moderation)</Button></form>

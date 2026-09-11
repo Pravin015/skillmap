@@ -7,6 +7,7 @@ import { Avatar, Badge, ButtonLink, Card, Empty, PageHeader, Stat } from "@/comp
 import { RequirementCard, reqTone } from "@/components/cards";
 import { appStatusLabel, fmtDate, reqStatusLabel, timeAgo } from "@/lib/utils";
 import { entitlementsFor } from "@/lib/billing";
+import { learnerScore, trainerStats } from "@/lib/stats";
 
 export const metadata = { title: "Dashboard" };
 
@@ -31,6 +32,8 @@ export default async function Dashboard() {
       where: { status: { in: ["OPEN", "SHORTLISTING"] }, OR: [{ visibility: "PUBLIC", skills: { some: { id: { in: p.skills.map((s) => s.id) } } } }, { invitedTrainers: { some: { id: p.id } } }], applications: { none: { trainerId: p.id } } },
       include: { company: { select: { name: true, slug: true, type: true, logoUrl: true, domainVerifiedAt: true } }, skills: true, _count: { select: { applications: true, comments: true } } }, orderBy: { createdAt: "desc" }, take: 3,
     });
+    const [stats, learners, upcoming] = await Promise.all([trainerStats(p.id, 30), learnerScore(p.id), db.availabilityBlock.findMany({ where: { trainerId: p.id, endDate: { gte: new Date() } }, orderBy: { startDate: "asc" }, take: 4, include: { requirement: { select: { title: true } } } })]);
+    const maxBar = Math.max(1, ...stats.series.map((d) => d.views + d.searches));
     const active = p.applications.filter((a) => ["APPLIED", "SHORTLISTED"].includes(a.status));
     const checklist = [
       ["Headline and bio", !!p.bio], ["At least 3 skills", p.skills.length >= 3], ["Day rate", !!p.dayRateMin || !!p.dayRateMax], ["Delivery modes and cities", p.deliveryModes.length > 0 && p.cities.length > 0],
@@ -46,6 +49,13 @@ export default async function Dashboard() {
           <Stat label="Shortlisted" value={p.applications.filter((a) => a.status === "SHORTLISTED").length} tone="amber" />
           <Stat label="Awarded" value={p.applications.filter((a) => a.status === "AWARDED").length} tone="lime" />
           <Stat label="Connection requests" value={pendingConns} tone="violet" />
+        </div>
+        <div className="mt-4 grid gap-4 md:grid-cols-[1fr_1fr_1.4fr]">
+          <Card className="p-5"><p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Profile views · 30 days</p><p className="mt-1 font-display text-3xl font-bold tabular-nums text-cyan">{stats.views}</p><p className="text-xs text-muted">{stats.searches} search appearances</p></Card>
+          <Card className="p-5"><p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Learner score</p><p className="mt-1 font-display text-3xl font-bold tabular-nums text-lime">{learners.count ? learners.avg!.toFixed(1) : "—"}</p><p className="text-xs text-muted">{learners.count ? `${learners.count} participants · ${learners.recommendPct}% recommend` : "Collect feedback after your next batch"}</p></Card>
+          <Card className="p-5"><p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Views and search appearances · daily</p>
+            <div className="mt-3 flex h-16 items-end gap-[3px]">{stats.series.map((d) => <span key={d.date} title={`${d.date}: ${d.views} views, ${d.searches} searches`} className="flex flex-1 flex-col justify-end gap-px"><span className="rounded-t-[2px] bg-cyan" style={{ height: `${(d.views / maxBar) * 100}%`, minHeight: d.views ? 2 : 0 }} /><span className="rounded-b-[2px] bg-cyan/30" style={{ height: `${(d.searches / maxBar) * 100}%`, minHeight: d.searches ? 2 : 0 }} /></span>)}</div>
+            <p className="mt-1 flex justify-between text-[10px] text-dim"><span>30 days ago</span><span>today</span></p></Card>
         </div>
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_340px]">
           <div className="space-y-6">
@@ -73,6 +83,11 @@ export default async function Dashboard() {
               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-cyan" style={{ width: `${(done / checklist.length) * 100}%` }} /></div>
               <ul className="mt-3 space-y-1.5 text-sm">{checklist.map(([l, ok]) => <li key={l} className={ok ? "text-muted line-through" : "text-ink"}><span className={`mr-2 ${ok ? "text-lime" : "text-dim"}`}>{ok ? "✓" : "○"}</span>{l}</li>)}</ul>
               <ButtonLink href="/settings" variant="secondary" size="sm" className="mt-3 w-full">Edit profile</ButtonLink>
+            </Card>
+            <Card className="p-5">
+              <div className="flex items-center justify-between"><p className="font-semibold">Upcoming dates</p><Link href="/settings/availability" className="text-xs text-cyan hover:underline">Calendar</Link></div>
+              {upcoming.length ? <ul className="mt-2 space-y-1.5 text-sm">{upcoming.map((b) => <li key={b.id} className="flex gap-2"><span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${b.kind === "BOOKED" ? "bg-navy" : b.kind === "TENTATIVE" ? "bg-amber" : "bg-dim"}`} /><span><span className="font-medium">{fmtDate(b.startDate)}{b.endDate.getTime() !== b.startDate.getTime() ? ` – ${fmtDate(b.endDate)}` : ""}</span><span className="block text-xs text-muted">{b.requirement?.title ?? b.note ?? b.kind.toLowerCase()}</span></span></li>)}</ul> : <p className="mt-1 text-sm text-muted">Nothing blocked. Add booked dates so companies see real availability.</p>}
+              <ButtonLink href="/settings/courses" variant="ghost" size="sm" className="mt-3 w-full">Manage course catalogue</ButtonLink>
             </Card>
             {planCard}
             <NotifCard notifications={notifications} />
@@ -125,6 +140,7 @@ export default async function Dashboard() {
               <p className="font-semibold">Saved trainers</p>
               {c.saved.length ? <ul className="mt-3 space-y-2">{c.saved.map((s) => <li key={s.trainerId}><Link href={`/trainers/${s.trainer.slug}`} className="flex items-center gap-2 text-sm hover:text-cyan"><Avatar name={s.trainer.user.name} src={s.trainer.user.avatarUrl} size={28} /><span className="truncate">{s.trainer.user.name}</span></Link></li>)}</ul> : <p className="mt-1 text-sm text-muted">Save trainers from their profile to build a bench.</p>}
               <ButtonLink href="/trainers" variant="secondary" size="sm" className="mt-3 w-full">Find trainers</ButtonLink>
+              <ButtonLink href="/dashboard/bench" variant="ghost" size="sm" className="mt-1 w-full">Open your bench</ButtonLink>
             </Card>
             {planCard}
             <NotifCard notifications={notifications} />

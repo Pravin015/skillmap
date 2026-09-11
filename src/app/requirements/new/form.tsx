@@ -7,9 +7,11 @@ import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Card, Field, Input, Select, Textarea } from "@/components/ui";
 import { cn, CURRENCIES, DELIVERY_MODES, LANGUAGES, modeLabel } from "@/lib/utils";
 
-export function NewRequirementForm({ categories, skills }: { categories: Category[]; skills: Skill[] }) {
-  const [mode, setMode] = useState("ONSITE");
-  const [picked, setPicked] = useState<string[]>([]);
+export type Preset = { title: string; description: string; categoryId: string; mode: string; participants?: number; skills: string[]; inviteTrainerId: string; trainerName: string };
+
+export function NewRequirementForm({ categories, skills, preset }: { categories: Category[]; skills: Skill[]; preset?: Preset }) {
+  const [mode, setMode] = useState(preset?.mode ?? "ONSITE");
+  const [picked, setPicked] = useState<string[]>(preset?.skills ?? []);
   const [filter, setFilter] = useState("");
   const toggle = (slug: string) => setPicked((p) => (p.includes(slug) ? p.filter((s) => s !== slug) : [...p, slug]));
   const visible = skills.filter((s) => s.name.toLowerCase().includes(filter.toLowerCase()));
@@ -17,9 +19,10 @@ export function NewRequirementForm({ categories, skills }: { categories: Categor
   return (
     <ActionForm action={createRequirement}>
       <Card className="space-y-5 p-6">
-        <Field label="Title" hint="What, how long, for whom. e.g. “HPE VM Essentials 9.0 · 3-day ILT for bank ops team”"><Input name="title" required minLength={8} /></Field>
+        {preset ? <input type="hidden" name="inviteTrainerId" value={preset.inviteTrainerId} /> : null}
+        <Field label="Title" hint="What, how long, for whom. e.g. “HPE VM Essentials 9.0 · 3-day ILT for bank ops team”"><Input name="title" required minLength={8} defaultValue={preset?.title} /></Field>
         <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Domain"><Select name="categoryId" required defaultValue=""><option value="" disabled>Choose a domain</option>{categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</Select></Field>
+          <Field label="Domain"><Select name="categoryId" required defaultValue={preset?.categoryId ?? ""}><option value="" disabled>Choose a domain</option>{categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</Select></Field>
           <Field label="Language"><Select name="language" defaultValue="English">{LANGUAGES.map((l) => <option key={l}>{l}</option>)}</Select></Field>
         </div>
         <Field label="Skills required" hint="Pick everything the trainer must be able to teach. Trainers with matching skills are notified.">
@@ -35,12 +38,12 @@ export function NewRequirementForm({ categories, skills }: { categories: Categor
           </div>
         </Field>
         <Field label="Description" hint="Audience level, outcomes, what you provide (lab, courseware, venue), and what you expect the trainer to bring.">
-          <Textarea name="description" required minLength={40} className="min-h-40" />
+          <Textarea name="description" required minLength={40} className="min-h-40" defaultValue={preset?.description} />
         </Field>
         <div className="grid gap-4 md:grid-cols-3">
           <Field label="Delivery mode"><Select name="mode" value={mode} onChange={(e) => setMode(e.target.value)}>{DELIVERY_MODES.map((m) => <option key={m} value={m}>{modeLabel[m]}</option>)}</Select></Field>
           <Field label="City" hint={mode === "VIRTUAL" ? "Not needed for virtual" : "Where the sessions happen"}><Input name="city" disabled={mode === "VIRTUAL"} placeholder="Mumbai" /></Field>
-          <Field label="Participants"><Input name="participants" type="number" min={1} required placeholder="16" /></Field>
+          <Field label="Participants"><Input name="participants" type="number" min={1} required placeholder="16" defaultValue={preset?.participants} /></Field>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="Start date"><Input name="startDate" type="date" required /></Field>

@@ -1,6 +1,7 @@
 import { PrismaClient, type DeliveryMode } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { seedFeed } from "./seed-feed";
+import { seedFeatures } from "./seed-features";
 
 const db = new PrismaClient();
 const PASSWORD = "Password@123";
@@ -161,6 +162,7 @@ async function main() {
 
   console.log("Seeded: 2 staff, 8 trainers, 4 companies, 9 requirements, applications, comments, connections, messages.");
   await seedFeed(db);
+  await seedFeatures(db);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); }).finally(() => db.$disconnect());

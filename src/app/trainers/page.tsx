@@ -6,6 +6,7 @@ import { Button, Empty, Input, PageHeader, Select } from "@/components/ui";
 import { TrainerCard } from "@/components/cards";
 import { DELIVERY_MODES, modeLabel } from "@/lib/utils";
 import { proTrainerUserIds } from "@/lib/billing";
+import { recordSearchAppearances } from "@/lib/stats";
 
 export const metadata = { title: "Trainers" };
 
@@ -32,6 +33,7 @@ export default async function TrainersPage({ searchParams }: { searchParams: Pro
   ]);
   // Trainer Pro members are featured: they sort ahead of everyone else within the chosen order.
   const trainers = [...trainersRaw].sort((a, b) => Number(pro.has(b.userId)) - Number(pro.has(a.userId)));
+  await recordSearchAppearances(trainers.slice(0, 24).map((t) => t.id));
   const cities = Array.from(new Set((await db.trainerProfile.findMany({ select: { cities: true } })).flatMap((t) => t.cities))).sort();
   const avg = new Map(ratings.map((r) => [r.toUserId, r._avg.score]));
 

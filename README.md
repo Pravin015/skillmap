@@ -81,9 +81,19 @@ Flow: `/pricing` → `startCheckout` creates the Razorpay subscription → Check
 
 Without keys in development the pricing page runs a **simulator** that activates plans locally so limits and badges can be tested. Plan limits are enforced in `entitlementsFor()`: applications per month, open requirements, team size, direct messaging and featured search placement.
 
+## Platform features added after Phase 1
+
+- **Availability calendar** (`/settings/availability`): trainers block booked, tentative or unavailable dates; awards block dates automatically and cancellations release them; profiles and the company bench show a 12-week strip; applying warns about clashes.
+- **Course catalogue** (`/settings/courses`): published courses appear on the trainer profile and in search; "Request this course" opens `/requirements/new?course=<id>` prefilled and auto-invites the trainer on publish.
+- **Participant feedback**: after an award, the company or trainer creates a link (`/feedback/<token>`, 30 days, anonymous, one response per device). Responses roll up into the trainer's public learner score.
+- **Profile analytics**: daily profile views and search appearances (`TrainerStatDaily`) on the trainer dashboard.
+- **Reports** (`/admin/reports`): members flag posts, requirements, comments or members; admins act, resolve or dismiss; reporters are notified.
+- **Bench** (`/dashboard/bench`): every trainer a company has awarded or saved, with availability and one-click invites.
+- **Global search** (`/search`) across trainers, courses, requirements, companies and posts. Mobile navigation menu.
+
 ## Phase 2 backlog
 
-Recommendations, LinkedIn profile import, email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
+Recommendations, email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
 
 ## Google and LinkedIn sign-in
 

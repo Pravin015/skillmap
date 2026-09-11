@@ -12,7 +12,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma db push --force-reset && tsx prisma/seed.ts",
     "postinstall": "prisma generate",
-    "db:seed:feed": "tsx prisma/seed-feed.ts"
+    "db:seed:feed": "tsx prisma/seed-feed.ts",
+    "db:seed:features": "tsx prisma/seed-features.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

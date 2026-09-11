@@ -4,6 +4,7 @@ import { deletePost, toggleLike } from "@/lib/actions/feed";
 import type { PostRow } from "@/lib/feed";
 import { Avatar, Badge } from "./ui";
 import { RepostButton } from "./post-actions";
+import { ReportButton } from "./report-button";
 import { cn, timeAgo } from "@/lib/utils";
 
 type Author = PostRow["author"];
@@ -84,8 +85,9 @@ export function PostCard({ post, viewerId, liked, isStaff, compact }: { post: Po
         ) : <span className="flex items-center gap-1.5 px-2.5 py-1.5 text-muted"><Heart size={16} />{counts.likes}</span>}
         <Link href={`/feed/${root.id}`} className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-medium text-muted transition hover:bg-surface-2 hover:text-ink"><MessageCircle size={16} />{counts.comments}</Link>
         {viewerId ? <RepostButton postId={root.id} count={counts.reposts} /> : <span className="flex items-center gap-1.5 px-2.5 py-1.5 text-muted"><Repeat2 size={16} />{counts.reposts}</span>}
+        {viewerId && post.authorId !== viewerId ? <ReportButton targetType="POST" targetId={root.id} className="ml-auto" /> : null}
         {canDelete ? (
-          <form action={deletePost} className="ml-auto"><input type="hidden" name="id" value={post.id} /><button className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs text-dim transition hover:bg-surface-2 hover:text-rose" title={post.authorId === viewerId ? "Delete post" : "Remove (moderation)"}><Trash2 size={14} />{post.authorId === viewerId ? "Delete" : "Remove"}</button></form>
+          <form action={deletePost} className={post.authorId === viewerId ? "ml-auto" : ""}><input type="hidden" name="id" value={post.id} /><button className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs text-dim transition hover:bg-surface-2 hover:text-rose" title={post.authorId === viewerId ? "Delete post" : "Remove (moderation)"}><Trash2 size={14} />{post.authorId === viewerId ? "Delete" : "Remove"}</button></form>
         ) : null}
       </div>
     </article>

@@ -99,6 +99,127 @@ model User {
   following        Follow[] @relation("Follower")
   followers        Follow[] @relation("FollowedUser")
   subscriptions    Subscription[]
+  reports          Report[]    @relation("Reporter")
+  resolvedReports  Report[]    @relation("Resolver")
+  feedbackLinks    FeedbackLink[]
+}
+
+enum BlockKind {
+  BOOKED
+  UNAVAILABLE
+  TENTATIVE
+}
+
+model AvailabilityBlock {
+  id            String       @id @default(cuid())
+  trainerId     String
+  trainer       TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  startDate     DateTime
+  endDate       DateTime
+  kind          BlockKind    @default(BOOKED)
+  note          String?
+  requirementId String?
+  requirement   Requirement? @relation(fields: [requirementId], references: [id], onDelete: SetNull)
+  createdAt     DateTime     @default(now())
+
+  @@index([trainerId, startDate])
+}
+
+enum CourseLevel {
+  FOUNDATION
+  INTERMEDIATE
+  ADVANCED
+}
+
+model Course {
+  id              String         @id @default(cuid())
+  trainerId       String
+  trainer         TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  title           String
+  summary         String
+  outline         String         @default("")
+  level           CourseLevel    @default(INTERMEDIATE)
+  durationDays    Int            @default(1)
+  modes           DeliveryMode[] @default([])
+  maxParticipants Int?
+  indicativeRate  Int?
+  currency        String         @default("INR")
+  outlineUrl      String?
+  categoryId      String?
+  category        Category?      @relation(fields: [categoryId], references: [id])
+  skills          Skill[]
+  published       Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model FeedbackLink {
+  id            String      @id @default(cuid())
+  token         String      @unique
+  requirementId String
+  requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  trainerId     String
+  trainer       TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  createdById   String
+  createdBy     User        @relation(fields: [createdById], references: [id])
+  expiresAt     DateTime
+  maxResponses  Int         @default(200)
+  createdAt     DateTime    @default(now())
+
+  responses FeedbackResponse[]
+}
+
+model FeedbackResponse {
+  id             String       @id @default(cuid())
+  linkId         String
+  link           FeedbackLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  score          Int
+  wouldRecommend Boolean
+  comment        String?
+  fingerprint    String?
+  createdAt      DateTime     @default(now())
+}
+
+model TrainerStatDaily {
+  trainerId         String
+  trainer           TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  date              DateTime       @db.Date
+  profileViews      Int            @default(0)
+  searchAppearances Int            @default(0)
+
+  @@id([trainerId, date])
+}
+
+enum ReportTarget {
+  POST
+  POST_COMMENT
+  REQUIREMENT
+  COMMENT
+  USER
+}
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+model Report {
+  id           String       @id @default(cuid())
+  reporterId   String
+  reporter     User         @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  targetType   ReportTarget
+  targetId     String
+  reason       String
+  detail       String?
+  status       ReportStatus @default(OPEN)
+  resolvedById String?
+  resolvedBy   User?        @relation("Resolver", fields: [resolvedById], references: [id])
+  resolution   String?
+  createdAt    DateTime     @default(now())
+  resolvedAt   DateTime?
+
+  @@index([status, createdAt])
 }
 
 enum PlanCode {
@@ -258,6 +379,10 @@ model TrainerProfile {
   applications   Application[]
   invitedTo      Requirement[]   @relation("RequirementInvites")
   savedBy        SavedTrainer[]
+  availability   AvailabilityBlock[]
+  courses        Course[]
+  feedbackLinks  FeedbackLink[]
+  stats          TrainerStatDaily[]
 }
 
 model Certification {
@@ -315,6 +440,7 @@ model Category {
   name         String
   slug         String        @unique
   requirements Requirement[]
+  courses      Course[]
 }
 
 model Skill {
@@ -323,6 +449,7 @@ model Skill {
   slug         String           @unique
   trainers     TrainerProfile[]
   requirements Requirement[]
+  courses      Course[]
 }
 
 model Requirement {
@@ -356,6 +483,8 @@ model Requirement {
   comments        Comment[]
   ratings         Rating[]
   conversations   Conversation[]
+  blocks          AvailabilityBlock[]
+  feedbackLinks   FeedbackLink[]
 }
 
 model Application {
