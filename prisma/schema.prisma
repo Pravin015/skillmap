@@ -102,6 +102,83 @@ model User {
   reports          Report[]    @relation("Reporter")
   resolvedReports  Report[]    @relation("Resolver")
   feedbackLinks    FeedbackLink[]
+  recommendationsWritten Recommendation[] @relation("RecAuthor")
+  workOrdersCreated WorkOrder[]
+  workOrderEvents  WorkOrderEvent[]
+}
+
+model Recommendation {
+  id            String       @id @default(cuid())
+  trainerId     String
+  trainer       TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  authorId      String
+  author        User         @relation("RecAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  companyId     String?
+  company       Company?     @relation(fields: [companyId], references: [id])
+  requirementId String?
+  requirement   Requirement? @relation(fields: [requirementId], references: [id], onDelete: SetNull)
+  relationship  String
+  body          String
+  visible       Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+
+  @@unique([trainerId, authorId])
+}
+
+enum WorkOrderStatus {
+  DRAFT
+  SENT
+  CHANGES_REQUESTED
+  ACCEPTED
+  CANCELLED
+}
+
+model WorkOrder {
+  id                String          @id @default(cuid())
+  number            Int             @default(autoincrement())
+  requirementId     String          @unique
+  requirement       Requirement     @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  trainerId         String
+  trainer           TrainerProfile  @relation(fields: [trainerId], references: [id])
+  companyId         String
+  company           Company         @relation(fields: [companyId], references: [id])
+  createdById       String
+  createdBy         User            @relation(fields: [createdById], references: [id])
+  version           Int             @default(1)
+  status            WorkOrderStatus @default(DRAFT)
+  title             String
+  startDate         DateTime
+  endDate           DateTime
+  days              Int
+  dayRate           Int
+  currency          String          @default("INR")
+  total             Int
+  participants      Int
+  mode              DeliveryMode
+  venue             String          @default("")
+  deliverables      String          @default("")
+  provided          String          @default("")
+  paymentTerms      String          @default("")
+  cancellationTerms String          @default("")
+  notes             String          @default("")
+  sentAt            DateTime?
+  acceptedAt        DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  events WorkOrderEvent[]
+}
+
+model WorkOrderEvent {
+  id          String    @id @default(cuid())
+  workOrderId String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  actorId     String
+  actor       User      @relation(fields: [actorId], references: [id])
+  type        String
+  note        String?
+  version     Int
+  createdAt   DateTime  @default(now())
 }
 
 enum BlockKind {
@@ -383,6 +460,8 @@ model TrainerProfile {
   courses        Course[]
   feedbackLinks  FeedbackLink[]
   stats          TrainerStatDaily[]
+  recommendations Recommendation[]
+  workOrders     WorkOrder[]
 }
 
 model Certification {
@@ -423,6 +502,8 @@ model Company {
   posts        Post[]
   followers    Follow[]
   subscriptions Subscription[]
+  recommendations Recommendation[]
+  workOrders   WorkOrder[]
 }
 
 model CompanyMember {
@@ -485,6 +566,8 @@ model Requirement {
   conversations   Conversation[]
   blocks          AvailabilityBlock[]
   feedbackLinks   FeedbackLink[]
+  recommendations Recommendation[]
+  workOrder       WorkOrder?
 }
 
 model Application {

@@ -16,6 +16,7 @@ import { proTrainerUserIds } from "@/lib/billing";
 import { learnerScore, recordProfileView } from "@/lib/stats";
 import { AvailabilityStrip } from "@/components/availability";
 import { ReportButton } from "@/components/report-button";
+import { RecommendationsSection } from "@/components/recommendations";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -24,8 +25,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return t ? { title: `${t.user.name} · ${t.headline}`, description: `${t.user.name}, freelance corporate trainer on CorpGurus. ${t.headline}` } : { title: "Trainer" };
 }
 
-export default async function TrainerPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function TrainerPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ recommend?: string }> }) {
   const { slug } = await params;
+  const { recommend } = await searchParams;
   const user = await getCurrentUser();
   const t = await db.trainerProfile.findUnique({
     where: { slug },
@@ -56,6 +58,24 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
     db.availabilityBlock.findMany({ where: { trainerId: t.id, endDate: { gte: new Date() } }, select: { startDate: true, endDate: true, kind: true } }),
     db.course.findMany({ where: { trainerId: t.id, published: true }, include: { skills: true, category: true }, orderBy: { createdAt: "desc" } }),
   ]);
+  const recs = await db.recommendation.findMany({ where: { trainerId: t.id }, include: { author: { select: { id: true, name: true, avatarUrl: true, role: true, membership: { select: { company: { select: { name: true, slug: true } } } } } } }, orderBy: { createdAt: "desc" } });
+  const existingRec = user ? recs.find((r) => r.authorId === user.id) ?? null : null;
+  let canWrite = false;
+  let askable: { id: string; name: string; company: string | null }[] = [];
+  if (user && !isSelf) {
+    const hired = user.membership ? await db.application.findFirst({ where: { trainerId: t.id, status: "AWARDED", requirement: { companyId: user.membership.company.id } }, select: { id: true } }) : null;
+    canWrite = !!hired || conn?.status === "ACCEPTED";
+  }
+  if (isSelf) {
+    const [hirers, conns] = await Promise.all([
+      db.companyMember.findMany({ where: { company: { requirements: { some: { applications: { some: { trainerId: t.id, status: "AWARDED" } } } } } }, include: { user: { select: { id: true, name: true } }, company: { select: { name: true } } } }),
+      db.connection.findMany({ where: { status: "ACCEPTED", OR: [{ requesterId: t.userId }, { addresseeId: t.userId }] }, include: { requester: { select: { id: true, name: true, membership: { select: { company: { select: { name: true } } } } } }, addressee: { select: { id: true, name: true, membership: { select: { company: { select: { name: true } } } } } } } }),
+    ]);
+    const seen = new Set<string>();
+    for (const m of hirers) if (!seen.has(m.user.id)) { seen.add(m.user.id); askable.push({ id: m.user.id, name: m.user.name, company: m.company.name }); }
+    for (const c of conns) { const o = c.requesterId === t.userId ? c.addressee : c.requester; if (!seen.has(o.id)) { seen.add(o.id); askable.push({ id: o.id, name: o.name, company: o.membership?.company.name ?? null }); } }
+    askable = askable.filter((a) => !recs.some((r) => r.authorId === a.id));
+  }
   const ratings = t.user.ratingsReceived;
   const avg = ratings.length ? ratings.reduce((a, r) => a + r.score, 0) / ratings.length : null;
 
@@ -142,6 +162,8 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
             </div>
           ) : <p className="text-sm text-muted">No awarded engagements yet.</p>}
         </section>
+
+        <RecommendationsSection recs={recs} trainerId={t.id} trainerName={t.user.name} viewerId={user?.id} isSelf={isSelf} canWrite={canWrite} existing={existingRec} askable={askable} openForm={recommend === "1"} />
 
         {ratings.length ? (
           <section>

@@ -17,6 +17,17 @@ export default async function Dashboard() {
   const notifications = await db.notification.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 6 });
   const pendingConns = await db.connection.count({ where: { addresseeId: user.id, status: "PENDING" } });
   const ent = await entitlementsFor(user);
+  const pendingWO = user.trainerProfile
+    ? await db.workOrder.findMany({ where: { trainerId: user.trainerProfile.id, status: "SENT" }, include: { company: { select: { name: true } } }, orderBy: { sentAt: "desc" } })
+    : user.membership
+      ? await db.workOrder.findMany({ where: { companyId: user.membership.company.id, status: { in: ["CHANGES_REQUESTED", "DRAFT"] } }, include: { trainer: { include: { user: { select: { name: true } } } } }, orderBy: { updatedAt: "desc" } })
+      : [];
+  const woCard = pendingWO.length ? (
+    <Card className="p-5" glow={user.trainerProfile ? "cyan" : "violet"}>
+      <p className="font-semibold">{user.trainerProfile ? "Work orders to review" : "Work orders needing attention"}</p>
+      <ul className="mt-2 space-y-2 text-sm">{pendingWO.map((w) => <li key={w.id}><Link href={`/requirements/${w.requirementId}/work-order`} className="block rounded-lg border border-line px-3 py-2 hover:border-cyan"><span className="block font-medium">{w.title}</span><span className="text-xs text-muted">{"company" in w ? w.company.name : w.trainer.user.name} · {w.status.toLowerCase().replace("_", " ")} · v{w.version}</span></Link></li>)}</ul>
+    </Card>
+  ) : null;
   const planCard = (
     <Card className="p-5">
       <div className="flex items-center justify-between"><p className="font-semibold">Plan</p><Badge tone={ent.plan ? "lime" : "neutral"}>{ent.planName}</Badge></div>
@@ -89,6 +100,7 @@ export default async function Dashboard() {
               {upcoming.length ? <ul className="mt-2 space-y-1.5 text-sm">{upcoming.map((b) => <li key={b.id} className="flex gap-2"><span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${b.kind === "BOOKED" ? "bg-navy" : b.kind === "TENTATIVE" ? "bg-amber" : "bg-dim"}`} /><span><span className="font-medium">{fmtDate(b.startDate)}{b.endDate.getTime() !== b.startDate.getTime() ? ` – ${fmtDate(b.endDate)}` : ""}</span><span className="block text-xs text-muted">{b.requirement?.title ?? b.note ?? b.kind.toLowerCase()}</span></span></li>)}</ul> : <p className="mt-1 text-sm text-muted">Nothing blocked. Add booked dates so companies see real availability.</p>}
               <ButtonLink href="/settings/courses" variant="ghost" size="sm" className="mt-3 w-full">Manage course catalogue</ButtonLink>
             </Card>
+            {woCard}
             {planCard}
             <NotifCard notifications={notifications} />
           </aside>
@@ -142,6 +154,7 @@ export default async function Dashboard() {
               <ButtonLink href="/trainers" variant="secondary" size="sm" className="mt-3 w-full">Find trainers</ButtonLink>
               <ButtonLink href="/dashboard/bench" variant="ghost" size="sm" className="mt-1 w-full">Open your bench</ButtonLink>
             </Card>
+            {woCard}
             {planCard}
             <NotifCard notifications={notifications} />
           </aside>

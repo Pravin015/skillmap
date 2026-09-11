@@ -90,10 +90,12 @@ Without keys in development the pricing page runs a **simulator** that activates
 - **Reports** (`/admin/reports`): members flag posts, requirements, comments or members; admins act, resolve or dismiss; reporters are notified.
 - **Bench** (`/dashboard/bench`): every trainer a company has awarded or saved, with availability and one-click invites.
 - **Global search** (`/search`) across trainers, courses, requirements, companies and posts. Mobile navigation menu.
+- **Recommendations**: company members who awarded a trainer, or accepted connections, write a recommendation on the profile (one per author, editable). Trainers can hide any and can ask eligible contacts for one.
+- **Work orders** (`/requirements/<id>/work-order`): after an award the company issues a versioned work order prefilled from the requirement and the accepted rate (dates, day rate, total, participants, venue, deliverables, provided items, payment and cancellation terms). The trainer accepts or requests changes with notes; the company revises and resends (version bumps). Full event history, print-to-PDF view, cancel and reopen.
 
 ## Phase 2 backlog
 
-Recommendations, email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
+Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
 
 ## Google and LinkedIn sign-in
 

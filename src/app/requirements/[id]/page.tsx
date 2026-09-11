@@ -35,6 +35,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
       applications: { include: { trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } } } } }, orderBy: { createdAt: "asc" } },
       comments: { where: { deletedAt: null }, include: { author: { select: { id: true, name: true, avatarUrl: true, role: true } } }, orderBy: { createdAt: "asc" } },
       ratings: { include: { fromUser: { select: { name: true } }, toUser: { select: { name: true } } } },
+      workOrder: { select: { id: true, status: true, version: true, total: true, currency: true, number: true } },
     },
   });
   if (!r) notFound();
@@ -195,6 +196,24 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
           </Card>
         ) : awarded ? (
           <Card className="p-5"><p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Awarded to</p><Link href={`/trainers/${awarded.trainer.slug}`} className="mt-2 flex items-center gap-2 hover:text-cyan"><Avatar name={awarded.trainer.user.name} src={awarded.trainer.user.avatarUrl} size={30} />{awarded.trainer.user.name}</Link></Card>
+        ) : null}
+
+        {awarded && ["AWARDED", "COMPLETED"].includes(r.status) && (isMember || user?.id === awarded.trainer.user.id) ? (
+          <Card className="p-5" glow={r.workOrder?.status === "SENT" && user?.id === awarded.trainer.user.id ? "cyan" : undefined}>
+            <p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Work order</p>
+            {r.workOrder ? (
+              <>
+                <p className="mt-1 flex items-center gap-2"><span className="font-display font-bold">WO-{String(r.workOrder.number).padStart(4, "0")}</span><Badge tone={r.workOrder.status === "ACCEPTED" ? "lime" : r.workOrder.status === "SENT" ? "amber" : r.workOrder.status === "CHANGES_REQUESTED" ? "rose" : "neutral"}>{r.workOrder.status.toLowerCase().replace("_", " ")} · v{r.workOrder.version}</Badge></p>
+                <p className="text-sm text-muted">{rateRange(r.workOrder.total, null, r.workOrder.currency).replace(" / day", " total")}</p>
+                <ButtonLink href={`/requirements/${r.id}/work-order`} variant={r.workOrder.status === "SENT" && user?.id === awarded.trainer.user.id ? "primary" : "secondary"} size="sm" className="mt-3 w-full">{r.workOrder.status === "SENT" && user?.id === awarded.trainer.user.id ? "Review and accept" : "Open work order"}</ButtonLink>
+              </>
+            ) : isMember ? (
+              <>
+                <p className="mt-1 text-sm text-muted">Confirm dates, rate, deliverables and terms with {awarded.trainer.user.name} in writing.</p>
+                <ButtonLink href={`/requirements/${r.id}/work-order`} variant="violet" size="sm" className="mt-3 w-full">Issue work order</ButtonLink>
+              </>
+            ) : <p className="mt-1 text-sm text-muted">{r.company.name} has not issued a work order yet.</p>}
+          </Card>
         ) : null}
 
         {awarded && ["AWARDED", "COMPLETED"].includes(r.status) && (isMember || user?.id === awarded.trainer.user.id) ? (
