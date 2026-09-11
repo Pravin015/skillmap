@@ -63,4 +63,21 @@ prisma/schema.prisma            data model · prisma/seed.ts demo data
 
 ## Phase 2 backlog
 
-Feed and posts, follow, recommendations, LinkedIn import, Google / LinkedIn login, paid plans (Razorpay / Stripe), email delivery (Resend), S3-compatible uploads, Meilisearch.
+Feed and posts, follow, recommendations, LinkedIn profile import, paid plans (Razorpay / Stripe), email delivery (Resend), S3-compatible uploads, Meilisearch.
+
+## Google and LinkedIn sign-in
+
+Both use OpenID Connect and are implemented in `src/lib/oauth.ts` plus the route handlers under `src/app/api/auth/[provider]/`. The buttons on the sign-in and sign-up pages activate automatically once keys are present in `.env`; until then they render disabled.
+
+**Google** - [console.cloud.google.com](https://console.cloud.google.com/apis/credentials) > Create credentials > OAuth client ID > Web application. Add the authorised redirect URI, then copy the client ID and secret into `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`.
+
+**LinkedIn** - [linkedin.com/developers](https://www.linkedin.com/developers/apps) > Create app (needs a LinkedIn Page) > Products > add **Sign In with LinkedIn using OpenID Connect** > Auth tab: add the redirect URL, copy the client ID and secret into `LINKEDIN_CLIENT_ID` / `LINKEDIN_CLIENT_SECRET`.
+
+Redirect URIs (replace the origin with your domain in production; it must match `NEXT_PUBLIC_APP_URL`):
+
+```
+http://localhost:3210/api/auth/google/callback
+http://localhost:3210/api/auth/linkedin/callback
+```
+
+Flow: `/api/auth/<provider>/start` sets a state cookie and redirects to the provider. `/api/auth/<provider>/callback` exchanges the code, reads the userinfo endpoint, then (1) signs in a previously linked account, (2) links to an existing account with the same verified email, or (3) sends a new member to `/signup/complete` to choose trainer or company. Members without a password can set one from Settings; unlinking the last provider is blocked until a password exists.

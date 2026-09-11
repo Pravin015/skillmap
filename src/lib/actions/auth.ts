@@ -62,8 +62,12 @@ export async function login(_prev: ActionState, formData: FormData): Promise<Act
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "");
-  const user = await db.user.findUnique({ where: { email } });
-  if (!user || !(await bcrypt.compare(password, user.passwordHash))) return { error: "Email or password is incorrect." };
+  const user = await db.user.findUnique({ where: { email }, include: { oauthAccounts: { select: { provider: true } } } });
+  if (user && !user.passwordHash) {
+    const via = user.oauthAccounts.map((a) => (a.provider === "google" ? "Google" : "LinkedIn")).join(" or ");
+    return { error: `This account signs in with ${via || "a linked provider"}. Use that button, or set a password from Settings after signing in.` };
+  }
+  if (!user || !(await bcrypt.compare(password, user.passwordHash!))) return { error: "Email or password is incorrect." };
   if (user.status === "SUSPENDED") return { error: "This account is suspended. Contact support@corpgurus.com." };
   await createSession(user.id);
   redirect(next && next.startsWith("/") ? next : "/dashboard");

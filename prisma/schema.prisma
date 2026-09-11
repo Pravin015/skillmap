@@ -73,7 +73,7 @@ model User {
   email        String     @unique
   name         String
   avatarUrl    String?
-  passwordHash String
+  passwordHash String?
   role         Role
   status       UserStatus @default(ACTIVE)
   createdAt    DateTime   @default(now())
@@ -92,6 +92,19 @@ model User {
   notifications    Notification[]
   auditLogs        AuditLog[]
   reviewedCerts    Certification[] @relation("CertReviewer")
+  oauthAccounts    OAuthAccount[]
+}
+
+model OAuthAccount {
+  id                String   @id @default(cuid())
+  provider          String
+  providerAccountId String
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email             String?
+  createdAt         DateTime @default(now())
+
+  @@unique([provider, providerAccountId])
 }
 
 model TrainerProfile {

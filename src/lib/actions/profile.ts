@@ -118,8 +118,9 @@ export async function updateAccount(_p: ActionState, fd: FormData): Promise<Acti
   const user = await requireUser();
   const current = String(fd.get("current") ?? ""), next = String(fd.get("next") ?? "");
   const full = await db.user.findUnique({ where: { id: user.id } });
-  if (!full || !(await bcrypt.compare(current, full.passwordHash))) return { error: "Current password is incorrect." };
+  if (!full) return { error: "Account not found." };
+  if (full.passwordHash && !(await bcrypt.compare(current, full.passwordHash))) return { error: "Current password is incorrect." };
   if (next.length < 8) return { error: "New password needs at least 8 characters." };
   await db.user.update({ where: { id: user.id }, data: { passwordHash: await bcrypt.hash(next, 10) } });
-  return { ok: "Password updated." };
+  return { ok: full.passwordHash ? "Password updated." : "Password set. You can now sign in with email as well." };
 }

@@ -4,12 +4,18 @@ import { addCertification, deleteCertification, inviteMember, removeMember, upda
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Alert, Avatar, Badge, Button, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { certStatusLabel, COMPANY_SIZES, CURRENCIES, DELIVERY_MODES, fmtDate, modeLabel } from "@/lib/utils";
+import { unlinkProvider } from "@/lib/actions/oauth";
+import { PROVIDER_LIST, providerName } from "@/lib/oauth";
+import { OAuthButtons } from "@/components/oauth-buttons";
 
 export const metadata = { title: "Settings" };
 
 export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ welcome?: string }> }) {
   const { welcome } = await searchParams;
   const user = await requireUser("/settings");
+  const account = await db.user.findUnique({ where: { id: user.id }, select: { passwordHash: true, oauthAccounts: { select: { provider: true, email: true, createdAt: true } } } });
+  const hasPassword = !!account?.passwordHash;
+  const linked = new Map((account?.oauthAccounts ?? []).map((a) => [a.provider, a]));
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
@@ -20,11 +26,32 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       {user.membership ? <CompanySettings companyId={user.membership.company.id} isOwner={user.membership.role === "OWNER"} me={user.id} /> : null}
 
       <Card className="p-6">
-        <h2 className="text-lg font-bold">Password</h2>
+        <h2 className="text-lg font-bold">Connected accounts</h2>
+        <p className="mt-1 text-sm text-muted">Sign in with Google or LinkedIn. Linking uses the same email as this account.</p>
+        <div className="mt-4 divide-y divide-line rounded-xl border border-line">
+          {PROVIDER_LIST.map((p) => {
+            const a = linked.get(p);
+            const canUnlink = !!a && (hasPassword || linked.size > 1);
+            return (
+              <div key={p} className="flex flex-wrap items-center gap-3 px-4 py-3">
+                <div className="min-w-0 flex-1"><p className="font-medium">{providerName(p)}</p><p className="text-xs text-muted">{a ? `Linked${a.email ? ` as ${a.email}` : ""} · ${fmtDate(a.createdAt)}` : "Not linked"}</p></div>
+                {a ? <Badge tone="lime">linked</Badge> : <Badge>not linked</Badge>}
+                {a && canUnlink ? <form action={unlinkProvider}><input type="hidden" name="provider" value={p} /><Button variant="ghost" size="sm" className="text-dim hover:text-rose">Unlink</Button></form> : null}
+                {a && !canUnlink ? <span className="text-xs text-dim">Set a password before unlinking</span> : null}
+              </div>
+            );
+          })}
+        </div>
+        {linked.size < PROVIDER_LIST.length ? <div className="mt-4"><OAuthButtons label="Link" next="/settings" divider={false} /></div> : null}
+      </Card>
+
+      <Card className="p-6">
+        <h2 className="text-lg font-bold">{hasPassword ? "Password" : "Set a password"}</h2>
+        {!hasPassword ? <p className="mt-1 text-sm text-muted">You currently sign in through a linked provider. Setting a password adds email sign-in as a backup.</p> : null}
         <ActionForm action={updateAccount} className="mt-4 grid gap-4 md:grid-cols-2">
-          <Field label="Current password"><Input name="current" type="password" required autoComplete="current-password" /></Field>
+          {hasPassword ? <Field label="Current password"><Input name="current" type="password" required autoComplete="current-password" /></Field> : <input type="hidden" name="current" value="" />}
           <Field label="New password"><Input name="next" type="password" required minLength={8} autoComplete="new-password" /></Field>
-          <div className="md:col-span-2"><SubmitButton variant="secondary">Update password</SubmitButton></div>
+          <div className="md:col-span-2"><SubmitButton variant="secondary">{hasPassword ? "Update password" : "Set password"}</SubmitButton></div>
         </ActionForm>
       </Card>
     </div>
