@@ -109,7 +109,7 @@ export function Empty({ title, body, action }: { title: string; body?: string; a
   );
 }
 
-export function PageHeader({ eyebrow, title, body, actions }: { eyebrow?: string; title: string; body?: string; actions?: ReactNode }) {
+export function PageHeader({ eyebrow, title, body, actions }: { eyebrow?: ReactNode; title: string; body?: string; actions?: ReactNode }) {
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
       <div>

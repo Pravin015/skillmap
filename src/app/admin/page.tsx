@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { reviewCertification, verifyCompanyDomain } from "@/lib/actions/admin";
+import { reviewCertification, verifyCompanyDomain, verifyGst, verifyIdentity } from "@/lib/actions/admin";
 import { Avatar, Button, Card, Empty, Input, PageHeader, Stat } from "@/components/ui";
 import { fmtDate, timeAgo } from "@/lib/utils";
 
 export const metadata = { title: "Admin queue" };
 
 export default async function AdminQueue() {
+  const [identities, gsts] = await Promise.all([
+    db.user.findMany({ where: { identityDocUrl: { not: null }, identityVerifiedAt: null }, select: { id: true, name: true, avatarUrl: true, identityDocUrl: true, identityNote: true, createdAt: true, trainerProfile: { select: { slug: true } } } }),
+    db.company.findMany({ where: { gstin: { not: null }, gstVerifiedAt: null }, select: { id: true, name: true, slug: true, gstin: true } }),
+  ]);
   const [certs, companies, counts, recentAudit] = await Promise.all([
     db.certification.findMany({ where: { status: "PENDING" }, include: { trainer: { include: { user: { select: { name: true, avatarUrl: true } } } } }, orderBy: { createdAt: "asc" } }),
     db.company.findMany({ where: { domainVerifiedAt: null, domain: { not: null } }, include: { members: { where: { role: "OWNER" }, include: { user: { select: { name: true, email: true } } } } }, orderBy: { createdAt: "asc" } }),
@@ -44,6 +48,35 @@ export default async function AdminQueue() {
                 </Card>
               ))}</div>
             ) : <Empty title="Queue is clear" body="No certifications waiting." />}
+          </section>
+
+          <section>
+            <h2 className="mb-3 text-lg font-bold">Identity documents <span className="mono text-xs text-amber">{identities.length} pending</span></h2>
+            {identities.length ? (
+              <div className="space-y-3">{identities.map((u) => (
+                <Card key={u.id} className="p-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Avatar name={u.name} src={u.avatarUrl} size={40} />
+                    <div className="min-w-0 flex-1"><p className="font-medium">{u.trainerProfile ? <Link href={`/trainers/${u.trainerProfile.slug}`} className="hover:text-cyan">{u.name}</Link> : u.name}</p><a href={u.identityDocUrl!} target="_blank" className="text-sm text-cyan hover:underline">Open document (staff only) ↗</a></div>
+                    <form action={verifyIdentity}><input type="hidden" name="id" value={u.id} /><input type="hidden" name="verify" value="1" /><Button size="sm">Verify identity</Button></form>
+                    <form action={verifyIdentity} className="flex gap-2"><input type="hidden" name="id" value={u.id} /><input type="hidden" name="verify" value="0" /><Input name="note" placeholder="Reason (sent to member)" className="h-8 w-56 py-1 text-xs" /><Button size="sm" variant="danger">Reject</Button></form>
+                  </div>
+                </Card>
+              ))}</div>
+            ) : <Empty title="No identity documents waiting" />}
+          </section>
+
+          <section>
+            <h2 className="mb-3 text-lg font-bold">GST numbers <span className="mono text-xs text-amber">{gsts.length} pending</span></h2>
+            {gsts.length ? (
+              <div className="space-y-3">{gsts.map((c) => (
+                <Card key={c.id} className="flex flex-wrap items-center gap-3 p-4">
+                  <div className="min-w-0 flex-1"><p className="font-medium"><Link href={`/companies/${c.slug}`} className="hover:text-violet">{c.name}</Link></p><p className="mono text-sm text-muted">{c.gstin}</p></div>
+                  <a href={`https://services.gst.gov.in/services/searchtp`} target="_blank" className="text-xs text-cyan hover:underline">Check on GST portal ↗</a>
+                  <form action={verifyGst}><input type="hidden" name="id" value={c.id} /><input type="hidden" name="verify" value="1" /><Button size="sm" variant="violet">Verify GST</Button></form>
+                </Card>
+              ))}</div>
+            ) : <Empty title="No GST numbers waiting" />}
           </section>
 
           <section>

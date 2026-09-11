@@ -13,6 +13,7 @@ export default async function Home() {
     Promise.all([db.trainerProfile.count(), db.company.count(), db.requirement.count({ where: { status: { in: ["OPEN", "SHORTLISTING"] } } }), db.certification.count({ where: { status: "VERIFIED" } })]),
   ]);
   const [nT, nC, nR, nV] = counts;
+  const categories = await db.category.findMany({ include: { _count: { select: { requirements: { where: { status: { in: ["OPEN", "SHORTLISTING"] }, visibility: "PUBLIC" } } } } }, orderBy: { name: "asc" } });
   const showRate = user?.role === "COMPANY" || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
 
   return (
@@ -54,6 +55,11 @@ export default async function Home() {
             <div className="rounded-lg bg-surface-2 py-3"><p className="font-display text-base font-bold text-ink">Award</p>rate afterwards</div>
           </div>
         </div>
+      </section>
+
+      <section>
+        <div className="mb-4 flex items-end justify-between border-b border-line pb-3"><h2 className="text-2xl font-bold">Browse by category</h2><Link href="/categories" className="text-sm font-medium text-cyan hover:underline">All categories →</Link></div>
+        <div className="flex flex-wrap gap-2">{categories.map((c) => <Link key={c.id} href={`/categories/${c.slug}`} className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium hover:border-cyan hover:text-cyan">{c.name}{c._count.requirements ? <span className="rounded-md bg-violet/8 px-1.5 text-xs text-violet">{c._count.requirements} open</span> : null}</Link>)}</div>
       </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

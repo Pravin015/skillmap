@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Bell, Briefcase, Building2, CreditCard, LayoutDashboard, LogOut, Menu, MessageSquare, Newspaper, Search, Settings, ShieldCheck, Tag, Users } from "lucide-react";
+import { BarChart3, Bell, Briefcase, Building2, CreditCard, LayoutDashboard, LayoutGrid, LogOut, Menu, MessageSquare, Newspaper, Receipt, Search, Settings, ShieldCheck, Tag, Users } from "lucide-react";
 import { getCurrentUser, isStaff } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logout } from "@/lib/actions/auth";
@@ -30,6 +30,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
             <NavLink href="/trainers" icon={<Users size={16} />}>Trainers</NavLink>
             <NavLink href="/requirements" icon={<Briefcase size={16} />}>Requirements</NavLink>
             <NavLink href="/companies" icon={<Building2 size={16} />}>Companies</NavLink>
+            <NavLink href="/categories" icon={<LayoutGrid size={16} />}>Categories</NavLink>
             <NavLink href="/pricing" icon={<Tag size={16} />}>Pricing</NavLink>
           </nav>
           <form action="/search" className="ml-auto hidden lg:block">
@@ -59,6 +60,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
                     <div className="hairline my-1" />
                     <MenuLink href="/dashboard" icon={<LayoutDashboard size={15} />}>Dashboard</MenuLink>
                     <MenuLink href="/feed" icon={<Newspaper size={15} />}>Feed</MenuLink>
+                    {user.trainerProfile || user.membership ? <><MenuLink href="/dashboard/analytics" icon={<BarChart3 size={15} />}>Analytics</MenuLink><MenuLink href="/dashboard/invoices" icon={<Receipt size={15} />}>Invoices</MenuLink></> : null}
                     <MenuLink href="/network" icon={<Users size={15} />}>Network</MenuLink>
                     <MenuLink href="/messages" icon={<MessageSquare size={15} />}>Messages</MenuLink>
                     {user.trainerProfile ? <MenuLink href={`/trainers/${user.trainerProfile.slug}`} icon={<Briefcase size={15} />}>My public profile</MenuLink> : null}
@@ -88,6 +90,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
                 <MenuLink href="/trainers" icon={<Users size={15} />}>Trainers</MenuLink>
                 <MenuLink href="/requirements" icon={<Briefcase size={15} />}>Requirements</MenuLink>
                 <MenuLink href="/companies" icon={<Building2 size={15} />}>Companies</MenuLink>
+                <MenuLink href="/categories" icon={<LayoutGrid size={15} />}>Categories</MenuLink>
                 <MenuLink href="/pricing" icon={<Tag size={15} />}>Pricing</MenuLink>
               </div>
             </details>

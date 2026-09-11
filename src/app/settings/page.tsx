@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { addCertification, deleteCertification, inviteMember, removeMember, updateAccount, updateCompany, updateTrainerProfile } from "@/lib/actions/profile";
+import { addCertification, deleteCertification, inviteMember, removeMember, updateAccount, updateCompany, updateEmailPrefs, updateTrainerProfile, uploadIdentity } from "@/lib/actions/profile";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Alert, Avatar, Badge, Button, ButtonLink, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { certStatusLabel, COMPANY_SIZES, CURRENCIES, DELIVERY_MODES, fmtDate, modeLabel } from "@/lib/utils";
@@ -13,17 +13,40 @@ export const metadata = { title: "Settings" };
 export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ welcome?: string }> }) {
   const { welcome } = await searchParams;
   const user = await requireUser("/settings");
-  const account = await db.user.findUnique({ where: { id: user.id }, select: { passwordHash: true, oauthAccounts: { select: { provider: true, email: true, createdAt: true } } } });
+  const account = await db.user.findUnique({ where: { id: user.id }, select: { passwordHash: true, emailNotifications: true, identityVerifiedAt: true, identityDocUrl: true, identityNote: true, oauthAccounts: { select: { provider: true, email: true, createdAt: true } } } });
   const hasPassword = !!account?.passwordHash;
   const linked = new Map((account?.oauthAccounts ?? []).map((a) => [a.provider, a]));
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
-      <PageHeader eyebrow="Settings" title={user.trainerProfile ? "Your trainer profile" : user.membership ? "Company page & team" : "Account"} body={welcome ? "Welcome aboard. Complete the essentials below so people can find you." : undefined} actions={<div className="flex flex-wrap gap-2">{user.trainerProfile ? <><ButtonLink href="/settings/availability" variant="secondary" size="sm">Availability</ButtonLink><ButtonLink href="/settings/courses" variant="secondary" size="sm">Courses</ButtonLink></> : null}{user.trainerProfile || user.membership ? <ButtonLink href="/settings/billing" variant="secondary" size="sm">Plan & billing</ButtonLink> : null}</div>} />
+      <PageHeader eyebrow="Settings" title={user.trainerProfile ? "Your trainer profile" : user.membership ? "Company page & team" : "Account"} body={welcome ? "Welcome aboard. Complete the essentials below so people can find you." : undefined} actions={<div className="flex flex-wrap gap-2">{user.trainerProfile ? <><ButtonLink href="/settings/availability" variant="secondary" size="sm">Availability</ButtonLink><ButtonLink href="/settings/courses" variant="secondary" size="sm">Courses</ButtonLink><ButtonLink href="/settings/gallery" variant="secondary" size="sm">Gallery</ButtonLink></> : null}{user.trainerProfile || user.membership ? <ButtonLink href="/settings/billing" variant="secondary" size="sm">Plan & billing</ButtonLink> : null}</div>} />
       {welcome ? <Alert tone="cyan">Account created. {user.trainerProfile ? "Add your skills, rate and certifications to get verified." : "Complete your company page, then post your first requirement."}</Alert> : null}
 
       {user.trainerProfile ? <TrainerSettings userId={user.id} profileId={user.trainerProfile.id} /> : null}
       {user.membership ? <CompanySettings companyId={user.membership.company.id} isOwner={user.membership.role === "OWNER"} me={user.id} /> : null}
+
+      {user.trainerProfile ? (
+        <Card className="p-6">
+          <div className="flex items-center justify-between"><h2 className="text-lg font-bold">Identity verification</h2>{account?.identityVerifiedAt ? <Badge tone="lime">Identity verified</Badge> : account?.identityDocUrl ? <Badge tone="amber">Under review</Badge> : <Badge>Not verified</Badge>}</div>
+          <p className="mt-1 text-sm text-muted">Upload a government ID (Aadhaar, PAN, passport or driving licence). It is stored privately, visible only to CorpGurus staff, and earns the Identity verified badge.</p>
+          {account?.identityNote ? <p className="mt-2 text-sm text-rose">{account.identityNote}</p> : null}
+          {!account?.identityVerifiedAt ? (
+            <ActionForm action={uploadIdentity} className="mt-4 flex flex-wrap items-end gap-3" resetOnSuccess>
+              <Field label="Document" hint="PDF or image, under 8 MB" className="flex-1"><Input name="document" type="file" accept=".pdf,image/*" required className="file:mr-3 file:rounded-md file:border-0 file:bg-surface-2 file:px-3 file:py-1 file:text-xs file:text-ink" /></Field>
+              <SubmitButton variant="secondary" pendingText="Uploading…">Submit for review</SubmitButton>
+            </ActionForm>
+          ) : null}
+        </Card>
+      ) : null}
+
+      <Card className="p-6">
+        <h2 className="text-lg font-bold">Email notifications</h2>
+        <form action={updateEmailPrefs} className="mt-3 flex flex-wrap items-center gap-3">
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="emailNotifications" value="1" defaultChecked={account?.emailNotifications ?? true} className="accent-cyan" /> Email me about applications, work orders, invoices, invitations and verification results</label>
+          <Button variant="secondary" size="sm">Save</Button>
+        </form>
+        <p className="mt-2 text-xs text-muted">Messages, likes and comments stay in-app only.</p>
+      </Card>
 
       <Card className="p-6">
         <h2 className="text-lg font-bold">Connected accounts</h2>
@@ -94,6 +117,11 @@ async function TrainerSettings({ userId, profileId }: { userId: string; profileI
           </div>
           <p className="-mt-2 text-xs text-dim">Rates are visible only to signed-in company accounts, never to guests or other trainers.</p>
           <Field label="Availability note" hint="e.g. “Booked until 20 Oct. Weekends possible.”"><Input name="availabilityNote" defaultValue={p.availabilityNote ?? ""} /></Field>
+          <Field label="Intro video link" hint="YouTube, Vimeo or Loom. Shown on your profile."><Input name="videoUrl" defaultValue={p.videoUrl ?? ""} placeholder="https://" /></Field>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field label="GSTIN" hint="Printed on your invoices"><Input name="gstin" defaultValue={p.gstin ?? ""} placeholder="Optional" /></Field>
+            <Field label="Payment details" hint="Bank or UPI, printed on invoices"><Textarea name="paymentDetails" defaultValue={p.paymentDetails ?? ""} className="min-h-16" /></Field>
+          </div>
           <Field label="Skills" hint="Tick everything you can deliver. Requirements with these skills notify you.">
             <div className="flex max-h-56 flex-wrap gap-1.5 overflow-y-auto rounded-lg border border-line bg-surface-2 p-3 scrollbar-thin">
               {skills.map((s) => <label key={s.id} className="cursor-pointer"><input type="checkbox" name="skills" value={s.slug} defaultChecked={mine.has(s.slug)} className="peer sr-only" /><span className="inline-block rounded-full border border-line-2 px-2.5 py-0.5 text-xs text-muted transition peer-checked:border-cyan peer-checked:bg-cyan peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-cyan/50">{s.name}</span></label>)}
@@ -153,6 +181,10 @@ async function CompanySettings({ companyId, isOwner, me }: { companyId: string; 
             <Field label="Company size"><Select name="size" defaultValue={c.size || ""}><option value="">—</option>{COMPANY_SIZES.map((s) => <option key={s}>{s}</option>)}</Select></Field>
             <Field label="Website"><Input name="website" defaultValue={c.website ?? ""} placeholder="https://" /></Field>
             <Field label="Cities" hint="Comma separated"><Input name="cities" defaultValue={c.cities.join(", ")} /></Field>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field label="GSTIN" hint={c.gstVerifiedAt ? "Verified by CorpGurus" : "Staff verify it for the GST verified badge"}><Input name="gstin" defaultValue={c.gstin ?? ""} placeholder="27AAAAA0000A1Z5" /></Field>
+            <Field label="Billing address" hint="Printed on invoices from trainers"><Textarea name="billingAddress" defaultValue={c.billingAddress ?? ""} className="min-h-16" /></Field>
           </div>
           <Field label="Company type"><Select name="type" defaultValue={c.type}><option value="DIRECT">Direct employer · we train our own people</option><option value="TRAINING_PARTNER">Training partner · we deliver for clients</option></Select></Field>
           <Field label="About" hint="What you train, how often, and what you provide trainers (lab, courseware, venue)."><Textarea name="description" defaultValue={c.description} className="min-h-28" /></Field>

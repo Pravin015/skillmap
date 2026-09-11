@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { seedFeed } from "./seed-feed";
 import { seedFeatures } from "./seed-features";
 import { seedRecs } from "./seed-recs";
+import { seedBatch3 } from "./seed-batch3";
 
 const db = new PrismaClient();
 const PASSWORD = "Password@123";
@@ -165,6 +166,7 @@ async function main() {
   await seedFeed(db);
   await seedFeatures(db);
   await seedRecs(db);
+  await seedBatch3(db);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); }).finally(() => db.$disconnect());

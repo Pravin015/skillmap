@@ -93,9 +93,17 @@ Without keys in development the pricing page runs a **simulator** that activates
 - **Recommendations**: company members who awarded a trainer, or accepted connections, write a recommendation on the profile (one per author, editable). Trainers can hide any and can ask eligible contacts for one.
 - **Work orders** (`/requirements/<id>/work-order`): after an award the company issues a versioned work order prefilled from the requirement and the accepted rate (dates, day rate, total, participants, venue, deliverables, provided items, payment and cancellation terms). The trainer accepts or requests changes with notes; the company revises and resends (version bumps). Full event history, print-to-PDF view, cancel and reopen.
 
+- **Gallery** (`/settings/gallery`): training photos with caption, date and company tag, optional share to feed; Gallery tab on the profile.
+- **Trainer page tabs**: Overview, Courses, Recommendations, Feedback (client ratings + anonymous participant comments), Posts, Gallery; badges; similar trainers.
+- **Badge levels** (`src/lib/badges.ts`): trainers earn Identity verified (staff review of a privately stored ID), verified certs, Top rated, Learner favourite, completed-engagement count, Trainer Pro. Companies earn Domain verified, GST verified, Trusted hirer, engagement count, plan badges. Admin queue handles identity documents and GSTINs; private files are served only to staff via `/api/private/...`.
+- **Categories** (`/categories`, `/categories/<slug>`): skills belong to categories with optional vendor; pages list trainers, courses and open requirements. Category strip on the home page.
+- **Analytics** (`/dashboard/analytics`): trainers see views, search appearances, funnel rates, earnings from accepted work orders and ratings; companies see posting volume, days to shortlist and award, spend, top trainers and skills.
+- **Invoicing** (`/dashboard/invoices`, `/invoices/<id>`): trainers raise a GST invoice against an accepted work order; companies record payment with a reference; overdue tracking; print view.
+- **Email** (`src/lib/email.ts`): Resend for application, work order, invoice, invitation, billing and verification notifications. Without `RESEND_API_KEY` emails are recorded in `EmailLog` instead of sent. Members can switch email off in Settings.
+
 ## Phase 2 backlog
 
-Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
+Interview scheduling, saved searches, data export, LinkedIn PDF import, referral programme, PWA, S3 uploads, Stripe for USD. Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
 
 ## Google and LinkedIn sign-in
 

@@ -42,3 +42,4 @@ next-env.d.ts
 
 # user uploads
 /public/uploads
+/private-uploads

@@ -76,6 +76,10 @@ model User {
   passwordHash String?
   role         Role
   status       UserStatus @default(ACTIVE)
+  emailNotifications Boolean @default(true)
+  identityVerifiedAt DateTime?
+  identityDocUrl     String?
+  identityNote       String?
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
@@ -105,6 +109,8 @@ model User {
   recommendationsWritten Recommendation[] @relation("RecAuthor")
   workOrdersCreated WorkOrder[]
   workOrderEvents  WorkOrderEvent[]
+  invoicesIssued   Invoice[]
+  emailLogs        EmailLog[]
 }
 
 model Recommendation {
@@ -166,7 +172,8 @@ model WorkOrder {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
-  events WorkOrderEvent[]
+  events   WorkOrderEvent[]
+  invoices Invoice[]
 }
 
 model WorkOrderEvent {
@@ -449,6 +456,9 @@ model TrainerProfile {
   currency         String         @default("INR")
   availabilityNote String?
   verifiedAt       DateTime?
+  gstin            String?
+  paymentDetails   String?
+  videoUrl         String?
   createdAt        DateTime       @default(now())
 
   skills         Skill[]
@@ -462,6 +472,8 @@ model TrainerProfile {
   stats          TrainerStatDaily[]
   recommendations Recommendation[]
   workOrders     WorkOrder[]
+  photos         GalleryPhoto[]
+  invoices       Invoice[]
 }
 
 model Certification {
@@ -493,6 +505,9 @@ model Company {
   type             CompanyType @default(DIRECT)
   domain           String?
   domainVerifiedAt DateTime?
+  gstin            String?
+  gstVerifiedAt    DateTime?
+  billingAddress   String?
   description      String      @default("")
   createdAt        DateTime    @default(now())
 
@@ -504,6 +519,8 @@ model Company {
   subscriptions Subscription[]
   recommendations Recommendation[]
   workOrders   WorkOrder[]
+  photos       GalleryPhoto[]
+  invoices     Invoice[]
 }
 
 model CompanyMember {
@@ -522,12 +539,17 @@ model Category {
   slug         String        @unique
   requirements Requirement[]
   courses      Course[]
+  skills       Skill[]
+  description  String        @default("")
 }
 
 model Skill {
   id           String           @id @default(cuid())
   name         String
   slug         String           @unique
+  categoryId   String?
+  category     Category?        @relation(fields: [categoryId], references: [id])
+  vendor       String?
   trainers     TrainerProfile[]
   requirements Requirement[]
   courses      Course[]
@@ -694,4 +716,65 @@ model AuditLog {
 model Setting {
   key   String @id
   value String
+}
+
+model GalleryPhoto {
+  id            String         @id @default(cuid())
+  trainerId     String
+  trainer       TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  url           String
+  caption       String         @default("")
+  takenOn       DateTime?
+  companyId     String?
+  company       Company?       @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  createdAt     DateTime       @default(now())
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  CANCELLED
+}
+
+model Invoice {
+  id            String         @id @default(cuid())
+  number        Int            @default(autoincrement())
+  invoiceNumber String
+  workOrderId   String
+  workOrder     WorkOrder      @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  trainerId     String
+  trainer       TrainerProfile @relation(fields: [trainerId], references: [id])
+  companyId     String
+  company       Company        @relation(fields: [companyId], references: [id])
+  issuedById    String
+  issuedBy      User           @relation(fields: [issuedById], references: [id])
+  description   String
+  amount        Int
+  gstRate       Int            @default(18)
+  gstAmount     Int            @default(0)
+  total         Int
+  currency      String         @default("INR")
+  trainerGstin  String?
+  companyGstin  String?
+  paymentDetails String        @default("")
+  notes         String         @default("")
+  status        InvoiceStatus  @default(SENT)
+  issuedAt      DateTime       @default(now())
+  dueDate       DateTime
+  paidAt        DateTime?
+  paidReference String?
+  createdAt     DateTime       @default(now())
+}
+
+model EmailLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  to         String
+  subject    String
+  status     String
+  providerId String?
+  error      String?
+  createdAt  DateTime @default(now())
 }

@@ -85,6 +85,8 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
 
           <div className="flex flex-wrap gap-2 print:hidden">
             <PrintButton />
+            {wo.status === "ACCEPTED" && isTrainer ? <Link href={`/dashboard/invoices?raise=${wo.id}`} className="inline-flex h-9 items-center rounded-lg bg-cyan px-3 font-display text-sm font-semibold text-white hover:bg-navy">Raise invoice</Link> : null}
+            {wo.status === "ACCEPTED" ? <Link href="/dashboard/invoices" className="inline-flex h-9 items-center rounded-lg border border-line-2 bg-white px-3 font-display text-sm font-semibold hover:bg-surface-2">Invoices</Link> : null}
             {isMember && wo.status !== "CANCELLED" && wo.status !== "ACCEPTED" ? <Link href={`/requirements/${id}/work-order?edit=1`} className="inline-flex h-9 items-center rounded-lg border border-line-2 bg-white px-3 font-display text-sm font-semibold hover:bg-surface-2">Edit and resend</Link> : null}
             {isMember && wo.status !== "CANCELLED" ? <form action={cancelWorkOrder}><input type="hidden" name="id" value={wo.id} /><Button variant="danger" size="sm">Cancel work order</Button></form> : null}
             {isMember && wo.status === "CANCELLED" ? <form action={reopenWorkOrder}><input type="hidden" name="id" value={wo.id} /><Button variant="secondary" size="sm">Reopen as draft</Button></form> : null}

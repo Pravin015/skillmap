@@ -14,7 +14,8 @@
     "postinstall": "prisma generate",
     "db:seed:feed": "tsx prisma/seed-feed.ts",
     "db:seed:features": "tsx prisma/seed-features.ts",
-    "db:seed:recs": "tsx prisma/seed-recs.ts"
+    "db:seed:recs": "tsx prisma/seed-recs.ts",
+    "db:seed:batch3": "tsx prisma/seed-batch3.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

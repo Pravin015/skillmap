@@ -37,6 +37,28 @@ export async function verifyCompanyDomain(fd: FormData) {
   revalidatePath("/admin"); revalidatePath(`/companies/${c.slug}`);
 }
 
+export async function verifyIdentity(fd: FormData) {
+  const admin = await requireRole([...STAFF]);
+  const id = String(fd.get("id"));
+  const verify = String(fd.get("verify")) === "1";
+  const note = String(fd.get("note") ?? "").trim() || null;
+  const u = await db.user.update({ where: { id }, data: { identityVerifiedAt: verify ? new Date() : null, identityNote: note }, include: { trainerProfile: { select: { slug: true } } } });
+  await notify(u.id, "verification", verify ? "Identity verified" : "Identity check not approved", verify ? "Your profile now carries the Identity verified badge." : note ?? "Upload a clearer document and try again.", "/settings");
+  await audit(admin.id, verify ? "identity.verify" : "identity.reject", id, { note });
+  revalidatePath("/admin"); revalidatePath("/admin/users");
+  if (u.trainerProfile) revalidatePath(`/trainers/${u.trainerProfile.slug}`);
+}
+
+export async function verifyGst(fd: FormData) {
+  const admin = await requireRole([...STAFF]);
+  const id = String(fd.get("id"));
+  const verify = String(fd.get("verify")) === "1";
+  const c = await db.company.update({ where: { id }, data: { gstVerifiedAt: verify ? new Date() : null }, include: { members: { select: { userId: true } } } });
+  if (verify) await notify(c.members.map((m) => m.userId), "verification", "GST verified", `${c.name} now carries the GST verified badge.`, `/companies/${c.slug}`);
+  await audit(admin.id, verify ? "company.gst.verify" : "company.gst.unverify", id, { gstin: c.gstin });
+  revalidatePath("/admin"); revalidatePath(`/companies/${c.slug}`);
+}
+
 export async function setUserStatus(fd: FormData) {
   const admin = await requireRole([...STAFF]);
   const id = String(fd.get("id"));

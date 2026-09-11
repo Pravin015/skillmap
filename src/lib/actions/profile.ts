@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { notify } from "@/lib/notify";
 import { parseList } from "@/lib/utils";
-import { saveUpload } from "@/lib/uploads";
+import { savePrivateUpload, saveUpload } from "@/lib/uploads";
 import { entitlementsFor } from "@/lib/billing";
 import type { ActionState } from "@/lib/types";
 
@@ -29,6 +29,7 @@ export async function updateTrainerProfile(_p: ActionState, fd: FormData): Promi
       headline, bio: String(fd.get("bio") ?? "").trim(), cities: parseList(fd.get("cities")), languages: parseList(fd.get("languages")), deliveryModes: modes,
       yearsExperience: Number(fd.get("yearsExperience") || 0), dayRateMin: min, dayRateMax: max, currency: String(fd.get("currency") || "INR"),
       availabilityNote: String(fd.get("availabilityNote") ?? "").trim() || null,
+      videoUrl: String(fd.get("videoUrl") ?? "").trim() || null, gstin: String(fd.get("gstin") ?? "").trim() || null, paymentDetails: String(fd.get("paymentDetails") ?? "").trim() || null,
       skills: { set: fd.getAll("skills").map((s) => ({ slug: String(s) })) },
     },
   });
@@ -68,7 +69,7 @@ export async function updateCompany(_p: ActionState, fd: FormData): Promise<Acti
   const website = String(fd.get("website") ?? "").trim();
   await db.company.update({
     where: { id: user.membership.company.id },
-    data: { name, industry: String(fd.get("industry") ?? "").trim(), size: String(fd.get("size") ?? ""), website: website || null, cities: parseList(fd.get("cities")), description: String(fd.get("description") ?? "").trim(), type: String(fd.get("type")) === "TRAINING_PARTNER" ? "TRAINING_PARTNER" : "DIRECT", ...(logoUrl ? { logoUrl } : {}) },
+    data: { name, industry: String(fd.get("industry") ?? "").trim(), size: String(fd.get("size") ?? ""), website: website || null, cities: parseList(fd.get("cities")), description: String(fd.get("description") ?? "").trim(), type: String(fd.get("type")) === "TRAINING_PARTNER" ? "TRAINING_PARTNER" : "DIRECT", gstin: String(fd.get("gstin") ?? "").trim() || null, billingAddress: String(fd.get("billingAddress") ?? "").trim() || null, ...(logoUrl ? { logoUrl } : {}) },
   });
   await db.user.update({ where: { id: user.id }, data: { name: String(fd.get("memberName") ?? user.name).trim() || user.name } });
   revalidatePath("/settings"); revalidatePath(`/companies/${user.membership.company.slug}`);
@@ -102,6 +103,24 @@ export async function removeMember(fd: FormData) {
   const m = await db.companyMember.findFirst({ where: { id, companyId: user.membership.company.id } });
   if (!m || m.userId === user.id) return;
   await db.companyMember.delete({ where: { id } });
+  revalidatePath("/settings");
+}
+
+export async function uploadIdentity(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const user = await requireUser();
+  let url: string | null = null;
+  try { url = await savePrivateUpload(fd.get("document") as File | null, "identity"); } catch (e) { return { error: (e as Error).message }; }
+  if (!url) return { error: "Choose a document." };
+  await db.user.update({ where: { id: user.id }, data: { identityDocUrl: url, identityVerifiedAt: null, identityNote: null } });
+  const staff = await db.user.findMany({ where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } }, select: { id: true } });
+  await notify(staff.map((s) => s.id), "verification", "Identity document submitted", `${user.name} uploaded an ID for verification.`, "/admin");
+  revalidatePath("/settings");
+  return { ok: "Submitted. Staff review identity documents within two working days. The file is never shown publicly." };
+}
+
+export async function updateEmailPrefs(fd: FormData) {
+  const user = await requireUser();
+  await db.user.update({ where: { id: user.id }, data: { emailNotifications: String(fd.get("emailNotifications")) === "1" } });
   revalidatePath("/settings");
 }
 

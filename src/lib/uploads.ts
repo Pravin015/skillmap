@@ -19,4 +19,17 @@ export async function saveUpload(file: File | null, folder: string, kinds: ("ima
   return `/uploads/${folder}/${name}`;
 }
 
+/** Stores under private-uploads/ (outside public/). Served only through /api/private/[...path] to staff. */
+export async function savePrivateUpload(file: File | null, folder: string, maxMb = 8) {
+  if (!file || !file.size) return null;
+  if (file.size > maxMb * 1024 * 1024) throw new Error(`File must be under ${maxMb} MB`);
+  const ext = path.extname(file.name).toLowerCase();
+  if (![...IMAGE, ".pdf"].includes(ext)) throw new Error("Upload a PDF or image");
+  const dir = path.join(process.cwd(), "private-uploads", folder);
+  await mkdir(dir, { recursive: true });
+  const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
+  await writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));
+  return `/api/private/${folder}/${name}`;
+}
+
 export const isImageUrl = (u: string) => IMAGE.includes(path.extname(u).toLowerCase());

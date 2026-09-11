@@ -10,6 +10,8 @@ import { loadPosts } from "@/lib/feed";
 import { PostCard } from "@/components/post-card";
 import { FollowButton } from "@/components/post-actions";
 import { isStaff } from "@/lib/auth";
+import { companyBadges } from "@/lib/badges";
+import { BadgeRow } from "@/components/badges";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -29,10 +31,11 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
   });
   if (!c) notFound();
   const isMember = !!user?.membership && user.membership.company.id === c.id;
-  const [follow, followerCount, feed] = await Promise.all([
+  const [follow, followerCount, feed, badges] = await Promise.all([
     user && !isMember ? db.follow.findUnique({ where: { followerId_companyId: { followerId: user.id, companyId: c.id } } }) : null,
     db.follow.count({ where: { companyId: c.id } }),
     loadPosts({ companyId: c.id }, 5, user?.id),
+    companyBadges(c.id),
   ]);
   const ratings = await db.rating.findMany({ where: { toUserId: { in: c.members.map((m) => m.userId) } }, include: { fromUser: { select: { name: true } }, requirement: { select: { title: true } } }, orderBy: { createdAt: "desc" } });
   const avg = ratings.length ? ratings.reduce((a, r) => a + r.score, 0) / ratings.length : null;
@@ -52,6 +55,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
               {c.domainVerifiedAt ? <Badge tone="lime">domain verified</Badge> : null}
               {avg ? <Badge tone="amber">★ {avg.toFixed(1)} from trainers</Badge> : null}
             </div>
+            <BadgeRow badges={badges} className="mt-2" />
             <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
               <span className="flex items-center gap-1.5"><MapPin size={14} />{c.cities.join(", ") || "—"}</span>
               {c.website ? <a href={c.website} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-ink"><Globe size={14} />{c.website.replace(/^https?:\/\//, "")}</a> : null}
