@@ -1,0 +1,75 @@
+"use server";
+
+import bcrypt from "bcryptjs";
+import { redirect } from "next/navigation";
+import { z } from "zod";
+import { db } from "@/lib/db";
+import { createSession, destroySession } from "@/lib/auth";
+import { slugify } from "@/lib/utils";
+import type { ActionState } from "@/lib/types";
+
+const signupSchema = z.object({
+  name: z.string().trim().min(2, "Enter your full name"),
+  email: z.string().trim().toLowerCase().email("Enter a valid email"),
+  password: z.string().min(8, "Password needs at least 8 characters"),
+  role: z.enum(["TRAINER", "COMPANY"]),
+  headline: z.string().trim().optional(),
+  companyName: z.string().trim().optional(),
+  companyType: z.enum(["DIRECT", "TRAINING_PARTNER"]).optional(),
+});
+
+async function uniqueSlug(base: string, exists: (s: string) => Promise<boolean>) {
+  let slug = slugify(base) || "member";
+  let i = 1;
+  while (await exists(slug)) slug = `${slugify(base)}-${++i}`;
+  return slug;
+}
+
+export async function signup(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const parsed = signupSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  const d = parsed.data;
+
+  if (d.role === "TRAINER" && !d.headline) return { error: "Add a one-line headline, e.g. “HPE & Aruba certified instructor”" };
+  if (d.role === "COMPANY" && !d.companyName) return { error: "Enter your company name" };
+
+  if (await db.user.findUnique({ where: { email: d.email } })) return { error: "An account with this email already exists. Sign in instead." };
+
+  const passwordHash = await bcrypt.hash(d.password, 10);
+  const user = await db.user.create({ data: { name: d.name, email: d.email, passwordHash, role: d.role } });
+
+  if (d.role === "TRAINER") {
+    const slug = await uniqueSlug(d.name, async (s) => !!(await db.trainerProfile.findUnique({ where: { slug: s } })));
+    await db.trainerProfile.create({ data: { userId: user.id, slug, headline: d.headline! } });
+  } else {
+    const slug = await uniqueSlug(d.companyName!, async (s) => !!(await db.company.findUnique({ where: { slug: s } })));
+    const domain = d.email.split("@")[1];
+    const company = await db.company.create({
+      data: { name: d.companyName!, slug, type: d.companyType ?? "DIRECT", domain: ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"].includes(domain) ? null : domain },
+    });
+    await db.companyMember.create({ data: { companyId: company.id, userId: user.id, role: "OWNER" } });
+  }
+
+  await db.notification.create({
+    data: { userId: user.id, type: "welcome", title: "Welcome to CorpGurus", body: d.role === "TRAINER" ? "Complete your profile and add certifications to get verified." : "Complete your company page, then post your first requirement.", href: "/settings" },
+  });
+
+  await createSession(user.id);
+  redirect("/settings?welcome=1");
+}
+
+export async function login(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const password = String(formData.get("password") ?? "");
+  const next = String(formData.get("next") ?? "");
+  const user = await db.user.findUnique({ where: { email } });
+  if (!user || !(await bcrypt.compare(password, user.passwordHash))) return { error: "Email or password is incorrect." };
+  if (user.status === "SUSPENDED") return { error: "This account is suspended. Contact support@corpgurus.com." };
+  await createSession(user.id);
+  redirect(next && next.startsWith("/") ? next : "/dashboard");
+}
+
+export async function logout() {
+  await destroySession();
+  redirect("/");
+}

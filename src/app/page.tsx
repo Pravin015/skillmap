@@ -1,69 +1,96 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, BadgeCheck, MessageSquareText, Radar, ShieldCheck } from "lucide-react";
+import { db } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
+import { ButtonLink } from "@/components/ui";
+import { RequirementCard, TrainerCard } from "@/components/cards";
 
-export default function Home() {
+export default async function Home() {
+  const user = await getCurrentUser();
+  const [trainers, requirements, counts] = await Promise.all([
+    db.trainerProfile.findMany({ where: { verifiedAt: { not: null } }, include: { user: { select: { name: true, avatarUrl: true } }, skills: true }, orderBy: { createdAt: "asc" }, take: 4 }),
+    db.requirement.findMany({ where: { visibility: "PUBLIC", status: { in: ["OPEN", "SHORTLISTING"] } }, include: { company: { select: { name: true, slug: true, type: true, logoUrl: true, domainVerifiedAt: true } }, skills: true, _count: { select: { applications: true, comments: true } } }, orderBy: { createdAt: "desc" }, take: 3 }),
+    Promise.all([db.trainerProfile.count(), db.company.count(), db.requirement.count({ where: { status: { in: ["OPEN", "SHORTLISTING"] } } }), db.certification.count({ where: { status: "VERIFIED" } })]),
+  ]);
+  const [nT, nC, nR, nV] = counts;
+  const showRate = user?.role === "COMPANY" || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="space-y-20">
+      <section className="pt-6 md:pt-14">
+        <p className="mono mb-4 inline-flex items-center gap-2 rounded-full border border-cyan/30 bg-cyan/5 px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-cyan">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan" /> The network for freelance corporate trainers
+        </p>
+        <h1 className="max-w-4xl text-4xl font-bold leading-[1.05] md:text-6xl">
+          Where companies find <span className="gradient-text">verified trainers</span>, and trainers find their next batch.
+        </h1>
+        <p className="mt-6 max-w-2xl text-lg text-muted">
+          Post a requirement with dates, mode and participants. Trainers ask questions in the open, apply with a rate, and get shortlisted. Every profile carries platform-verified certifications and ratings from real engagements.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <ButtonLink href="/signup?as=company" variant="violet" size="lg">Post a requirement <ArrowRight size={16} /></ButtonLink>
+          <ButtonLink href="/signup" size="lg">Join as a trainer</ButtonLink>
+          <ButtonLink href="/trainers" variant="outline" size="lg">Browse trainers</ButtonLink>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <dl className="mt-12 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-4">
+          {[["Trainers", nT, "text-cyan"], ["Companies", nC, "text-[#b79cff]"], ["Open requirements", nR, "text-amber"], ["Verified certs", nV, "text-lime"]].map(([l, v, c]) => (
+            <div key={String(l)} className="bg-surface px-5 py-4">
+              <dt className="mono text-[11px] uppercase tracking-[0.12em] text-muted">{l}</dt>
+              <dd className={`mt-1 font-display text-3xl font-bold tabular-nums ${c}`}>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-4">
+        {[
+          { icon: <Radar size={20} />, t: "Requirements, not job posts", b: "Dates, delivery mode, participants, budget and language up front. Trainers see fit in five seconds." },
+          { icon: <MessageSquareText size={20} />, t: "Ask in the open", b: "Clarifying questions are public comments. The company answers once, everyone benefits, and the best fit shows before anyone applies." },
+          { icon: <BadgeCheck size={20} />, t: "Verified, not self-declared", b: "Certifications are reviewed by CorpGurus staff. Company email domains are verified. Badges mean something." },
+          { icon: <ShieldCheck size={20} />, t: "Reputation that compounds", b: "Both sides rate each other after every completed engagement. Your history travels with you." },
+        ].map((f) => (
+          <div key={f.t} className="rounded-2xl border border-line bg-surface/60 p-5">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-cyan/10 text-cyan">{f.icon}</span>
+            <h3 className="mt-3 font-semibold">{f.t}</h3>
+            <p className="mt-1 text-sm text-muted">{f.b}</p>
+          </div>
+        ))}
+      </section>
+
+      <section>
+        <div className="mb-5 flex items-end justify-between">
+          <div><p className="mono text-[11px] uppercase tracking-[0.14em] text-violet">Live now</p><h2 className="text-2xl font-bold">Open requirements</h2></div>
+          <Link href="/requirements" className="text-sm text-muted hover:text-ink">All requirements →</Link>
         </div>
-      </main>
+        <div className="grid gap-4 md:grid-cols-3">{requirements.map((r) => <RequirementCard key={r.id} r={r} />)}</div>
+      </section>
+
+      <section>
+        <div className="mb-5 flex items-end justify-between">
+          <div><p className="mono text-[11px] uppercase tracking-[0.14em] text-cyan">Verified</p><h2 className="text-2xl font-bold">Trainers companies keep rebooking</h2></div>
+          <Link href="/trainers" className="text-sm text-muted hover:text-ink">Browse all →</Link>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{trainers.map((t) => <TrainerCard key={t.id} t={t} showRate={!!showRate} />)}</div>
+      </section>
+
+      <section className="relative overflow-hidden rounded-3xl border border-line bg-surface p-8 md:p-12">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-violet/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-10 h-72 w-72 rounded-full bg-cyan/15 blur-3xl" />
+        <div className="relative grid gap-8 md:grid-cols-2">
+          <div>
+            <p className="mono text-[11px] uppercase tracking-[0.14em] text-violet">For training partners</p>
+            <h2 className="mt-2 text-2xl font-bold">Staff 300 batches a year from a bench you trust.</h2>
+            <p className="mt-3 text-muted">Invite-only requirements for repeat clients, saved shortlists, and a team of recruiters on one company page.</p>
+            <ButtonLink href="/signup?as=company" variant="violet" className="mt-5">Create a partner account</ButtonLink>
+          </div>
+          <div>
+            <p className="mono text-[11px] uppercase tracking-[0.14em] text-cyan">For trainers</p>
+            <h2 className="mt-2 text-2xl font-bold">Your certifications, verified. Your rate, respected.</h2>
+            <p className="mt-3 text-muted">Day rates are visible only to signed-in companies. Apply with a proposed rate, and get told promptly when a batch is awarded.</p>
+            <ButtonLink href="/signup" className="mt-5">Build your profile</ButtonLink>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

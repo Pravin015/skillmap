@@ -1,0 +1,107 @@
+import Link from "next/link";
+import { Bell, Briefcase, Building2, LayoutDashboard, LogOut, MessageSquare, Settings, ShieldCheck, Users, Sparkles } from "lucide-react";
+import { getCurrentUser, isStaff } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { logout } from "@/lib/actions/auth";
+import { Avatar, ButtonLink } from "./ui";
+import { roleLabel } from "@/lib/utils";
+
+export async function Shell({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
+  const unread = user ? await db.notification.count({ where: { userId: user.id, readAt: null } }) : 0;
+  const tone = user?.role === "TRAINER" ? "cyan" : user?.role === "COMPANY" ? "violet" : "amber";
+
+  return (
+    <div className="relative flex min-h-screen flex-col">
+      <div className="grid-bg pointer-events-none absolute inset-x-0 top-0 h-[720px]" />
+      <div className="glow h-[720px]" />
+      <header className="sticky top-0 z-40">
+        <div className="glass border-x-0 border-t-0">
+          <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 md:px-6">
+            <Link href="/" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
+              <span className="relative flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-cyan to-violet text-bg">
+                <Sparkles size={15} strokeWidth={2.5} />
+              </span>
+              Corp<span className="gradient-text">Gurus</span>
+            </Link>
+            <nav className="hidden items-center gap-1 text-sm text-muted md:flex">
+              <NavLink href="/trainers" icon={<Users size={15} />}>Trainers</NavLink>
+              <NavLink href="/requirements" icon={<Briefcase size={15} />}>Requirements</NavLink>
+              <NavLink href="/companies" icon={<Building2 size={15} />}>Companies</NavLink>
+            </nav>
+            <div className="ml-auto flex items-center gap-2">
+              {user ? (
+                <>
+                  <Link href="/dashboard/notifications" className="relative rounded-lg p-2 text-muted hover:bg-white/5 hover:text-ink" aria-label="Notifications">
+                    <Bell size={18} />
+                    {unread > 0 ? (
+                      <span className="mono absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cyan px-1 text-[10px] font-semibold text-bg">{unread}</span>
+                    ) : null}
+                  </Link>
+                  <Link href="/messages" className="rounded-lg p-2 text-muted hover:bg-white/5 hover:text-ink" aria-label="Messages"><MessageSquare size={18} /></Link>
+                  <details className="group relative">
+                    <summary className="flex cursor-pointer items-center gap-2 rounded-lg py-1 pl-1 pr-2 hover:bg-white/5">
+                      <Avatar name={user.name} src={user.avatarUrl} size={32} tone={tone} />
+                      <span className="hidden text-sm font-medium md:block">{user.name.split(" ")[0]}</span>
+                    </summary>
+                    <div className="absolute right-0 mt-2 w-60 overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-2xl shadow-black/50">
+                      <div className="px-3 py-2">
+                        <p className="truncate text-sm font-semibold">{user.name}</p>
+                        <p className="mono text-[11px] uppercase tracking-wider text-muted">{roleLabel[user.role]}{user.membership ? ` · ${user.membership.company.name}` : ""}</p>
+                      </div>
+                      <div className="hairline my-1" />
+                      <MenuLink href="/dashboard" icon={<LayoutDashboard size={15} />}>Dashboard</MenuLink>
+                      <MenuLink href="/network" icon={<Users size={15} />}>Network</MenuLink>
+                      <MenuLink href="/messages" icon={<MessageSquare size={15} />}>Messages</MenuLink>
+                      {user.trainerProfile ? <MenuLink href={`/trainers/${user.trainerProfile.slug}`} icon={<Sparkles size={15} />}>My public profile</MenuLink> : null}
+                      {user.membership ? <MenuLink href={`/companies/${user.membership.company.slug}`} icon={<Building2 size={15} />}>Company page</MenuLink> : null}
+                      <MenuLink href="/settings" icon={<Settings size={15} />}>Settings</MenuLink>
+                      {isStaff(user) ? <MenuLink href="/admin" icon={<ShieldCheck size={15} />}>Admin console</MenuLink> : null}
+                      <div className="hairline my-1" />
+                      <form action={logout}>
+                        <button className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-muted hover:bg-white/5 hover:text-rose">
+                          <LogOut size={15} /> Sign out
+                        </button>
+                      </form>
+                    </div>
+                  </details>
+                </>
+              ) : (
+                <>
+                  <ButtonLink href="/login" variant="ghost" size="sm">Sign in</ButtonLink>
+                  <ButtonLink href="/signup" size="sm">Join CorpGurus</ButtonLink>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-6 md:py-10">{children}</main>
+      <footer className="relative z-10 border-t border-line">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-xs text-dim md:px-6">
+          <p>© 2026 CorpGurus. The network for freelance corporate trainers.</p>
+          <div className="mono flex gap-4 uppercase tracking-wider">
+            <Link href="/trainers" className="hover:text-ink">Trainers</Link>
+            <Link href="/requirements" className="hover:text-ink">Requirements</Link>
+            <Link href="/companies" className="hover:text-ink">Companies</Link>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function NavLink({ href, icon, children }: { href: string; icon: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <Link href={href} className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition hover:bg-white/5 hover:text-ink">
+      {icon}{children}
+    </Link>
+  );
+}
+function MenuLink({ href, icon, children }: { href: string; icon: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <Link href={href} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink/90 hover:bg-white/5">
+      {icon}{children}
+    </Link>
+  );
+}

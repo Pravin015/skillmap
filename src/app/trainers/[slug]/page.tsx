@@ -1,0 +1,144 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { BadgeCheck, Bookmark, BookmarkCheck, Clock, Languages, MapPin, MessageSquare, Star, UserPlus } from "lucide-react";
+import { db } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
+import { canMessage } from "@/lib/messaging";
+import { requestConnection, startConversation, toggleSaveTrainer } from "@/lib/actions/network";
+import { inviteTrainer } from "@/lib/actions/requirements";
+import { Avatar, Badge, Button, Card, Chip, Select } from "@/components/ui";
+import { certStatusLabel, fmtDate, modeLabel, rateRange } from "@/lib/utils";
+
+export default async function TrainerPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const user = await getCurrentUser();
+  const t = await db.trainerProfile.findUnique({
+    where: { slug },
+    include: {
+      user: { select: { id: true, name: true, avatarUrl: true, createdAt: true, status: true, ratingsReceived: { include: { fromUser: { select: { name: true, membership: { select: { company: { select: { name: true } } } } } }, requirement: { select: { title: true } } }, orderBy: { createdAt: "desc" } } } },
+      skills: { orderBy: { name: "asc" } },
+      certifications: { orderBy: [{ status: "asc" }, { createdAt: "desc" }] },
+      applications: { where: { status: "AWARDED" }, include: { requirement: { include: { company: { select: { name: true, slug: true } } } } }, orderBy: { createdAt: "desc" } },
+    },
+  });
+  if (!t || t.user.status !== "ACTIVE") notFound();
+
+  const isSelf = user?.id === t.userId;
+  const showRate = !!user && user.role !== "TRAINER";
+  const [conn, messagable, saved, openReqs] = await Promise.all([
+    user && !isSelf ? db.connection.findFirst({ where: { OR: [{ requesterId: user.id, addresseeId: t.userId }, { requesterId: t.userId, addresseeId: user.id }] } }) : null,
+    user && !isSelf ? canMessage(user.id, t.userId) : false,
+    user?.membership ? db.savedTrainer.findUnique({ where: { companyId_trainerId: { companyId: user.membership.company.id, trainerId: t.id } } }) : null,
+    user?.membership ? db.requirement.findMany({ where: { companyId: user.membership.company.id, status: { in: ["OPEN", "SHORTLISTING"] }, invitedTrainers: { none: { id: t.id } } }, select: { id: true, title: true } }) : [],
+  ]);
+  const ratings = t.user.ratingsReceived;
+  const avg = ratings.length ? ratings.reduce((a, r) => a + r.score, 0) / ratings.length : null;
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="space-y-6">
+        <Card className="p-6" glow="cyan">
+          <div className="flex flex-wrap items-start gap-5">
+            <Avatar name={t.user.name} src={t.user.avatarUrl} size={88} />
+            <div className="min-w-0 flex-1">
+              <h1 className="flex items-center gap-2 text-2xl font-bold md:text-3xl">{t.user.name}{t.verifiedAt ? <BadgeCheck className="text-cyan" size={22} aria-label="Verified trainer" /> : null}</h1>
+              <p className="mt-1 text-lg text-muted">{t.headline}</p>
+              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-muted">
+                <span className="flex items-center gap-1.5"><MapPin size={14} />{t.cities.join(", ") || "Location flexible"}</span>
+                <span className="flex items-center gap-1.5"><Clock size={14} />{t.yearsExperience} years</span>
+                <span className="flex items-center gap-1.5"><Languages size={14} />{t.languages.join(", ") || "English"}</span>
+                {avg ? <span className="flex items-center gap-1 text-amber"><Star size={14} className="fill-amber" />{avg.toFixed(1)} · {ratings.length} rating{ratings.length > 1 ? "s" : ""}</span> : null}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-1.5">{t.deliveryModes.map((m) => <Badge key={m} tone="cyan">{modeLabel[m]}</Badge>)}{t.verifiedAt ? <Badge tone="lime">verified {fmtDate(t.verifiedAt)}</Badge> : null}</div>
+            </div>
+          </div>
+          {t.bio ? <p className="mt-5 max-w-3xl whitespace-pre-line leading-relaxed text-ink/90">{t.bio}</p> : null}
+        </Card>
+
+        <section>
+          <h2 className="mb-3 text-lg font-bold">Skills</h2>
+          <div className="flex flex-wrap gap-2">{t.skills.map((s) => <Link key={s.id} href={`/trainers?skill=${s.slug}`}><Chip className="hover:border-cyan/50">{s.name}</Chip></Link>)}</div>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-lg font-bold">Certifications</h2>
+          {t.certifications.length ? (
+            <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface/60">
+              {t.certifications.map((c) => (
+                <div key={c.id} className="flex flex-wrap items-center gap-3 px-5 py-3.5">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium">{c.name}</p>
+                    <p className="text-sm text-muted">{c.issuer}{c.credentialId ? <span className="mono"> · {c.credentialId}</span> : null}{c.issuedOn ? ` · issued ${fmtDate(c.issuedOn)}` : ""}</p>
+                  </div>
+                  <Badge tone={c.status === "VERIFIED" ? "lime" : c.status === "PENDING" ? "amber" : "rose"}>{c.status === "VERIFIED" ? <BadgeCheck size={12} /> : null}{certStatusLabel[c.status]}</Badge>
+                </div>
+              ))}
+            </div>
+          ) : <p className="text-sm text-muted">No certifications listed yet.</p>}
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-lg font-bold">Engagements on CorpGurus</h2>
+          {t.applications.length ? (
+            <div className="space-y-2">
+              {t.applications.map((a) => (
+                <Link key={a.id} href={`/requirements/${a.requirementId}`} className="block rounded-xl border border-line bg-surface/60 px-5 py-3 hover:border-violet/50">
+                  <p className="font-medium">{a.requirement.title}</p>
+                  <p className="text-sm text-muted">{a.requirement.company.name} · {a.requirement.days} day{a.requirement.days > 1 ? "s" : ""} · {a.requirement.participants} participants · {fmtDate(a.requirement.startDate)}</p>
+                </Link>
+              ))}
+            </div>
+          ) : <p className="text-sm text-muted">No awarded engagements yet.</p>}
+        </section>
+
+        {ratings.length ? (
+          <section>
+            <h2 className="mb-3 text-lg font-bold">What clients say</h2>
+            <div className="space-y-3">
+              {ratings.map((r) => (
+                <div key={r.id} className="rounded-xl border border-line bg-surface/60 p-4">
+                  <p className="flex items-center gap-2 text-amber">{"★".repeat(r.score)}<span className="text-dim">{"★".repeat(5 - r.score)}</span><span className="ml-1 text-xs text-muted">{fmtDate(r.createdAt)}</span></p>
+                  {r.review ? <p className="mt-2 text-ink/90">“{r.review}”</p> : null}
+                  <p className="mt-2 text-sm text-muted">{r.fromUser.name}{r.fromUser.membership ? `, ${r.fromUser.membership.company.name}` : ""} · {r.requirement.title}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+      </div>
+
+      <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+        <Card className="p-5">
+          <p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Day rate</p>
+          <p className="mt-1 font-display text-xl font-bold text-cyan">{showRate ? rateRange(t.dayRateMin, t.dayRateMax, t.currency) : "Visible to companies"}</p>
+          {!user ? <p className="mt-1 text-xs text-dim">Sign in with a company account to see rates and message trainers.</p> : null}
+          {t.availabilityNote ? <p className="mt-3 rounded-lg bg-bg-2 px-3 py-2 text-sm text-muted">{t.availabilityNote}</p> : null}
+          {!isSelf && user ? (
+            <div className="mt-4 space-y-2">
+              {conn?.status === "ACCEPTED" ? <Badge tone="lime" className="w-full justify-center py-1.5">Connected</Badge>
+                : conn?.status === "PENDING" ? <Badge tone="amber" className="w-full justify-center py-1.5">{conn.requesterId === user.id ? "Request sent" : "Wants to connect with you"}</Badge>
+                : (<form action={requestConnection}><input type="hidden" name="userId" value={t.userId} /><Button className="w-full" variant="secondary"><UserPlus size={15} /> Connect</Button></form>)}
+              {messagable ? (<form action={startConversation}><input type="hidden" name="userId" value={t.userId} /><Button className="w-full"><MessageSquare size={15} /> Message</Button></form>)
+                : <p className="text-center text-xs text-dim">Messaging unlocks once connected, or after an application at your company.</p>}
+              {user.membership ? (
+                <form action={toggleSaveTrainer}><input type="hidden" name="trainerId" value={t.id} /><Button className="w-full" variant="ghost">{saved ? <><BookmarkCheck size={15} className="text-cyan" /> Saved to shortlist</> : <><Bookmark size={15} /> Save to shortlist</>}</Button></form>
+              ) : null}
+            </div>
+          ) : null}
+          {isSelf ? <Link href="/settings" className="mt-4 block text-center text-sm text-cyan hover:underline">Edit your profile</Link> : null}
+        </Card>
+        {user?.membership && openReqs.length ? (
+          <Card className="p-5">
+            <p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Invite to a requirement</p>
+            <form action={inviteTrainer} className="mt-2 space-y-2">
+              <input type="hidden" name="trainerId" value={t.id} />
+              <Select name="requirementId">{openReqs.map((r) => <option key={r.id} value={r.id}>{r.title}</option>)}</Select>
+              <Button variant="violet" className="w-full">Send invite</Button>
+            </form>
+          </Card>
+        ) : null}
+        <p className="mono px-1 text-[11px] uppercase tracking-wider text-dim">Member since {fmtDate(t.user.createdAt)}</p>
+      </aside>
+    </div>
+  );
+}

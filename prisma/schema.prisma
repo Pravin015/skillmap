@@ -1,0 +1,341 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  TRAINER
+  COMPANY
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum DeliveryMode {
+  ONSITE
+  VIRTUAL
+  HYBRID
+}
+
+enum CertStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum CompanyType {
+  DIRECT
+  TRAINING_PARTNER
+}
+
+enum MemberRole {
+  OWNER
+  RECRUITER
+}
+
+enum Visibility {
+  PUBLIC
+  INVITE_ONLY
+}
+
+enum ReqStatus {
+  OPEN
+  SHORTLISTING
+  AWARDED
+  COMPLETED
+  CANCELLED
+}
+
+enum AppStatus {
+  APPLIED
+  SHORTLISTED
+  AWARDED
+  DECLINED
+  WITHDRAWN
+}
+
+enum ConnStatus {
+  PENDING
+  ACCEPTED
+  IGNORED
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  avatarUrl    String?
+  passwordHash String
+  role         Role
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  trainerProfile   TrainerProfile?
+  membership       CompanyMember?
+  postedRequirements Requirement[]
+  comments         Comment[]
+  sentConnections  Connection[] @relation("ConnRequester")
+  gotConnections   Connection[] @relation("ConnAddressee")
+  conversations    ConversationParticipant[]
+  messages         Message[]
+  ratingsGiven     Rating[] @relation("RatingFrom")
+  ratingsReceived  Rating[] @relation("RatingTo")
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+  reviewedCerts    Certification[] @relation("CertReviewer")
+}
+
+model TrainerProfile {
+  id               String         @id @default(cuid())
+  userId           String         @unique
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug             String         @unique
+  headline         String
+  bio              String         @default("")
+  cities           String[]       @default([])
+  deliveryModes    DeliveryMode[] @default([])
+  languages        String[]       @default([])
+  yearsExperience  Int            @default(0)
+  dayRateMin       Int?
+  dayRateMax       Int?
+  currency         String         @default("INR")
+  availabilityNote String?
+  verifiedAt       DateTime?
+  createdAt        DateTime       @default(now())
+
+  skills         Skill[]
+  certifications Certification[]
+  applications   Application[]
+  invitedTo      Requirement[]   @relation("RequirementInvites")
+  savedBy        SavedTrainer[]
+}
+
+model Certification {
+  id           String     @id @default(cuid())
+  trainerId    String
+  trainer      TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  name         String
+  issuer       String
+  credentialId String?
+  issuedOn     DateTime?
+  expiresOn    DateTime?
+  fileUrl      String?
+  status       CertStatus @default(PENDING)
+  reviewNote   String?
+  reviewedById String?
+  reviewedBy   User?      @relation("CertReviewer", fields: [reviewedById], references: [id])
+  createdAt    DateTime   @default(now())
+}
+
+model Company {
+  id               String      @id @default(cuid())
+  slug             String      @unique
+  name             String
+  logoUrl          String?
+  industry         String      @default("")
+  size             String      @default("")
+  website          String?
+  cities           String[]    @default([])
+  type             CompanyType @default(DIRECT)
+  domain           String?
+  domainVerifiedAt DateTime?
+  description      String      @default("")
+  createdAt        DateTime    @default(now())
+
+  members      CompanyMember[]
+  requirements Requirement[]
+  saved        SavedTrainer[]
+}
+
+model CompanyMember {
+  id        String     @id @default(cuid())
+  companyId String
+  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      MemberRole @default(RECRUITER)
+  joinedAt  DateTime   @default(now())
+}
+
+model Category {
+  id           String        @id @default(cuid())
+  name         String
+  slug         String        @unique
+  requirements Requirement[]
+}
+
+model Skill {
+  id           String           @id @default(cuid())
+  name         String
+  slug         String           @unique
+  trainers     TrainerProfile[]
+  requirements Requirement[]
+}
+
+model Requirement {
+  id           String       @id @default(cuid())
+  companyId    String
+  company      Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  postedById   String
+  postedBy     User         @relation(fields: [postedById], references: [id])
+  title        String
+  description  String
+  categoryId   String
+  category     Category     @relation(fields: [categoryId], references: [id])
+  skills       Skill[]
+  mode         DeliveryMode
+  city         String?
+  startDate    DateTime
+  endDate      DateTime
+  days         Int
+  participants Int
+  budgetMin    Int?
+  budgetMax    Int?
+  currency     String       @default("INR")
+  language     String       @default("English")
+  visibility   Visibility   @default(PUBLIC)
+  status       ReqStatus    @default(OPEN)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  invitedTrainers TrainerProfile[] @relation("RequirementInvites")
+  applications    Application[]
+  comments        Comment[]
+  ratings         Rating[]
+  conversations   Conversation[]
+}
+
+model Application {
+  id              String    @id @default(cuid())
+  requirementId   String
+  requirement     Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  trainerId       String
+  trainer         TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  coverNote       String
+  proposedRate    Int?
+  status          AppStatus @default(APPLIED)
+  declineReason   String?
+  statusChangedAt DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+
+  @@unique([requirementId, trainerId])
+}
+
+model Comment {
+  id            String      @id @default(cuid())
+  requirementId String
+  requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  authorId      String
+  author        User        @relation(fields: [authorId], references: [id])
+  parentId      String?
+  parent        Comment?    @relation("Replies", fields: [parentId], references: [id])
+  replies       Comment[]   @relation("Replies")
+  body          String
+  createdAt     DateTime    @default(now())
+  deletedAt     DateTime?
+}
+
+model Connection {
+  id          String     @id @default(cuid())
+  requesterId String
+  requester   User       @relation("ConnRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addresseeId String
+  addressee   User       @relation("ConnAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+  status      ConnStatus @default(PENDING)
+  createdAt   DateTime   @default(now())
+  respondedAt DateTime?
+
+  @@unique([requesterId, addresseeId])
+}
+
+model Conversation {
+  id            String       @id @default(cuid())
+  requirementId String?
+  requirement   Requirement? @relation(fields: [requirementId], references: [id])
+  lastMessageAt DateTime     @default(now())
+  createdAt     DateTime     @default(now())
+
+  participants ConversationParticipant[]
+  messages     Message[]
+}
+
+model ConversationParticipant {
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastReadAt     DateTime?
+
+  @@id([conversationId, userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id])
+  body           String
+  createdAt      DateTime     @default(now())
+}
+
+model Rating {
+  id            String      @id @default(cuid())
+  requirementId String
+  requirement   Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  fromUserId    String
+  fromUser      User        @relation("RatingFrom", fields: [fromUserId], references: [id])
+  toUserId      String
+  toUser        User        @relation("RatingTo", fields: [toUserId], references: [id])
+  score         Int
+  review        String?
+  createdAt     DateTime    @default(now())
+
+  @@unique([requirementId, fromUserId, toUserId])
+}
+
+model SavedTrainer {
+  companyId String
+  company   Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  trainerId String
+  trainer   TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  createdAt DateTime       @default(now())
+
+  @@id([companyId, trainerId])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String
+  href      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String
+  actor     User     @relation(fields: [actorId], references: [id])
+  action    String
+  target    String
+  detail    Json?
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  key   String @id
+  value String
+}

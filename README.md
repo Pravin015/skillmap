@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CorpGurus
 
-## Getting Started
+Marketplace and professional network for freelance corporate trainers. Companies and training partners post requirements; trainers ask questions in public, apply with a rate, get shortlisted and awarded; both sides rate each other.
 
-First, run the development server:
+## Stack
+
+Next.js 16 (App Router, TypeScript, server actions) · Tailwind CSS 4 · PostgreSQL 16 in Docker · Prisma 6 · session cookies signed with `jose` · `bcryptjs` passwords · `lucide-react` icons.
+
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install          # also runs prisma generate
+pnpm db:up            # starts Postgres on localhost:5433 (Docker Desktop must be running)
+pnpm db:push          # applies prisma/schema.prisma
+pnpm db:seed          # demo data: 8 trainers, 4 companies, 9 requirements, staff accounts
+pnpm dev -p 3210
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`pnpm db:reset` wipes and reseeds. Uploaded certificates, logos and avatars land in `public/uploads/` (git-ignored).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Demo accounts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All passwords: `Password@123`
 
-## Learn More
+| Role | Email |
+|---|---|
+| Super admin | pravin@corpgurus.demo |
+| Administrator | admin@corpgurus.demo |
+| Trainer (verified) | ananya@corpgurus.demo, rohit@corpgurus.demo, sana@corpgurus.demo |
+| Company owner (direct) | rahul@techsphere.demo, ishaan@novafintech.demo |
+| Company recruiter | kavya@techsphere.demo, sandeep@skillbridge.demo |
+| Training partner owner | meera@skillbridge.demo, lakshmi@quantumedge.demo |
 
-To learn more about Next.js, take a look at the following resources:
+## Roles and what they can do
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Trainer** – public profile, skills, certifications (verified by staff), day rate visible to companies only, apply / withdraw, comment, connect, message.
+- **Company member** – company page; *Owner* also manages members. Post public or invite-only requirements, answer comments, shortlist / award / decline, save trainers, invite trainers.
+- **Training partner** – a company type; exempt from the free open-requirement limit.
+- **Administrator** – verification queue (certs, company domains), moderation (comments, requirements), suspend users. Every action is audit-logged.
+- **Super admin** – everything above plus administrators, plan limits and settings, domains and skills taxonomy, full audit log.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Map
 
-## Deploy on Vercel
+```
+src/app
+  page.tsx                      landing
+  login, signup                 auth
+  trainers, trainers/[slug]     directory + public profile
+  companies, companies/[slug]   directory + company page
+  requirements                  list · [id] detail with comments & apply · new
+  dashboard                     role-aware home · applications · requirements/[id]/applicants · notifications
+  messages, messages/[id]       inbox and conversation
+  network                       connections
+  settings                      trainer profile / company page / team / password
+  admin                         queue · users · requirements · platform (super admin)
+src/lib
+  auth.ts                       session, requireUser / requireRole
+  actions/*.ts                  server actions (auth, profile, requirements, network, admin)
+  messaging.ts                  who may message whom
+  notify.ts                     notifications + audit log
+prisma/schema.prisma            data model · prisma/seed.ts demo data
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Phase 2 backlog
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Feed and posts, follow, recommendations, LinkedIn import, Google / LinkedIn login, paid plans (Razorpay / Stripe), email delivery (Resend), S3-compatible uploads, Meilisearch.

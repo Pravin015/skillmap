@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: corpgurus-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: corpgurus
+      POSTGRES_PASSWORD: corpgurus
+      POSTGRES_DB: corpgurus
+    ports:
+      - "5433:5432"
+    volumes:
+      - corpgurus_pg:/var/lib/postgresql/data
+
+volumes:
+  corpgurus_pg:
