@@ -101,9 +101,15 @@ Without keys in development the pricing page runs a **simulator** that activates
 - **Invoicing** (`/dashboard/invoices`, `/invoices/<id>`): trainers raise a GST invoice against an accepted work order; companies record payment with a reference; overdue tracking; print view.
 - **Email** (`src/lib/email.ts`): Resend for application, work order, invoice, invitation, billing and verification notifications. Without `RESEND_API_KEY` emails are recorded in `EmailLog` instead of sent. Members can switch email off in Settings.
 
+- **Data export** (Settings): CSV downloads at `/api/export/<kind>` for applications, work orders, invoices, feedback (trainers) or requirements, applicants, work orders, invoices (companies), plus a JSON bundle.
+- **Trainer CV** (`/trainers/<slug>/cv`): print-ready one-pager built from verified data, with a copyable share link.
+- **Bulk import** (`/requirements/import`): CSV template, validation preview with per-row errors, confirm to create up to 50 requirements; respects plan limits and triggers skill and saved-search alerts.
+- **Saved searches** (`/dashboard/saved-searches`): save trainer or requirement filters; new matches notify in-app and by email (trainer alerts throttled to once a day per search).
+- **Interviews**: companies propose up to three slots for an applicant with format, duration and link; trainers confirm one or decline with a note; confirmation emails both sides a calendar (.ics) invite, also downloadable at `/api/interviews/<id>/ics`.
+
 ## Phase 2 backlog
 
-Interview scheduling, saved searches, data export, LinkedIn PDF import, referral programme, PWA, S3 uploads, Stripe for USD. Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
+LinkedIn PDF import, referral programme, PWA, S3 uploads, Stripe for USD. Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
 
 ## Google and LinkedIn sign-in
 

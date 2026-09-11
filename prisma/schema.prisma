@@ -111,6 +111,8 @@ model User {
   workOrderEvents  WorkOrderEvent[]
   invoicesIssued   Invoice[]
   emailLogs        EmailLog[]
+  savedSearches    SavedSearch[]
+  interviewsProposed Interview[]
 }
 
 model Recommendation {
@@ -605,6 +607,8 @@ model Application {
   statusChangedAt DateTime  @default(now())
   createdAt       DateTime  @default(now())
 
+  interview Interview?
+
   @@unique([requirementId, trainerId])
 }
 
@@ -777,4 +781,60 @@ model EmailLog {
   providerId String?
   error      String?
   createdAt  DateTime @default(now())
+}
+
+enum SearchKind {
+  TRAINERS
+  REQUIREMENTS
+}
+
+model SavedSearch {
+  id             String     @id @default(cuid())
+  userId         String
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind           SearchKind
+  name           String
+  params         Json
+  alerts         Boolean    @default(true)
+  lastNotifiedAt DateTime?
+  createdAt      DateTime   @default(now())
+}
+
+enum InterviewStatus {
+  PROPOSED
+  CONFIRMED
+  DECLINED
+  CANCELLED
+}
+
+enum InterviewMode {
+  VIDEO
+  PHONE
+  ONSITE
+}
+
+model Interview {
+  id              String          @id @default(cuid())
+  applicationId   String          @unique
+  application     Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  proposedById    String
+  proposedBy      User            @relation(fields: [proposedById], references: [id])
+  status          InterviewStatus @default(PROPOSED)
+  mode            InterviewMode   @default(VIDEO)
+  location        String          @default("")
+  durationMin     Int             @default(30)
+  note            String          @default("")
+  responseNote    String?
+  confirmedSlotId String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  slots InterviewSlot[]
+}
+
+model InterviewSlot {
+  id          String    @id @default(cuid())
+  interviewId String
+  interview   Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  startsAt    DateTime
 }

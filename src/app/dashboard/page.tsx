@@ -8,6 +8,7 @@ import { RequirementCard, reqTone } from "@/components/cards";
 import { appStatusLabel, fmtDate, reqStatusLabel, timeAgo } from "@/lib/utils";
 import { entitlementsFor } from "@/lib/billing";
 import { learnerScore, trainerStats } from "@/lib/stats";
+import { InterviewSummaryLink } from "@/components/interview";
 
 export const metadata = { title: "Dashboard" };
 
@@ -22,6 +23,17 @@ export default async function Dashboard() {
     : user.membership
       ? await db.workOrder.findMany({ where: { companyId: user.membership.company.id, status: { in: ["CHANGES_REQUESTED", "DRAFT"] } }, include: { trainer: { include: { user: { select: { name: true } } } } }, orderBy: { updatedAt: "desc" } })
       : [];
+  const upcomingInterviews = await db.interview.findMany({
+    where: { status: { in: ["PROPOSED", "CONFIRMED"] }, application: user.trainerProfile ? { trainerId: user.trainerProfile.id } : user.membership ? { requirement: { companyId: user.membership.company.id } } : { id: "" } },
+    include: { slots: { orderBy: { startsAt: "asc" } }, application: { include: { requirement: { select: { id: true, title: true, company: { select: { name: true } } } }, trainer: { include: { user: { select: { name: true } } } } } } },
+    orderBy: { updatedAt: "desc" }, take: 5,
+  });
+  const interviewCard = upcomingInterviews.length ? (
+    <Card className="p-5">
+      <p className="font-semibold">Interviews</p>
+      <ul className="mt-2 space-y-2 text-sm">{upcomingInterviews.map((iv) => { const slot = iv.slots.find((s) => s.id === iv.confirmedSlotId) ?? iv.slots[0]; const req = iv.application.requirement; return <li key={iv.id}><InterviewSummaryLink href={user.trainerProfile ? `/requirements/${req.id}` : `/dashboard/requirements/${req.id}/applicants`} title={req.title} when={slot?.startsAt ?? iv.createdAt} who={`${user.trainerProfile ? req.company.name : iv.application.trainer.user.name} · ${iv.status === "CONFIRMED" ? "confirmed" : user.trainerProfile ? "pick a slot" : "awaiting trainer"}`} /></li>; })}</ul>
+    </Card>
+  ) : null;
   const woCard = pendingWO.length ? (
     <Card className="p-5" glow={user.trainerProfile ? "cyan" : "violet"}>
       <p className="font-semibold">{user.trainerProfile ? "Work orders to review" : "Work orders needing attention"}</p>
@@ -54,7 +66,7 @@ export default async function Dashboard() {
 
     return (
       <div>
-        <PageHeader eyebrow="Trainer dashboard" title={`Hello, ${user.name.split(" ")[0]}`} body={p.verifiedAt ? "Your profile is verified. Companies see you first in search." : "Get verified to appear first in search results."} actions={<><ButtonLink href="/dashboard/analytics" variant="ghost">Analytics</ButtonLink><ButtonLink href="/dashboard/invoices" variant="ghost">Invoices</ButtonLink><ButtonLink href="/requirements" variant="secondary">Browse requirements <ArrowRight size={15} /></ButtonLink></>} />
+        <PageHeader eyebrow="Trainer dashboard" title={`Hello, ${user.name.split(" ")[0]}`} body={p.verifiedAt ? "Your profile is verified. Companies see you first in search." : "Get verified to appear first in search results."} actions={<><ButtonLink href="/dashboard/analytics" variant="ghost">Analytics</ButtonLink><ButtonLink href="/dashboard/invoices" variant="ghost">Invoices</ButtonLink><ButtonLink href="/dashboard/saved-searches" variant="ghost">Alerts</ButtonLink><ButtonLink href="/requirements" variant="secondary">Browse requirements <ArrowRight size={15} /></ButtonLink></>} />
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <Stat label="Active applications" value={active.length} />
           <Stat label="Shortlisted" value={p.applications.filter((a) => a.status === "SHORTLISTED").length} tone="amber" />
@@ -100,6 +112,7 @@ export default async function Dashboard() {
               {upcoming.length ? <ul className="mt-2 space-y-1.5 text-sm">{upcoming.map((b) => <li key={b.id} className="flex gap-2"><span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${b.kind === "BOOKED" ? "bg-navy" : b.kind === "TENTATIVE" ? "bg-amber" : "bg-dim"}`} /><span><span className="font-medium">{fmtDate(b.startDate)}{b.endDate.getTime() !== b.startDate.getTime() ? ` – ${fmtDate(b.endDate)}` : ""}</span><span className="block text-xs text-muted">{b.requirement?.title ?? b.note ?? b.kind.toLowerCase()}</span></span></li>)}</ul> : <p className="mt-1 text-sm text-muted">Nothing blocked. Add booked dates so companies see real availability.</p>}
               <ButtonLink href="/settings/courses" variant="ghost" size="sm" className="mt-3 w-full">Manage course catalogue</ButtonLink>
             </Card>
+            {interviewCard}
             {woCard}
             {planCard}
             <NotifCard notifications={notifications} />
@@ -122,7 +135,7 @@ export default async function Dashboard() {
     const totalApps = c.requirements.reduce((n, r) => n + r._count.applications, 0);
     return (
       <div>
-        <PageHeader eyebrow={`${c.name} · ${user.membership.role.toLowerCase()}`} title={`Hello, ${user.name.split(" ")[0]}`} body={c.domainVerifiedAt ? "Your company is verified." : "Ask an administrator to verify your email domain to earn the verified badge."} actions={<><ButtonLink href="/dashboard/analytics" variant="ghost">Analytics</ButtonLink><ButtonLink href="/dashboard/invoices" variant="ghost">Invoices</ButtonLink><ButtonLink href="/requirements/new" variant="violet"><Plus size={15} /> Post a requirement</ButtonLink></>} />
+        <PageHeader eyebrow={`${c.name} · ${user.membership.role.toLowerCase()}`} title={`Hello, ${user.name.split(" ")[0]}`} body={c.domainVerifiedAt ? "Your company is verified." : "Ask an administrator to verify your email domain to earn the verified badge."} actions={<><ButtonLink href="/dashboard/analytics" variant="ghost">Analytics</ButtonLink><ButtonLink href="/dashboard/invoices" variant="ghost">Invoices</ButtonLink><ButtonLink href="/dashboard/saved-searches" variant="ghost">Alerts</ButtonLink><ButtonLink href="/requirements/import" variant="ghost">Import CSV</ButtonLink><ButtonLink href="/requirements/new" variant="violet"><Plus size={15} /> Post a requirement</ButtonLink></>} />
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <Stat label="Open requirements" value={open.length} tone="violet" />
           <Stat label="Applications" value={totalApps} />
@@ -154,6 +167,7 @@ export default async function Dashboard() {
               <ButtonLink href="/trainers" variant="secondary" size="sm" className="mt-3 w-full">Find trainers</ButtonLink>
               <ButtonLink href="/dashboard/bench" variant="ghost" size="sm" className="mt-1 w-full">Open your bench</ButtonLink>
             </Card>
+            {interviewCard}
             {woCard}
             {planCard}
             <NotifCard notifications={notifications} />

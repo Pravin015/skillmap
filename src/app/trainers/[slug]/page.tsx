@@ -142,6 +142,7 @@ export default async function TrainerPage({ params, searchParams }: { params: Pr
               ) : null}
             </div>
           ) : null}
+          <Link href={`/trainers/${slug}/cv`} className="mt-3 block text-center text-xs text-cyan hover:underline">View as one-page CV</Link>
           {isSelf ? <div className="mt-4 grid gap-1 text-sm"><Link href="/settings" className="text-cyan hover:underline">Edit profile</Link><Link href="/settings/availability" className="text-cyan hover:underline">Availability</Link><Link href="/settings/courses" className="text-cyan hover:underline">Courses</Link><Link href="/settings/gallery" className="text-cyan hover:underline">Gallery</Link></div> : null}
         </Card>
         <Card className="p-5">

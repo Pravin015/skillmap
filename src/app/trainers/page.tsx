@@ -7,6 +7,8 @@ import { TrainerCard } from "@/components/cards";
 import { DELIVERY_MODES, modeLabel } from "@/lib/utils";
 import { proTrainerUserIds } from "@/lib/billing";
 import { recordSearchAppearances } from "@/lib/stats";
+import { SaveSearchButton } from "@/components/save-search-button";
+import { describeSearch } from "@/lib/saved-searches";
 
 export const metadata = { title: "Trainers" };
 
@@ -51,7 +53,7 @@ export default async function TrainersPage({ searchParams }: { searchParams: Pro
         <label className="flex items-center gap-2 px-1 text-sm text-muted"><input type="checkbox" name="verified" value="1" defaultChecked={!!sp.verified} className="accent-cyan" /> Verified only</label>
         <Button type="submit" variant="secondary">Filter</Button>
       </form>
-      <p className="mono mb-4 text-[11px] uppercase tracking-wider text-dim">{trainers.length} trainer{trainers.length === 1 ? "" : "s"}</p>
+      <div className="mb-4 flex items-center justify-between"><p className="mono text-[11px] uppercase tracking-wider text-dim">{trainers.length} trainer{trainers.length === 1 ? "" : "s"}</p>{user && user.role !== "TRAINER" ? <SaveSearchButton kind="TRAINERS" params={{ q: sp.q, skill: sp.skill, city: sp.city, mode: sp.mode, verified: sp.verified }} suggestedName={describeSearch("TRAINERS", { q: sp.q, skill: sp.skill, city: sp.city, mode: sp.mode, verified: sp.verified })} /> : null}</div>
       {trainers.length ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {trainers.map((t) => <TrainerCard key={t.id} t={{ ...t, avg: avg.get(t.userId) ?? null, pro: pro.has(t.userId) }} showRate={showRate} />)}

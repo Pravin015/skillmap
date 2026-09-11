@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BarChart3, Bell, Briefcase, Building2, CreditCard, LayoutDashboard, LayoutGrid, LogOut, Menu, MessageSquare, Newspaper, Receipt, Search, Settings, ShieldCheck, Tag, Users } from "lucide-react";
+import { BarChart3, Bell, BellRing, Briefcase, Building2, CreditCard, LayoutDashboard, LayoutGrid, LogOut, Menu, MessageSquare, Newspaper, Receipt, Search, Settings, ShieldCheck, Tag, Users } from "lucide-react";
 import { getCurrentUser, isStaff } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logout } from "@/lib/actions/auth";
@@ -60,7 +60,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
                     <div className="hairline my-1" />
                     <MenuLink href="/dashboard" icon={<LayoutDashboard size={15} />}>Dashboard</MenuLink>
                     <MenuLink href="/feed" icon={<Newspaper size={15} />}>Feed</MenuLink>
-                    {user.trainerProfile || user.membership ? <><MenuLink href="/dashboard/analytics" icon={<BarChart3 size={15} />}>Analytics</MenuLink><MenuLink href="/dashboard/invoices" icon={<Receipt size={15} />}>Invoices</MenuLink></> : null}
+                    {user.trainerProfile || user.membership ? <><MenuLink href="/dashboard/analytics" icon={<BarChart3 size={15} />}>Analytics</MenuLink><MenuLink href="/dashboard/invoices" icon={<Receipt size={15} />}>Invoices</MenuLink><MenuLink href="/dashboard/saved-searches" icon={<BellRing size={15} />}>Saved searches</MenuLink></> : null}
                     <MenuLink href="/network" icon={<Users size={15} />}>Network</MenuLink>
                     <MenuLink href="/messages" icon={<MessageSquare size={15} />}>Messages</MenuLink>
                     {user.trainerProfile ? <MenuLink href={`/trainers/${user.trainerProfile.slug}`} icon={<Briefcase size={15} />}>My public profile</MenuLink> : null}

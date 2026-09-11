@@ -7,6 +7,7 @@ import { decideApplication } from "@/lib/actions/requirements";
 import { startConversation } from "@/lib/actions/network";
 import { Avatar, Badge, Button, ButtonLink, Chip, Empty, Input, PageHeader } from "@/components/ui";
 import { reqTone } from "@/components/cards";
+import { InterviewPanel } from "@/components/interview";
 import { appStatusLabel, dateRange, modeLabel, rateRange, reqStatusLabel, timeAgo } from "@/lib/utils";
 
 export const metadata = { title: "Applicants" };
@@ -19,7 +20,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
     where: { id, companyId: user.membership.company.id },
     include: {
       skills: true,
-      applications: { include: { trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } }, skills: true, certifications: { where: { status: "VERIFIED" } }, _count: { select: { applications: { where: { status: "AWARDED" } } } } } } }, orderBy: [{ status: "asc" }, { createdAt: "asc" }] },
+      applications: { include: { interview: { include: { slots: { orderBy: { startsAt: "asc" } } } }, trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } }, skills: true, certifications: { where: { status: "VERIFIED" } }, _count: { select: { applications: { where: { status: "AWARDED" } } } } } } }, orderBy: [{ status: "asc" }, { createdAt: "asc" }] },
     },
   });
   if (!r) notFound();
@@ -63,6 +64,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
                     {a.declineReason ? <p className="mt-1 text-xs text-muted">Reason sent: “{a.declineReason}”</p> : null}
                   </div>
                 </div>
+                {!dim && ["APPLIED", "SHORTLISTED"].includes(a.status) && ["OPEN", "SHORTLISTING"].includes(r.status) ? <div className="mt-4"><InterviewPanel applicationId={a.id} interview={a.interview} trainerName={t.user.name} /></div> : null}
                 {!dim && r.status !== "COMPLETED" && r.status !== "CANCELLED" ? (
                   <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-4">
                     <form action={startConversation}><input type="hidden" name="userId" value={t.user.id} /><input type="hidden" name="requirementId" value={r.id} /><Button variant="secondary" size="sm">Message</Button></form>

@@ -24,7 +24,7 @@ ${url ? `<tr><td style="padding:22px 28px 0"><a href="${url}" style="display:inl
 }
 
 /** Sends through Resend when a key is present; otherwise records the email as "logged" so the flow can be inspected in development. */
-export async function sendEmail({ to, subject, html, text, userId }: { to: string; subject: string; html: string; text: string; userId?: string | null }) {
+export async function sendEmail({ to, subject, html, text, userId, attachments }: { to: string; subject: string; html: string; text: string; userId?: string | null; attachments?: { filename: string; content: string }[] }) {
   if (!emailConfigured()) {
     await db.emailLog.create({ data: { userId: userId ?? null, to, subject, status: "logged" } });
     if (process.env.NODE_ENV !== "production") console.log(`[email → ${to}] ${subject}`);
@@ -33,7 +33,7 @@ export async function sendEmail({ to, subject, html, text, userId }: { to: strin
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST", headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: from(), to: [to], subject, html, text }),
+      body: JSON.stringify({ from: from(), to: [to], subject, html, text, attachments: attachments?.map((a) => ({ filename: a.filename, content: Buffer.from(a.content).toString("base64") })) }),
     });
     const json = (await res.json().catch(() => ({}))) as { id?: string; message?: string };
     if (!res.ok) throw new Error(json.message || `Resend ${res.status}`);

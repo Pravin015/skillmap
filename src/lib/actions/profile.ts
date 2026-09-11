@@ -9,6 +9,7 @@ import { notify } from "@/lib/notify";
 import { parseList } from "@/lib/utils";
 import { savePrivateUpload, saveUpload } from "@/lib/uploads";
 import { entitlementsFor } from "@/lib/billing";
+import { alertTrainerSearches } from "@/lib/saved-searches";
 import type { ActionState } from "@/lib/types";
 
 export async function updateTrainerProfile(_p: ActionState, fd: FormData): Promise<ActionState> {
@@ -33,6 +34,7 @@ export async function updateTrainerProfile(_p: ActionState, fd: FormData): Promi
       skills: { set: fd.getAll("skills").map((s) => ({ slug: String(s) })) },
     },
   });
+  await alertTrainerSearches(user.trainerProfile.id);
   revalidatePath("/settings"); revalidatePath(`/trainers/${user.trainerProfile.slug}`); revalidatePath("/trainers");
   return { ok: "Profile saved." };
 }

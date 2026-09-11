@@ -1,0 +1,97 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { db } from "@/lib/db";
+import { requireUser } from "@/lib/auth";
+import { notify } from "@/lib/notify";
+import { sendEmail, renderEmail } from "@/lib/email";
+import { buildIcs } from "@/lib/ics";
+import { appUrl } from "@/lib/oauth";
+import type { ActionState } from "@/lib/types";
+
+function refresh(requirementId: string) {
+  revalidatePath(`/dashboard/requirements/${requirementId}/applicants`);
+  revalidatePath(`/requirements/${requirementId}`);
+  revalidatePath("/dashboard/applications");
+  revalidatePath("/dashboard");
+}
+
+const fmtSlot = (d: Date) => new Intl.DateTimeFormat("en-IN", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }).format(d) + " IST";
+
+/** Company proposes up to three slots for a shortlisted applicant. */
+export async function proposeInterview(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const user = await requireUser();
+  if (!user.membership) return { error: "Only company members schedule interviews." };
+  const applicationId = String(fd.get("applicationId"));
+  const app = await db.application.findFirst({ where: { id: applicationId, requirement: { companyId: user.membership.company.id } }, include: { requirement: { select: { id: true, title: true } }, trainer: { select: { userId: true } }, interview: true } });
+  if (!app) return { error: "Application not found." };
+  if (!["SHORTLISTED", "APPLIED"].includes(app.status)) return { error: "Interviews are for applied or shortlisted trainers." };
+  if (app.interview && app.interview.status === "CONFIRMED") return { error: "An interview is already confirmed. Cancel it first to propose new slots." };
+  const slots = [1, 2, 3].map((i) => String(fd.get(`slot${i}`) || "")).filter(Boolean).map((s) => new Date(s)).filter((d) => !isNaN(d.getTime()) && d > new Date());
+  if (!slots.length) return { error: "Propose at least one future date and time." };
+  const mode = (["VIDEO", "PHONE", "ONSITE"].includes(String(fd.get("mode"))) ? String(fd.get("mode")) : "VIDEO") as "VIDEO" | "PHONE" | "ONSITE";
+  const durationMin = [15, 30, 45, 60].includes(Number(fd.get("durationMin"))) ? Number(fd.get("durationMin")) : 30;
+  const location = String(fd.get("location") ?? "").trim();
+  const note = String(fd.get("note") ?? "").trim();
+  const data = { proposedById: user.id, status: "PROPOSED" as const, mode, durationMin, location, note, responseNote: null, confirmedSlotId: null };
+  const interview = app.interview
+    ? await db.interview.update({ where: { id: app.interview.id }, data: { ...data, slots: { deleteMany: {}, create: slots.map((startsAt) => ({ startsAt })) } } })
+    : await db.interview.create({ data: { ...data, applicationId, slots: { create: slots.map((startsAt) => ({ startsAt })) } } });
+  if (app.status === "APPLIED") await db.application.update({ where: { id: applicationId }, data: { status: "SHORTLISTED", statusChangedAt: new Date() } });
+  await notify(app.trainer.userId, "application", `Interview slots from ${user.membership.company.name}`, `${app.requirement.title}: ${slots.map(fmtSlot).join(" / ")}. Pick one.`, `/requirements/${app.requirement.id}`);
+  refresh(app.requirement.id);
+  void interview;
+  return { ok: `Sent ${slots.length} slot${slots.length > 1 ? "s" : ""} to the trainer.` };
+}
+
+/** Trainer picks a slot (confirms) or declines with a note. Confirmation emails both sides a calendar invite. */
+export async function respondInterview(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const user = await requireUser();
+  const id = String(fd.get("id"));
+  const slotId = String(fd.get("slotId") || "");
+  const decline = String(fd.get("decline")) === "1";
+  const note = String(fd.get("note") ?? "").trim();
+  const iv = await db.interview.findUnique({ where: { id }, include: { slots: true, proposedBy: { select: { id: true, name: true, email: true } }, application: { include: { requirement: { include: { company: { include: { members: { select: { userId: true } } } } } }, trainer: { include: { user: { select: { id: true, name: true, email: true } } } } } } } });
+  if (!iv || iv.application.trainer.user.id !== user.id) return { error: "Only the invited trainer can respond." };
+  if (iv.status !== "PROPOSED") return { error: "This interview is not awaiting a response." };
+  const req = iv.application.requirement;
+  const members = req.company.members.map((m) => m.userId);
+  if (decline) {
+    await db.interview.update({ where: { id }, data: { status: "DECLINED", responseNote: note || null } });
+    await notify(members, "application", `${user.name} can't make the proposed slots`, note || "Propose new times from the applicants page.", `/dashboard/requirements/${req.id}/applicants`);
+    refresh(req.id);
+    return { ok: "Sent. The company can propose new times." };
+  }
+  const slot = iv.slots.find((s) => s.id === slotId);
+  if (!slot) return { error: "Pick one of the proposed slots." };
+  await db.interview.update({ where: { id }, data: { status: "CONFIRMED", confirmedSlotId: slot.id, responseNote: note || null } });
+  const when = fmtSlot(slot.startsAt);
+  const title = `Interview: ${req.title}`;
+  const description = `${req.company.name} × ${user.name}\n${iv.mode === "VIDEO" ? "Video call" : iv.mode === "PHONE" ? "Phone call" : "In person"}${iv.location ? ` · ${iv.location}` : ""}\n${iv.note}\n\nManage: ${appUrl()}/requirements/${req.id}`;
+  const ics = (organizer: { name: string; email: string }, attendee: { name: string; email: string }) => buildIcs({ uid: iv.id, title, description, location: iv.location, start: slot.startsAt, durationMin: iv.durationMin, organizer, attendee, url: `${appUrl()}/requirements/${req.id}` });
+  const body = `${when} · ${iv.durationMin} min · ${iv.mode === "VIDEO" ? "video" : iv.mode === "PHONE" ? "phone" : "in person"}${iv.location ? ` · ${iv.location}` : ""}`;
+  await notify(members, "application", `${user.name} confirmed the interview`, body, `/dashboard/requirements/${req.id}/applicants`);
+  await notify(user.id, "application", "Interview confirmed", `${req.company.name} · ${body}`, `/requirements/${req.id}`);
+  const { html, text } = renderEmail({ title: `Interview confirmed · ${when}`, body: `${req.title}\n${body}\n\nA calendar invite is attached.`, ctaHref: `/requirements/${req.id}`, ctaLabel: "Open on CorpGurus" });
+  const organizer = { name: iv.proposedBy.name, email: iv.proposedBy.email }, attendee = { name: user.name, email: user.email };
+  await Promise.all([
+    sendEmail({ to: user.email, subject: `Interview confirmed · ${req.title}`, html, text, userId: user.id, attachments: [{ filename: "interview.ics", content: ics(organizer, attendee) }] }),
+    sendEmail({ to: iv.proposedBy.email, subject: `${user.name} confirmed · ${req.title}`, html, text, userId: iv.proposedBy.id, attachments: [{ filename: "interview.ics", content: ics(organizer, attendee) }] }),
+  ]);
+  refresh(req.id);
+  return { ok: `Confirmed for ${when}. Calendar invites have been emailed to both of you.` };
+}
+
+export async function cancelInterview(fd: FormData) {
+  const user = await requireUser();
+  const id = String(fd.get("id"));
+  const iv = await db.interview.findUnique({ where: { id }, include: { application: { include: { requirement: { include: { company: { include: { members: { select: { userId: true } } } } } }, trainer: { select: { userId: true } } } } } });
+  if (!iv) return;
+  const req = iv.application.requirement;
+  const isMember = req.company.members.some((m) => m.userId === user.id);
+  const isTrainer = iv.application.trainer.userId === user.id;
+  if (!isMember && !isTrainer) return;
+  await db.interview.update({ where: { id }, data: { status: "CANCELLED" } });
+  await notify(isMember ? [iv.application.trainer.userId] : req.company.members.map((m) => m.userId), "application", "Interview cancelled", `${req.title} · cancelled by ${user.name}.`, isMember ? `/requirements/${req.id}` : `/dashboard/requirements/${req.id}/applicants`);
+  refresh(req.id);
+}

@@ -8,6 +8,7 @@ import { requireUser } from "@/lib/auth";
 import { notify } from "@/lib/notify";
 import { daysBetween } from "@/lib/utils";
 import { entitlementsFor } from "@/lib/billing";
+import { alertRequirementSearches } from "@/lib/saved-searches";
 import type { ActionState } from "@/lib/types";
 
 const reqSchema = z.object({
@@ -72,6 +73,7 @@ export async function createRequirement(_p: ActionState, fd: FormData): Promise<
     const matching = await db.trainerProfile.findMany({ where: { skills: { some: { slug: { in: skillSlugs } } } }, select: { userId: true } });
     await notify(matching.map((m) => m.userId), "requirement", "New requirement matches your skills", `${ctx.companyName}: ${d.title}`, `/requirements/${req.id}`);
   }
+  if (d.visibility === "PUBLIC") await alertRequirementSearches(req.id);
   redirect(`/requirements/${req.id}`);
 }
 

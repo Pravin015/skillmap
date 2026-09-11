@@ -13,6 +13,7 @@ import { appStatusLabel, dateRange, fmtDate, modeLabel, rateRange, reqStatusLabe
 import { createFeedbackLink } from "@/lib/actions/feedback";
 import { overlapping } from "@/components/availability";
 import { ReportButton } from "@/components/report-button";
+import { InterviewResponse } from "@/components/interview";
 import { appUrl } from "@/lib/oauth";
 import type { Metadata } from "next";
 
@@ -32,7 +33,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
       postedBy: { select: { id: true, name: true, avatarUrl: true } },
       category: true, skills: { orderBy: { name: "asc" } },
       invitedTrainers: { include: { user: { select: { name: true } } } },
-      applications: { include: { trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } } } } }, orderBy: { createdAt: "asc" } },
+      applications: { include: { interview: { include: { slots: { orderBy: { startsAt: "asc" } } } }, trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } } } } }, orderBy: { createdAt: "asc" } },
       comments: { where: { deletedAt: null }, include: { author: { select: { id: true, name: true, avatarUrl: true, role: true } } }, orderBy: { createdAt: "asc" } },
       ratings: { include: { fromUser: { select: { name: true } }, toUser: { select: { name: true } } } },
       workOrder: { select: { id: true, status: true, version: true, total: true, currency: true, number: true } },
@@ -157,6 +158,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
                 <div className="mt-2"><Badge tone={myApp.status === "AWARDED" ? "lime" : myApp.status === "SHORTLISTED" ? "amber" : myApp.status === "DECLINED" ? "rose" : myApp.status === "WITHDRAWN" ? "neutral" : "cyan"}>{appStatusLabel[myApp.status]}</Badge></div>
                 <p className="mt-2 text-sm text-muted">Proposed {rateRange(myApp.proposedRate, null, r.currency)} · sent {fmtDate(myApp.createdAt)}</p>
                 {myApp.declineReason ? <p className="mt-2 rounded-lg bg-surface-2 px-3 py-2 text-sm text-muted">“{myApp.declineReason}”</p> : null}
+                {myApp.interview ? <div className="mt-3"><InterviewResponse interview={myApp.interview} companyName={r.company.name} /></div> : null}
                 <form action={startConversation} className="mt-3"><input type="hidden" name="userId" value={r.postedBy.id} /><input type="hidden" name="requirementId" value={r.id} /><Button variant="secondary" className="w-full"><MessageSquare size={15} /> Message {r.postedBy.name.split(" ")[0]}</Button></form>
                 {["APPLIED", "SHORTLISTED"].includes(myApp.status) ? <form action={withdrawApplication} className="mt-2"><input type="hidden" name="id" value={myApp.id} /><Button variant="ghost" size="sm" className="w-full text-rose">Withdraw application</Button></form> : null}
               </>

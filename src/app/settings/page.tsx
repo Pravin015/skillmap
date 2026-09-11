@@ -40,6 +40,17 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       ) : null}
 
       <Card className="p-6">
+        <h2 className="text-lg font-bold">Export your data</h2>
+        <p className="mt-1 text-sm text-muted">Download what CorpGurus holds about {user.membership ? "your company" : "you"}. CSV files open in Excel or Google Sheets; the JSON bundle is everything in one file.</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {(user.trainerProfile ? [["applications", "Applications"], ["work-orders", "Work orders"], ["invoices", "Invoices"], ["feedback", "Participant feedback"], ["profile", "Profile (JSON)"], ["all", "Everything (JSON)"]] : [["requirements", "Requirements"], ["applicants", "Applicants"], ["work-orders", "Work orders"], ["invoices", "Invoices"], ["all", "Everything (JSON)"]]).map(([k, l]) => (
+            <a key={k} href={`/api/export/${k}`} className="inline-flex h-8 items-center rounded-lg border border-line-2 bg-white px-3 font-display text-[13px] font-semibold hover:bg-surface-2">{l}</a>
+          ))}
+          {user.trainerProfile ? <a href={`/trainers/${user.trainerProfile.slug}/cv`} className="inline-flex h-8 items-center rounded-lg bg-cyan px-3 font-display text-[13px] font-semibold text-white hover:bg-navy">Your CV (print / PDF)</a> : null}
+        </div>
+      </Card>
+
+      <Card className="p-6">
         <h2 className="text-lg font-bold">Email notifications</h2>
         <form action={updateEmailPrefs} className="mt-3 flex flex-wrap items-center gap-3">
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="emailNotifications" value="1" defaultChecked={account?.emailNotifications ?? true} className="accent-cyan" /> Email me about applications, work orders, invoices, invitations and verification results</label>
