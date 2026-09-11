@@ -26,12 +26,12 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
   return (
     <div className="grid gap-4 lg:grid-cols-[300px_1fr]">
       <aside className="hidden lg:block"><ConversationList convos={convos} me={user.id} activeId={id} /></aside>
-      <section className="flex h-[calc(100vh-11rem)] min-h-[480px] flex-col overflow-hidden rounded-2xl border border-line bg-surface/60">
+      <section className="flex h-[calc(100vh-11rem)] min-h-[480px] flex-col overflow-hidden rounded-2xl border border-line bg-white">
         <header className="flex items-center gap-3 border-b border-line px-5 py-3">
           <Avatar name={other.name} src={other.avatarUrl} size={36} tone={other.role === "COMPANY" ? "violet" : "cyan"} />
           <div className="min-w-0">
             <Link href={otherHref} className="font-semibold hover:text-cyan">{other.name}</Link>
-            <p className="truncate text-xs text-muted">{other.membership ? other.membership.company.name : "Trainer"}{convo.requirement ? <> · <Link href={`/requirements/${convo.requirement.id}`} className="text-[#b79cff] hover:underline">{convo.requirement.title}</Link></> : null}</p>
+            <p className="truncate text-xs text-muted">{other.membership ? other.membership.company.name : "Trainer"}{convo.requirement ? <> · <Link href={`/requirements/${convo.requirement.id}`} className="text-violet hover:underline">{convo.requirement.title}</Link></> : null}</p>
           </div>
           <Link href="/messages" className="ml-auto text-xs text-muted hover:text-ink lg:hidden">All conversations</Link>
         </header>
@@ -43,9 +43,9 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
               <div key={m.id}>
                 {showDay ? <p className="mono my-3 text-center text-[10px] uppercase tracking-[0.14em] text-dim">{dayLabel}</p> : null}
                 <div className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed ${mine ? "rounded-br-sm bg-cyan/15 text-ink ring-1 ring-cyan/30" : "rounded-bl-sm bg-surface-2 text-ink"}`}>
+                  <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed ${mine ? "rounded-br-sm bg-cyan text-white" : "rounded-bl-sm bg-surface-2 text-ink border border-line"}`}>
                     <p className="whitespace-pre-line">{m.body}</p>
-                    <p className={`mono mt-1 text-[10px] ${mine ? "text-cyan/70" : "text-dim"}`}>{new Intl.DateTimeFormat("en-IN", { hour: "numeric", minute: "2-digit" }).format(m.createdAt)}</p>
+                    <p className={`mono mt-1 text-[10px] ${mine ? "text-white/70" : "text-dim"}`}>{new Intl.DateTimeFormat("en-IN", { hour: "numeric", minute: "2-digit" }).format(m.createdAt)}</p>
                   </div>
                 </div>
               </div>

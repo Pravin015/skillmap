@@ -15,7 +15,7 @@ export default async function CompaniesPage() {
       <PageHeader eyebrow="Directory" title="Companies and training partners" body="Direct employers running their own academies, and authorised training partners who staff batches with freelance instructors." />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {companies.map((c) => (
-          <Link key={c.id} href={`/companies/${c.slug}`} className="block rounded-2xl border border-line bg-surface/70 p-5 transition hover:-translate-y-0.5 hover:border-violet/50">
+          <Link key={c.id} href={`/companies/${c.slug}`} className="block rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-violet/50">
             <div className="flex items-start gap-3">
               <Avatar name={c.name} src={c.logoUrl} size={48} tone="violet" className="rounded-xl" />
               <div className="min-w-0 flex-1">

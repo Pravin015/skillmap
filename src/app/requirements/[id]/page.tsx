@@ -43,7 +43,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
       <div className="space-y-6">
         <Card className="p-6">
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
-            <Link href={`/companies/${r.company.slug}`} className="flex items-center gap-1.5 font-medium text-ink hover:text-[#b79cff]">{r.company.name}{r.company.domainVerifiedAt ? <BadgeCheck size={14} className="text-violet" /> : null}</Link>
+            <Link href={`/companies/${r.company.slug}`} className="flex items-center gap-1.5 font-medium text-ink hover:text-violet">{r.company.name}{r.company.domainVerifiedAt ? <BadgeCheck size={14} className="text-violet" /> : null}</Link>
             {r.company.type === "TRAINING_PARTNER" ? <Badge tone="violet">partner</Badge> : null}
             <Badge>{r.category.name}</Badge>
             {r.visibility === "INVITE_ONLY" ? <Badge tone="amber">invite-only</Badge> : null}
@@ -52,7 +52,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
           </div>
           <h1 className="mt-3 text-2xl font-bold md:text-3xl">{r.title}</h1>
           <div className="mt-4 flex flex-wrap gap-1.5">{r.skills.map((s) => <Chip key={s.id}>{s.name}</Chip>)}</div>
-          <dl className="mt-6 grid grid-cols-2 gap-4 rounded-xl border border-line bg-bg-2/60 p-4 md:grid-cols-3">
+          <dl className="mt-6 grid grid-cols-2 gap-4 rounded-xl border border-line bg-surface-2 p-4 md:grid-cols-3">
             <Meta icon={<CalendarDays size={14} />} l="Dates" v={`${dateRange(r.startDate, r.endDate)} · ${r.days} day${r.days > 1 ? "s" : ""}`} />
             <Meta icon={<MapPin size={14} />} l="Delivery" v={r.mode === "VIRTUAL" ? "Virtual" : `${modeLabel[r.mode]} · ${r.city}`} />
             <Meta icon={<Users size={14} />} l="Participants" v={String(r.participants)} />
@@ -68,7 +68,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
           <p className="mb-4 text-sm text-muted">Ask about the lab, the audience or the logistics here. The company answers once, for everyone.</p>
           <div className="space-y-3">
             {topLevel.map((c) => (
-              <div key={c.id} className="rounded-2xl border border-line bg-surface/60 p-4">
+              <div key={c.id} className="rounded-2xl border border-line bg-white p-4">
                 <CommentRow c={c} isCompany={r.company.members.some((m) => m.userId === c.authorId)} staff={staff} />
                 {replies(c.id).map((rep) => (
                   <div key={rep.id} className="ml-6 mt-3 border-l-2 border-line-2 pl-4 md:ml-11">
@@ -140,7 +140,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
                 <p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Your application</p>
                 <div className="mt-2"><Badge tone={myApp.status === "AWARDED" ? "lime" : myApp.status === "SHORTLISTED" ? "amber" : myApp.status === "DECLINED" ? "rose" : myApp.status === "WITHDRAWN" ? "neutral" : "cyan"}>{appStatusLabel[myApp.status]}</Badge></div>
                 <p className="mt-2 text-sm text-muted">Proposed {rateRange(myApp.proposedRate, null, r.currency)} · sent {fmtDate(myApp.createdAt)}</p>
-                {myApp.declineReason ? <p className="mt-2 rounded-lg bg-bg-2 px-3 py-2 text-sm text-muted">“{myApp.declineReason}”</p> : null}
+                {myApp.declineReason ? <p className="mt-2 rounded-lg bg-surface-2 px-3 py-2 text-sm text-muted">“{myApp.declineReason}”</p> : null}
                 <form action={startConversation} className="mt-3"><input type="hidden" name="userId" value={r.postedBy.id} /><input type="hidden" name="requirementId" value={r.id} /><Button variant="secondary" className="w-full"><MessageSquare size={15} /> Message {r.postedBy.name.split(" ")[0]}</Button></form>
                 {["APPLIED", "SHORTLISTED"].includes(myApp.status) ? <form action={withdrawApplication} className="mt-2"><input type="hidden" name="id" value={myApp.id} /><Button variant="ghost" size="sm" className="w-full text-rose">Withdraw application</Button></form> : null}
               </>

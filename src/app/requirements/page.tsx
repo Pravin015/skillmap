@@ -34,7 +34,7 @@ export default async function RequirementsPage({ searchParams }: { searchParams:
     <div>
       <PageHeader eyebrow="Marketplace" title="Training requirements" body="Posted by companies and training partners. Ask questions in the open, then apply with your rate."
         actions={user?.membership ? <ButtonLink href="/requirements/new" variant="violet"><Plus size={16} /> Post a requirement</ButtonLink> : !user ? <ButtonLink href="/signup?as=company" variant="violet">Post a requirement</ButtonLink> : null} />
-      <form className="mb-6 grid gap-3 rounded-2xl border border-line bg-surface/60 p-4 md:grid-cols-[1fr_170px_140px_140px_150px_auto]">
+      <form className="mb-6 grid gap-3 rounded-2xl border border-line bg-white p-4 md:grid-cols-[1fr_170px_140px_140px_150px_auto]">
         <div className="relative"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" /><Input name="q" defaultValue={sp.q} placeholder="Search title, skill or keyword" className="pl-9" /></div>
         <Select name="category" defaultValue={sp.category ?? ""}><option value="">Any domain</option>{categories.map((c) => <option key={c.id} value={c.slug}>{c.name}</option>)}</Select>
         <Select name="mode" defaultValue={sp.mode ?? ""}><option value="">Any mode</option>{DELIVERY_MODES.map((m) => <option key={m} value={m}>{modeLabel[m]}</option>)}</Select>

@@ -23,11 +23,11 @@ export function NewRequirementForm({ categories, skills }: { categories: Categor
           <Field label="Language"><Select name="language" defaultValue="English">{LANGUAGES.map((l) => <option key={l}>{l}</option>)}</Select></Field>
         </div>
         <Field label="Skills required" hint="Pick everything the trainer must be able to teach. Trainers with matching skills are notified.">
-          <div className="rounded-lg border border-line bg-bg-2 p-3">
+          <div className="rounded-lg border border-line bg-surface-2 p-3">
             <Input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter skills…" className="mb-2" />
             <div className="flex max-h-40 flex-wrap gap-1.5 overflow-y-auto scrollbar-thin">
               {visible.map((s) => (
-                <button type="button" key={s.id} onClick={() => toggle(s.slug)} className={cn("rounded-full border px-2.5 py-0.5 text-xs transition", picked.includes(s.slug) ? "border-cyan/60 bg-cyan/15 text-cyan" : "border-line-2 text-muted hover:border-line-2 hover:text-ink")}>{s.name}</button>
+                <button type="button" key={s.id} onClick={() => toggle(s.slug)} className={cn("rounded-full border px-2.5 py-0.5 text-xs transition", picked.includes(s.slug) ? "border-cyan bg-cyan text-white" : "border-line-2 text-muted hover:border-line-2 hover:text-ink")}>{s.name}</button>
               ))}
             </div>
             {picked.map((s) => <input key={s} type="hidden" name="skills" value={s} />)}

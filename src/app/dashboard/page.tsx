@@ -47,9 +47,9 @@ export default async function Dashboard() {
             <section>
               <div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-bold">Recent applications</h2><Link href="/dashboard/applications" className="text-sm text-muted hover:text-ink">All →</Link></div>
               {p.applications.length ? (
-                <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface/60">
+                <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
                   {p.applications.slice(0, 5).map((a) => (
-                    <Link key={a.id} href={`/requirements/${a.requirementId}`} className="flex items-center gap-3 px-5 py-3 hover:bg-white/[0.03]">
+                    <Link key={a.id} href={`/requirements/${a.requirementId}`} className="flex items-center gap-3 px-5 py-3 hover:bg-surface-2">
                       <div className="min-w-0 flex-1"><p className="truncate font-medium">{a.requirement.title}</p><p className="text-xs text-muted">{a.requirement.company.name} · applied {timeAgo(a.createdAt)}</p></div>
                       <Badge tone={a.status === "AWARDED" ? "lime" : a.status === "SHORTLISTED" ? "amber" : a.status === "DECLINED" ? "rose" : a.status === "WITHDRAWN" ? "neutral" : "cyan"}>{appStatusLabel[a.status]}</Badge>
                     </Link>
@@ -61,7 +61,7 @@ export default async function Dashboard() {
           <aside className="space-y-4">
             <Card className="p-5">
               <div className="flex items-center justify-between"><p className="font-semibold">Profile strength</p><span className="mono text-xs text-cyan">{done}/{checklist.length}</span></div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-bg-2"><div className="h-full rounded-full bg-gradient-to-r from-cyan to-violet" style={{ width: `${(done / checklist.length) * 100}%` }} /></div>
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-cyan" style={{ width: `${(done / checklist.length) * 100}%` }} /></div>
               <ul className="mt-3 space-y-1.5 text-sm">{checklist.map(([l, ok]) => <li key={l} className={ok ? "text-muted line-through" : "text-ink"}><span className={`mr-2 ${ok ? "text-lime" : "text-dim"}`}>{ok ? "✓" : "○"}</span>{l}</li>)}</ul>
               <ButtonLink href="/settings" variant="secondary" size="sm" className="mt-3 w-full">Edit profile</ButtonLink>
             </Card>
@@ -96,11 +96,11 @@ export default async function Dashboard() {
           <section>
             <h2 className="mb-3 text-lg font-bold">Your requirements</h2>
             {c.requirements.length ? (
-              <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface/60">
+              <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
                 {c.requirements.map((r) => (
                   <div key={r.id} className="flex flex-wrap items-center gap-3 px-5 py-3.5">
                     <div className="min-w-0 flex-1">
-                      <Link href={`/requirements/${r.id}`} className="block truncate font-medium hover:text-[#b79cff]">{r.title}</Link>
+                      <Link href={`/requirements/${r.id}`} className="block truncate font-medium hover:text-violet">{r.title}</Link>
                       <p className="text-xs text-muted">{fmtDate(r.startDate)} · {r.days}d · {r.participants} pax · {r._count.comments} comments</p>
                     </div>
                     <Badge tone={reqTone[r.status]}>{reqStatusLabel[r.status]}</Badge>

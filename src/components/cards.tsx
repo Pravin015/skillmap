@@ -13,7 +13,7 @@ export function TrainerCard({ t, showRate }: {
   showRate: boolean;
 }) {
   return (
-    <Link href={`/trainers/${t.slug}`} className="group block rounded-2xl border border-line bg-surface/70 p-5 transition hover:-translate-y-0.5 hover:border-cyan/40 hover:shadow-[0_8px_40px_rgba(34,211,238,0.08)]">
+    <Link href={`/trainers/${t.slug}`} className="group block rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-cyan/40 hover:shadow-md">
       <div className="flex items-start gap-3">
         <Avatar name={t.user.name} src={t.user.avatarUrl} size={48} />
         <div className="min-w-0 flex-1">
@@ -43,7 +43,7 @@ export function RequirementCard({ r }: {
   r: Requirement & { company: Pick<Company, "name" | "slug" | "type" | "logoUrl" | "domainVerifiedAt">; skills: Skill[]; _count: { applications: number; comments: number } };
 }) {
   return (
-    <Link href={`/requirements/${r.id}`} className="group block rounded-2xl border border-line bg-surface/70 p-5 transition hover:-translate-y-0.5 hover:border-violet/50 hover:shadow-[0_8px_40px_rgba(139,92,246,0.1)]">
+    <Link href={`/requirements/${r.id}`} className="group block rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-violet/50 hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 text-xs text-muted">
@@ -52,7 +52,7 @@ export function RequirementCard({ r }: {
             {r.company.type === "TRAINING_PARTNER" ? <Badge tone="violet">partner</Badge> : null}
             {r.visibility === "INVITE_ONLY" ? <Badge tone="amber">invite-only</Badge> : null}
           </p>
-          <h3 className="mt-1 line-clamp-2 font-display text-[15px] font-semibold leading-snug group-hover:text-[#b79cff]">{r.title}</h3>
+          <h3 className="mt-1 line-clamp-2 font-display text-[15px] font-semibold leading-snug group-hover:text-violet">{r.title}</h3>
         </div>
         <Badge tone={reqTone[r.status]}>{reqStatusLabel[r.status]}</Badge>
       </div>

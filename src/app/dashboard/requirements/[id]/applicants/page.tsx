@@ -39,7 +39,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
             const t = a.trainer; const rt = avg.get(t.user.id); const matched = t.skills.filter((s) => reqSkills.has(s.id)).length;
             const dim = a.status === "DECLINED" || a.status === "WITHDRAWN";
             return (
-              <div key={a.id} className={`rounded-2xl border p-5 ${a.status === "AWARDED" ? "border-lime/40 bg-lime/5" : a.status === "SHORTLISTED" ? "border-amber/40 bg-surface/70" : "border-line bg-surface/70"} ${dim ? "opacity-60" : ""}`}>
+              <div key={a.id} className={`rounded-2xl border p-5 ${a.status === "AWARDED" ? "border-lime/40 bg-lime/5" : a.status === "SHORTLISTED" ? "border-amber/40 bg-white" : "border-line bg-white"} ${dim ? "opacity-60" : ""}`}>
                 <div className="flex flex-wrap items-start gap-4">
                   <Avatar name={t.user.name} src={t.user.avatarUrl} size={56} />
                   <div className="min-w-0 flex-1">
@@ -58,7 +58,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
                       <span className="text-cyan">{matched}/{r.skills.length} skills match</span>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1.5">{t.skills.map((s) => <Chip key={s.id} className={reqSkills.has(s.id) ? "border-cyan/50 text-cyan" : ""}>{s.name}</Chip>)}</div>
-                    <blockquote className="mt-3 rounded-lg border-l-2 border-cyan/50 bg-bg-2/60 px-4 py-3 text-[15px] leading-relaxed text-ink/90">{a.coverNote}</blockquote>
+                    <blockquote className="mt-3 rounded-lg border-l-2 border-cyan/50 bg-surface-2 px-4 py-3 text-[15px] leading-relaxed text-ink/90">{a.coverNote}</blockquote>
                     <p className="mono mt-2 text-sm text-cyan">Proposed {rateRange(a.proposedRate, null, r.currency)}<span className="text-dim"> · profile {rateRange(t.dayRateMin, t.dayRateMax, t.currency)}</span></p>
                     {a.declineReason ? <p className="mt-1 text-xs text-muted">Reason sent: “{a.declineReason}”</p> : null}
                   </div>

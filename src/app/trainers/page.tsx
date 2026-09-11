@@ -34,7 +34,7 @@ export default async function TrainersPage({ searchParams }: { searchParams: Pro
   return (
     <div>
       <PageHeader eyebrow="Directory" title="Freelance corporate trainers" body="Verified instructors across cloud, security, networking, leadership, sales and compliance. Filter by skill, city and delivery mode." />
-      <form className="mb-6 grid gap-3 rounded-2xl border border-line bg-surface/60 p-4 md:grid-cols-[1fr_180px_160px_140px_auto_auto]">
+      <form className="mb-6 grid gap-3 rounded-2xl border border-line bg-white p-4 md:grid-cols-[1fr_180px_160px_140px_auto_auto]">
         <div className="relative">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" />
           <Input name="q" defaultValue={sp.q} placeholder="Search by name, skill or keyword" className="pl-9" />

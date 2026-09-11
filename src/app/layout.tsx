@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Sora, Manrope, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Shell } from "@/components/shell";
 
-const sora = Sora({ subsets: ["latin"], variable: "--font-sora", weight: ["500", "600", "700"] });
-const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", weight: ["400", "500", "600", "700"] });
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", weight: ["400", "500"] });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta", weight: ["500", "600", "700", "800"] });
+const source = Source_Sans_3({ subsets: ["latin"], variable: "--font-source", weight: ["400", "500", "600", "700"] });
+const plexMono = IBM_Plex_Mono({ subsets: ["latin"], variable: "--font-plexmono", weight: ["400", "500"] });
 
 export const metadata: Metadata = {
   title: { default: "CorpGurus", template: "%s · CorpGurus" },
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sora.variable} ${manrope.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${jakarta.variable} ${source.variable} ${plexMono.variable}`}>
       <body>
         <Shell>{children}</Shell>
       </body>

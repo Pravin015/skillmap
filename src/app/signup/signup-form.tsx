@@ -11,7 +11,7 @@ export function SignupForm({ initialRole }: { initialRole: "TRAINER" | "COMPANY"
   const [role, setRole] = useState<"TRAINER" | "COMPANY">(initialRole);
   return (
     <Card className="mt-6 p-6">
-      <div className="mb-5 grid grid-cols-2 gap-2 rounded-xl border border-line bg-bg-2 p-1">
+      <div className="mb-5 grid grid-cols-2 gap-2 rounded-xl border border-line bg-surface-2 p-1">
         <RoleTab active={role === "TRAINER"} onClick={() => setRole("TRAINER")} icon={<GraduationCap size={16} />} label="I'm a trainer" sub="Find engagements" tone="cyan" />
         <RoleTab active={role === "COMPANY"} onClick={() => setRole("COMPANY")} icon={<Building2 size={16} />} label="I hire trainers" sub="Post requirements" tone="violet" />
       </div>
@@ -46,7 +46,7 @@ function RoleTab({ active, onClick, icon, label, sub, tone }: { active: boolean;
   return (
     <button type="button" onClick={onClick}
       className={cn("flex items-center gap-3 rounded-lg px-3 py-2.5 text-left transition",
-        active ? (tone === "cyan" ? "bg-cyan/10 text-cyan ring-1 ring-cyan/40" : "bg-violet/10 text-[#b79cff] ring-1 ring-violet/40") : "text-muted hover:bg-white/5 hover:text-ink")}>
+        active ? (tone === "cyan" ? "bg-cyan/10 text-cyan ring-1 ring-cyan/40" : "bg-violet/10 text-violet ring-1 ring-violet/40") : "text-muted hover:bg-surface-2 hover:text-ink")}>
       {icon}
       <span><span className="block text-sm font-semibold">{label}</span><span className="block text-[11px] opacity-70">{sub}</span></span>
     </button>

@@ -47,7 +47,7 @@ export default async function NetworkPage({ searchParams }: { searchParams: Prom
           <div className="grid gap-3 md:grid-cols-2">{accepted.map((c) => {
             const other = c.requesterId === user.id ? c.addressee : c.requester;
             return (
-              <div key={c.id} className="flex items-center gap-3 rounded-2xl border border-line bg-surface/60 p-4">
+              <div key={c.id} className="flex items-center gap-3 rounded-2xl border border-line bg-white p-4">
                 <Person u={other} sub={`Connected ${timeAgo(c.respondedAt ?? c.createdAt)}`} />
                 <div className="flex shrink-0 gap-1.5">
                   <form action={startConversation}><input type="hidden" name="userId" value={other.id} /><Button size="sm" variant="secondary">Message</Button></form>
@@ -62,14 +62,14 @@ export default async function NetworkPage({ searchParams }: { searchParams: Prom
       {outgoing.length ? (
         <section className="mb-8">
           <h2 className="mb-3 text-lg font-bold">Sent <span className="mono text-xs text-muted">{outgoing.length}</span></h2>
-          <div className="grid gap-3 md:grid-cols-2">{outgoing.map((c) => <div key={c.id} className="flex items-center gap-3 rounded-2xl border border-line bg-surface/60 p-4"><Person u={c.addressee} /><Badge tone="amber">pending</Badge></div>)}</div>
+          <div className="grid gap-3 md:grid-cols-2">{outgoing.map((c) => <div key={c.id} className="flex items-center gap-3 rounded-2xl border border-line bg-white p-4"><Person u={c.addressee} /><Badge tone="amber">pending</Badge></div>)}</div>
         </section>
       ) : null}
 
       <section>
         <h2 className="mb-3 text-lg font-bold">People you may know</h2>
         <div className="grid gap-3 md:grid-cols-2">{suggestions.map((u) => (
-          <div key={u.id} className="flex items-center gap-3 rounded-2xl border border-line bg-surface/60 p-4">
+          <div key={u.id} className="flex items-center gap-3 rounded-2xl border border-line bg-white p-4">
             <Person u={u} />
             <form action={requestConnection}><input type="hidden" name="userId" value={u.id} /><Button size="sm" variant="secondary">Connect</Button></form>
           </div>

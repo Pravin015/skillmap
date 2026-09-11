@@ -21,7 +21,7 @@ export default async function ApplicationsPage() {
     <div>
       <PageHeader eyebrow="Trainer" title="My applications" body={`Free plan: ${used} of ${limit} applications used this month.`} actions={<ButtonLink href="/requirements" variant="secondary">Find requirements</ButtonLink>} />
       {apps.length ? (
-        <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface/60">
+        <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
           {apps.map((a) => (
             <div key={a.id} className="grid gap-3 px-5 py-4 md:grid-cols-[1fr_auto_auto] md:items-center">
               <div className="min-w-0">

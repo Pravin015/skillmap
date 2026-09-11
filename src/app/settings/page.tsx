@@ -58,7 +58,7 @@ async function TrainerSettings({ userId, profileId }: { userId: string; profileI
             <Field label="Languages" hint="Comma separated"><Input name="languages" defaultValue={p.languages.join(", ")} placeholder="English, Hindi" /></Field>
           </div>
           <Field label="Delivery modes">
-            <div className="flex flex-wrap gap-3">{DELIVERY_MODES.map((m) => <label key={m} className="flex items-center gap-2 rounded-lg border border-line bg-bg-2 px-3 py-2 text-sm"><input type="checkbox" name="deliveryModes" value={m} defaultChecked={p.deliveryModes.includes(m)} className="accent-cyan" />{modeLabel[m]}</label>)}</div>
+            <div className="flex flex-wrap gap-3">{DELIVERY_MODES.map((m) => <label key={m} className="flex items-center gap-2 rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm"><input type="checkbox" name="deliveryModes" value={m} defaultChecked={p.deliveryModes.includes(m)} className="accent-cyan" />{modeLabel[m]}</label>)}</div>
           </Field>
           <div className="grid gap-4 md:grid-cols-3">
             <Field label="Currency"><Select name="currency" defaultValue={p.currency}>{CURRENCIES.map((c) => <option key={c}>{c}</option>)}</Select></Field>
@@ -68,8 +68,8 @@ async function TrainerSettings({ userId, profileId }: { userId: string; profileI
           <p className="-mt-2 text-xs text-dim">Rates are visible only to signed-in company accounts, never to guests or other trainers.</p>
           <Field label="Availability note" hint="e.g. “Booked until 20 Oct. Weekends possible.”"><Input name="availabilityNote" defaultValue={p.availabilityNote ?? ""} /></Field>
           <Field label="Skills" hint="Tick everything you can deliver. Requirements with these skills notify you.">
-            <div className="flex max-h-56 flex-wrap gap-1.5 overflow-y-auto rounded-lg border border-line bg-bg-2 p-3 scrollbar-thin">
-              {skills.map((s) => <label key={s.id} className="cursor-pointer"><input type="checkbox" name="skills" value={s.slug} defaultChecked={mine.has(s.slug)} className="peer sr-only" /><span className="inline-block rounded-full border border-line-2 px-2.5 py-0.5 text-xs text-muted transition peer-checked:border-cyan/60 peer-checked:bg-cyan/15 peer-checked:text-cyan peer-focus-visible:ring-2 peer-focus-visible:ring-cyan/50">{s.name}</span></label>)}
+            <div className="flex max-h-56 flex-wrap gap-1.5 overflow-y-auto rounded-lg border border-line bg-surface-2 p-3 scrollbar-thin">
+              {skills.map((s) => <label key={s.id} className="cursor-pointer"><input type="checkbox" name="skills" value={s.slug} defaultChecked={mine.has(s.slug)} className="peer sr-only" /><span className="inline-block rounded-full border border-line-2 px-2.5 py-0.5 text-xs text-muted transition peer-checked:border-cyan peer-checked:bg-cyan peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-cyan/50">{s.name}</span></label>)}
             </div>
           </Field>
           <SubmitButton pendingText="Saving…">Save profile</SubmitButton>

@@ -44,7 +44,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
               <span>Since {fmtDate(c.createdAt)}</span>
             </div>
             {c.description ? <p className="mt-4 max-w-3xl leading-relaxed text-ink/90">{c.description}</p> : null}
-            {isMember ? <Link href="/settings" className="mt-3 inline-block text-sm text-[#b79cff] hover:underline">Edit company page</Link> : null}
+            {isMember ? <Link href="/settings" className="mt-3 inline-block text-sm text-violet hover:underline">Edit company page</Link> : null}
           </div>
         </div>
       </Card>
@@ -65,7 +65,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
         <h2 className="mb-3 text-lg font-bold">Team</h2>
         <div className="flex flex-wrap gap-3">
           {c.members.map((m) => (
-            <div key={m.id} className="flex items-center gap-3 rounded-xl border border-line bg-surface/60 px-4 py-2.5">
+            <div key={m.id} className="flex items-center gap-3 rounded-xl border border-line bg-white px-4 py-2.5">
               <Avatar name={m.user.name} src={m.user.avatarUrl} size={36} tone="violet" />
               <div><p className="text-sm font-medium">{m.user.name}</p><p className="mono text-[11px] uppercase tracking-wider text-muted">{m.role}</p></div>
             </div>
@@ -77,7 +77,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ slug: 
         <section>
           <h2 className="mb-3 text-lg font-bold">What trainers say</h2>
           <div className="space-y-3">{ratings.map((r) => (
-            <div key={r.id} className="rounded-xl border border-line bg-surface/60 p-4">
+            <div key={r.id} className="rounded-xl border border-line bg-white p-4">
               <p className="text-amber">{"★".repeat(r.score)}<span className="text-dim">{"★".repeat(5 - r.score)}</span></p>
               {r.review ? <p className="mt-1 text-ink/90">“{r.review}”</p> : null}
               <p className="mt-1 text-sm text-muted">{r.fromUser.name} · {r.requirement.title}</p>

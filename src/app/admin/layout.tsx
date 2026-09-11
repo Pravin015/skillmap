@@ -11,9 +11,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <span className="flex items-center gap-2 font-display font-semibold"><ShieldCheck size={18} className="text-amber" /> Admin console</span>
         <Badge tone="amber">{user.role === "SUPER_ADMIN" ? "super admin" : "administrator"}</Badge>
         <nav className="ml-auto flex gap-1 text-sm">
-          <Link href="/admin" className="rounded-lg px-3 py-1.5 text-muted hover:bg-white/5 hover:text-ink">Queue</Link>
-          <Link href="/admin/users" className="rounded-lg px-3 py-1.5 text-muted hover:bg-white/5 hover:text-ink">Users</Link>
-          <Link href="/admin/requirements" className="rounded-lg px-3 py-1.5 text-muted hover:bg-white/5 hover:text-ink">Requirements</Link>
+          <Link href="/admin" className="rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Queue</Link>
+          <Link href="/admin/users" className="rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Users</Link>
+          <Link href="/admin/requirements" className="rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Requirements</Link>
           {user.role === "SUPER_ADMIN" ? <Link href="/admin/platform" className="rounded-lg px-3 py-1.5 text-amber hover:bg-amber/10">Platform</Link> : null}
         </nav>
       </div>

@@ -1,87 +1,75 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #05070d;
-  --color-bg-2: #0a0e19;
-  --color-surface: #0f1422;
-  --color-surface-2: #161c2e;
-  --color-line: #1f2740;
-  --color-line-2: #2c3655;
-  --color-ink: #e8ecf5;
-  --color-muted: #8c95ad;
-  --color-dim: #5b6480;
-  --color-cyan: #22d3ee;
-  --color-violet: #8b5cf6;
-  --color-amber: #f5b841;
-  --color-lime: #a3e635;
-  --color-rose: #fb7185;
-  --font-display: var(--font-sora), "Segoe UI", system-ui, sans-serif;
-  --font-body: var(--font-manrope), "Segoe UI", system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), Consolas, monospace;
-  --radius-xl: 14px;
-  --radius-2xl: 20px;
+  /* Corporate light palette. Token names are kept from the first build so
+     component code did not need renaming: cyan = primary blue (trainer side),
+     violet = company side, amber = staff/warning, lime = success, rose = danger. */
+  --color-bg: #f4f6f9;
+  --color-bg-2: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0f3f7;
+  --color-line: #e1e6ee;
+  --color-line-2: #c7d0dc;
+  --color-ink: #14213a;
+  --color-muted: #56637a;
+  --color-dim: #8b96a8;
+  --color-cyan: #0f4c9a;
+  --color-violet: #4b3f9e;
+  --color-amber: #a2650a;
+  --color-lime: #1b7f45;
+  --color-rose: #b3261e;
+  --color-navy: #0b2a5b;
+  --font-display: var(--font-jakarta), "Segoe UI", system-ui, sans-serif;
+  --font-body: var(--font-source), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-plexmono), Consolas, monospace;
+  --radius-xl: 10px;
+  --radius-2xl: 12px;
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-body);
-  font-feature-settings: "ss01", "cv11";
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   text-wrap: balance;
 }
 
-.mono { font-family: var(--font-mono); }
-
-.grid-bg {
-  background-image:
-    linear-gradient(to right, rgba(140, 149, 173, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(140, 149, 173, 0.06) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 100%);
+/* Small caps-style labels. Historically mono; corporate theme uses the display face. */
+.mono {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
-.glow {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(600px 300px at 20% -10%, rgba(34, 211, 238, 0.16), transparent 60%),
-    radial-gradient(700px 320px at 85% -20%, rgba(139, 92, 246, 0.18), transparent 60%);
-}
+.grid-bg { display: none; }
+.glow { display: none; }
 
 .glass {
-  background: rgba(15, 20, 34, 0.7);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid var(--color-line);
 }
 
-.ring-glow-cyan { box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.35), 0 0 32px rgba(34, 211, 238, 0.18); }
-.ring-glow-violet { box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.4), 0 0 32px rgba(139, 92, 246, 0.2); }
+.ring-glow-cyan { box-shadow: 0 0 0 1px var(--color-cyan), 0 6px 20px rgba(15, 76, 154, 0.08); }
+.ring-glow-violet { box-shadow: 0 0 0 1px var(--color-violet), 0 6px 20px rgba(75, 63, 158, 0.08); }
 
-.gradient-text {
-  background: linear-gradient(90deg, #22d3ee 0%, #8b5cf6 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+.gradient-text { color: var(--color-cyan); }
 
-.hairline { background: linear-gradient(90deg, transparent, var(--color-line-2), transparent); height: 1px; }
+.hairline { background: var(--color-line); height: 1px; }
 
-::selection { background: rgba(34, 211, 238, 0.3); }
+::selection { background: rgba(15, 76, 154, 0.18); }
 
-*:focus-visible { outline: 2px solid rgba(34, 211, 238, 0.7); outline-offset: 2px; }
+*:focus-visible { outline: 2px solid rgba(15, 76, 154, 0.6); outline-offset: 2px; }
 
 details > summary { list-style: none; }
 details > summary::-webkit-details-marker { display: none; }
@@ -92,3 +80,5 @@ details > summary::-webkit-details-marker { display: none; }
 
 .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
 .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--color-line-2); border-radius: 8px; }
+
+input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.6; }

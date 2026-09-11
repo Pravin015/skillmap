@@ -52,7 +52,7 @@ export default async function AdminQueue() {
               <div className="space-y-3">{companies.map((c) => (
                 <Card key={c.id} className="flex flex-wrap items-center gap-3 p-4">
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium"><Link href={`/companies/${c.slug}`} className="hover:text-[#b79cff]">{c.name}</Link> <span className="mono text-sm text-muted">· {c.domain}</span></p>
+                    <p className="font-medium"><Link href={`/companies/${c.slug}`} className="hover:text-violet">{c.name}</Link> <span className="mono text-sm text-muted">· {c.domain}</span></p>
                     <p className="text-sm text-muted">Owner: {c.members[0]?.user.name} · {c.members[0]?.user.email}</p>
                   </div>
                   <form action={verifyCompanyDomain}><input type="hidden" name="id" value={c.id} /><input type="hidden" name="verify" value="1" /><Button size="sm" variant="violet">Verify domain</Button></form>
