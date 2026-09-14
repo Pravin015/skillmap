@@ -11,6 +11,7 @@ import { Avatar, Badge, Button, ButtonLink, Card, Chip, Field, Input, Select, Te
 import { reqTone } from "@/components/cards";
 import { appStatusLabel, dateRange, fmtDate, modeLabel, rateRange, reqStatusLabel, timeAgo } from "@/lib/utils";
 import { createFeedbackLink } from "@/lib/actions/feedback";
+import { issueCertificates, revokeCertificate } from "@/lib/actions/certificates";
 import { overlapping } from "@/components/availability";
 import { ReportButton } from "@/components/report-button";
 import { InterviewResponse } from "@/components/interview";
@@ -37,6 +38,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
       comments: { where: { deletedAt: null }, include: { author: { select: { id: true, name: true, avatarUrl: true, role: true } } }, orderBy: { createdAt: "asc" } },
       ratings: { include: { fromUser: { select: { name: true } }, toUser: { select: { name: true } } } },
       workOrder: { select: { id: true, status: true, version: true, total: true, currency: true, number: true } },
+      certificates: { orderBy: { issuedAt: "desc" } },
     },
   });
   if (!r) notFound();
@@ -233,6 +235,28 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
                 <form action={createFeedbackLink} className="mt-3"><input type="hidden" name="requirementId" value={r.id} /><Button variant="secondary" size="sm" className="w-full">Create feedback link</Button></form>
               </>
             )}
+          </Card>
+        ) : null}
+
+        {awarded && ["AWARDED", "COMPLETED"].includes(r.status) && (isMember || user?.id === awarded.trainer.user.id) ? (
+          <Card className="p-5">
+            <p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Completion certificates</p>
+            <p className="mt-1 text-sm text-muted">Issue verifiable certificates to participants. Each gets a unique ID and a public page anyone can check.</p>
+            <ActionForm action={issueCertificates} className="mt-3 space-y-2" resetOnSuccess>
+              <input type="hidden" name="requirementId" value={r.id} />
+              <Textarea name="participants" className="min-h-24 text-xs" placeholder={"One per line: Name, email (email optional)\nAsha Menon, asha@company.com\nRavi Kumar"} required />
+              <label className="flex items-center gap-2 text-xs"><input type="checkbox" name="email" value="1" defaultChecked className="accent-cyan" /> Email the certificate link to participants with an address</label>
+              <SubmitButton variant="secondary" size="sm" className="w-full" pendingText="Issuing…">Issue certificates</SubmitButton>
+            </ActionForm>
+            {r.certificates.length ? (
+              <ul className="mt-3 max-h-56 space-y-1 overflow-y-auto text-xs">{r.certificates.map((c) => (
+                <li key={c.id} className="flex items-center gap-2 rounded-md border border-line/60 px-2 py-1">
+                  <Link href={`/certificates/${c.code}`} className={`min-w-0 flex-1 truncate ${c.revokedAt ? "text-muted line-through" : "hover:text-cyan"}`}>{c.participantName}</Link>
+                  <span className="mono text-[10px] text-muted">{c.code}</span>
+                  {c.revokedAt ? null : <form action={revokeCertificate}><input type="hidden" name="id" value={c.id} /><button className="text-rose hover:underline">Revoke</button></form>}
+                </li>
+              ))}</ul>
+            ) : null}
           </Card>
         ) : null}
 

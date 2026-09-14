@@ -6,6 +6,12 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { notify, audit } from "@/lib/notify";
 import type { ActionState } from "@/lib/types";
+import { dispatchWebhook } from "@/lib/webhooks";
+
+async function emitInvoice(id: string, event: "invoice.created" | "invoice.paid") {
+  const i = await db.invoice.findUnique({ where: { id }, select: { id: true, invoiceNumber: true, status: true, amount: true, gstRate: true, gstAmount: true, total: true, currency: true, dueDate: true, paidAt: true, paidReference: true, workOrderId: true, companyId: true, createdAt: true, trainer: { select: { id: true, slug: true, user: { select: { name: true } } } } } });
+  if (i) await dispatchWebhook(i.companyId, event, { invoice: { id: i.id, number: i.invoiceNumber, status: i.status, amount: i.amount, gst_rate: i.gstRate, gst_amount: i.gstAmount, total: i.total, currency: i.currency, due_date: i.dueDate, paid_at: i.paidAt, paid_reference: i.paidReference, work_order_id: i.workOrderId, trainer: { id: i.trainer.id, slug: i.trainer.slug, name: i.trainer.user.name }, created_at: i.createdAt } });
+}
 
 function refresh(id?: string) {
   revalidatePath("/dashboard/invoices"); revalidatePath("/dashboard"); revalidatePath("/dashboard/analytics");
@@ -36,6 +42,7 @@ export async function raiseInvoice(_p: ActionState, fd: FormData): Promise<Actio
     amount, gstRate, gstAmount, total: amount + gstAmount, currency: wo.currency, trainerGstin, companyGstin: wo.company.gstin, paymentDetails, notes: String(fd.get("notes") ?? "").trim(), dueDate,
   } });
   await db.trainerProfile.update({ where: { id: wo.trainerId }, data: { gstin: trainerGstin ?? undefined, paymentDetails: paymentDetails || undefined } });
+  await emitInvoice(inv.id, "invoice.created");
   await notify(wo.company.members.map((m) => m.userId), "invoice", `Invoice ${invoiceNumber} from ${user.name}`, `${wo.title} · total ${wo.currency} ${(amount + gstAmount).toLocaleString("en-IN")} · due ${dueDate.toDateString()}`, `/invoices/${inv.id}`);
   refresh(inv.id);
   redirect(`/invoices/${inv.id}?sent=1`);
@@ -51,6 +58,7 @@ export async function markInvoicePaid(_p: ActionState, fd: FormData): Promise<Ac
   await db.invoice.update({ where: { id }, data: { status: "PAID", paidAt: new Date(), paidReference: reference || null } });
   await notify(inv.trainer.userId, "invoice", `Invoice ${inv.invoiceNumber} marked paid`, `${inv.company.name} recorded payment${reference ? ` · ref ${reference}` : ""}.`, `/invoices/${id}`);
   await audit(user.id, "invoice.paid", id, { reference });
+  await emitInvoice(id, "invoice.paid");
   refresh(id);
   return { ok: "Marked as paid. The trainer has been notified." };
 }

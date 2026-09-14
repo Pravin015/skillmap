@@ -11,6 +11,17 @@ import { entitlementsFor } from "@/lib/billing";
 import { alertRequirementSearches } from "@/lib/saved-searches";
 import { qualifyReferral } from "@/lib/actions/referrals";
 import type { ActionState } from "@/lib/types";
+import { dispatchWebhook } from "@/lib/webhooks";
+import { applicationSelect, requirementSelect, shapeApplication, shapeRequirement } from "@/lib/api-shapes";
+
+async function emitApplication(id: string, event: "application.created" | "application.status_changed") {
+  const a = await db.application.findUnique({ where: { id }, select: { ...applicationSelect, requirement: { select: { title: true, currency: true, companyId: true } } } });
+  if (a) await dispatchWebhook(a.requirement.companyId, event, { application: shapeApplication(a) });
+}
+async function emitRequirement(id: string) {
+  const r = await db.requirement.findUnique({ where: { id }, select: { ...requirementSelect, companyId: true } });
+  if (r) await dispatchWebhook(r.companyId, "requirement.status_changed", { requirement: shapeRequirement(r) });
+}
 
 const reqSchema = z.object({
   title: z.string().trim().min(8, "Give the requirement a descriptive title"),
@@ -101,6 +112,7 @@ export async function setRequirementStatus(fd: FormData) {
   const req = await db.requirement.findFirst({ where: { id, companyId: ctx.companyId }, include: { applications: { where: { status: { in: ["APPLIED", "SHORTLISTED", "AWARDED"] } }, include: { trainer: { select: { userId: true } } } } } });
   if (!req) return;
   await db.requirement.update({ where: { id }, data: { status } });
+  await emitRequirement(id);
   if (status === "CANCELLED") {
     await db.availabilityBlock.deleteMany({ where: { requirementId: id } });
     await notify(req.applications.map((a) => a.trainer.userId), "requirement", "Requirement cancelled", `${ctx.companyName} cancelled: ${req.title}`, `/requirements/${id}`);
@@ -152,7 +164,8 @@ export async function apply(_p: ActionState, fd: FormData): Promise<ActionState>
     if (used >= limit) return { error: `The free plan allows ${limit} applications a month. Upgrade to Trainer Pro for unlimited applications (see Pricing).` };
   }
 
-  await db.application.create({ data: { requirementId, trainerId: user.trainerProfile.id, coverNote, proposedRate } });
+  const created = await db.application.create({ data: { requirementId, trainerId: user.trainerProfile.id, coverNote, proposedRate } });
+  await emitApplication(created.id, "application.created");
   await notify(req.company.members.map((m) => m.userId), "application", "New application", `${user.name} applied to ${req.title}`, `/dashboard/requirements/${requirementId}/applicants`);
   revalidatePath(`/requirements/${requirementId}`);
   return { ok: "Application sent. The company can now message you directly." };
@@ -165,6 +178,7 @@ export async function withdrawApplication(fd: FormData) {
   const app = await db.application.findFirst({ where: { id, trainerId: user.trainerProfile.id } });
   if (!app || ["AWARDED", "WITHDRAWN"].includes(app.status)) return;
   await db.application.update({ where: { id }, data: { status: "WITHDRAWN", statusChangedAt: new Date() } });
+  await emitApplication(id, "application.status_changed");
   revalidatePath("/dashboard/applications");
   revalidatePath(`/requirements/${app.requirementId}`);
 }
@@ -178,6 +192,7 @@ export async function decideApplication(fd: FormData) {
   const app = await db.application.findFirst({ where: { id, requirement: { companyId: ctx.companyId } }, include: { requirement: true, trainer: { select: { userId: true } } } });
   if (!app) return;
   await db.application.update({ where: { id }, data: { status: decision, declineReason: decision === "DECLINED" ? reason : null, statusChangedAt: new Date() } });
+  await emitApplication(id, "application.status_changed");
 
   const reqId = app.requirementId;
   if (decision === "SHORTLISTED") {
@@ -186,6 +201,7 @@ export async function decideApplication(fd: FormData) {
   }
   if (decision === "AWARDED") {
     await db.requirement.update({ where: { id: reqId }, data: { status: "AWARDED" } });
+    await emitRequirement(reqId);
     await db.availabilityBlock.create({ data: { trainerId: app.trainerId, startDate: app.requirement.startDate, endDate: app.requirement.endDate, kind: "BOOKED", requirementId: reqId, note: app.requirement.title } });
     const others = await db.application.findMany({ where: { requirementId: reqId, id: { not: id }, status: { in: ["APPLIED", "SHORTLISTED"] } }, include: { trainer: { select: { userId: true } } } });
     await db.application.updateMany({ where: { requirementId: reqId, id: { not: id }, status: { in: ["APPLIED", "SHORTLISTED"] } }, data: { status: "DECLINED", declineReason: "The requirement was awarded to another trainer.", statusChangedAt: new Date() } });

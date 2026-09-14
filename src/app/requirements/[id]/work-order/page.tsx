@@ -25,7 +25,7 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
     include: {
       company: { include: { members: { select: { userId: true } } } },
       applications: { where: { status: "AWARDED" }, include: { trainer: { include: { user: { select: { id: true, name: true, email: true } } } } } },
-      workOrder: { include: { events: { include: { actor: { select: { name: true } } }, orderBy: { createdAt: "asc" } }, createdBy: { select: { name: true } } } },
+      workOrder: { include: { events: { include: { actor: { select: { name: true } } }, orderBy: { createdAt: "asc" } }, createdBy: { select: { name: true } }, batches: { orderBy: { position: "asc" } } } },
     },
   });
   if (!req) notFound();
@@ -39,6 +39,8 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
   const editing = isMember && (!wo || edit === "1" || wo.status === "DRAFT" || wo.status === "CHANGES_REQUESTED") && wo?.status !== "ACCEPTED" && wo?.status !== "CANCELLED";
   const defaults = wo ?? { title: `${req.title}`, startDate: req.startDate, endDate: req.endDate, dayRate: awarded.proposedRate ?? req.budgetMax ?? 0, currency: req.currency, participants: req.participants, mode: req.mode, venue: req.city ? `${req.city}` : "", deliverables: "", provided: "", paymentTerms: "Invoice on completion, payable within 30 days by bank transfer. GST extra.", cancellationTerms: "Free reschedule up to 7 days before the start date. 50% of the total payable if cancelled within 7 days.", notes: "" };
   const lines = (s: string) => s.split("\n").map((l) => l.trim()).filter(Boolean);
+  const isoDay = (d: Date) => d.toISOString().slice(0, 10);
+  const initialBatches = (wo?.batches ?? []).map((b) => ({ label: b.label, startDate: isoDay(b.startDate), endDate: isoDay(b.endDate), participants: String(b.participants), city: b.city ?? "" }));
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -52,7 +54,7 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
         <>
           <div><p className="mono text-[12px] uppercase tracking-[0.08em] text-violet">{wo ? (wo.status === "CHANGES_REQUESTED" ? "Revise work order" : "Edit work order") : "New work order"}</p><h1 className="text-2xl font-bold">{req.title}</h1><p className="mt-1 text-sm text-muted">Trainer: {awarded.trainer.user.name} · Prefilled from the requirement and the accepted application.</p></div>
           {wo?.status === "CHANGES_REQUESTED" ? <Alert tone="rose">{awarded.trainer.user.name} asked for changes: “{[...wo.events].reverse().find((e) => e.type === "changes_requested")?.note}”</Alert> : null}
-          <WorkOrderForm requirementId={id} defaults={defaults} revising={!!wo && wo.status !== "DRAFT"} />
+          <WorkOrderForm requirementId={id} defaults={defaults} revising={!!wo && wo.status !== "DRAFT"} initialBatches={initialBatches} />
         </>
       ) : wo ? (
         <>
@@ -69,6 +71,16 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
               <Item l="Dates" v={dateRange(wo.startDate, wo.endDate)} /><Item l="Days" v={String(wo.days)} /><Item l="Participants" v={String(wo.participants)} /><Item l="Delivery" v={modeLabel[wo.mode]} />
               <Item l="Day rate" v={money(wo.dayRate, wo.currency)} /><Item l="Total (ex. GST)" v={money(wo.total, wo.currency)} accent /><Item l="Requirement" v={req.title} span />
             </dl>
+            {wo.batches.length ? (
+              <div className="mt-6">
+                <h3 className="font-display font-semibold">Batches</h3>
+                <table className="mt-2 w-full text-sm">
+                  <thead><tr className="border-b border-line text-left text-[11px] uppercase tracking-wider text-muted"><th className="py-1.5 pr-3">#</th><th className="py-1.5 pr-3">Batch</th><th className="py-1.5 pr-3">Dates</th><th className="py-1.5 pr-3 text-right">Days</th><th className="py-1.5 pr-3 text-right">Participants</th><th className="py-1.5">City / platform</th></tr></thead>
+                  <tbody>{wo.batches.map((b, i) => <tr key={b.id} className="border-b border-line/60"><td className="mono py-1.5 pr-3 text-xs text-muted">{i + 1}</td><td className="py-1.5 pr-3 font-medium">{b.label}</td><td className="py-1.5 pr-3">{dateRange(b.startDate, b.endDate)}</td><td className="py-1.5 pr-3 text-right tabular-nums">{b.days}</td><td className="py-1.5 pr-3 text-right tabular-nums">{b.participants}</td><td className="py-1.5 text-muted">{b.city ?? "—"}</td></tr>)}</tbody>
+                  <tfoot><tr className="font-semibold"><td /><td className="py-1.5 pr-3">Total</td><td /><td className="py-1.5 pr-3 text-right tabular-nums">{wo.days}</td><td className="py-1.5 pr-3 text-right tabular-nums">{wo.participants}</td><td /></tr></tfoot>
+                </table>
+              </div>
+            ) : null}
             {wo.venue ? <Block title="Venue and logistics" text={wo.venue} /> : null}
             <div className="grid gap-6 md:grid-cols-2">
               {wo.deliverables ? <div className="mt-6"><h3 className="font-display font-semibold">Trainer delivers</h3><ul className="mt-2 list-disc space-y-1 pl-5 text-sm">{lines(wo.deliverables).map((l, i) => <li key={i}>{l}</li>)}</ul></div> : null}

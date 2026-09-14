@@ -121,6 +121,9 @@ Without keys in development the pricing page runs a **simulator** that activates
 - **Announcement banner**: super admin sets text, style, link and expiry on Platform; members dismiss per browser.
 - **Time zones**: each member picks a time zone in Settings; interview slots are entered in the proposer's zone, stored as instants, and shown to each side in their own zone (reminders too).
 - **Work-order e-signature**: the company types a name to send, the trainer types a name to accept; names, timestamps and a reference hash appear on the document and print view.
+- **Multi-batch work orders**: a work order can be split into batches (label, dates, participants, city); days and participants total automatically and the batch table prints on the document.
+- **Completion certificates**: after an award, the company or trainer pastes participant names (with optional emails) on the requirement page; each participant gets a unique code and a public, printable, verifiable page at `/certificates/<code>` (emailed when an address is given). Certificates can be revoked.
+- **Public API v1 + webhooks** (`/settings/developers`): companies create API keys (`cg_live_…`, stored hashed, shown once) and call `GET/POST /api/v1/requirements`, `GET/PATCH /api/v1/requirements/:id`, `GET /api/v1/applications`, `GET /api/v1/work-orders` (cursor pagination, 600 req/min per key). Webhook endpoints receive signed JSON (`X-CorpGurus-Signature: sha256=HMAC(secret, "{timestamp}.{body}")`) for `application.created`, `application.status_changed`, `requirement.status_changed`, `work_order.sent`, `work_order.accepted`, `invoice.created`, `invoice.paid`; deliveries are logged with status and error, and a "Send test" button exists per endpoint.
 
 ## Phase 2 backlog
 
