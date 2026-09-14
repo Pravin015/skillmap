@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CreditCard } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { ACTIVE_STATUSES, entitlementsFor, inr, planByCode, simulatorEnabled, subscriptionWhere } from "@/lib/billing";
+import { ACTIVE_STATUSES, entitlementsFor, fmtAmount, planByCode, simulatorEnabled, subscriptionWhere } from "@/lib/billing";
 import { cancelSubscription, simulateExpire } from "@/lib/actions/billing";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Alert, Badge, Button, ButtonLink, Card, PageHeader } from "@/components/ui";
@@ -31,6 +31,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       {success ? <Alert tone="lime">{simulated ? "Simulated subscription activated. No money moved." : "Payment confirmed. Your plan activates as soon as Razorpay confirms it, usually within a minute."}</Alert> : null}
       {error === "signature" ? <Alert tone="rose">The payment could not be verified. If you were charged, contact support@corpgurus.com with the payment reference.</Alert> : null}
       {error === "owner" ? <Alert tone="rose">That subscription belongs to a different account.</Alert> : null}
+      {error === "stripe" ? <Alert tone="rose">We could not confirm the Stripe checkout. If you were charged, the webhook will activate the plan within a minute; otherwise try again.</Alert> : null}
 
       <Card className="p-6" glow={isCompany ? "violet" : "cyan"}>
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -39,7 +40,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
             <p className="mt-1 font-display text-2xl font-bold">{ent.planName}</p>
             {active ? (
               <p className="mt-1 text-sm text-muted">
-                {inr(active.amount)} / {active.interval === "YEARLY" ? "year" : "month"}
+                {fmtAmount(active.amount, active.currency)} / {active.interval === "YEARLY" ? "year" : "month"} · {active.provider === "stripe" ? "Stripe" : "Razorpay"}
                 {active.currentPeriodEnd ? ` · ${active.cancelAtPeriodEnd ? "ends" : "renews"} ${fmtDate(active.currentPeriodEnd)}` : ""}
                 {active.simulated ? " · simulated" : ""}
               </p>
@@ -71,7 +72,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           <div className="mt-3 overflow-x-auto"><table className="w-full text-sm">
             <thead><tr className="mono text-left text-[11px] uppercase tracking-wider text-muted"><th className="py-2 pr-4">Date</th><th className="py-2 pr-4">Plan</th><th className="py-2 pr-4">Amount</th><th className="py-2 pr-4">Status</th><th className="py-2">Reference</th></tr></thead>
             <tbody className="divide-y divide-line">{payments.map((p) => (
-              <tr key={p.id}><td className="py-2 pr-4">{fmtDate(p.createdAt)}</td><td className="py-2 pr-4">{planByCode(p.plan).name}</td><td className="py-2 pr-4 tabular-nums">{inr(p.amount)}</td><td className="py-2 pr-4"><Badge tone={p.status === "captured" ? "lime" : p.status === "failed" ? "rose" : "amber"}>{p.status}</Badge></td><td className="mono py-2 text-xs text-muted">{p.razorpayPaymentId ?? "—"}{p.method ? ` · ${p.method}` : ""}</td></tr>
+              <tr key={p.id}><td className="py-2 pr-4">{fmtDate(p.createdAt)}</td><td className="py-2 pr-4">{planByCode(p.plan).name}</td><td className="py-2 pr-4 tabular-nums">{fmtAmount(p.amount, p.currency)}</td><td className="py-2 pr-4"><Badge tone={p.status === "captured" ? "lime" : p.status === "failed" ? "rose" : "amber"}>{p.status}</Badge></td><td className="mono py-2 text-xs text-muted">{p.razorpayPaymentId ?? "—"}{p.method ? ` · ${p.method}` : ""}</td></tr>
             ))}</tbody>
           </table></div>
         ) : <p className="mt-2 text-sm text-muted">No charges yet.</p>}

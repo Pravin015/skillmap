@@ -37,6 +37,7 @@ async function loadTrainer(slug: string) {
       user: { select: { id: true, name: true, avatarUrl: true, createdAt: true, status: true, ratingsReceived: { include: { fromUser: { select: { name: true, membership: { select: { company: { select: { name: true } } } } } }, requirement: { select: { title: true } } }, orderBy: { createdAt: "desc" } } } },
       skills: { orderBy: { name: "asc" }, include: { category: { select: { name: true, slug: true } } } },
       certifications: { orderBy: [{ status: "asc" }, { createdAt: "desc" }] },
+      experiences: { orderBy: [{ current: "desc" }, { startDate: "desc" }] },
       applications: { where: { status: "AWARDED" }, include: { requirement: { include: { company: { select: { name: true, slug: true } } } } }, orderBy: { createdAt: "desc" } },
       _count: { select: { courses: { where: { published: true } }, photos: true, recommendations: { where: { visible: true } } } },
     },
@@ -175,6 +176,13 @@ function Overview({ t, badges, first }: { t: T; badges: Awaited<ReturnType<typeo
       <section><h2 className="mb-3 text-lg font-bold">Skills</h2>
         <div className="space-y-3">{[...byCat.entries()].map(([cat, e]) => <div key={cat}><p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">{e.slug ? <Link href={`/categories/${e.slug}`} className="hover:text-ink">{cat}</Link> : cat}</p><div className="flex flex-wrap gap-2">{e.skills.map((s) => <Link key={s} href={`/trainers?q=${encodeURIComponent(s)}`}><Chip className="hover:border-cyan">{s}</Chip></Link>)}</div></div>)}</div>
       </section>
+      {t.experiences.length ? (
+        <section><h2 className="mb-3 text-lg font-bold">Work history</h2>
+          <ol className="relative space-y-4 border-l border-line pl-5">{t.experiences.map((e) => (
+            <li key={e.id} className="relative"><span className="absolute -left-[26px] top-1.5 h-2.5 w-2.5 rounded-full bg-cyan" /><p className="font-semibold">{e.title} <span className="font-normal text-muted">· {e.organisation}</span></p><p className="text-xs text-muted">{e.startDate ? fmtDate(e.startDate) : "?"} → {e.current ? "present" : e.endDate ? fmtDate(e.endDate) : "?"}</p>{e.description ? <p className="mt-1 text-sm text-ink/90">{e.description}</p> : null}</li>
+          ))}</ol>
+        </section>
+      ) : null}
       <section><h2 className="mb-3 text-lg font-bold">Certifications</h2>
         {t.certifications.length ? (
           <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">{t.certifications.map((c) => (

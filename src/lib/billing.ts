@@ -35,6 +35,7 @@ export const PLANS: PlanDef[] = [
 
 export const planByCode = (code: PlanCode) => PLANS.find((p) => p.code === code)!;
 export const planPrice = (code: PlanCode, interval: BillingInterval) => (interval === "YEARLY" ? planByCode(code).yearly : planByCode(code).monthly);
+export const fmtAmount = (minor: number, currency: string) => new Intl.NumberFormat(currency === "USD" ? "en-US" : "en-IN", { style: "currency", currency, maximumFractionDigits: 0 }).format(minor / 100);
 export const inr = (paise: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(paise / 100);
 
 /* ---------- Razorpay client ---------- */
@@ -44,6 +45,7 @@ const keySecret = () => process.env.RAZORPAY_KEY_SECRET ?? "";
 export const razorpayConfigured = () => !!keyId() && !!keySecret();
 export const publicKeyId = () => keyId();
 export const simulatorEnabled = () => !razorpayConfigured() && process.env.NODE_ENV !== "production";
+export const usdSimulatorEnabled = () => !process.env.STRIPE_SECRET_KEY && process.env.NODE_ENV !== "production";
 
 async function rzp<T>(path: string, init?: { method?: string; body?: unknown }): Promise<T> {
   const res = await fetch(`https://api.razorpay.com/v1${path}`, {

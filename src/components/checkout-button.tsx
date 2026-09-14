@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import type { BillingInterval, PlanCode } from "@prisma/client";
-import { confirmCheckout, startCheckout } from "@/lib/actions/billing";
+import { confirmCheckout, startCheckout, startStripeCheckout } from "@/lib/actions/billing";
 import { Button } from "./ui";
 
 declare global {
@@ -19,6 +19,18 @@ function loadCheckoutJs() {
     s.onerror = () => reject(new Error("Could not load Razorpay Checkout. Check your connection and try again."));
     document.head.appendChild(s);
   });
+}
+
+/** USD: redirect to Stripe's hosted Checkout. */
+export function StripeCheckoutButton({ plan, interval, label, variant = "primary" }: { plan: PlanCode; interval: BillingInterval; label: string; variant?: "primary" | "violet" | "secondary" }) {
+  const [pending, start] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  return (
+    <div>
+      <Button type="button" variant={variant} className="w-full" disabled={pending} onClick={() => start(async () => { setError(null); const r = await startStripeCheckout(plan, interval); if ("error" in r) setError(r.error); else window.location.href = r.url; })}>{pending ? <Loader2 size={15} className="animate-spin" /> : null}{label}</Button>
+      {error ? <p className="mt-2 text-xs text-rose">{error}</p> : null}
+    </div>
+  );
 }
 
 /** Opens Razorpay Checkout for a subscription. On success it submits the payment proof to confirmCheckout. */

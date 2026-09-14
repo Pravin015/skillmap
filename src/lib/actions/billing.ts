@@ -11,6 +11,8 @@ import {
   razorpayConfigured, simulatorEnabled, subscriptionWhere, verifyCheckoutSignature,
 } from "@/lib/billing";
 import type { ActionState } from "@/lib/types";
+import { appUrl } from "@/lib/oauth";
+import { cancelStripeSubscription, createCheckoutSession, ensureStripePrice, stripeConfigured, usdPrice } from "@/lib/stripe";
 
 const PLAN_CODES: PlanCode[] = ["TRAINER_PRO", "COMPANY_GROWTH", "PARTNER"];
 
@@ -53,6 +55,23 @@ export async function startCheckout(plan: PlanCode, interval: BillingInterval): 
 }
 
 /** Razorpay Checkout success handler posts the payment id and signature here. */
+/** USD plans go through Stripe Checkout (hosted). Returns the redirect URL. */
+export async function startStripeCheckout(plan: PlanCode, interval: BillingInterval): Promise<{ url: string } | { error: string }> {
+  if (!PLAN_CODES.includes(plan)) return { error: "Unknown plan." };
+  if (!stripeConfigured()) return { error: "USD billing is not configured yet. Add STRIPE_SECRET_KEY to .env." };
+  let s;
+  try { s = await subject(plan); } catch (e) { return { error: (e as Error).message }; }
+  const existing = await db.subscription.findFirst({ where: { ...s.where, status: { in: ACTIVE_STATUSES } } });
+  if (existing) return { error: `${s.label} already has an active ${planByCode(existing.plan).name} plan. Cancel it first to change plans.` };
+  try {
+    const priceId = await ensureStripePrice(plan, interval);
+    const local = await db.subscription.create({ data: { ...s.where, plan, interval, amount: usdPrice(plan, interval), currency: "USD", provider: "stripe", status: "CREATED" } });
+    const session = await createCheckoutSession({ priceId, email: s.user.email, successUrl: `${appUrl()}/api/billing/stripe/return?session_id={CHECKOUT_SESSION_ID}`, cancelUrl: `${appUrl()}/pricing?interval=${interval === "YEARLY" ? "yearly" : "monthly"}&currency=usd&cancelled=1`, metadata: { localId: local.id, plan, interval, userId: s.user.id } });
+    await db.subscription.update({ where: { id: local.id }, data: { stripeCheckoutId: session.id } });
+    return { url: session.url };
+  } catch (e) { return { error: (e as Error).message }; }
+}
+
 export async function confirmCheckout(fd: FormData): Promise<void> {
   const user = await requireUser();
   const paymentId = String(fd.get("razorpay_payment_id") ?? "");
@@ -77,7 +96,10 @@ export async function cancelSubscription(_p: ActionState, fd: FormData): Promise
   if (sub.companyId && user.membership?.role !== "OWNER") return { error: "Only the company owner can cancel the plan." };
   if (!ACTIVE_STATUSES!.includes(sub.status)) return { error: "This subscription is not active." };
   try {
-    if (sub.razorpaySubscriptionId && !sub.simulated) {
+    if (sub.provider === "stripe" && sub.stripeSubscriptionId && !sub.simulated) {
+      const r = await cancelStripeSubscription(sub.stripeSubscriptionId);
+      await db.subscription.update({ where: { id }, data: { cancelAtPeriodEnd: true, currentPeriodEnd: r.current_period_end ? new Date(r.current_period_end * 1000) : sub.currentPeriodEnd } });
+    } else if (sub.razorpaySubscriptionId && !sub.simulated) {
       const r = await cancelRazorpaySubscription(sub.razorpaySubscriptionId, true);
       await db.subscription.update({ where: { id }, data: { cancelAtPeriodEnd: true, currentPeriodEnd: r.current_end ? new Date(r.current_end * 1000) : sub.currentPeriodEnd } });
     } else {
@@ -95,13 +117,14 @@ export async function simulateCheckout(_p: ActionState, fd: FormData): Promise<A
   if (!simulatorEnabled()) return { error: "The simulator is only available in development without Razorpay keys." };
   const plan = String(fd.get("plan")) as PlanCode;
   const interval = (String(fd.get("interval")) === "YEARLY" ? "YEARLY" : "MONTHLY") as BillingInterval;
+  const currency = String(fd.get("currency")) === "USD" ? "USD" : "INR";
   if (!PLAN_CODES.includes(plan)) return { error: "Unknown plan." };
   let s;
   try { s = await subject(plan); } catch (e) { return { error: (e as Error).message }; }
   if (await db.subscription.findFirst({ where: { ...s.where, status: { in: ACTIVE_STATUSES } } })) return { error: `${s.label} already has an active plan.` };
   const end = new Date(); end.setMonth(end.getMonth() + (interval === "YEARLY" ? 12 : 1));
-  const sub = await db.subscription.create({ data: { ...s.where, plan, interval, amount: planPrice(plan, interval), status: "ACTIVE", simulated: true, currentPeriodEnd: end, razorpaySubscriptionId: `sim_${Date.now()}` } });
-  await db.payment.create({ data: { subscriptionId: sub.id, razorpayPaymentId: `sim_pay_${Date.now()}`, amount: sub.amount, status: "captured", method: "simulator" } });
+  const sub = await db.subscription.create({ data: { ...s.where, plan, interval, amount: currency === "USD" ? usdPrice(plan, interval) : planPrice(plan, interval), currency, provider: currency === "USD" ? "stripe" : "razorpay", status: "ACTIVE", simulated: true, currentPeriodEnd: end, razorpaySubscriptionId: `sim_${Date.now()}` } });
+  await db.payment.create({ data: { subscriptionId: sub.id, razorpayPaymentId: `sim_pay_${Date.now()}`, amount: sub.amount, currency: sub.currency, status: "captured", method: "simulator" } });
   await notify(s.user.id, "billing", `${planByCode(plan).name} activated (simulated)`, "This is a development simulation. No money moved.", "/settings/billing");
   await audit(s.user.id, "subscription.simulate", sub.id, { plan, interval });
   billingRefresh();

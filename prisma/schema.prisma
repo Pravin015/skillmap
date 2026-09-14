@@ -354,6 +354,10 @@ model Subscription {
   razorpaySubscriptionId String?         @unique
   razorpayPlanId         String?
   razorpayCustomerId     String?
+  provider               String          @default("razorpay")
+  stripeSubscriptionId   String?         @unique
+  stripeCustomerId       String?
+  stripeCheckoutId       String?
   currentPeriodEnd       DateTime?
   cancelAtPeriodEnd      Boolean         @default(false)
   simulated              Boolean         @default(false)
@@ -486,6 +490,7 @@ model TrainerProfile {
   workOrders     WorkOrder[]
   photos         GalleryPhoto[]
   invoices       Invoice[]
+  experiences    Experience[]
 }
 
 model Certification {
@@ -889,4 +894,17 @@ model JobRun {
   name      String
   ranAt     DateTime @default(now())
   summary   String
+}
+
+model Experience {
+  id           String         @id @default(cuid())
+  trainerId    String
+  trainer      TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  title        String
+  organisation String
+  startDate    DateTime?
+  endDate      DateTime?
+  current      Boolean        @default(false)
+  description  String         @default("")
+  createdAt    DateTime       @default(now())
 }

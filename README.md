@@ -114,9 +114,12 @@ Without keys in development the pricing page runs a **simulator** that activates
 - **WhatsApp / SMS** (`src/lib/sms.ts`): Twilio WhatsApp sender with SMS fallback for shortlists, awards, work orders, invoices and invitations; opt-in with a phone number in Settings; logged when keys are absent.
 - **Production hardening**: S3-compatible uploads when `S3_*` is set (R2, MinIO, AWS), in-memory rate limits on sign-up, sign-in and feedback, security headers, `output: standalone`, `Dockerfile`, `docker-compose.prod.yml` (app + Postgres + cron sidecar), `/api/health`.
 
+- **LinkedIn import** (`/settings/import`): upload the PDF LinkedIn generates from a profile (or paste text); the parser (`src/lib/linkedin-parse.ts`) extracts headline, about, skills, languages, certifications and work history; the trainer ticks what to apply. Certifications arrive as pending; work history lives in `Experience` and shows on the Overview tab.
+- **Stripe (USD)**: the pricing page has an INR/USD toggle. USD plans use Stripe Checkout (hosted); prices/products are created lazily and cached in Setting. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`; register `https://<domain>/api/billing/stripe/webhook` for `checkout.session.completed`, `invoice.paid`, `invoice.payment_failed`, `customer.subscription.updated`, `customer.subscription.deleted`. Without keys the USD buttons use the simulator.
+
 ## Phase 2 backlog
 
-LinkedIn PDF import, Stripe for USD, Redis-backed rate limiting for multi-instance deployments. Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
+Redis-backed rate limiting for multi-instance deployments. Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
 
 ## Google and LinkedIn sign-in
 
