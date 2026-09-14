@@ -9,6 +9,8 @@ import { PwaControls } from "./pwa-register";
 import { AnnouncementBar } from "./announcement-bar";
 import { stopImpersonation } from "@/lib/actions/impersonate";
 import { roleLabel } from "@/lib/utils";
+import { getLang, getT, LANGS } from "@/lib/i18n";
+import { setLang } from "@/lib/actions/lang";
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
@@ -24,6 +26,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
   const unread = user ? await db.notification.count({ where: { userId: user.id, readAt: null } }) : 0;
   const unreadConvos = user ? (await db.conversationParticipant.findMany({ where: { userId: user.id }, select: { lastReadAt: true, conversation: { select: { messages: { where: { senderId: { not: user.id } }, orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } } } } } })).filter((p) => p.conversation.messages[0] && (!p.lastReadAt || p.lastReadAt < p.conversation.messages[0].createdAt)).length : 0;
   const tone = user?.role === "TRAINER" ? "cyan" : user?.role === "COMPANY" ? "violet" : "amber";
+  const [t, lang] = await Promise.all([getT(), getLang()]);
   const ann = Object.fromEntries((await db.setting.findMany({ where: { key: { in: ["announcement_text", "announcement_tone", "announcement_href", "announcement_until", "announcement_id"] } } })).map((s) => [s.key, s.value]));
   const announcementLive = !!ann.announcement_text && (!ann.announcement_until || new Date(ann.announcement_until) > new Date());
 
@@ -41,12 +44,12 @@ export async function Shell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-8 px-4 md:px-6">
           <Logo />
           <nav className="hidden items-center gap-1 text-[15px] font-medium text-muted md:flex">
-            <NavLink href="/feed" icon={<Newspaper size={16} />}>Feed</NavLink>
-            <NavLink href="/trainers" icon={<Users size={16} />}>Trainers</NavLink>
-            <NavLink href="/requirements" icon={<Briefcase size={16} />}>Requirements</NavLink>
-            <NavLink href="/companies" icon={<Building2 size={16} />}>Companies</NavLink>
-            <NavLink href="/categories" icon={<LayoutGrid size={16} />}>Categories</NavLink>
-            <NavLink href="/pricing" icon={<Tag size={16} />}>Pricing</NavLink>
+            <NavLink href="/feed" icon={<Newspaper size={16} />}>{t("nav.feed")}</NavLink>
+            <NavLink href="/trainers" icon={<Users size={16} />}>{t("nav.trainers")}</NavLink>
+            <NavLink href="/requirements" icon={<Briefcase size={16} />}>{t("nav.requirements")}</NavLink>
+            <NavLink href="/companies" icon={<Building2 size={16} />}>{t("nav.companies")}</NavLink>
+            <NavLink href="/categories" icon={<LayoutGrid size={16} />}>{t("nav.categories")}</NavLink>
+            <NavLink href="/pricing" icon={<Tag size={16} />}>{t("nav.pricing")}</NavLink>
           </nav>
           <form action="/search" className="ml-auto hidden lg:block">
             <div className="relative"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" /><input name="q" placeholder="Search" className="h-9 w-56 rounded-lg border border-line bg-surface-2 pl-9 pr-3 text-sm placeholder:text-dim focus:border-cyan focus:bg-white focus:outline-none" /></div>
@@ -94,19 +97,19 @@ export async function Shell({ children }: { children: React.ReactNode }) {
               </>
             ) : (
               <>
-                <ButtonLink href="/login" variant="ghost" size="sm">Sign in</ButtonLink>
-                <ButtonLink href="/signup" size="sm">Join CorpGurus</ButtonLink>
+                <ButtonLink href="/login" variant="ghost" size="sm">{t("nav.signin")}</ButtonLink>
+                <ButtonLink href="/signup" size="sm">{t("nav.join")}</ButtonLink>
               </>
             )}
             <details className="relative md:hidden">
               <summary className="flex cursor-pointer items-center rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-ink" aria-label="Menu"><Menu size={20} /></summary>
               <div className="absolute right-0 mt-2 w-56 rounded-xl border border-line bg-white p-1.5 shadow-lg shadow-navy/10">
-                <MenuLink href="/feed" icon={<Newspaper size={15} />}>Feed</MenuLink>
-                <MenuLink href="/trainers" icon={<Users size={15} />}>Trainers</MenuLink>
-                <MenuLink href="/requirements" icon={<Briefcase size={15} />}>Requirements</MenuLink>
-                <MenuLink href="/companies" icon={<Building2 size={15} />}>Companies</MenuLink>
-                <MenuLink href="/categories" icon={<LayoutGrid size={15} />}>Categories</MenuLink>
-                <MenuLink href="/pricing" icon={<Tag size={15} />}>Pricing</MenuLink>
+                <MenuLink href="/feed" icon={<Newspaper size={15} />}>{t("nav.feed")}</MenuLink>
+                <MenuLink href="/trainers" icon={<Users size={15} />}>{t("nav.trainers")}</MenuLink>
+                <MenuLink href="/requirements" icon={<Briefcase size={15} />}>{t("nav.requirements")}</MenuLink>
+                <MenuLink href="/companies" icon={<Building2 size={15} />}>{t("nav.companies")}</MenuLink>
+                <MenuLink href="/categories" icon={<LayoutGrid size={15} />}>{t("nav.categories")}</MenuLink>
+                <MenuLink href="/pricing" icon={<Tag size={15} />}>{t("nav.pricing")}</MenuLink>
               </div>
             </details>
           </div>
@@ -115,12 +118,15 @@ export async function Shell({ children }: { children: React.ReactNode }) {
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-6 md:py-10">{children}</main>
       <footer className="border-t border-line bg-white">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-[13px] text-muted md:px-6">
-          <div className="flex flex-wrap items-center gap-3"><p>© 2026 CorpGurus. The professional network for freelance corporate trainers.</p><PwaControls signedIn={!!user} /></div>
-          <div className="flex gap-5 font-medium">
-            <Link href="/trainers" className="hover:text-ink">Trainers</Link>
-            <Link href="/requirements" className="hover:text-ink">Requirements</Link>
-            <Link href="/companies" className="hover:text-ink">Companies</Link>
-            <Link href="/pricing" className="hover:text-ink">Pricing</Link>
+          <div className="flex flex-wrap items-center gap-3"><p>© 2026 CorpGurus. {t("footer.tagline")}</p><PwaControls signedIn={!!user} /></div>
+          <div className="flex flex-wrap items-center gap-5 font-medium">
+            <Link href="/trainers" className="hover:text-ink">{t("nav.trainers")}</Link>
+            <Link href="/requirements" className="hover:text-ink">{t("nav.requirements")}</Link>
+            <Link href="/companies" className="hover:text-ink">{t("nav.companies")}</Link>
+            <Link href="/pricing" className="hover:text-ink">{t("nav.pricing")}</Link>
+            <form action={setLang} className="flex items-center gap-1 rounded-lg border border-line p-0.5" aria-label={t("footer.language")}>
+              {(Object.keys(LANGS) as (keyof typeof LANGS)[]).map((l) => <button key={l} name="lang" value={l} className={`rounded-md px-2 py-0.5 text-xs ${lang === l ? "bg-navy text-white" : "text-muted hover:text-ink"}`} aria-pressed={lang === l}>{LANGS[l]}</button>)}
+            </form>
           </div>
         </div>
       </footer>

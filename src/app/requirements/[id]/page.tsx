@@ -34,7 +34,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
       postedBy: { select: { id: true, name: true, avatarUrl: true } },
       category: true, skills: { orderBy: { name: "asc" } },
       invitedTrainers: { include: { user: { select: { name: true } } } },
-      applications: { include: { interview: { include: { slots: { orderBy: { startsAt: "asc" } } } }, trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } } } } }, orderBy: { createdAt: "asc" } },
+      applications: { include: { team: { select: { name: true, slug: true } }, interview: { include: { slots: { orderBy: { startsAt: "asc" } } } }, trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } } } } }, orderBy: { createdAt: "asc" } },
       comments: { where: { deletedAt: null }, include: { author: { select: { id: true, name: true, avatarUrl: true, role: true } } }, orderBy: { createdAt: "asc" } },
       ratings: { include: { fromUser: { select: { name: true } }, toUser: { select: { name: true } } } },
       workOrder: { select: { id: true, status: true, version: true, total: true, currency: true, number: true } },
@@ -53,6 +53,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
   const clashes = user?.trainerProfile && acceptsApps && !myApp
     ? overlapping(await db.availabilityBlock.findMany({ where: { trainerId: user.trainerProfile.id, endDate: { gte: r.startDate }, startDate: { lte: r.endDate } } }), r.startDate, r.endDate)
     : [];
+  const myTeams = user?.trainerProfile && acceptsApps && !myApp ? await db.trainerTeam.findMany({ where: { leadId: user.trainerProfile.id, members: { some: { status: "ACCEPTED" } } }, select: { id: true, name: true }, orderBy: { name: "asc" } }) : [];
   const feedbackLink = awarded && (isMember || user?.id === awarded.trainer.user.id) ? await db.feedbackLink.findFirst({ where: { requirementId: r.id }, include: { _count: { select: { responses: true } }, responses: { select: { score: true, wouldRecommend: true } } } }) : null;
   const topLevel = r.comments.filter((c) => !c.parentId);
   const replies = (pid: string) => r.comments.filter((c) => c.parentId === pid);
@@ -158,7 +159,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
               <>
                 <p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Your application</p>
                 <div className="mt-2"><Badge tone={myApp.status === "AWARDED" ? "lime" : myApp.status === "SHORTLISTED" ? "amber" : myApp.status === "DECLINED" ? "rose" : myApp.status === "WITHDRAWN" ? "neutral" : "cyan"}>{appStatusLabel[myApp.status]}</Badge></div>
-                <p className="mt-2 text-sm text-muted">Proposed {rateRange(myApp.proposedRate, null, r.currency)} · sent {fmtDate(myApp.createdAt)}</p>
+                <p className="mt-2 text-sm text-muted">Proposed {rateRange(myApp.proposedRate, null, r.currency)} · sent {fmtDate(myApp.createdAt)}{myApp.team ? <> · as team <Link href={`/teams/${myApp.team.slug}`} className="text-cyan hover:underline">{myApp.team.name}</Link></> : null}</p>
                 {myApp.declineReason ? <p className="mt-2 rounded-lg bg-surface-2 px-3 py-2 text-sm text-muted">“{myApp.declineReason}”</p> : null}
                 {myApp.interview ? <div className="mt-3"><InterviewResponse interview={myApp.interview} companyName={r.company.name} tz={user?.timezone} /></div> : null}
                 <form action={startConversation} className="mt-3"><input type="hidden" name="userId" value={r.postedBy.id} /><input type="hidden" name="requirementId" value={r.id} /><Button variant="secondary" className="w-full"><MessageSquare size={15} /> Message {r.postedBy.name.split(" ")[0]}</Button></form>
@@ -173,6 +174,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
                   <input type="hidden" name="requirementId" value={r.id} />
                   <Field label="Cover note"><Textarea name="coverNote" required placeholder="Relevant batches you've delivered, what you bring, anything you need from them." /></Field>
                   <Field label={`Proposed day rate (${r.currency})`} hint={`Budget: ${rateRange(r.budgetMin, r.budgetMax, r.currency)}`}><Input name="proposedRate" type="number" min={0} step={500} placeholder={String(r.budgetMax ?? "")} /></Field>
+                  {myTeams.length ? <Field label="Apply as" hint="Team applications list every member; you sign and invoice as lead."><Select name="teamId" defaultValue=""><option value="">Myself</option>{myTeams.map((tm) => <option key={tm.id} value={tm.id}>Team · {tm.name}</option>)}</Select></Field> : null}
                   <SubmitButton className="w-full" pendingText="Sending…">Send application</SubmitButton>
                 </ActionForm>
               </>

@@ -73,6 +73,11 @@ export async function createRequirement(_p: ActionState, fd: FormData): Promise<
     },
   });
 
+  const stepId = String(fd.get("stepId") || "");
+  if (stepId) {
+    const step = await db.learningPathStep.findFirst({ where: { id: stepId, path: { companyId: ctx.companyId } }, select: { id: true } });
+    if (step) await db.learningPathStep.update({ where: { id: step.id }, data: { requirementId: req.id } });
+  }
   const inviteTrainerId = String(fd.get("inviteTrainerId") || "");
   if (inviteTrainerId) {
     const tr = await db.trainerProfile.findUnique({ where: { id: inviteTrainerId }, select: { userId: true } });
@@ -164,9 +169,12 @@ export async function apply(_p: ActionState, fd: FormData): Promise<ActionState>
     if (used >= limit) return { error: `The free plan allows ${limit} applications a month. Upgrade to Trainer Pro for unlimited applications (see Pricing).` };
   }
 
-  const created = await db.application.create({ data: { requirementId, trainerId: user.trainerProfile.id, coverNote, proposedRate } });
+  const teamId = String(fd.get("teamId") || "");
+  const team = teamId ? await db.trainerTeam.findFirst({ where: { id: teamId, leadId: user.trainerProfile.id }, select: { id: true, name: true } }) : null;
+  if (teamId && !team) return { error: "You can only apply on behalf of a team you lead." };
+  const created = await db.application.create({ data: { requirementId, trainerId: user.trainerProfile.id, coverNote, proposedRate, teamId: team?.id ?? null } });
   await emitApplication(created.id, "application.created");
-  await notify(req.company.members.map((m) => m.userId), "application", "New application", `${user.name} applied to ${req.title}`, `/dashboard/requirements/${requirementId}/applicants`);
+  await notify(req.company.members.map((m) => m.userId), "application", "New application", `${user.name}${team ? ` (team ${team.name})` : ""} applied to ${req.title}`, `/dashboard/requirements/${requirementId}/applicants`);
   revalidatePath(`/requirements/${requirementId}`);
   return { ok: "Application sent. The company can now message you directly." };
 }

@@ -5,7 +5,8 @@ import { notify } from "@/lib/notify";
 
 type SubEntity = { id: string; status: string; current_end?: number | null; plan_id?: string; customer_id?: string };
 type PayEntity = { id: string; amount: number; currency: string; status: string; method?: string; invoice_id?: string };
-type Event = { event: string; payload?: { subscription?: { entity: SubEntity }; payment?: { entity: PayEntity } } };
+type LinkEntity = { id: string; status: string; reference_id?: string };
+type Event = { event: string; payload?: { subscription?: { entity: SubEntity }; payment?: { entity: PayEntity }; payment_link?: { entity: LinkEntity } } };
 
 /** Razorpay → CorpGurus. Register this URL in the Razorpay dashboard with the subscription.* and payment.captured events. */
 export async function POST(req: Request) {
@@ -20,6 +21,16 @@ export async function POST(req: Request) {
   // Idempotent: Razorpay retries deliveries.
   if (await db.webhookEvent.findUnique({ where: { eventId } })) return NextResponse.json({ ok: true, duplicate: true });
   await db.webhookEvent.create({ data: { eventId, type: event.event, payload: event as object } });
+
+  const linkEntity = event.payload?.payment_link?.entity;
+  if (event.event === "payment_link.paid" && linkEntity?.id) {
+    const esc = await db.escrowDeposit.findFirst({ where: { OR: [{ providerRef: linkEntity.id }, { id: linkEntity.reference_id ?? "" }], status: "PENDING" }, include: { workOrder: { select: { requirementId: true, title: true } }, trainer: { select: { userId: true } }, company: { select: { name: true } } } });
+    if (esc) {
+      await db.escrowDeposit.update({ where: { id: esc.id }, data: { status: "FUNDED", fundedAt: new Date(), providerRef: linkEntity.id } });
+      await notify(esc.trainer.userId, "workorder", "Payment secured in escrow", `${esc.company.name} deposited ${esc.currency} ${esc.amount.toLocaleString("en-IN")} for ${esc.workOrder.title}.`, `/requirements/${esc.workOrder.requirementId}/work-order`);
+    }
+    return NextResponse.json({ ok: true, escrow: !!esc });
+  }
 
   const subEntity = event.payload?.subscription?.entity;
   const payEntity = event.payload?.payment?.entity;

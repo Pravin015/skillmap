@@ -193,6 +193,7 @@ model WorkOrder {
   events   WorkOrderEvent[]
   invoices Invoice[]
   batches  WorkOrderBatch[]
+  escrow   EscrowDeposit?
 }
 
 model WorkOrderEvent {
@@ -498,6 +499,9 @@ model TrainerProfile {
   photos         GalleryPhoto[]
   invoices       Invoice[]
   experiences    Experience[]
+  teamsLed       TrainerTeam[]
+  teamMemberships TrainerTeamMember[]
+  escrows        EscrowDeposit[]
   certificatesIssued IssuedCertificate[]
 }
 
@@ -549,6 +553,8 @@ model Company {
   invoices     Invoice[]
   apiKeys      ApiKey[]
   webhooks     WebhookEndpoint[]
+  learningPaths LearningPath[]
+  escrows      EscrowDeposit[]
 }
 
 model CompanyMember {
@@ -619,6 +625,7 @@ model Requirement {
   recommendations Recommendation[]
   workOrder       WorkOrder?
   certificates    IssuedCertificate[]
+  learningStep    LearningPathStep?
 }
 
 model Application {
@@ -628,6 +635,8 @@ model Application {
   trainerId       String
   trainer         TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
   coverNote       String
+  teamId          String?
+  team            TrainerTeam? @relation(fields: [teamId], references: [id], onDelete: SetNull)
   proposedRate    Int?
   status          AppStatus @default(APPLIED)
   declineReason   String?
@@ -981,4 +990,101 @@ model WebhookDelivery {
   responseCode Int?
   error        String?
   createdAt    DateTime        @default(now())
+}
+
+model LearningPath {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdById String
+  title       String
+  description String   @default("")
+  audience    String?
+  targetDate  DateTime?
+  archived    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  steps LearningPathStep[]
+}
+
+model LearningPathStep {
+  id            String       @id @default(cuid())
+  pathId        String
+  path          LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  position      Int          @default(0)
+  title         String
+  description   String       @default("")
+  days          Int          @default(1)
+  participants  Int          @default(10)
+  skills        String[]     @default([])
+  requirementId String?      @unique
+  requirement   Requirement? @relation(fields: [requirementId], references: [id], onDelete: SetNull)
+  createdAt     DateTime     @default(now())
+}
+
+enum TeamMemberStatus {
+  INVITED
+  ACCEPTED
+  DECLINED
+}
+
+model TrainerTeam {
+  id          String         @id @default(cuid())
+  slug        String         @unique
+  name        String
+  tagline     String         @default("")
+  description String         @default("")
+  leadId      String
+  lead        TrainerProfile @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now())
+
+  members      TrainerTeamMember[]
+  applications Application[]
+}
+
+model TrainerTeamMember {
+  id        String           @id @default(cuid())
+  teamId    String
+  team      TrainerTeam      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  trainerId String
+  trainer   TrainerProfile   @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  role      String           @default("Co-trainer")
+  status    TeamMemberStatus @default(INVITED)
+  createdAt DateTime         @default(now())
+
+  @@unique([teamId, trainerId])
+}
+
+enum EscrowStatus {
+  PENDING
+  FUNDED
+  RELEASED
+  PAID_OUT
+  REFUNDED
+}
+
+model EscrowDeposit {
+  id          String         @id @default(cuid())
+  workOrderId String         @unique
+  workOrder   WorkOrder      @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  companyId   String
+  company     Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  trainerId   String
+  trainer     TrainerProfile @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  amount      Int
+  feePercent  Int            @default(5)
+  fee         Int
+  currency    String         @default("INR")
+  status      EscrowStatus   @default(PENDING)
+  provider    String         @default("simulated")
+  providerRef String?
+  fundedAt    DateTime?
+  releasedAt  DateTime?
+  paidOutAt   DateTime?
+  refundedAt  DateTime?
+  payoutRef   String?
+  note        String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }

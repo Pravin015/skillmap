@@ -16,6 +16,7 @@ import { BadgeList, BadgeRow } from "@/components/badges";
 import { PostCard } from "@/components/post-card";
 import { FollowButton } from "@/components/post-actions";
 import { RecommendationsSection } from "@/components/recommendations";
+import { TrainerTeams } from "@/components/trainer-teams";
 import { ReportButton } from "@/components/report-button";
 import { TrainerCard } from "@/components/cards";
 import { Avatar, Badge, Button, Card, Chip, Select } from "@/components/ui";
@@ -183,6 +184,7 @@ function Overview({ t, badges, first }: { t: T; badges: Awaited<ReturnType<typeo
           ))}</ol>
         </section>
       ) : null}
+      <TrainerTeams trainerId={t.id} />
       <section><h2 className="mb-3 text-lg font-bold">Certifications</h2>
         {t.certifications.length ? (
           <div className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">{t.certifications.map((c) => (

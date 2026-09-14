@@ -17,6 +17,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/admin/users" className="rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Users</Link>
           <Link href="/admin/requirements" className="rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Requirements</Link>
           <Link href="/admin/reports" className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Reports{openReports ? <span className="rounded-full bg-rose px-1.5 font-display text-[10px] font-bold text-white">{openReports}</span> : null}</Link>
+          <Link href="/admin/escrow" className="rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Escrow</Link>
           {user.role === "SUPER_ADMIN" ? <Link href="/admin/platform" className="rounded-lg px-3 py-1.5 text-amber hover:bg-amber/10">Platform</Link> : null}
         </nav>
       </div>

@@ -7,7 +7,7 @@ import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Card, Field, Input, Select, Textarea } from "@/components/ui";
 import { cn, CURRENCIES, DELIVERY_MODES, LANGUAGES, modeLabel } from "@/lib/utils";
 
-export type Preset = { title: string; description: string; categoryId: string; mode: string; participants?: number; skills: string[]; inviteTrainerId: string; trainerName: string };
+export type Preset = { title: string; description: string; categoryId: string; mode: string; participants?: number; skills: string[]; inviteTrainerId: string; trainerName: string; stepId?: string };
 
 export function NewRequirementForm({ categories, skills, preset }: { categories: Category[]; skills: Skill[]; preset?: Preset }) {
   const [mode, setMode] = useState(preset?.mode ?? "ONSITE");
@@ -19,7 +19,8 @@ export function NewRequirementForm({ categories, skills, preset }: { categories:
   return (
     <ActionForm action={createRequirement}>
       <Card className="space-y-5 p-6">
-        {preset ? <input type="hidden" name="inviteTrainerId" value={preset.inviteTrainerId} /> : null}
+        {preset?.inviteTrainerId ? <input type="hidden" name="inviteTrainerId" value={preset.inviteTrainerId} /> : null}
+        {preset?.stepId ? <input type="hidden" name="stepId" value={preset.stepId} /> : null}
         <Field label="Title" hint="What, how long, for whom. e.g. “HPE VM Essentials 9.0 · 3-day ILT for bank ops team”"><Input name="title" required minLength={8} defaultValue={preset?.title} /></Field>
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="Domain"><Select name="categoryId" required defaultValue={preset?.categoryId ?? ""}><option value="" disabled>Choose a domain</option>{categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</Select></Field>

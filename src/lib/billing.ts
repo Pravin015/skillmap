@@ -59,6 +59,14 @@ async function rzp<T>(path: string, init?: { method?: string; body?: unknown }):
   return json;
 }
 
+/** One-off payment link for escrow deposits. https://razorpay.com/docs/api/payments/payment-links/ */
+export async function createRazorpayPaymentLink(p: { amountMinor: number; currency: string; description: string; referenceId: string; callbackUrl: string; customer?: { name?: string; email?: string } }) {
+  return rzp<{ id: string; short_url: string; status: string }>("/payment_links", { method: "POST", body: { amount: p.amountMinor, currency: p.currency, description: p.description, reference_id: p.referenceId, callback_url: p.callbackUrl, callback_method: "get", customer: p.customer, notes: { kind: "escrow", escrowId: p.referenceId } } });
+}
+export async function fetchRazorpayPaymentLink(id: string) {
+  return rzp<{ id: string; status: string; reference_id?: string; payments?: { payment_id: string; status: string }[] }>(`/payment_links/${id}`);
+}
+
 /** Razorpay plan ids are created once per (plan, interval) and cached in the Setting table. */
 export async function ensureRazorpayPlan(code: PlanCode, interval: BillingInterval) {
   const key = `rzp_plan_${code}_${interval}`;

@@ -10,6 +10,8 @@ import { Logo } from "@/components/shell";
 import { Alert, Badge, Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { dateRange, fmtDate, modeLabel, money, timeAgo } from "@/lib/utils";
 import { WorkOrderForm } from "./form";
+import { EscrowCard } from "@/components/escrow-card";
+import { razorpayConfigured } from "@/lib/billing";
 
 export const metadata = { title: "Work order" };
 
@@ -24,8 +26,8 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
     where: { id },
     include: {
       company: { include: { members: { select: { userId: true } } } },
-      applications: { where: { status: "AWARDED" }, include: { trainer: { include: { user: { select: { id: true, name: true, email: true } } } } } },
-      workOrder: { include: { events: { include: { actor: { select: { name: true } } }, orderBy: { createdAt: "asc" } }, createdBy: { select: { name: true } }, batches: { orderBy: { position: "asc" } } } },
+      applications: { where: { status: "AWARDED" }, include: { team: { include: { members: { where: { status: "ACCEPTED" }, include: { trainer: { select: { slug: true, user: { select: { name: true } } } } } } } }, trainer: { include: { user: { select: { id: true, name: true, email: true } } } } } },
+      workOrder: { include: { events: { include: { actor: { select: { name: true } } }, orderBy: { createdAt: "asc" } }, createdBy: { select: { name: true } }, batches: { orderBy: { position: "asc" } }, escrow: true } },
     },
   });
   if (!req) notFound();
@@ -36,6 +38,7 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
   if (!awarded) return <Alert tone="amber">Award the requirement to a trainer before issuing a work order. <Link href={`/dashboard/requirements/${id}/applicants`} className="underline">Review applicants</Link>.</Alert>;
 
   const wo = req.workOrder;
+  const feePercent = Number((await db.setting.findUnique({ where: { key: "escrow_fee_percent" } }))?.value ?? 5);
   const editing = isMember && (!wo || edit === "1" || wo.status === "DRAFT" || wo.status === "CHANGES_REQUESTED") && wo?.status !== "ACCEPTED" && wo?.status !== "CANCELLED";
   const defaults = wo ?? { title: `${req.title}`, startDate: req.startDate, endDate: req.endDate, dayRate: awarded.proposedRate ?? req.budgetMax ?? 0, currency: req.currency, participants: req.participants, mode: req.mode, venue: req.city ? `${req.city}` : "", deliverables: "", provided: "", paymentTerms: "Invoice on completion, payable within 30 days by bank transfer. GST extra.", cancellationTerms: "Free reschedule up to 7 days before the start date. 50% of the total payable if cancelled within 7 days.", notes: "" };
   const lines = (s: string) => s.split("\n").map((l) => l.trim()).filter(Boolean);
@@ -65,7 +68,7 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
             </div>
             <div className="grid gap-6 py-5 md:grid-cols-2">
               <div><p className="mono text-[11px] uppercase tracking-wider text-muted">Client</p><p className="mt-1 font-semibold">{req.company.name}</p><p className="text-sm text-muted">Issued by {wo.createdBy.name}</p></div>
-              <div><p className="mono text-[11px] uppercase tracking-wider text-muted">Trainer</p><p className="mt-1 font-semibold">{awarded.trainer.user.name}</p><p className="text-sm text-muted">{awarded.trainer.headline}</p></div>
+              <div><p className="mono text-[11px] uppercase tracking-wider text-muted">Trainer</p><p className="mt-1 font-semibold">{awarded.trainer.user.name}</p><p className="text-sm text-muted">{awarded.trainer.headline}</p>{awarded.team ? <p className="mt-1 text-sm text-muted">Team <span className="font-medium text-ink">{awarded.team.name}</span>{awarded.team.members.length ? ` · with ${awarded.team.members.map((m) => m.trainer.user.name).join(", ")}` : ""}</p> : null}</div>
             </div>
             <dl className="grid grid-cols-2 gap-4 rounded-xl border border-line bg-surface-2 p-4 md:grid-cols-4">
               <Item l="Dates" v={dateRange(wo.startDate, wo.endDate)} /><Item l="Days" v={String(wo.days)} /><Item l="Participants" v={String(wo.participants)} /><Item l="Delivery" v={modeLabel[wo.mode]} />
@@ -103,6 +106,8 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
             {isMember && wo.status !== "CANCELLED" ? <form action={cancelWorkOrder}><input type="hidden" name="id" value={wo.id} /><Button variant="danger" size="sm">Cancel work order</Button></form> : null}
             {isMember && wo.status === "CANCELLED" ? <form action={reopenWorkOrder}><input type="hidden" name="id" value={wo.id} /><Button variant="secondary" size="sm">Reopen as draft</Button></form> : null}
           </div>
+
+          {wo.status === "ACCEPTED" || wo.escrow ? <EscrowCard escrow={wo.escrow} workOrderId={wo.id} workOrderStatus={wo.status} total={wo.total} currency={wo.currency} isMember={isMember} isTrainer={isTrainer} feePercent={feePercent} live={razorpayConfigured() && wo.currency === "INR"} /> : null}
 
           {isTrainer && wo.status === "SENT" ? (
             <Card className="p-6 print:hidden" glow="cyan">

@@ -20,7 +20,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
     where: { id, companyId: user.membership.company.id },
     include: {
       skills: true,
-      applications: { include: { interview: { include: { slots: { orderBy: { startsAt: "asc" } } } }, trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } }, skills: true, certifications: { where: { status: "VERIFIED" } }, _count: { select: { applications: { where: { status: "AWARDED" } } } } } } }, orderBy: [{ status: "asc" }, { createdAt: "asc" }] },
+      applications: { include: { team: { include: { members: { where: { status: "ACCEPTED" }, include: { trainer: { select: { slug: true, user: { select: { name: true } } } } } } } }, interview: { include: { slots: { orderBy: { startsAt: "asc" } } } }, trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } }, skills: true, certifications: { where: { status: "VERIFIED" } }, _count: { select: { applications: { where: { status: "AWARDED" } } } } } } }, orderBy: [{ status: "asc" }, { createdAt: "asc" }] },
     },
   });
   if (!r) notFound();
@@ -50,6 +50,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
                       <span className="text-xs text-dim">applied {timeAgo(a.createdAt)}</span>
                     </div>
                     <p className="text-sm text-muted">{t.headline}</p>
+                    {a.team ? <p className="mt-1 rounded-md border border-cyan/30 bg-cyan/5 px-2 py-1 text-xs"><span className="font-semibold text-cyan">Team application · <Link href={`/teams/${a.team.slug}`} className="hover:underline">{a.team.name}</Link></span><span className="text-muted"> · with {a.team.members.map((m) => m.trainer.user.name).join(", ") || "no other members yet"}</span></p> : null}
                     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
                       <span className="flex items-center gap-1"><MapPin size={12} />{t.cities.join(", ") || "Flexible"}</span>
                       <span>{t.yearsExperience} yrs</span>
