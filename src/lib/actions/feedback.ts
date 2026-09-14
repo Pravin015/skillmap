@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { notify } from "@/lib/notify";
+import { rateLimit } from "@/lib/ratelimit";
 import type { ActionState } from "@/lib/types";
 
 /** Company members or the awarded trainer create one link per engagement. Learners open it without an account. */
@@ -27,6 +28,7 @@ export async function createFeedbackLink(fd: FormData) {
 }
 
 export async function submitFeedback(_p: ActionState, fd: FormData): Promise<ActionState> {
+  if (!(await rateLimit("feedback", 30, 60 * 60 * 1000))) return { error: "Too many submissions from this network. Try again later." };
   const token = String(fd.get("token") ?? "");
   const score = Number(fd.get("score"));
   const wouldRecommend = String(fd.get("wouldRecommend")) === "yes";

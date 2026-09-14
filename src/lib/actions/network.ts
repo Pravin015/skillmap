@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { notify } from "@/lib/notify";
 import { canMessage } from "@/lib/messaging";
+import { saveUpload } from "@/lib/uploads";
 
 export async function requestConnection(fd: FormData) {
   const user = await requireUser();
@@ -55,10 +56,12 @@ export async function sendMessage(fd: FormData) {
   const user = await requireUser();
   const conversationId = String(fd.get("conversationId"));
   const body = String(fd.get("body") ?? "").trim();
-  if (!body) return;
+  let attachmentUrl: string | null = null, attachmentName: string | null = null;
+  try { const f = fd.get("attachment") as File | null; attachmentUrl = await saveUpload(f, "messages", ["image", "doc"], 10); if (attachmentUrl && f) attachmentName = f.name; } catch { /* ignore bad attachment */ }
+  if (!body && !attachmentUrl) return;
   const convo = await db.conversation.findFirst({ where: { id: conversationId, participants: { some: { userId: user.id } } }, include: { participants: true } });
   if (!convo) return;
-  await db.message.create({ data: { conversationId, senderId: user.id, body } });
+  await db.message.create({ data: { conversationId, senderId: user.id, body: body || (attachmentName ? `Sent ${attachmentName}` : ""), attachmentUrl, attachmentName } });
   await db.conversation.update({ where: { id: conversationId }, data: { lastMessageAt: new Date() } });
   await db.conversationParticipant.update({ where: { conversationId_userId: { conversationId, userId: user.id } }, data: { lastReadAt: new Date() } });
   const others = convo.participants.filter((p) => p.userId !== user.id).map((p) => p.userId);

@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
-import { createAdmin, removeAdmin, updateSetting, upsertTaxonomy } from "@/lib/actions/admin";
+import { createAdmin, removeAdmin, runJobsNow, updateSetting, upsertTaxonomy } from "@/lib/actions/admin";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Avatar, Badge, Button, Card, Chip, Field, Input, PageHeader, Stat } from "@/components/ui";
 import { fmtDate, timeAgo } from "@/lib/utils";
@@ -34,6 +34,8 @@ export default async function PlatformPage() {
   ]);
   const activeSubs = await db.subscription.findMany({ where: { status: { in: ACTIVE_STATUSES } }, include: { user: { select: { name: true } }, company: { select: { name: true } } }, orderBy: { createdAt: "desc" } });
   const mrr = activeSubs.reduce((n, x) => n + (x.interval === "YEARLY" ? Math.round(x.amount / 12) : x.amount), 0);
+  const jobRuns = await db.jobRun.findMany({ orderBy: { ranAt: "desc" }, take: 7 });
+  const [emailStats, smsStats, pushCount] = await Promise.all([db.emailLog.groupBy({ by: ["status"], _count: true }), db.smsLog.groupBy({ by: ["status"], _count: true }), db.pushSubscription.count()]);
   const s = Object.fromEntries(settings.map((x) => [x.key, x.value]));
   const [newUsers, newReqs, newApps, awarded] = growth;
 
@@ -94,6 +96,23 @@ export default async function PlatformPage() {
           <h2 className="text-lg font-bold">Skills <span className="mono text-xs text-muted">{skills.length}</span></h2>
           <div className="mt-3 flex max-h-48 flex-wrap gap-1.5 overflow-y-auto scrollbar-thin">{skills.map((k) => <Chip key={k.id}>{k.name} <span className="ml-1 text-dim">{k._count.trainers}·{k._count.requirements}</span></Chip>)}</div>
           <ActionForm action={upsertTaxonomy} className="mt-4 flex gap-2" resetOnSuccess><input type="hidden" name="kind" value="skill" /><Input name="name" placeholder="New skill, e.g. Snowflake" required /><SubmitButton variant="secondary">Add</SubmitButton></ActionForm>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card className="p-6">
+          <div className="flex items-center justify-between"><h2 className="text-lg font-bold">Daily jobs</h2><form action={runJobsNow}><Button variant="secondary" size="sm">Run now</Button></form></div>
+          <p className="mt-1 text-sm text-muted">Certificate expiry reminders, expiries, overdue-invoice nudges, interview reminders, completion nudges. Schedule <span className="mono">GET /api/cron/daily</span> with the <span className="mono">x-cron-secret</span> header once a day.</p>
+          <ul className="mt-3 space-y-1 text-sm">{jobRuns.map((j) => <li key={j.id} className="flex gap-3"><span className="shrink-0 text-muted">{timeAgo(j.ranAt)}</span><span>{j.summary}</span></li>)}{!jobRuns.length ? <li className="text-muted">Never run.</li> : null}</ul>
+        </Card>
+        <Card className="p-6">
+          <h2 className="text-lg font-bold">Delivery channels</h2>
+          <dl className="mt-3 grid grid-cols-3 gap-3 text-sm">
+            <div><dt className="mono text-[11px] uppercase tracking-wider text-muted">Email</dt><dd className="mt-1">{emailStats.length ? emailStats.map((e) => `${e._count} ${e.status}`).join(" · ") : "none yet"}</dd></div>
+            <div><dt className="mono text-[11px] uppercase tracking-wider text-muted">WhatsApp / SMS</dt><dd className="mt-1">{smsStats.length ? smsStats.map((e) => `${e._count} ${e.status}`).join(" · ") : "none yet"}</dd></div>
+            <div><dt className="mono text-[11px] uppercase tracking-wider text-muted">Push devices</dt><dd className="mt-1">{pushCount}</dd></div>
+          </dl>
+          <p className="mt-3 text-xs text-muted">“logged” means the provider key is not set and the message was recorded instead of sent.</p>
         </Card>
       </div>
 

@@ -66,7 +66,7 @@ export default async function Dashboard() {
 
     return (
       <div>
-        <PageHeader eyebrow="Trainer dashboard" title={`Hello, ${user.name.split(" ")[0]}`} body={p.verifiedAt ? "Your profile is verified. Companies see you first in search." : "Get verified to appear first in search results."} actions={<><ButtonLink href="/dashboard/analytics" variant="ghost">Analytics</ButtonLink><ButtonLink href="/dashboard/invoices" variant="ghost">Invoices</ButtonLink><ButtonLink href="/dashboard/saved-searches" variant="ghost">Alerts</ButtonLink><ButtonLink href="/requirements" variant="secondary">Browse requirements <ArrowRight size={15} /></ButtonLink></>} />
+        <PageHeader eyebrow="Trainer dashboard" title={`Hello, ${user.name.split(" ")[0]}`} body={p.verifiedAt ? "Your profile is verified. Companies see you first in search." : "Get verified to appear first in search results."} actions={<><ButtonLink href="/dashboard/analytics" variant="ghost">Analytics</ButtonLink><ButtonLink href="/dashboard/invoices" variant="ghost">Invoices</ButtonLink><ButtonLink href="/dashboard/saved-searches" variant="ghost">Alerts</ButtonLink><ButtonLink href="/dashboard/referrals" variant="ghost">Refer</ButtonLink><ButtonLink href="/requirements" variant="secondary">Browse requirements <ArrowRight size={15} /></ButtonLink></>} />
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <Stat label="Active applications" value={active.length} />
           <Stat label="Shortlisted" value={p.applications.filter((a) => a.status === "SHORTLISTED").length} tone="amber" />

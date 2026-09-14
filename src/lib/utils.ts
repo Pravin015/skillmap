@@ -66,7 +66,7 @@ export const reqStatusLabel: Record<ReqStatus, string> = {
 export const appStatusLabel: Record<AppStatus, string> = {
   APPLIED: "Applied", SHORTLISTED: "Shortlisted", AWARDED: "Awarded", DECLINED: "Declined", WITHDRAWN: "Withdrawn",
 };
-export const certStatusLabel: Record<CertStatus, string> = { PENDING: "Pending review", VERIFIED: "Verified", REJECTED: "Rejected" };
+export const certStatusLabel: Record<CertStatus, string> = { PENDING: "Pending review", VERIFIED: "Verified", REJECTED: "Rejected", EXPIRED: "Expired" };
 export const connStatusLabel: Record<ConnStatus, string> = { PENDING: "Pending", ACCEPTED: "Connected", IGNORED: "Ignored" };
 export const roleLabel: Record<Role, string> = { TRAINER: "Trainer", COMPANY: "Company", ADMIN: "Administrator", SUPER_ADMIN: "Super admin" };
 

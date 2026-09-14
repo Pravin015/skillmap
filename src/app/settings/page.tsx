@@ -13,7 +13,7 @@ export const metadata = { title: "Settings" };
 export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ welcome?: string }> }) {
   const { welcome } = await searchParams;
   const user = await requireUser("/settings");
-  const account = await db.user.findUnique({ where: { id: user.id }, select: { passwordHash: true, emailNotifications: true, identityVerifiedAt: true, identityDocUrl: true, identityNote: true, oauthAccounts: { select: { provider: true, email: true, createdAt: true } } } });
+  const account = await db.user.findUnique({ where: { id: user.id }, select: { passwordHash: true, emailNotifications: true, phone: true, whatsappAlerts: true, identityVerifiedAt: true, identityDocUrl: true, identityNote: true, oauthAccounts: { select: { provider: true, email: true, createdAt: true } } } });
   const hasPassword = !!account?.passwordHash;
   const linked = new Map((account?.oauthAccounts ?? []).map((a) => [a.provider, a]));
 
@@ -51,12 +51,16 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       </Card>
 
       <Card className="p-6">
-        <h2 className="text-lg font-bold">Email notifications</h2>
-        <form action={updateEmailPrefs} className="mt-3 flex flex-wrap items-center gap-3">
+        <h2 className="text-lg font-bold">Notifications</h2>
+        <form action={updateEmailPrefs} className="mt-3 space-y-3">
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="emailNotifications" value="1" defaultChecked={account?.emailNotifications ?? true} className="accent-cyan" /> Email me about applications, work orders, invoices, invitations and verification results</label>
+          <div className="grid gap-3 md:grid-cols-[220px_1fr] md:items-end">
+            <Field label="Mobile number" hint="With country code, e.g. +919876543210"><Input name="phone" defaultValue={account?.phone ?? ""} placeholder="+91" /></Field>
+            <label className="flex items-center gap-2 pb-6 text-sm"><input type="checkbox" name="whatsappAlerts" value="1" defaultChecked={account?.whatsappAlerts ?? false} className="accent-cyan" /> WhatsApp / SMS me for shortlists, awards, work orders and invoices</label>
+          </div>
           <Button variant="secondary" size="sm">Save</Button>
         </form>
-        <p className="mt-2 text-xs text-muted">Messages, likes and comments stay in-app only.</p>
+        <p className="mt-2 text-xs text-muted">Messages, likes and comments stay in-app. Browser push can be enabled from the footer of any page.</p>
       </Card>
 
       <Card className="p-6">

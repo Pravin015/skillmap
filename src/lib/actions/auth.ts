@@ -6,6 +6,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { createSession, destroySession } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
+import { rateLimit } from "@/lib/ratelimit";
 import type { ActionState } from "@/lib/types";
 
 const signupSchema = z.object({
@@ -26,6 +27,7 @@ async function uniqueSlug(base: string, exists: (s: string) => Promise<boolean>)
 }
 
 export async function signup(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  if (!(await rateLimit("signup", 10, 60 * 60 * 1000))) return { error: "Too many sign-ups from this network. Try again in an hour." };
   const parsed = signupSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const d = parsed.data;
@@ -36,7 +38,9 @@ export async function signup(_prev: ActionState, formData: FormData): Promise<Ac
   if (await db.user.findUnique({ where: { email: d.email } })) return { error: "An account with this email already exists. Sign in instead." };
 
   const passwordHash = await bcrypt.hash(d.password, 10);
-  const user = await db.user.create({ data: { name: d.name, email: d.email, passwordHash, role: d.role } });
+  const refCode = String(formData.get("ref") ?? "").trim().toUpperCase();
+  const referrer = refCode ? await db.user.findUnique({ where: { referralCode: refCode }, select: { id: true } }) : null;
+  const user = await db.user.create({ data: { name: d.name, email: d.email, passwordHash, role: d.role, referredById: referrer?.id ?? null } });
 
   if (d.role === "TRAINER") {
     const slug = await uniqueSlug(d.name, async (s) => !!(await db.trainerProfile.findUnique({ where: { slug: s } })));
@@ -59,6 +63,7 @@ export async function signup(_prev: ActionState, formData: FormData): Promise<Ac
 }
 
 export async function login(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  if (!(await rateLimit("login", 20, 15 * 60 * 1000))) return { error: "Too many sign-in attempts. Wait 15 minutes and try again." };
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "");

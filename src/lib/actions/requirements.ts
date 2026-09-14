@@ -9,6 +9,7 @@ import { notify } from "@/lib/notify";
 import { daysBetween } from "@/lib/utils";
 import { entitlementsFor } from "@/lib/billing";
 import { alertRequirementSearches } from "@/lib/saved-searches";
+import { qualifyReferral } from "@/lib/actions/referrals";
 import type { ActionState } from "@/lib/types";
 
 const reqSchema = z.object({
@@ -74,6 +75,7 @@ export async function createRequirement(_p: ActionState, fd: FormData): Promise<
     await notify(matching.map((m) => m.userId), "requirement", "New requirement matches your skills", `${ctx.companyName}: ${d.title}`, `/requirements/${req.id}`);
   }
   if (d.visibility === "PUBLIC") await alertRequirementSearches(req.id);
+  await qualifyReferral(ctx.user.id);
   redirect(`/requirements/${req.id}`);
 }
 

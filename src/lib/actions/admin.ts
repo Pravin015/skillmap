@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { audit, notify } from "@/lib/notify";
 import { slugify } from "@/lib/utils";
+import { qualifyReferral } from "@/lib/actions/referrals";
 import type { ActionState } from "@/lib/types";
 
 const STAFF = ["ADMIN", "SUPER_ADMIN"] as const;
@@ -21,6 +22,7 @@ export async function reviewCertification(fd: FormData) {
   await db.certification.update({ where: { id }, data: { status: decision, reviewNote: note, reviewedById: admin.id } });
   if (decision === "VERIFIED") {
     await db.trainerProfile.update({ where: { id: cert.trainer.id }, data: { verifiedAt: new Date() } });
+    await qualifyReferral(cert.trainer.userId);
   }
   await notify(cert.trainer.userId, "verification", decision === "VERIFIED" ? "Certification verified" : "Certification not verified", `${cert.name} (${cert.issuer})${note ? `: ${note}` : ""}`, "/settings");
   await audit(admin.id, `certification.${decision.toLowerCase()}`, cert.id, { trainer: cert.trainer.slug, name: cert.name, note });
@@ -86,6 +88,14 @@ export async function moderateRequirement(fd: FormData) {
   await notify(r.company.members.map((m) => m.userId), "moderation", "Requirement removed by CorpGurus", `${r.title} was taken down. Reply to support@corpgurus.com if you think this is a mistake.`, `/requirements/${id}`);
   await audit(admin.id, "requirement.takedown", id, { title: r.title });
   revalidatePath(`/requirements/${id}`); revalidatePath("/admin");
+}
+
+export async function runJobsNow(): Promise<void> {
+  const su = await requireRole(["SUPER_ADMIN"]);
+  const { runDailyJobs } = await import("@/lib/jobs");
+  const summary = await runDailyJobs();
+  await audit(su.id, "jobs.run", "daily", { summary });
+  revalidatePath("/admin/platform");
 }
 
 export async function createAdmin(_p: ActionState, fd: FormData): Promise<ActionState> {

@@ -107,9 +107,16 @@ Without keys in development the pricing page runs a **simulator** that activates
 - **Saved searches** (`/dashboard/saved-searches`): save trainer or requirement filters; new matches notify in-app and by email (trainer alerts throttled to once a day per search).
 - **Interviews**: companies propose up to three slots for an applicant with format, duration and link; trainers confirm one or decline with a note; confirmation emails both sides a calendar (.ics) invite, also downloadable at `/api/interviews/<id>/ics`.
 
+- **Daily jobs** (`/api/cron/daily`, header `x-cron-secret`): certificate expiry reminders 30 days out, automatic expiry (badge drops when no verified cert remains), weekly overdue-invoice nudges, interview reminders 24 h ahead, completion nudges. Super admin can run them from Platform; history in `JobRun`.
+- **Live messaging**: conversations and the header badges refresh automatically (polling every 3 s in a conversation, 20 s elsewhere); file attachments in chat.
+- **Referrals** (`/dashboard/referrals`): every member has a code; `/signup?ref=CODE` links the new account; when the referred trainer's first certificate is verified or the referred company posts its first requirement, the referrer gets 30 days of Trainer Pro or Company Growth.
+- **Installable app**: web manifest, service worker with offline page and cached assets, browser push via VAPID (`npx web-push generate-vapid-keys`, then set `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`). Install and push controls sit in the footer.
+- **WhatsApp / SMS** (`src/lib/sms.ts`): Twilio WhatsApp sender with SMS fallback for shortlists, awards, work orders, invoices and invitations; opt-in with a phone number in Settings; logged when keys are absent.
+- **Production hardening**: S3-compatible uploads when `S3_*` is set (R2, MinIO, AWS), in-memory rate limits on sign-up, sign-in and feedback, security headers, `output: standalone`, `Dockerfile`, `docker-compose.prod.yml` (app + Postgres + cron sidecar), `/api/health`.
+
 ## Phase 2 backlog
 
-LinkedIn PDF import, referral programme, PWA, S3 uploads, Stripe for USD. Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
+LinkedIn PDF import, Stripe for USD, Redis-backed rate limiting for multi-instance deployments. Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
 
 ## Google and LinkedIn sign-in
 

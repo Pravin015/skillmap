@@ -7,7 +7,7 @@ import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Card, Field, Input, Select } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
-export function SignupForm({ initialRole, oauth }: { initialRole: "TRAINER" | "COMPANY"; oauth?: React.ReactNode }) {
+export function SignupForm({ initialRole, oauth, refCode }: { initialRole: "TRAINER" | "COMPANY"; oauth?: React.ReactNode; refCode?: string }) {
   const [role, setRole] = useState<"TRAINER" | "COMPANY">(initialRole);
   return (
     <Card className="mt-6 p-6">
@@ -18,6 +18,7 @@ export function SignupForm({ initialRole, oauth }: { initialRole: "TRAINER" | "C
       {oauth}
       <ActionForm action={signup} className="space-y-4">
         <input type="hidden" name="role" value={role} />
+        {refCode ? <input type="hidden" name="ref" value={refCode} /> : null}
         <Field label="Full name"><Input name="name" required placeholder="Ananya Iyer" autoComplete="name" /></Field>
         <Field label="Work email"><Input name="email" type="email" required placeholder={role === "COMPANY" ? "you@company.com" : "you@example.com"} autoComplete="email" /></Field>
         <Field label="Password" hint="At least 8 characters"><Input name="password" type="password" required minLength={8} autoComplete="new-password" /></Field>

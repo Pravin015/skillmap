@@ -1,0 +1,46 @@
+# Production stack: app + Postgres + daily jobs. Copy .env.example to .env.production and fill it in.
+#   docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-corpgurus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-corpgurus}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-corpgurus}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env.production
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-corpgurus}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-corpgurus}?schema=public
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - uploads:/app/public/uploads
+      - private_uploads:/app/private-uploads
+    command: sh -c "node node_modules/prisma/build/index.js db push --skip-generate && node server.js"
+
+  cron:
+    image: curlimages/curl:latest
+    restart: unless-stopped
+    depends_on: [app]
+    env_file: .env.production
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["while true; do sleep 86400; curl -fsS -H \"x-cron-secret: $$CRON_SECRET\" http://app:3000/api/cron/daily || true; done"]
+
+volumes:
+  pgdata:
+  uploads:
+  private_uploads:

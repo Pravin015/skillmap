@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { BarChart3, Bell, BellRing, Briefcase, Building2, CreditCard, LayoutDashboard, LayoutGrid, LogOut, Menu, MessageSquare, Newspaper, Receipt, Search, Settings, ShieldCheck, Tag, Users } from "lucide-react";
+import { BarChart3, Bell, BellRing, Gift, Briefcase, Building2, CreditCard, LayoutDashboard, LayoutGrid, LogOut, Menu, MessageSquare, Newspaper, Receipt, Search, Settings, ShieldCheck, Tag, Users } from "lucide-react";
 import { getCurrentUser, isStaff } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logout } from "@/lib/actions/auth";
 import { Avatar, ButtonLink } from "./ui";
+import { LiveRefresh } from "./live-refresh";
+import { PwaControls } from "./pwa-register";
 import { roleLabel } from "@/lib/utils";
 
 export function Logo({ className = "" }: { className?: string }) {
@@ -18,10 +20,12 @@ export function Logo({ className = "" }: { className?: string }) {
 export async function Shell({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
   const unread = user ? await db.notification.count({ where: { userId: user.id, readAt: null } }) : 0;
+  const unreadConvos = user ? (await db.conversationParticipant.findMany({ where: { userId: user.id }, select: { lastReadAt: true, conversation: { select: { messages: { where: { senderId: { not: user.id } }, orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } } } } } })).filter((p) => p.conversation.messages[0] && (!p.lastReadAt || p.lastReadAt < p.conversation.messages[0].createdAt)).length : 0;
   const tone = user?.role === "TRAINER" ? "cyan" : user?.role === "COMPANY" ? "violet" : "amber";
 
   return (
     <div className="flex min-h-screen flex-col">
+      {user ? <LiveRefresh /> : null}
       <header className="sticky top-0 z-40 border-b border-line bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-8 px-4 md:px-6">
           <Logo />
@@ -46,7 +50,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
                     <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose px-1 font-display text-[10px] font-bold text-white">{unread}</span>
                   ) : null}
                 </Link>
-                <Link href="/messages" className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-ink" aria-label="Messages"><MessageSquare size={19} /></Link>
+                <Link href="/messages" className="relative rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-ink" aria-label="Messages"><MessageSquare size={19} />{unreadConvos > 0 ? <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cyan px-1 font-display text-[10px] font-bold text-white">{unreadConvos}</span> : null}</Link>
                 <details className="group relative">
                   <summary className="flex cursor-pointer items-center gap-2 rounded-lg py-1 pl-1 pr-2 hover:bg-surface-2">
                     <Avatar name={user.name} src={user.avatarUrl} size={32} tone={tone} />
@@ -60,7 +64,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
                     <div className="hairline my-1" />
                     <MenuLink href="/dashboard" icon={<LayoutDashboard size={15} />}>Dashboard</MenuLink>
                     <MenuLink href="/feed" icon={<Newspaper size={15} />}>Feed</MenuLink>
-                    {user.trainerProfile || user.membership ? <><MenuLink href="/dashboard/analytics" icon={<BarChart3 size={15} />}>Analytics</MenuLink><MenuLink href="/dashboard/invoices" icon={<Receipt size={15} />}>Invoices</MenuLink><MenuLink href="/dashboard/saved-searches" icon={<BellRing size={15} />}>Saved searches</MenuLink></> : null}
+                    {user.trainerProfile || user.membership ? <><MenuLink href="/dashboard/analytics" icon={<BarChart3 size={15} />}>Analytics</MenuLink><MenuLink href="/dashboard/invoices" icon={<Receipt size={15} />}>Invoices</MenuLink><MenuLink href="/dashboard/saved-searches" icon={<BellRing size={15} />}>Saved searches</MenuLink><MenuLink href="/dashboard/referrals" icon={<Gift size={15} />}>Refer & earn</MenuLink></> : null}
                     <MenuLink href="/network" icon={<Users size={15} />}>Network</MenuLink>
                     <MenuLink href="/messages" icon={<MessageSquare size={15} />}>Messages</MenuLink>
                     {user.trainerProfile ? <MenuLink href={`/trainers/${user.trainerProfile.slug}`} icon={<Briefcase size={15} />}>My public profile</MenuLink> : null}
@@ -100,7 +104,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-6 md:py-10">{children}</main>
       <footer className="border-t border-line bg-white">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-[13px] text-muted md:px-6">
-          <p>© 2026 CorpGurus. The professional network for freelance corporate trainers.</p>
+          <div className="flex flex-wrap items-center gap-3"><p>© 2026 CorpGurus. The professional network for freelance corporate trainers.</p><PwaControls signedIn={!!user} /></div>
           <div className="flex gap-5 font-medium">
             <Link href="/trainers" className="hover:text-ink">Trainers</Link>
             <Link href="/requirements" className="hover:text-ink">Requirements</Link>

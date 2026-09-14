@@ -122,7 +122,8 @@ export async function uploadIdentity(_p: ActionState, fd: FormData): Promise<Act
 
 export async function updateEmailPrefs(fd: FormData) {
   const user = await requireUser();
-  await db.user.update({ where: { id: user.id }, data: { emailNotifications: String(fd.get("emailNotifications")) === "1" } });
+  const phone = String(fd.get("phone") ?? "").replace(/[^\d+]/g, "");
+  await db.user.update({ where: { id: user.id }, data: { emailNotifications: String(fd.get("emailNotifications")) === "1", phone: phone || null, whatsappAlerts: String(fd.get("whatsappAlerts")) === "1" && !!phone } });
   revalidatePath("/settings");
 }
 
