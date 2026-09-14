@@ -2,7 +2,7 @@ import "server-only";
 import type { Prisma } from "@prisma/client";
 import { db } from "./db";
 
-const author = { select: { id: true, name: true, avatarUrl: true, role: true, trainerProfile: { select: { slug: true, headline: true, verifiedAt: true } }, membership: { select: { company: { select: { name: true, slug: true, domainVerifiedAt: true } } } } } } as const;
+const author = { select: { id: true, name: true, avatarUrl: true, role: true, trainerProfile: { select: { slug: true, headline: true, verifiedAt: true } }, memberships: { select: { company: { select: { name: true, slug: true, domainVerifiedAt: true } } } } } } as const;
 
 export const postInclude = {
   author,

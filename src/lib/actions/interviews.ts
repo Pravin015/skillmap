@@ -8,6 +8,7 @@ import { sendEmail, renderEmail } from "@/lib/email";
 import { buildIcs } from "@/lib/ics";
 import { appUrl } from "@/lib/oauth";
 import type { ActionState } from "@/lib/types";
+import { memberCan } from "@/lib/permissions";
 import { fmtInTz, zonedToUtc } from "@/lib/tz";
 
 function refresh(requirementId: string) {
@@ -55,7 +56,7 @@ export async function respondInterview(_p: ActionState, fd: FormData): Promise<A
   const slotId = String(fd.get("slotId") || "");
   const decline = String(fd.get("decline")) === "1";
   const note = String(fd.get("note") ?? "").trim();
-  const iv = await db.interview.findUnique({ where: { id }, include: { slots: true, proposedBy: { select: { id: true, name: true, email: true } }, application: { include: { requirement: { include: { company: { include: { members: { select: { userId: true } } } } } }, trainer: { include: { user: { select: { id: true, name: true, email: true } } } } } } } });
+  const iv = await db.interview.findUnique({ where: { id }, include: { slots: true, proposedBy: { select: { id: true, name: true, email: true } }, application: { include: { requirement: { include: { company: { include: { members: { select: { userId: true, role: true } } } } } }, trainer: { include: { user: { select: { id: true, name: true, email: true } } } } } } } });
   if (!iv || iv.application.trainer.user.id !== user.id) return { error: "Only the invited trainer can respond." };
   if (iv.status !== "PROPOSED") return { error: "This interview is not awaiting a response." };
   const req = iv.application.requirement;
@@ -91,10 +92,10 @@ export async function respondInterview(_p: ActionState, fd: FormData): Promise<A
 export async function cancelInterview(fd: FormData) {
   const user = await requireUser();
   const id = String(fd.get("id"));
-  const iv = await db.interview.findUnique({ where: { id }, include: { application: { include: { requirement: { include: { company: { include: { members: { select: { userId: true } } } } } }, trainer: { select: { userId: true } } } } } });
+  const iv = await db.interview.findUnique({ where: { id }, include: { application: { include: { requirement: { include: { company: { include: { members: { select: { userId: true, role: true } } } } } }, trainer: { select: { userId: true } } } } } });
   if (!iv) return;
   const req = iv.application.requirement;
-  const isMember = req.company.members.some((m) => m.userId === user.id);
+  const isMember = memberCan(req.company.members, user.id, "hire");
   const isTrainer = iv.application.trainer.userId === user.id;
   if (!isMember && !isTrainer) return;
   await db.interview.update({ where: { id }, data: { status: "CANCELLED" } });

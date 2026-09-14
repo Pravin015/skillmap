@@ -8,6 +8,7 @@ import { notify } from "@/lib/notify";
 import { sendEmail, renderEmail } from "@/lib/email";
 import { appUrl } from "@/lib/oauth";
 import type { ActionState } from "@/lib/types";
+import { memberCan } from "@/lib/permissions";
 
 const code = () => randomBytes(5).toString("hex").toUpperCase().match(/.{1,5}/g)!.join("-");
 
@@ -15,11 +16,11 @@ const code = () => randomBytes(5).toString("hex").toUpperCase().match(/.{1,5}/g)
 export async function issueCertificates(_p: ActionState, fd: FormData): Promise<ActionState> {
   const user = await requireUser();
   const requirementId = String(fd.get("requirementId"));
-  const req = await db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: { select: { userId: true } } } }, applications: { where: { status: "AWARDED" }, include: { trainer: { select: { id: true, userId: true, user: { select: { name: true } } } } } } } });
+  const req = await db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, applications: { where: { status: "AWARDED" }, include: { trainer: { select: { id: true, userId: true, user: { select: { name: true } } } } } } } });
   if (!req || !["AWARDED", "COMPLETED"].includes(req.status)) return { error: "Certificates can be issued once the engagement is awarded." };
   const awarded = req.applications[0];
   if (!awarded) return { error: "No awarded trainer on this requirement." };
-  const allowed = req.company.members.some((m) => m.userId === user.id) || awarded.trainer.userId === user.id;
+  const allowed = memberCan(req.company.members, user.id, "hire") || awarded.trainer.userId === user.id;
   if (!allowed) return { error: "Only the company or the awarded trainer can issue certificates." };
   const lines = String(fd.get("participants") ?? "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   if (!lines.length) return { error: "Add at least one participant, one per line." };
@@ -52,9 +53,9 @@ export async function issueCertificates(_p: ActionState, fd: FormData): Promise<
 
 export async function revokeCertificate(fd: FormData) {
   const user = await requireUser();
-  const c = await db.issuedCertificate.findUnique({ where: { id: String(fd.get("id")) }, include: { requirement: { include: { company: { include: { members: { select: { userId: true } } } } } }, trainer: { select: { userId: true } } } });
+  const c = await db.issuedCertificate.findUnique({ where: { id: String(fd.get("id")) }, include: { requirement: { include: { company: { include: { members: { select: { userId: true, role: true } } } } } }, trainer: { select: { userId: true } } } });
   if (!c) return;
-  const allowed = c.requirement.company.members.some((m) => m.userId === user.id) || c.trainer.userId === user.id;
+  const allowed = memberCan(c.requirement.company.members, user.id, "hire") || c.trainer.userId === user.id;
   if (!allowed) return;
   await db.issuedCertificate.update({ where: { id: c.id }, data: { revokedAt: new Date() } });
   revalidatePath(`/requirements/${c.requirementId}`); revalidatePath(`/certificates/${c.code}`);

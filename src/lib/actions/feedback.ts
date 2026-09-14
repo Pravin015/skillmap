@@ -8,16 +8,17 @@ import { requireUser } from "@/lib/auth";
 import { notify } from "@/lib/notify";
 import { rateLimit } from "@/lib/ratelimit";
 import type { ActionState } from "@/lib/types";
+import { memberCan } from "@/lib/permissions";
 
 /** Company members or the awarded trainer create one link per engagement. Learners open it without an account. */
 export async function createFeedbackLink(fd: FormData) {
   const user = await requireUser();
   const requirementId = String(fd.get("requirementId"));
-  const req = await db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: { select: { userId: true } } } }, applications: { where: { status: "AWARDED" }, include: { trainer: { select: { id: true, userId: true } } } } } });
+  const req = await db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, applications: { where: { status: "AWARDED" }, include: { trainer: { select: { id: true, userId: true } } } } } });
   if (!req || !["AWARDED", "COMPLETED"].includes(req.status)) return;
   const awarded = req.applications[0];
   if (!awarded) return;
-  const allowed = req.company.members.some((m) => m.userId === user.id) || awarded.trainer.userId === user.id;
+  const allowed = memberCan(req.company.members, user.id, "hire") || awarded.trainer.userId === user.id;
   if (!allowed) return;
   const existing = await db.feedbackLink.findFirst({ where: { requirementId, trainerId: awarded.trainer.id } });
   if (existing) return;

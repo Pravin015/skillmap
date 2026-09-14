@@ -30,7 +30,7 @@ export default async function TrainerCvPage({ params }: { params: Promise<{ slug
       certifications: { where: { status: "VERIFIED" }, orderBy: { issuedOn: "desc" } },
       courses: { where: { published: true }, orderBy: { createdAt: "desc" } },
       applications: { where: { status: "AWARDED" }, include: { requirement: { include: { company: { select: { name: true } } } } }, orderBy: { createdAt: "desc" }, take: 8 },
-      recommendations: { where: { visible: true }, include: { author: { select: { name: true, membership: { select: { company: { select: { name: true } } } } } } }, orderBy: { createdAt: "desc" }, take: 2 },
+      recommendations: { where: { visible: true }, include: { author: { select: { name: true, memberships: { select: { company: { select: { name: true } } } } } } }, orderBy: { createdAt: "desc" }, take: 2 },
     },
   });
   if (!t || t.user.status !== "ACTIVE") notFound();
@@ -81,7 +81,7 @@ export default async function TrainerCvPage({ params }: { params: Promise<{ slug
 
         {t.applications.length ? <section className="mt-6"><h2 className="mono text-[11px] uppercase tracking-[0.12em] text-cyan">Recent engagements</h2><ul className="mt-1 space-y-0.5 text-sm">{t.applications.map((a) => <li key={a.id}><span className="font-semibold">{a.requirement.title}</span> <span className="text-muted">· {a.requirement.company.name} · {a.requirement.participants} participants · {fmtDate(a.requirement.startDate)}</span></li>)}</ul></section> : null}
 
-        {t.recommendations.length ? <section className="mt-6"><h2 className="mono text-[11px] uppercase tracking-[0.12em] text-cyan">Recommendations</h2>{t.recommendations.map((r) => <blockquote key={r.id} className="mt-2 border-l-2 border-line pl-3 text-sm"><p className="italic">“{r.body.length > 280 ? r.body.slice(0, 277) + "…" : r.body}”</p><p className="mt-1 text-xs text-muted">{r.author.name}{r.author.membership ? `, ${r.author.membership.company.name}` : ""}</p></blockquote>)}</section> : null}
+        {t.recommendations.length ? <section className="mt-6"><h2 className="mono text-[11px] uppercase tracking-[0.12em] text-cyan">Recommendations</h2>{t.recommendations.map((r) => <blockquote key={r.id} className="mt-2 border-l-2 border-line pl-3 text-sm"><p className="italic">“{r.body.length > 280 ? r.body.slice(0, 277) + "…" : r.body}”</p><p className="mt-1 text-xs text-muted">{r.author.name}{r.author.memberships[0] ? `, ${r.author.memberships[0].company.name}` : ""}</p></blockquote>)}</section> : null}
 
         <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4 text-xs text-muted">
           <p>{showRate ? `Day rate ${rateRange(t.dayRateMin, t.dayRateMax, t.currency)} · ` : ""}Contact through CorpGurus: {url.replace(/^https?:\/\//, "")}</p>

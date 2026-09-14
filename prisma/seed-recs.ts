@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 /** Demo recommendations and one sent work order. Safe to re-run: skips if recommendations exist. */
 export async function seedRecs(db: PrismaClient) {
   if (await db.recommendation.count()) { console.log("Recommendations already seeded, skipping."); return; }
-  const u = async (email: string) => { const x = await db.user.findUnique({ where: { email }, include: { membership: true, trainerProfile: true } }); if (!x) throw new Error(`seed-recs: missing ${email}`); return x; };
+  const u = async (email: string) => { const x = await db.user.findUnique({ where: { email }, include: { memberships: true, trainerProfile: true } }); if (!x) throw new Error(`seed-recs: missing ${email}`); return x; };
   const ananya = await u("ananya@corpgurus.demo");
   const sana = await u("sana@corpgurus.demo");
   const rohit = await u("rohit@corpgurus.demo");
@@ -13,10 +13,10 @@ export async function seedRecs(db: PrismaClient) {
 
   const awarded = await db.application.findFirst({ where: { trainerId: sana.trainerProfile!.id, status: "AWARDED" }, include: { requirement: true } });
   await db.recommendation.createMany({ data: [
-    { trainerId: sana.trainerProfile!.id, authorId: lakshmi.id, companyId: lakshmi.membership!.companyId, requirementId: awarded?.requirementId, relationship: "Hired for a training engagement", body: "Sana ran our AWS and Terraform bootcamp for a 20-person DevOps team and the client asked for her by name for the next batch. She built the labs in real sandbox accounts, adapted day 3 on the fly when the group struggled with EKS, and sent a cost-control cheat sheet afterwards that the team still uses." },
-    { trainerId: ananya.trainerProfile!.id, authorId: sandeep.id, companyId: sandeep.membership!.companyId, relationship: "Hired for a training engagement", body: "We have staffed three HPE VM Essentials batches with Ananya. Vendor-authorised, always validates the lab a day early, and her day-2 checklist is the reason clients rebook. Zero escalations across all three deliveries." },
+    { trainerId: sana.trainerProfile!.id, authorId: lakshmi.id, companyId: lakshmi.memberships[0]!.companyId, requirementId: awarded?.requirementId, relationship: "Hired for a training engagement", body: "Sana ran our AWS and Terraform bootcamp for a 20-person DevOps team and the client asked for her by name for the next batch. She built the labs in real sandbox accounts, adapted day 3 on the fly when the group struggled with EKS, and sent a cost-control cheat sheet afterwards that the team still uses." },
+    { trainerId: ananya.trainerProfile!.id, authorId: sandeep.id, companyId: sandeep.memberships[0]!.companyId, relationship: "Hired for a training engagement", body: "We have staffed three HPE VM Essentials batches with Ananya. Vendor-authorised, always validates the lab a day early, and her day-2 checklist is the reason clients rebook. Zero escalations across all three deliveries." },
     { trainerId: ananya.trainerProfile!.id, authorId: rohit.id, relationship: "Worked together as trainers", body: "Co-delivered a hybrid infrastructure track with Ananya for an MSSP. She handles migration questions from senior admins with a calm that keeps the room on schedule, and she shares material generously with other instructors." },
-    { trainerId: rohit.trainerProfile!.id, authorId: kavya.id, companyId: kavya.membership!.companyId, relationship: "Hired for a training engagement", body: "Rohit delivered PAN-OS essentials for two SOC batches back to back. He mapped the EDU-210 material to our runbooks on day 5, which is exactly what our L1 engineers needed. Would book again without hesitation." },
+    { trainerId: rohit.trainerProfile!.id, authorId: kavya.id, companyId: kavya.memberships[0]!.companyId, relationship: "Hired for a training engagement", body: "Rohit delivered PAN-OS essentials for two SOC batches back to back. He mapped the EDU-210 material to our runbooks on day 5, which is exactly what our L1 engineers needed. Would book again without hesitation." },
   ] });
 
   if (awarded) {

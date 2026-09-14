@@ -12,6 +12,9 @@ enum Role {
   COMPANY
   ADMIN
   SUPER_ADMIN
+  MODERATOR
+  FINANCE
+  SUPPORT
 }
 
 enum UserStatus {
@@ -39,7 +42,10 @@ enum CompanyType {
 
 enum MemberRole {
   OWNER
-  RECRUITER
+  ADMIN
+  HIRING_MANAGER
+  FINANCE
+  VIEWER
 }
 
 enum Visibility {
@@ -94,7 +100,8 @@ model User {
   updatedAt    DateTime   @updatedAt
 
   trainerProfile   TrainerProfile?
-  membership       CompanyMember?
+  memberships      CompanyMember[]
+  activeCompanyId  String?
   postedRequirements Requirement[]
   comments         Comment[]
   sentConnections  Connection[] @relation("ConnRequester")
@@ -567,10 +574,12 @@ model CompanyMember {
   id        String     @id @default(cuid())
   companyId String
   company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  userId    String     @unique
+  userId    String
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role      MemberRole @default(RECRUITER)
+  role      MemberRole @default(HIRING_MANAGER)
   joinedAt  DateTime   @default(now())
+
+  @@unique([companyId, userId])
 }
 
 model Category {

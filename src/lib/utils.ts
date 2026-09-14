@@ -68,7 +68,7 @@ export const appStatusLabel: Record<AppStatus, string> = {
 };
 export const certStatusLabel: Record<CertStatus, string> = { PENDING: "Pending review", VERIFIED: "Verified", REJECTED: "Rejected", EXPIRED: "Expired" };
 export const connStatusLabel: Record<ConnStatus, string> = { PENDING: "Pending", ACCEPTED: "Connected", IGNORED: "Ignored" };
-export const roleLabel: Record<Role, string> = { TRAINER: "Trainer", COMPANY: "Company", ADMIN: "Administrator", SUPER_ADMIN: "Super admin" };
+export const roleLabel: Record<Role, string> = { TRAINER: "Trainer", COMPANY: "Company", ADMIN: "Administrator", SUPER_ADMIN: "Super admin", MODERATOR: "Moderator", FINANCE: "Finance", SUPPORT: "Support" };
 
 export const DELIVERY_MODES: DeliveryMode[] = ["ONSITE", "VIRTUAL", "HYBRID"];
 export const CURRENCIES = ["INR", "USD"];

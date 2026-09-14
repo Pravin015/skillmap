@@ -44,7 +44,7 @@ async function loadTrainer(slug: string) {
   return db.trainerProfile.findUnique({
     where: { slug },
     include: {
-      user: { select: { id: true, name: true, avatarUrl: true, createdAt: true, status: true, ratingsReceived: { include: { fromUser: { select: { name: true, membership: { select: { company: { select: { name: true } } } } } }, requirement: { select: { title: true } } }, orderBy: { createdAt: "desc" } } } },
+      user: { select: { id: true, name: true, avatarUrl: true, createdAt: true, status: true, ratingsReceived: { include: { fromUser: { select: { name: true, memberships: { select: { company: { select: { name: true } } } } } }, requirement: { select: { title: true } } }, orderBy: { createdAt: "desc" } } } },
       skills: { orderBy: { name: "asc" }, include: { category: { select: { name: true, slug: true } } } },
       certifications: { orderBy: [{ status: "asc" }, { createdAt: "desc" }] },
       experiences: { orderBy: [{ current: "desc" }, { startDate: "desc" }] },
@@ -233,7 +233,7 @@ async function CoursesTab({ trainerId, slug, first, showRate, user }: { trainerI
 }
 
 async function RecsTab({ t, user, isSelf, conn, openForm }: { t: T; user: Viewer; isSelf: boolean; conn: { status: string } | null; openForm: boolean }) {
-  const recs = await db.recommendation.findMany({ where: { trainerId: t.id }, include: { author: { select: { id: true, name: true, avatarUrl: true, role: true, membership: { select: { company: { select: { name: true, slug: true } } } } } } }, orderBy: { createdAt: "desc" } });
+  const recs = await db.recommendation.findMany({ where: { trainerId: t.id }, include: { author: { select: { id: true, name: true, avatarUrl: true, role: true, memberships: { select: { company: { select: { name: true, slug: true } } } } } } }, orderBy: { createdAt: "desc" } });
   const existing = user ? recs.find((r) => r.authorId === user.id) ?? null : null;
   let canWrite = false;
   let askable: { id: string; name: string; company: string | null }[] = [];
@@ -244,11 +244,11 @@ async function RecsTab({ t, user, isSelf, conn, openForm }: { t: T; user: Viewer
   if (isSelf) {
     const [hirers, conns] = await Promise.all([
       db.companyMember.findMany({ where: { company: { requirements: { some: { applications: { some: { trainerId: t.id, status: "AWARDED" } } } } } }, include: { user: { select: { id: true, name: true } }, company: { select: { name: true } } } }),
-      db.connection.findMany({ where: { status: "ACCEPTED", OR: [{ requesterId: t.userId }, { addresseeId: t.userId }] }, include: { requester: { select: { id: true, name: true, membership: { select: { company: { select: { name: true } } } } } }, addressee: { select: { id: true, name: true, membership: { select: { company: { select: { name: true } } } } } } } }),
+      db.connection.findMany({ where: { status: "ACCEPTED", OR: [{ requesterId: t.userId }, { addresseeId: t.userId }] }, include: { requester: { select: { id: true, name: true, memberships: { select: { company: { select: { name: true } } } } } }, addressee: { select: { id: true, name: true, memberships: { select: { company: { select: { name: true } } } } } } } }),
     ]);
     const seen = new Set<string>();
     for (const m of hirers) if (!seen.has(m.user.id)) { seen.add(m.user.id); askable.push({ id: m.user.id, name: m.user.name, company: m.company.name }); }
-    for (const c of conns) { const o = c.requesterId === t.userId ? c.addressee : c.requester; if (!seen.has(o.id)) { seen.add(o.id); askable.push({ id: o.id, name: o.name, company: o.membership?.company.name ?? null }); } }
+    for (const c of conns) { const o = c.requesterId === t.userId ? c.addressee : c.requester; if (!seen.has(o.id)) { seen.add(o.id); askable.push({ id: o.id, name: o.name, company: o.memberships[0]?.company.name ?? null }); } }
     askable = askable.filter((a) => !recs.some((r) => r.authorId === a.id));
   }
   return <RecommendationsSection recs={recs} trainerId={t.id} trainerName={t.user.name} viewerId={user?.id} isSelf={isSelf} canWrite={canWrite} existing={existing} askable={askable} openForm={openForm} />;
@@ -264,7 +264,7 @@ async function FeedbackTab({ trainerId, ratings, avg, learners }: { trainerId: s
           <Card className="p-5"><p className="mono text-[11px] uppercase tracking-wider text-muted">Learner score</p><p className="mt-1 font-display text-3xl font-bold text-lime">{learners.count ? learners.avg!.toFixed(1) : "—"}</p><p className="text-xs text-muted">{learners.count ? `${learners.count} anonymous participants · ${learners.recommendPct}% would recommend` : "Collected through feedback links after sessions"}</p></Card>
         </div>
       </section>
-      {ratings.length ? <section><h2 className="mb-3 text-lg font-bold">What clients say</h2><div className="space-y-3">{ratings.map((r) => <div key={r.id} className="rounded-xl border border-line bg-white p-4"><p className="flex items-center gap-2 text-amber">{"★".repeat(r.score)}<span className="text-dim">{"★".repeat(5 - r.score)}</span><span className="ml-1 text-xs text-muted">{fmtDate(r.createdAt)}</span></p>{r.review ? <p className="mt-2 text-ink/90">“{r.review}”</p> : null}<p className="mt-2 text-sm text-muted">{r.fromUser.name}{r.fromUser.membership ? `, ${r.fromUser.membership.company.name}` : ""} · {r.requirement.title}</p></div>)}</div></section> : null}
+      {ratings.length ? <section><h2 className="mb-3 text-lg font-bold">What clients say</h2><div className="space-y-3">{ratings.map((r) => <div key={r.id} className="rounded-xl border border-line bg-white p-4"><p className="flex items-center gap-2 text-amber">{"★".repeat(r.score)}<span className="text-dim">{"★".repeat(5 - r.score)}</span><span className="ml-1 text-xs text-muted">{fmtDate(r.createdAt)}</span></p>{r.review ? <p className="mt-2 text-ink/90">“{r.review}”</p> : null}<p className="mt-2 text-sm text-muted">{r.fromUser.name}{r.fromUser.memberships[0] ? `, ${r.fromUser.memberships[0].company.name}` : ""} · {r.requirement.title}</p></div>)}</div></section> : null}
       {comments.length ? <section><h2 className="mb-3 text-lg font-bold">What participants say</h2><div className="space-y-3">{comments.map((c, i) => <div key={i} className="rounded-xl border border-line bg-white p-4"><p className="text-lime">{"★".repeat(c.score)}<span className="text-dim">{"★".repeat(5 - c.score)}</span></p><p className="mt-1 text-ink/90">“{c.comment}”</p><p className="mt-1 text-xs text-muted">Anonymous participant · {c.link.requirement.title} · {fmtDate(c.createdAt)}</p></div>)}</div></section> : null}
       {!ratings.length && !comments.length ? <p className="text-sm text-muted">No written feedback yet.</p> : null}
     </>

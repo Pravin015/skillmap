@@ -12,6 +12,7 @@ import { entitlementsFor } from "@/lib/billing";
 import { isTimezone } from "@/lib/tz";
 import { alertTrainerSearches } from "@/lib/saved-searches";
 import type { ActionState } from "@/lib/types";
+import { companyCan, isStaffRole } from "@/lib/permissions";
 
 export async function updateTrainerProfile(_p: ActionState, fd: FormData): Promise<ActionState> {
   const user = await requireUser();
@@ -81,16 +82,17 @@ export async function updateCompany(_p: ActionState, fd: FormData): Promise<Acti
 
 export async function inviteMember(_p: ActionState, fd: FormData): Promise<ActionState> {
   const user = await requireUser();
-  if (!user.membership || user.membership.role !== "OWNER") return { error: "Only the company owner can add members." };
-  const parsed = z.object({ name: z.string().trim().min(2), email: z.string().trim().toLowerCase().email(), role: z.enum(["OWNER", "RECRUITER"]) }).safeParse(Object.fromEntries(fd));
+  if (!user.membership || !companyCan(user.membership.role, "manage_team")) return { error: "Only owners and admins can add members." };
+  const parsed = z.object({ name: z.string().trim().min(2), email: z.string().trim().toLowerCase().email(), role: z.enum(["OWNER", "ADMIN", "HIRING_MANAGER", "FINANCE", "VIEWER"]) }).safeParse(Object.fromEntries(fd));
+  if (parsed.success && parsed.data.role === "OWNER" && user.membership.role !== "OWNER") return { error: "Only an owner can add another owner." };
   if (!parsed.success) return { error: "Enter a name, a valid email and a role." };
   const { name, email, role } = parsed.data;
   const ent = await entitlementsFor(user);
   const members = await db.companyMember.count({ where: { companyId: user.membership.company.id } });
   if (members >= ent.memberLimit) return { error: `Your plan allows ${ent.memberLimit} team members. Upgrade on the Pricing page to add more.` };
-  const existing = await db.user.findUnique({ where: { email }, include: { membership: true } });
-  if (existing?.membership) return { error: "That person already belongs to a company." };
-  if (existing && existing.role !== "COMPANY") return { error: "That email belongs to a trainer or staff account." };
+  const existing = await db.user.findUnique({ where: { email }, include: { memberships: true } });
+  if (existing?.memberships.some((m) => m.companyId === user.membership!.company.id)) return { error: "That person is already on your team." };
+  if (existing && isStaffRole(existing.role)) return { error: "That email belongs to a CorpGurus staff account." };
   const temp = `Cg-${Math.random().toString(36).slice(2, 8)}-${Math.random().toString(36).slice(2, 6)}`;
   const member = existing ?? (await db.user.create({ data: { name, email, role: "COMPANY", passwordHash: await bcrypt.hash(temp, 10) } }));
   await db.companyMember.create({ data: { companyId: user.membership.company.id, userId: member.id, role } });
@@ -101,7 +103,7 @@ export async function inviteMember(_p: ActionState, fd: FormData): Promise<Actio
 
 export async function removeMember(fd: FormData) {
   const user = await requireUser();
-  if (!user.membership || user.membership.role !== "OWNER") return;
+  if (!user.membership || !companyCan(user.membership.role, "manage_team")) return;
   const id = String(fd.get("id"));
   const m = await db.companyMember.findFirst({ where: { id, companyId: user.membership.company.id } });
   if (!m || m.userId === user.id) return;
@@ -138,4 +140,22 @@ export async function updateAccount(_p: ActionState, fd: FormData): Promise<Acti
   if (next.length < 8) return { error: "New password needs at least 8 characters." };
   await db.user.update({ where: { id: user.id }, data: { passwordHash: await bcrypt.hash(next, 10) } });
   return { ok: full.passwordHash ? "Password updated." : "Password set. You can now sign in with email as well." };
+}
+
+/** Owners and admins change a member's role. Ownership can only be granted by an owner, and the last owner cannot be demoted. */
+export async function setMemberRole(fd: FormData) {
+  const user = await requireUser();
+  if (!user.membership || !companyCan(user.membership.role, "manage_team")) return;
+  const id = String(fd.get("id")), role = String(fd.get("role")) as "OWNER" | "ADMIN" | "HIRING_MANAGER" | "FINANCE" | "VIEWER";
+  if (!["OWNER", "ADMIN", "HIRING_MANAGER", "FINANCE", "VIEWER"].includes(role)) return;
+  const m = await db.companyMember.findFirst({ where: { id, companyId: user.membership.company.id } });
+  if (!m) return;
+  if ((role === "OWNER" || m.role === "OWNER") && user.membership.role !== "OWNER") return;
+  if (m.role === "OWNER" && role !== "OWNER") {
+    const owners = await db.companyMember.count({ where: { companyId: m.companyId, role: "OWNER" } });
+    if (owners <= 1) return;
+  }
+  await db.companyMember.update({ where: { id }, data: { role } });
+  await notify(m.userId, "team", `Your role at ${user.membership.company.name} is now ${role.toLowerCase().replace("_", " ")}`, `Changed by ${user.name}.`, "/dashboard");
+  revalidatePath("/settings");
 }

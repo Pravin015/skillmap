@@ -9,6 +9,7 @@ import { Wizard, WizardNav } from "@/components/wizard";
 import { TrainerCard } from "@/components/cards";
 import { Avatar, Badge, Card, Field, Input, Select, Textarea } from "@/components/ui";
 import { COMPANY_SIZES } from "@/lib/utils";
+import { COMPANY_ROLES } from "@/lib/permissions";
 
 export const metadata = { title: "Set up your company", robots: { index: false } };
 
@@ -85,14 +86,14 @@ export default async function CompanyOnboarding({ searchParams }: { searchParams
   if (step === 4) {
     const isOwner = user.membership.role === "OWNER";
     return (
-      <Wizard base={BASE} steps={STEPS} current={4} title={<>Bring your <span className="serif text-violet">team.</span></>} body="Recruiters can post and shortlist; owners also manage billing, the team and API keys. Invitees get a temporary password to share securely." aside={<>{preview}<Card className="p-4"><p className="mono text-[11px] uppercase tracking-wider text-muted">Current team</p><ul className="mt-2 space-y-2">{c.members.map((m) => <li key={m.id} className="flex items-center gap-2 text-sm"><Avatar name={m.user.name} src={m.user.avatarUrl} size={26} tone="violet" /><span className="min-w-0 flex-1 truncate">{m.user.name}</span><Badge tone={m.role === "OWNER" ? "violet" : "neutral"}>{m.role.toLowerCase()}</Badge></li>)}</ul></Card></>}>
+      <Wizard base={BASE} steps={STEPS} current={4} title={<>Bring your <span className="serif text-violet">team.</span></>} body="Hiring managers post and award; finance funds escrow and pays invoices; admins manage the team; viewers read. Invitees get a temporary password to share securely." aside={<>{preview}<Card className="p-4"><p className="mono text-[11px] uppercase tracking-wider text-muted">Current team</p><ul className="mt-2 space-y-2">{c.members.map((m) => <li key={m.id} className="flex items-center gap-2 text-sm"><Avatar name={m.user.name} src={m.user.avatarUrl} size={26} tone="violet" /><span className="min-w-0 flex-1 truncate">{m.user.name}</span><Badge tone={m.role === "OWNER" ? "violet" : "neutral"}>{m.role.toLowerCase()}</Badge></li>)}</ul></Card></>}>
         <ActionForm action={companyStep4} className="space-y-4" resetOnSuccess>
           {!isOwner ? <p className="rounded-xl border border-amber/30 bg-amber/5 px-4 py-3 text-sm text-amber">Only the company owner can add members. You can skip this step.</p> : null}
           {[1, 2, 3].map((i) => (
             <div key={i} className="grid gap-3 rounded-xl border border-line bg-white p-3 md:grid-cols-[1fr_1.3fr_150px]">
               <Field label="Name"><Input name={`name${i}`} placeholder="Priya Sharma" disabled={!isOwner} /></Field>
               <Field label="Work email"><Input name={`email${i}`} type="email" placeholder="priya@company.com" disabled={!isOwner} /></Field>
-              <Field label="Role"><Select name={`role${i}`} defaultValue="RECRUITER" disabled={!isOwner}><option value="RECRUITER">Recruiter</option><option value="OWNER">Owner</option></Select></Field>
+              <Field label="Role"><Select name={`role${i}`} defaultValue="HIRING_MANAGER" disabled={!isOwner}>{COMPANY_ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</Select></Field>
             </div>
           ))}
           <WizardNav back={`${BASE}?step=3`} skip={`${BASE}?step=5`} submitLabel={isOwner ? "Add team and continue" : "Continue"} />

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
-import { getCurrentUser } from "@/lib/auth";
+import { requireStaffAny } from "@/lib/auth";
 import { setUserStatus } from "@/lib/actions/admin";
 import { startImpersonation } from "@/lib/actions/impersonate";
 import { Avatar, Badge, Button, Input, PageHeader, Select } from "@/components/ui";
@@ -11,12 +11,12 @@ export const metadata = { title: "Users" };
 
 export default async function AdminUsers({ searchParams }: { searchParams: Promise<{ q?: string; role?: string }> }) {
   const { q, role } = await searchParams;
-  const me = (await getCurrentUser())!;
+  const me = await requireStaffAny(["users", "support"], "/admin/users");
   const where: Prisma.UserWhereInput = {
     ...(q ? { OR: [{ name: { contains: q, mode: "insensitive" } }, { email: { contains: q, mode: "insensitive" } }] } : {}),
     ...(role ? { role: role as "TRAINER" | "COMPANY" | "ADMIN" | "SUPER_ADMIN" } : {}),
   };
-  const users = await db.user.findMany({ where, include: { trainerProfile: { select: { slug: true, verifiedAt: true } }, membership: { include: { company: { select: { name: true, slug: true } } } } }, orderBy: { createdAt: "desc" }, take: 200 });
+  const users = await db.user.findMany({ where, include: { trainerProfile: { select: { slug: true, verifiedAt: true } }, memberships: { include: { company: { select: { name: true, slug: true } } } } }, orderBy: { createdAt: "desc" }, take: 200 });
   return (
     <div>
       <PageHeader eyebrow="Operations" title="Users" body="Suspend accounts that break the rules. Suspended users cannot sign in and vanish from search." />
@@ -35,7 +35,7 @@ export default async function AdminUsers({ searchParams }: { searchParams: Promi
                 <tr key={u.id} className="hover:bg-surface-2">
                   <td className="px-4 py-3"><div className="flex items-center gap-2"><Avatar name={u.name} src={u.avatarUrl} size={30} tone={u.role === "COMPANY" ? "violet" : u.role === "TRAINER" ? "cyan" : "amber"} /><div><p className="font-medium">{u.name}</p><p className="text-xs text-muted">{u.email}</p></div></div></td>
                   <td className="px-4 py-3"><Badge tone={u.role === "TRAINER" ? "cyan" : u.role === "COMPANY" ? "violet" : "amber"}>{roleLabel[u.role]}</Badge></td>
-                  <td className="px-4 py-3 text-muted">{u.trainerProfile ? <Link href={`/trainers/${u.trainerProfile.slug}`} className="hover:text-cyan">Profile{u.trainerProfile.verifiedAt ? " · verified" : ""}</Link> : u.membership ? <Link href={`/companies/${u.membership.company.slug}`} className="hover:text-violet">{u.membership.company.name} · {u.membership.role.toLowerCase()}</Link> : "—"}</td>
+                  <td className="px-4 py-3 text-muted">{u.trainerProfile ? <Link href={`/trainers/${u.trainerProfile.slug}`} className="hover:text-cyan">Profile{u.trainerProfile.verifiedAt ? " · verified" : ""}</Link> : u.memberships[0] ? <Link href={`/companies/${u.memberships[0].company.slug}`} className="hover:text-violet">{u.memberships[0].company.name} · {u.memberships[0].role.toLowerCase()}</Link> : "—"}</td>
                   <td className="px-4 py-3 text-muted">{fmtDate(u.createdAt)}</td>
                   <td className="px-4 py-3"><Badge tone={u.status === "ACTIVE" ? "lime" : "rose"}>{u.status}</Badge></td>
                   <td className="px-4 py-3 text-right"><div className="flex justify-end gap-1">{me.role === "SUPER_ADMIN" && u.role !== "SUPER_ADMIN" && u.status === "ACTIVE" && u.id !== me.id ? <form action={startImpersonation}><input type="hidden" name="userId" value={u.id} /><Button size="sm" variant="ghost">View as</Button></form> : null}{canAct ? <form action={setUserStatus}><input type="hidden" name="id" value={u.id} /><input type="hidden" name="status" value={u.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE"} /><Button size="sm" variant={u.status === "ACTIVE" ? "danger" : "secondary"}>{u.status === "ACTIVE" ? "Suspend" : "Reinstate"}</Button></form> : null}</div></td>

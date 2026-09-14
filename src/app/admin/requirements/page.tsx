@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 import { moderateComment, moderateRequirement } from "@/lib/actions/admin";
 import { deletePost } from "@/lib/actions/feed";
 import { Badge, Button, PageHeader } from "@/components/ui";
@@ -9,6 +10,7 @@ import { fmtDate, reqStatusLabel, timeAgo } from "@/lib/utils";
 export const metadata = { title: "Requirements moderation" };
 
 export default async function AdminRequirements() {
+  await requireStaff("moderate", "/admin/requirements");
   const posts = await db.post.findMany({ where: { deletedAt: null }, include: { author: { select: { name: true } }, _count: { select: { likes: true, comments: true } } }, orderBy: { createdAt: "desc" }, take: 20 });
   const [reqs, comments] = await Promise.all([
     db.requirement.findMany({ include: { company: { select: { name: true, slug: true } }, _count: { select: { applications: true, comments: true } } }, orderBy: { createdAt: "desc" }, take: 100 }),

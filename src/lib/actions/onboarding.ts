@@ -10,6 +10,7 @@ import { saveUpload } from "@/lib/uploads";
 import { parseList } from "@/lib/utils";
 import { entitlementsFor } from "@/lib/billing";
 import type { ActionState } from "@/lib/types";
+import { isStaffRole } from "@/lib/permissions";
 
 /** Onboarding wizards. Each step saves what it can and moves on; nothing here is mandatory beyond the first step's basics. */
 
@@ -172,7 +173,7 @@ export async function companyStep3(_p: ActionState, fd: FormData): Promise<Actio
 export async function companyStep4(_p: ActionState, fd: FormData): Promise<ActionState> {
   const ctx = await ownerContext();
   if (!ctx) return { error: "Company accounts only." };
-  const rows = [1, 2, 3].map((i) => ({ name: String(fd.get(`name${i}`) ?? "").trim(), email: String(fd.get(`email${i}`) ?? "").trim().toLowerCase(), role: String(fd.get(`role${i}`)) === "OWNER" ? "OWNER" as const : "RECRUITER" as const })).filter((r) => r.email);
+  const rows = [1, 2, 3].map((i) => ({ name: String(fd.get(`name${i}`) ?? "").trim(), email: String(fd.get(`email${i}`) ?? "").trim().toLowerCase(), role: (["OWNER", "ADMIN", "HIRING_MANAGER", "FINANCE", "VIEWER"].includes(String(fd.get(`role${i}`))) ? String(fd.get(`role${i}`)) : "HIRING_MANAGER") as "OWNER" | "ADMIN" | "HIRING_MANAGER" | "FINANCE" | "VIEWER" })).filter((r) => r.email);
   if (rows.length && !ctx.isOwner) return { error: "Only the company owner can add team members. Skip this step or ask the owner." };
   const ent = await entitlementsFor(ctx.user);
   const current = await db.companyMember.count({ where: { companyId: ctx.companyId } });
@@ -180,9 +181,9 @@ export async function companyStep4(_p: ActionState, fd: FormData): Promise<Actio
   const temps: string[] = [];
   for (const r of rows) {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(r.email)) return { error: `“${r.email}” is not a valid email.` };
-    const existing = await db.user.findUnique({ where: { email: r.email }, include: { membership: true } });
-    if (existing?.membership) return { error: `${r.email} already belongs to a company.` };
-    if (existing && existing.role !== "COMPANY") return { error: `${r.email} is a trainer or staff account.` };
+    const existing = await db.user.findUnique({ where: { email: r.email }, include: { memberships: true } });
+    if (existing?.memberships.some((m) => m.companyId === ctx.companyId)) return { error: `${r.email} is already on your team.` };
+    if (existing && isStaffRole(existing.role)) return { error: `${r.email} is a CorpGurus staff account.` };
     const temp = `Cg-${Math.random().toString(36).slice(2, 8)}-${Math.random().toString(36).slice(2, 6)}`;
     const member = existing ?? (await db.user.create({ data: { name: r.name || r.email.split("@")[0], email: r.email, role: "COMPANY", passwordHash: await bcrypt.hash(temp, 10), onboardingCompletedAt: new Date() } }));
     await db.companyMember.create({ data: { companyId: ctx.companyId, userId: member.id, role: r.role } });

@@ -8,10 +8,11 @@ import { audit } from "@/lib/notify";
 import { generateApiKey } from "@/lib/api-auth";
 import { dispatchWebhook, WEBHOOK_EVENTS } from "@/lib/webhooks";
 import type { ActionState } from "@/lib/types";
+import { companyCan } from "@/lib/permissions";
 
 async function companyOf() {
   const user = await requireUser();
-  if (user.role !== "COMPANY" || !user.membership) return null;
+  if (!user.membership || !companyCan(user.membership.role, "api_keys")) return null;
   return { user, companyId: user.membership.company.id };
 }
 const refresh = () => revalidatePath("/settings/developers");

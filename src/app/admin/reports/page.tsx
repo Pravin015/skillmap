@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 import { resolveReport } from "@/lib/actions/reports";
 import { deletePost } from "@/lib/actions/feed";
 import { moderateComment, moderateRequirement } from "@/lib/actions/admin";
@@ -9,6 +10,7 @@ import { timeAgo } from "@/lib/utils";
 export const metadata = { title: "Reports" };
 
 export default async function AdminReports({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+  await requireStaff("moderate", "/admin/reports");
   const { status } = await searchParams;
   const filter = status === "closed" ? { in: ["RESOLVED", "DISMISSED"] as ("RESOLVED" | "DISMISSED")[] } : "OPEN";
   const reports = await db.report.findMany({ where: { status: typeof filter === "string" ? filter : filter }, include: { reporter: { select: { name: true } }, resolvedBy: { select: { name: true } } }, orderBy: { createdAt: "desc" }, take: 100 });
@@ -18,7 +20,7 @@ export default async function AdminReports({ searchParams }: { searchParams: Pro
   const reqs = await db.requirement.findMany({ where: { id: { in: reports.filter((r) => r.targetType === "REQUIREMENT").map((r) => r.targetId) } }, select: { id: true, title: true, status: true, company: { select: { name: true } } } });
   const comments = await db.comment.findMany({ where: { id: { in: reports.filter((r) => r.targetType === "COMMENT").map((r) => r.targetId) } }, select: { id: true, body: true, deletedAt: true, requirementId: true, author: { select: { name: true } } } });
   const postComments = await db.postComment.findMany({ where: { id: { in: reports.filter((r) => r.targetType === "POST_COMMENT").map((r) => r.targetId) } }, select: { id: true, body: true, deletedAt: true, postId: true, author: { select: { name: true } } } });
-  const users = await db.user.findMany({ where: { id: { in: reports.filter((r) => r.targetType === "USER").map((r) => r.targetId) } }, select: { id: true, name: true, status: true, trainerProfile: { select: { slug: true } }, membership: { select: { company: { select: { slug: true } } } } } });
+  const users = await db.user.findMany({ where: { id: { in: reports.filter((r) => r.targetType === "USER").map((r) => r.targetId) } }, select: { id: true, name: true, status: true, trainerProfile: { select: { slug: true } }, memberships: { select: { company: { select: { slug: true } } } } } });
 
   const describe = (r: (typeof reports)[number]): { text: string; href?: string; gone?: boolean; action?: React.ReactNode } => {
     switch (r.targetType) {
@@ -26,7 +28,7 @@ export default async function AdminReports({ searchParams }: { searchParams: Pro
       case "REQUIREMENT": { const q = reqs.find((x) => x.id === r.targetId); return q ? { text: `Requirement by ${q.company.name}: ${q.title}`, href: `/requirements/${q.id}`, gone: q.status === "CANCELLED", action: q.status !== "CANCELLED" ? <form action={moderateRequirement}><input type="hidden" name="id" value={q.id} /><Button size="sm" variant="danger">Take down</Button></form> : null } : { text: "Requirement no longer exists", gone: true }; }
       case "COMMENT": { const c = comments.find((x) => x.id === r.targetId); return c ? { text: `Comment by ${c.author.name}: “${c.body.slice(0, 120)}”`, href: `/requirements/${c.requirementId}#comments`, gone: !!c.deletedAt, action: !c.deletedAt ? <form action={moderateComment}><input type="hidden" name="id" value={c.id} /><Button size="sm" variant="danger">Remove comment</Button></form> : null } : { text: "Comment no longer exists", gone: true }; }
       case "POST_COMMENT": { const c = postComments.find((x) => x.id === r.targetId); return c ? { text: `Feed comment by ${c.author.name}: “${c.body.slice(0, 120)}”`, href: `/feed/${c.postId}`, gone: !!c.deletedAt } : { text: "Comment no longer exists", gone: true }; }
-      case "USER": { const u = users.find((x) => x.id === r.targetId); return u ? { text: `Member: ${u.name}`, href: u.trainerProfile ? `/trainers/${u.trainerProfile.slug}` : u.membership ? `/companies/${u.membership.company.slug}` : "/admin/users", gone: u.status === "SUSPENDED", action: <Link href={`/admin/users?q=${encodeURIComponent(u.name)}`} className="text-xs text-cyan hover:underline">Manage in Users</Link> } : { text: "Member no longer exists", gone: true }; }
+      case "USER": { const u = users.find((x) => x.id === r.targetId); return u ? { text: `Member: ${u.name}`, href: u.trainerProfile ? `/trainers/${u.trainerProfile.slug}` : u.memberships[0] ? `/companies/${u.memberships[0].company.slug}` : "/admin/users", gone: u.status === "SUSPENDED", action: <Link href={`/admin/users?q=${encodeURIComponent(u.name)}`} className="text-xs text-cyan hover:underline">Manage in Users</Link> } : { text: "Member no longer exists", gone: true }; }
     }
   };
 

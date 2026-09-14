@@ -17,7 +17,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
   if (!post) notFound();
   const rootId = post.repostOfId ?? post.id;
   const [comments, like] = await Promise.all([
-    db.postComment.findMany({ where: { postId: rootId, deletedAt: null }, include: { author: { select: { id: true, name: true, avatarUrl: true, role: true, trainerProfile: { select: { slug: true } }, membership: { select: { company: { select: { slug: true, name: true } } } } } } }, orderBy: { createdAt: "asc" } }),
+    db.postComment.findMany({ where: { postId: rootId, deletedAt: null }, include: { author: { select: { id: true, name: true, avatarUrl: true, role: true, trainerProfile: { select: { slug: true } }, memberships: { select: { company: { select: { slug: true, name: true } } } } } } }, orderBy: { createdAt: "asc" } }),
     user ? db.postLike.findUnique({ where: { postId_userId: { postId: rootId, userId: user.id } } }) : null,
   ]);
   const staff = isStaff(user);
@@ -30,7 +30,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
         <h2 className="font-display text-base font-semibold">Comments <span className="text-sm font-normal text-muted">{comments.length}</span></h2>
         <div className="mt-4 space-y-4">
           {comments.map((c) => {
-            const href = c.author.trainerProfile ? `/trainers/${c.author.trainerProfile.slug}` : c.author.membership ? `/companies/${c.author.membership.company.slug}` : "#";
+            const href = c.author.trainerProfile ? `/trainers/${c.author.trainerProfile.slug}` : c.author.memberships[0] ? `/companies/${c.author.memberships[0].company.slug}` : "#";
             return (
               <div key={c.id} className="flex items-start gap-3">
                 <Avatar name={c.author.name} src={c.author.avatarUrl} size={32} tone={c.author.role === "COMPANY" ? "violet" : c.author.role === "TRAINER" ? "cyan" : "amber"} />

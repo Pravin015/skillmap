@@ -8,6 +8,7 @@ import { audit, notify } from "@/lib/notify";
 import { createRazorpayPaymentLink, razorpayConfigured } from "@/lib/billing";
 import { appUrl } from "@/lib/oauth";
 import type { ActionState } from "@/lib/types";
+import { memberCan } from "@/lib/permissions";
 
 function refresh(requirementId: string) {
   revalidatePath(`/requirements/${requirementId}/work-order`);
@@ -27,8 +28,8 @@ async function feePercent() {
  */
 export async function fundEscrow(_p: ActionState, fd: FormData): Promise<ActionState> {
   const user = await requireUser();
-  const wo = await db.workOrder.findUnique({ where: { id: String(fd.get("workOrderId")) }, include: { company: { include: { members: { select: { userId: true } } } }, trainer: { select: { id: true, userId: true, user: { select: { name: true } } } }, escrow: true } });
-  if (!wo || !wo.company.members.some((m) => m.userId === user.id)) return { error: "Only the company on this work order can fund it." };
+  const wo = await db.workOrder.findUnique({ where: { id: String(fd.get("workOrderId")) }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, trainer: { select: { id: true, userId: true, user: { select: { name: true } } } }, escrow: true } });
+  if (!wo || !memberCan(wo.company.members, user.id, "fund_escrow")) return { error: "Only the company on this work order can fund it." };
   if (wo.status !== "ACCEPTED") return { error: "Fund the deposit once the trainer has accepted the work order." };
   if (wo.escrow && wo.escrow.status !== "PENDING" && wo.escrow.status !== "REFUNDED") return { error: "This work order is already funded." };
   if (wo.total <= 0) return { error: "The work order total is zero." };
@@ -57,8 +58,8 @@ export async function fundEscrow(_p: ActionState, fd: FormData): Promise<ActionS
 /** Company releases the funds to the trainer once the training is delivered. */
 export async function releaseEscrow(_p: ActionState, fd: FormData): Promise<ActionState> {
   const user = await requireUser();
-  const esc = await db.escrowDeposit.findUnique({ where: { id: String(fd.get("id")) }, include: { company: { include: { members: { select: { userId: true } } } }, trainer: { select: { userId: true } }, workOrder: { select: { title: true, requirementId: true } } } });
-  if (!esc || !esc.company.members.some((m) => m.userId === user.id)) return { error: "Only the company can release the deposit." };
+  const esc = await db.escrowDeposit.findUnique({ where: { id: String(fd.get("id")) }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, trainer: { select: { userId: true } }, workOrder: { select: { title: true, requirementId: true } } } });
+  if (!esc || !memberCan(esc.company.members, user.id, "fund_escrow")) return { error: "Only the company can release the deposit." };
   if (esc.status !== "FUNDED") return { error: "This deposit is not funded." };
   const note = String(fd.get("note") ?? "").trim().slice(0, 300) || null;
   await db.escrowDeposit.update({ where: { id: esc.id }, data: { status: "RELEASED", releasedAt: new Date(), note } });
@@ -73,7 +74,7 @@ export async function releaseEscrow(_p: ActionState, fd: FormData): Promise<Acti
 /** Trainer nudges the company after delivery. */
 export async function requestEscrowRelease(fd: FormData) {
   const user = await requireUser();
-  const esc = await db.escrowDeposit.findUnique({ where: { id: String(fd.get("id")) }, include: { company: { include: { members: { select: { userId: true } } } }, trainer: { select: { userId: true } }, workOrder: { select: { title: true, requirementId: true } } } });
+  const esc = await db.escrowDeposit.findUnique({ where: { id: String(fd.get("id")) }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, trainer: { select: { userId: true } }, workOrder: { select: { title: true, requirementId: true } } } });
   if (!esc || esc.trainer.userId !== user.id || esc.status !== "FUNDED") return;
   await notify(esc.company.members.map((m) => m.userId), "workorder", `${user.name} requested release of the escrow deposit`, `${esc.workOrder.title} · release from the work order page once delivery is complete.`, `/requirements/${esc.workOrder.requirementId}/work-order`);
   refresh(esc.workOrder.requirementId);
@@ -97,9 +98,9 @@ export async function markEscrowPaidOut(_p: ActionState, fd: FormData): Promise<
 /** Company (while funded) or staff refunds the deposit, e.g. a cancelled engagement. */
 export async function refundEscrow(_p: ActionState, fd: FormData): Promise<ActionState> {
   const user = await requireUser();
-  const esc = await db.escrowDeposit.findUnique({ where: { id: String(fd.get("id")) }, include: { company: { include: { members: { select: { userId: true } } } }, trainer: { select: { userId: true } }, workOrder: { select: { title: true, requirementId: true, status: true } } } });
+  const esc = await db.escrowDeposit.findUnique({ where: { id: String(fd.get("id")) }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, trainer: { select: { userId: true } }, workOrder: { select: { title: true, requirementId: true, status: true } } } });
   if (!esc) return { error: "Deposit not found." };
-  const allowed = isStaff(user) || esc.company.members.some((m) => m.userId === user.id);
+  const allowed = isStaff(user) || memberCan(esc.company.members, user.id, "fund_escrow");
   if (!allowed) return { error: "Not allowed." };
   if (esc.status !== "FUNDED") return { error: "Only funded deposits can be refunded." };
   if (!isStaff(user) && esc.workOrder.status !== "CANCELLED") return { error: "Cancel the work order first, or ask CorpGurus support to refund." };

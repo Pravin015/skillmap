@@ -8,6 +8,7 @@ import { requireUser } from "@/lib/auth";
 import { notify, audit } from "@/lib/notify";
 import { daysBetween } from "@/lib/utils";
 import type { ActionState } from "@/lib/types";
+import { memberCan } from "@/lib/permissions";
 import { createHash } from "node:crypto";
 import { clientIp } from "@/lib/ratelimit";
 import { dispatchWebhook } from "@/lib/webhooks";
@@ -65,7 +66,7 @@ function refresh(requirementId: string) {
 }
 
 async function engagement(requirementId: string) {
-  return db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: { select: { userId: true } } } }, applications: { where: { status: "AWARDED" }, include: { trainer: { select: { id: true, userId: true, user: { select: { name: true } } } } } }, workOrder: true } });
+  return db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, applications: { where: { status: "AWARDED" }, include: { trainer: { select: { id: true, userId: true, user: { select: { name: true } } } } } }, workOrder: true } });
 }
 
 /** Company members create or revise the work order. "send" transitions it to SENT and bumps the version when it was already sent. */
@@ -76,7 +77,7 @@ export async function saveWorkOrder(_p: ActionState, fd: FormData): Promise<Acti
   const d = parsed.data;
   const req = await engagement(d.requirementId);
   if (!req) return { error: "Requirement not found." };
-  if (!req.company.members.some((m) => m.userId === user.id)) return { error: "Only the company that posted the requirement can issue a work order." };
+  if (!memberCan(req.company.members, user.id, "sign_work_order")) return { error: "Only the company that posted the requirement can issue a work order." };
   const awarded = req.applications[0];
   if (!awarded) return { error: "Award the requirement to a trainer first." };
   if (req.workOrder?.status === "ACCEPTED") return { error: "This work order is accepted. Cancel it to issue a new one." };
@@ -113,7 +114,7 @@ export async function respondWorkOrder(_p: ActionState, fd: FormData): Promise<A
   const decision = String(fd.get("decision")) as "ACCEPT" | "CHANGES";
   const note = String(fd.get("note") ?? "").trim();
   const signedName = String(fd.get("signedName") ?? "").trim();
-  const wo = await db.workOrder.findUnique({ where: { id }, include: { trainer: { select: { userId: true } }, company: { include: { members: { select: { userId: true } } } }, requirement: { select: { id: true, title: true } } } });
+  const wo = await db.workOrder.findUnique({ where: { id }, include: { trainer: { select: { userId: true } }, company: { include: { members: { select: { userId: true, role: true } } } }, requirement: { select: { id: true, title: true } } } });
   if (!wo || wo.trainer.userId !== user.id) return { error: "Only the awarded trainer can respond." };
   if (wo.status !== "SENT") return { error: "This work order is not awaiting your response." };
   if (decision === "CHANGES" && note.length < 5) return { error: "Tell the company what to change." };
@@ -131,8 +132,8 @@ export async function respondWorkOrder(_p: ActionState, fd: FormData): Promise<A
 export async function cancelWorkOrder(fd: FormData) {
   const user = await requireUser();
   const id = String(fd.get("id"));
-  const wo = await db.workOrder.findUnique({ where: { id }, include: { company: { include: { members: { select: { userId: true } } } }, trainer: { select: { userId: true } } } });
-  if (!wo || !wo.company.members.some((m) => m.userId === user.id)) return;
+  const wo = await db.workOrder.findUnique({ where: { id }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, trainer: { select: { userId: true } } } });
+  if (!wo || !memberCan(wo.company.members, user.id, "sign_work_order")) return;
   await db.workOrder.update({ where: { id }, data: { status: "CANCELLED" } });
   await db.workOrderEvent.create({ data: { workOrderId: id, actorId: user.id, type: "cancelled", version: wo.version } });
   await audit(user.id, "workorder.cancel", id);
@@ -143,8 +144,8 @@ export async function cancelWorkOrder(fd: FormData) {
 export async function reopenWorkOrder(fd: FormData) {
   const user = await requireUser();
   const id = String(fd.get("id"));
-  const wo = await db.workOrder.findUnique({ where: { id }, include: { company: { include: { members: { select: { userId: true } } } } } });
-  if (!wo || wo.status !== "CANCELLED" || !wo.company.members.some((m) => m.userId === user.id)) return;
+  const wo = await db.workOrder.findUnique({ where: { id }, include: { company: { include: { members: { select: { userId: true, role: true } } } } } });
+  if (!wo || wo.status !== "CANCELLED" || !memberCan(wo.company.members, user.id, "sign_work_order")) return;
   await db.workOrder.update({ where: { id }, data: { status: "DRAFT" } });
   await db.workOrderEvent.create({ data: { workOrderId: id, actorId: user.id, type: "reopened", version: wo.version } });
   refresh(wo.requirementId);

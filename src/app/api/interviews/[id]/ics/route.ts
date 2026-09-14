@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { memberCan } from "@/lib/permissions";
 import { getCurrentUser } from "@/lib/auth";
 import { buildIcs } from "@/lib/ics";
 import { appUrl } from "@/lib/oauth";
@@ -9,10 +10,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "sign in" }, { status: 401 });
   const { id } = await params;
-  const iv = await db.interview.findUnique({ where: { id }, include: { slots: true, proposedBy: { select: { name: true, email: true } }, application: { include: { requirement: { include: { company: { include: { members: { select: { userId: true } } } } } }, trainer: { include: { user: { select: { id: true, name: true, email: true } } } } } } } });
+  const iv = await db.interview.findUnique({ where: { id }, include: { slots: true, proposedBy: { select: { name: true, email: true } }, application: { include: { requirement: { include: { company: { include: { members: { select: { userId: true, role: true } } } } } }, trainer: { include: { user: { select: { id: true, name: true, email: true } } } } } } } });
   if (!iv || iv.status !== "CONFIRMED") return NextResponse.json({ error: "not found" }, { status: 404 });
   const req = iv.application.requirement;
-  const allowed = iv.application.trainer.user.id === user.id || req.company.members.some((m) => m.userId === user.id);
+  const allowed = iv.application.trainer.user.id === user.id || memberCan(req.company.members, user.id, "view");
   if (!allowed) return NextResponse.json({ error: "forbidden" }, { status: 403 });
   const slot = iv.slots.find((s) => s.id === iv.confirmedSlotId);
   if (!slot) return NextResponse.json({ error: "no slot" }, { status: 404 });

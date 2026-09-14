@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
-import { requireRole } from "@/lib/auth";
-import { createAdmin, removeAdmin, runJobsNow, setAnnouncement, updateSetting, upsertTaxonomy } from "@/lib/actions/admin";
+import { STAFF_ROLE_META, STAFF_ROLES } from "@/lib/permissions";
+import { requireStaff } from "@/lib/auth";
+import { createAdmin, removeAdmin, runJobsNow, setAnnouncement, updateSetting, upsertTaxonomy, setStaffRole } from "@/lib/actions/admin";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Avatar, Badge, Button, Card, Chip, Field, Input, PageHeader, Select, Stat } from "@/components/ui";
 import { fmtDate, timeAgo } from "@/lib/utils";
@@ -18,9 +19,9 @@ const SETTINGS: { key: string; label: string; hint: string }[] = [
 const daysAgo = (n: number) => new Date(Date.now() - n * 86400000);
 
 export default async function PlatformPage() {
-  await requireRole(["SUPER_ADMIN"], "/admin/platform");
+  await requireStaff("platform", "/admin/platform");
   const [admins, settings, categories, skills, audit, growth] = await Promise.all([
-    db.user.findMany({ where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } }, orderBy: [{ role: "desc" }, { createdAt: "asc" }] }),
+    db.user.findMany({ where: { role: { in: STAFF_ROLES } }, orderBy: [{ role: "desc" }, { createdAt: "asc" }] }),
     db.setting.findMany(),
     db.category.findMany({ orderBy: { name: "asc" }, include: { _count: { select: { requirements: true } } } }),
     db.skill.findMany({ orderBy: { name: "asc" }, include: { _count: { select: { trainers: true, requirements: true } } } }),
@@ -63,15 +64,16 @@ export default async function PlatformPage() {
             <div key={a.id} className="flex items-center gap-3 px-4 py-3">
               <Avatar name={a.name} src={a.avatarUrl} size={34} tone="amber" />
               <div className="min-w-0 flex-1"><p className="font-medium">{a.name}</p><p className="text-xs text-muted">{a.email} · since {fmtDate(a.createdAt)}</p></div>
-              <Badge tone={a.role === "SUPER_ADMIN" ? "amber" : "neutral"}>{a.role === "SUPER_ADMIN" ? "super" : a.status === "SUSPENDED" ? "removed" : "admin"}</Badge>
-              {a.role === "ADMIN" && a.status === "ACTIVE" ? <form action={removeAdmin}><input type="hidden" name="id" value={a.id} /><Button size="sm" variant="ghost" className="text-dim hover:text-rose">Remove</Button></form> : null}
+              {a.status === "SUSPENDED" ? <Badge tone="neutral">removed</Badge> : a.role === "SUPER_ADMIN" ? <Badge tone="amber">super admin</Badge> : <form action={setStaffRole} className="flex items-center gap-1"><input type="hidden" name="id" value={a.id} /><Select name="role" defaultValue={a.role} className="h-8 w-40 py-1 text-xs">{STAFF_ROLE_META.filter((r) => r.value !== "SUPER_ADMIN").map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</Select><Button size="sm" variant="ghost">Save</Button></form>}
+              {a.role !== "SUPER_ADMIN" && a.status === "ACTIVE" ? <form action={removeAdmin}><input type="hidden" name="id" value={a.id} /><Button size="sm" variant="ghost" className="text-dim hover:text-rose">Remove</Button></form> : null}
             </div>
           ))}</div>
           <ActionForm action={createAdmin} className="mt-4 grid gap-3 md:grid-cols-3 md:items-end" resetOnSuccess>
             <Field label="Name"><Input name="name" required /></Field>
             <Field label="Email"><Input name="email" type="email" required /></Field>
             <Field label="Initial password"><Input name="password" type="text" required minLength={8} /></Field>
-            <div className="md:col-span-3"><SubmitButton variant="secondary">Create administrator</SubmitButton></div>
+            <Field label="Role" className="md:col-span-3"><Select name="role" defaultValue="ADMIN">{STAFF_ROLE_META.filter((r) => r.value !== "SUPER_ADMIN").map((r) => <option key={r.value} value={r.value}>{r.label} · {r.blurb}</option>)}</Select></Field>
+            <div className="md:col-span-3"><SubmitButton variant="secondary">Create staff account</SubmitButton></div>
           </ActionForm>
         </Card>
 

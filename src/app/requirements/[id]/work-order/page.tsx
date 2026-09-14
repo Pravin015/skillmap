@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, FileCheck2 } from "lucide-react";
 import { PrintButton } from "@/components/print-button";
 import { db } from "@/lib/db";
+import { memberCan } from "@/lib/permissions";
 import { isStaff, requireUser } from "@/lib/auth";
 import { cancelWorkOrder, reopenWorkOrder, respondWorkOrder } from "@/lib/actions/work-orders";
 import { ActionForm } from "@/components/form-bits";
@@ -25,14 +26,14 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
   const req = await db.requirement.findUnique({
     where: { id },
     include: {
-      company: { include: { members: { select: { userId: true } } } },
+      company: { include: { members: { select: { userId: true, role: true } } } },
       applications: { where: { status: "AWARDED" }, include: { team: { include: { members: { where: { status: "ACCEPTED" }, include: { trainer: { select: { slug: true, user: { select: { name: true } } } } } } } }, trainer: { include: { user: { select: { id: true, name: true, email: true } } } } } },
       workOrder: { include: { events: { include: { actor: { select: { name: true } } }, orderBy: { createdAt: "asc" } }, createdBy: { select: { name: true } }, batches: { orderBy: { position: "asc" } }, escrow: true } },
     },
   });
   if (!req) notFound();
   const awarded = req.applications[0];
-  const isMember = req.company.members.some((m) => m.userId === user.id);
+  const isMember = memberCan(req.company.members, user.id, "view");
   const isTrainer = awarded?.trainer.user.id === user.id;
   if (!isMember && !isTrainer && !isStaff(user)) notFound();
   if (!awarded) return <Alert tone="amber">Award the requirement to a trainer before issuing a work order. <Link href={`/dashboard/requirements/${id}/applicants`} className="underline">Review applicants</Link>.</Alert>;

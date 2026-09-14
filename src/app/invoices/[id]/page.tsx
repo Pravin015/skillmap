@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { db } from "@/lib/db";
+import { memberCan } from "@/lib/permissions";
 import { isStaff, requireUser } from "@/lib/auth";
 import { cancelInvoice, markInvoicePaid } from "@/lib/actions/invoices";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
@@ -17,10 +18,10 @@ export default async function InvoicePage({ params, searchParams }: { params: Pr
   const { id } = await params;
   const { sent } = await searchParams;
   const user = await requireUser(`/invoices/${id}`);
-  const inv = await db.invoice.findUnique({ where: { id }, include: { trainer: { include: { user: { select: { id: true, name: true, email: true } } } }, company: { include: { members: { select: { userId: true } } } }, workOrder: { include: { requirement: { select: { id: true, title: true } } } } } });
+  const inv = await db.invoice.findUnique({ where: { id }, include: { trainer: { include: { user: { select: { id: true, name: true, email: true } } } }, company: { include: { members: { select: { userId: true, role: true } } } }, workOrder: { include: { requirement: { select: { id: true, title: true } } } } } });
   if (!inv) notFound();
   const isTrainer = inv.trainer.user.id === user.id;
-  const isMember = inv.company.members.some((m) => m.userId === user.id);
+  const isMember = memberCan(inv.company.members, user.id, "view");
   if (!isTrainer && !isMember && !isStaff(user)) notFound();
   const overdue = inv.status === "SENT" && inv.dueDate < new Date();
 

@@ -10,13 +10,13 @@ import type { ActionState } from "@/lib/types";
 async function eligibility(authorId: string, trainerId: string) {
   const [trainer, me] = await Promise.all([
     db.trainerProfile.findUnique({ where: { id: trainerId }, select: { userId: true, slug: true, user: { select: { name: true } } } }),
-    db.user.findUnique({ where: { id: authorId }, select: { membership: { select: { companyId: true, company: { select: { name: true } } } } } }),
+    db.user.findUnique({ where: { id: authorId }, select: { memberships: { select: { companyId: true, company: { select: { name: true } } } } } }),
   ]);
   if (!trainer || trainer.userId === authorId) return null;
-  const awarded = me?.membership ? await db.application.findFirst({ where: { trainerId, status: "AWARDED", requirement: { companyId: me.membership.companyId } }, include: { requirement: { select: { id: true, title: true } } }, orderBy: { createdAt: "desc" } }) : null;
+  const awarded = me?.memberships[0] ? await db.application.findFirst({ where: { trainerId, status: "AWARDED", requirement: { companyId: me.memberships[0].companyId } }, include: { requirement: { select: { id: true, title: true } } }, orderBy: { createdAt: "desc" } }) : null;
   const connected = await db.connection.findFirst({ where: { status: "ACCEPTED", OR: [{ requesterId: authorId, addresseeId: trainer.userId }, { requesterId: trainer.userId, addresseeId: authorId }] } });
   if (!awarded && !connected) return null;
-  return { trainer, companyId: me?.membership?.companyId ?? null, companyName: me?.membership?.company.name ?? null, awarded };
+  return { trainer, companyId: me?.memberships[0]?.companyId ?? null, companyName: me?.memberships[0]?.company.name ?? null, awarded };
 }
 
 export async function writeRecommendation(_p: ActionState, fd: FormData): Promise<ActionState> {

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { requireRole } from "@/lib/auth";
+import { requireStaff } from "@/lib/auth";
 import { markEscrowPaidOut, refundEscrow } from "@/lib/actions/escrow";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Badge, Card, Empty, Input, PageHeader, Stat } from "@/components/ui";
@@ -12,7 +12,7 @@ const tone = { PENDING: "amber", FUNDED: "cyan", RELEASED: "lime", PAID_OUT: "li
 
 /** Staff view of managed payments: what is held, what is due for payout, and the fee earned. */
 export default async function AdminEscrowPage() {
-  await requireRole(["ADMIN", "SUPER_ADMIN"], "/admin/escrow");
+  await requireStaff("finance", "/admin/escrow");
   const rows = await db.escrowDeposit.findMany({ include: { company: { select: { name: true, slug: true } }, trainer: { select: { slug: true, paymentDetails: true, user: { select: { name: true } } } }, workOrder: { select: { number: true, title: true, requirementId: true } } }, orderBy: { updatedAt: "desc" }, take: 200 });
   const held = rows.filter((r) => r.status === "FUNDED").reduce((n, r) => n + (r.currency === "INR" ? r.amount : 0), 0);
   const due = rows.filter((r) => r.status === "RELEASED");

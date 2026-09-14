@@ -6,7 +6,7 @@ import { ActionForm, SubmitButton } from "./form-bits";
 import { Avatar, Button, Card, Field, Input, Select, Textarea } from "./ui";
 import { fmtDate } from "@/lib/utils";
 
-export type RecRow = Recommendation & { author: { id: string; name: string; avatarUrl: string | null; role: string; membership: { company: { name: string; slug: string } } | null } };
+export type RecRow = Recommendation & { author: { id: string; name: string; avatarUrl: string | null; role: string; memberships: { company: { name: string; slug: string } }[] } };
 
 export function RecommendationsSection({ recs, trainerId, trainerName, viewerId, isSelf, canWrite, existing, askable, openForm }: {
   recs: RecRow[]; trainerId: string; trainerName: string; viewerId?: string; isSelf: boolean; canWrite: boolean; existing: RecRow | null;
@@ -25,7 +25,7 @@ export function RecommendationsSection({ recs, trainerId, trainerName, viewerId,
             <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-3">
               <Avatar name={r.author.name} src={r.author.avatarUrl} size={32} tone={r.author.role === "COMPANY" ? "violet" : "cyan"} />
               <div className="min-w-0 flex-1 text-sm">
-                <p className="font-semibold">{r.author.name}{r.author.membership ? <>, <Link href={`/companies/${r.author.membership.company.slug}`} className="font-normal text-muted hover:text-ink">{r.author.membership.company.name}</Link></> : null}</p>
+                <p className="font-semibold">{r.author.name}{r.author.memberships[0] ? <>, <Link href={`/companies/${r.author.memberships[0].company.slug}`} className="font-normal text-muted hover:text-ink">{r.author.memberships[0].company.name}</Link></> : null}</p>
                 <p className="text-xs text-muted">{r.relationship} · {fmtDate(r.createdAt)}</p>
               </div>
               {isSelf ? <form action={toggleRecommendation}><input type="hidden" name="id" value={r.id} /><Button variant="ghost" size="sm">{r.visible ? "Hide" : "Show"}</Button></form> : null}

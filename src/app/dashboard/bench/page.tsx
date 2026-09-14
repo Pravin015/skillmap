@@ -19,7 +19,7 @@ export default async function BenchPage() {
     db.application.findMany({ where: { status: "AWARDED", requirement: { companyId } }, include: { requirement: { select: { id: true, title: true, startDate: true, status: true } }, trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } }, skills: true, availability: { where: { endDate: { gte: new Date() } } } } } }, orderBy: { createdAt: "desc" } }),
     db.savedTrainer.findMany({ where: { companyId }, include: { trainer: { include: { user: { select: { id: true, name: true, avatarUrl: true } }, skills: true, availability: { where: { endDate: { gte: new Date() } } } } } } }),
     db.requirement.findMany({ where: { companyId, status: { in: ["OPEN", "SHORTLISTING"] } }, select: { id: true, title: true } }),
-    db.rating.findMany({ where: { fromUser: { membership: { companyId } } }, select: { toUserId: true, score: true } }),
+    db.rating.findMany({ where: { fromUser: { memberships: { some: { companyId } } } }, select: { toUserId: true, score: true } }),
   ]);
   type T = (typeof awarded)[number]["trainer"];
   const bench = new Map<string, { t: T; engagements: { id: string; title: string; startDate: Date; status: string }[]; saved: boolean }>();

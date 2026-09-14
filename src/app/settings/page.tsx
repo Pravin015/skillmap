@@ -1,9 +1,10 @@
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { addCertification, deleteCertification, inviteMember, removeMember, updateAccount, updateCompany, updateEmailPrefs, updateTrainerProfile, uploadIdentity } from "@/lib/actions/profile";
+import { addCertification, deleteCertification, inviteMember, removeMember, updateAccount, updateCompany, updateEmailPrefs, updateTrainerProfile, uploadIdentity, setMemberRole } from "@/lib/actions/profile";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Alert, Avatar, Badge, Button, ButtonLink, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { certStatusLabel, COMPANY_SIZES, CURRENCIES, DELIVERY_MODES, fmtDate, modeLabel } from "@/lib/utils";
+import { COMPANY_ACTION_LABELS, COMPANY_ROLES, companyCan, memberRoleLabel, type CompanyAction } from "@/lib/permissions";
 import { unlinkProvider } from "@/lib/actions/oauth";
 import { PROVIDER_LIST, providerName } from "@/lib/oauth";
 import { OAuthButtons } from "@/components/oauth-buttons";
@@ -24,7 +25,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       {welcome ? <Alert tone="cyan">Account created. {user.trainerProfile ? "Add your skills, rate and certifications to get verified." : "Complete your company page, then post your first requirement."}</Alert> : null}
 
       {user.trainerProfile ? <TrainerSettings userId={user.id} profileId={user.trainerProfile.id} /> : null}
-      {user.membership ? <CompanySettings companyId={user.membership.company.id} isOwner={user.membership.role === "OWNER"} me={user.id} /> : null}
+      {user.membership ? <CompanySettings companyId={user.membership.company.id} isOwner={user.membership.role === "OWNER"} canManage={companyCan(user.membership.role, "manage_team")} me={user.id} /> : null}
 
       {user.trainerProfile ? (
         <Card className="p-6">
@@ -176,7 +177,7 @@ async function TrainerSettings({ userId, profileId }: { userId: string; profileI
   );
 }
 
-async function CompanySettings({ companyId, isOwner, me }: { companyId: string; isOwner: boolean; me: string }) {
+async function CompanySettings({ companyId, isOwner, canManage, me }: { companyId: string; isOwner: boolean; canManage: boolean; me: string }) {
   const [c, meUser] = await Promise.all([
     db.company.findUnique({ where: { id: companyId }, include: { members: { include: { user: { select: { id: true, name: true, email: true, avatarUrl: true } } }, orderBy: { joinedAt: "asc" } } } }),
     db.user.findUnique({ where: { id: me }, select: { name: true } }),
@@ -211,22 +212,23 @@ async function CompanySettings({ companyId, isOwner, me }: { companyId: string; 
 
       <Card className="p-6">
         <h2 className="text-lg font-bold">Team</h2>
-        <p className="mt-1 text-sm text-muted">Owners manage members and billing. Recruiters post requirements, shortlist and message.</p>
+        <p className="mt-1 text-sm text-muted">Roles decide what each person can do. Trainers can be added too; they switch between their trainer view and your company from the account menu.</p>
+        <details className="mt-3 rounded-xl border border-line bg-surface-2/60 p-3 text-sm"><summary className="cursor-pointer font-medium">Permission matrix</summary><div className="mt-2 overflow-x-auto"><table className="w-full text-xs"><thead><tr className="text-left text-muted"><th className="py-1 pr-3">Permission</th>{COMPANY_ROLES.map((r) => <th key={r.value} className="py-1 pr-3">{r.label}</th>)}</tr></thead><tbody>{(Object.keys(COMPANY_ACTION_LABELS) as CompanyAction[]).map((a) => <tr key={a} className="border-t border-line/60"><td className="py-1 pr-3">{COMPANY_ACTION_LABELS[a]}</td>{COMPANY_ROLES.map((r) => <td key={r.value} className="py-1 pr-3">{companyCan(r.value, a) ? <span className="text-lime">✓</span> : <span className="text-dim">–</span>}</td>)}</tr>)}</tbody></table></div></details>
         <div className="mt-4 divide-y divide-line rounded-xl border border-line">
           {c.members.map((m) => (
             <div key={m.id} className="flex items-center gap-3 px-4 py-3">
               <Avatar name={m.user.name} src={m.user.avatarUrl} size={36} tone="violet" />
               <div className="min-w-0 flex-1"><p className="font-medium">{m.user.name}{m.userId === me ? <span className="text-muted"> (you)</span> : null}</p><p className="text-xs text-muted">{m.user.email}</p></div>
-              <Badge tone={m.role === "OWNER" ? "violet" : "neutral"}>{m.role}</Badge>
-              {isOwner && m.userId !== me ? <form action={removeMember}><input type="hidden" name="id" value={m.id} /><Button variant="ghost" size="sm" className="text-dim hover:text-rose">Remove</Button></form> : null}
+              {canManage && m.userId !== me ? <form action={setMemberRole} className="flex items-center gap-1"><input type="hidden" name="id" value={m.id} /><Select name="role" defaultValue={m.role} className="h-8 w-44 py-1 text-xs">{COMPANY_ROLES.filter((r) => isOwner || r.value !== "OWNER").map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</Select><Button variant="ghost" size="sm">Save</Button></form> : <Badge tone={m.role === "OWNER" ? "violet" : "neutral"}>{memberRoleLabel(m.role)}</Badge>}
+              {canManage && m.userId !== me ? <form action={removeMember}><input type="hidden" name="id" value={m.id} /><Button variant="ghost" size="sm" className="text-dim hover:text-rose">Remove</Button></form> : null}
             </div>
           ))}
         </div>
-        {isOwner ? (
-          <ActionForm action={inviteMember} className="mt-5 grid gap-4 md:grid-cols-[1fr_1fr_160px_auto] md:items-end" resetOnSuccess>
+        {canManage ? (
+          <ActionForm action={inviteMember} className="mt-5 grid gap-4 md:grid-cols-[1fr_1fr_190px_auto] md:items-end" resetOnSuccess>
             <Field label="Name"><Input name="name" required placeholder="Kavya Singh" /></Field>
-            <Field label="Work email"><Input name="email" type="email" required placeholder="kavya@company.com" /></Field>
-            <Field label="Role"><Select name="role" defaultValue="RECRUITER"><option value="RECRUITER">Recruiter</option><option value="OWNER">Owner</option></Select></Field>
+            <Field label="Work email" hint="Trainers can be added with the email they use on CorpGurus."><Input name="email" type="email" required placeholder="kavya@company.com" /></Field>
+            <Field label="Role"><Select name="role" defaultValue="HIRING_MANAGER">{COMPANY_ROLES.filter((r) => isOwner || r.value !== "OWNER").map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</Select></Field>
             <SubmitButton variant="secondary">Add member</SubmitButton>
           </ActionForm>
         ) : null}

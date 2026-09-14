@@ -23,13 +23,13 @@ export async function ensureReferralCode() {
  * Reward: 30 days of Trainer Pro or Company Growth for the referrer, added to an active subscription or created as a free one.
  */
 export async function qualifyReferral(referredUserId: string) {
-  const referred = await db.user.findUnique({ where: { id: referredUserId }, include: { referredBy: { include: { membership: { select: { companyId: true } } } } } });
+  const referred = await db.user.findUnique({ where: { id: referredUserId }, include: { referredBy: { include: { memberships: { select: { companyId: true } } } } } });
   if (!referred?.referredBy) return;
   if (await db.referralReward.findUnique({ where: { referredId: referredUserId } })) return;
   const referrer = referred.referredBy;
-  const plan = referrer.role === "TRAINER" ? "TRAINER_PRO" : referrer.membership ? "COMPANY_GROWTH" : null;
+  const plan = referrer.role === "TRAINER" ? "TRAINER_PRO" : referrer.memberships[0] ? "COMPANY_GROWTH" : null;
   if (!plan) return;
-  const where = referrer.membership ? { companyId: referrer.membership.companyId } : { userId: referrer.id };
+  const where = referrer.memberships[0] ? { companyId: referrer.memberships[0].companyId } : { userId: referrer.id };
   const active = await db.subscription.findFirst({ where: { ...where, status: { in: ["ACTIVE", "AUTHENTICATED", "PENDING"] } } });
   if (active) {
     await db.subscription.update({ where: { id: active.id }, data: { currentPeriodEnd: new Date((active.currentPeriodEnd ?? new Date()).getTime() + 30 * 86400000) } });

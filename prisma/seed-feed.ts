@@ -6,7 +6,7 @@ const hoursAgo = (h: number) => new Date(Date.now() - h * 3600000);
 export async function seedFeed(db: PrismaClient) {
   if (await db.post.count()) { console.log("Feed already seeded, skipping."); return; }
   const byEmail = async (email: string) => {
-    const u = await db.user.findUnique({ where: { email }, include: { membership: true } });
+    const u = await db.user.findUnique({ where: { email }, include: { memberships: true } });
     if (!u) throw new Error(`seed-feed: missing user ${email}`);
     return u;
   };
@@ -22,8 +22,8 @@ export async function seedFeed(db: PrismaClient) {
   const kavya = await byEmail("kavya@techsphere.demo");
   const lakshmi = await byEmail("lakshmi@quantumedge.demo");
 
-  const mk = (u: { id: string; membership: { companyId: string } | null }, body: string, h: number, extra: Partial<{ imageUrl: string; docUrl: string; docName: string }> = {}) =>
-    db.post.create({ data: { authorId: u.id, companyId: u.membership?.companyId ?? null, body, createdAt: hoursAgo(h), ...extra } });
+  const mk = (u: { id: string; memberships: { companyId: string }[] }, body: string, h: number, extra: Partial<{ imageUrl: string; docUrl: string; docName: string }> = {}) =>
+    db.post.create({ data: { authorId: u.id, companyId: u.memberships[0]?.companyId ?? null, body, createdAt: hoursAgo(h), ...extra } });
 
   const p1 = await mk(ananya, "Wrapped a 3-day HPE VM Essentials 9.0 batch for a bank ops team yesterday. Two things that landed hardest:\n\n1. Running the VMware-to-HVM migration as a live lab instead of slides. The room went quiet in the good way.\n2. A one-page \"day-2 checklist\" they keep after the course.\n\nHappy to share the checklist template with other VME instructors here.", 30);
   const p2 = await mk(meera, "SkillBridge is now an authorised HPE training partner for the full GreenLake and VM Essentials track. We are staffing 40+ batches this quarter and looking for ASE-certified instructors in Mumbai, Delhi NCR and Bengaluru. Open requirements are on our company page.", 52);
@@ -56,15 +56,15 @@ export async function seedFeed(db: PrismaClient) {
   await cmt(p3, kavya, "This is exactly the confusion we hit last batch. Thank you.", 18);
   await cmt(p4, ananya, "Congratulations Sana.", 7);
 
-  await db.post.create({ data: { authorId: meera.id, companyId: meera.membership?.companyId, body: "This is the kind of instructor we want on every VME batch.", repostOfId: p1.id, createdAt: hoursAgo(25) } });
-  await db.post.create({ data: { authorId: rahul.id, companyId: rahul.membership?.companyId, body: "", repostOfId: p7.id, createdAt: hoursAgo(40) } });
+  await db.post.create({ data: { authorId: meera.id, companyId: meera.memberships[0]?.companyId, body: "This is the kind of instructor we want on every VME batch.", repostOfId: p1.id, createdAt: hoursAgo(25) } });
+  await db.post.create({ data: { authorId: rahul.id, companyId: rahul.memberships[0]?.companyId, body: "", repostOfId: p7.id, createdAt: hoursAgo(40) } });
 
   const follow = (f: { id: string }, t: { id: string }) => db.follow.create({ data: { followerId: f.id, followingUserId: t.id } });
   const followCo = (f: { id: string }, companyId: string) => db.follow.create({ data: { followerId: f.id, companyId } });
   await Promise.all([
     follow(ananya, rohit), follow(ananya, sana), follow(ananya, vikram), follow(rohit, ananya), follow(sana, ananya), follow(priya, ananya), follow(karan, ananya), follow(meera, ananya), follow(sandeep, ananya),
     follow(kavya, rohit), follow(rahul, priya), follow(rahul, vikram), follow(lakshmi, sana), follow(meera, rohit), follow(priya, sana),
-    followCo(ananya, meera.membership!.companyId), followCo(rohit, meera.membership!.companyId), followCo(rohit, rahul.membership!.companyId), followCo(sana, lakshmi.membership!.companyId), followCo(priya, rahul.membership!.companyId),
+    followCo(ananya, meera.memberships[0]!.companyId), followCo(rohit, meera.memberships[0]!.companyId), followCo(rohit, rahul.memberships[0]!.companyId), followCo(sana, lakshmi.memberships[0]!.companyId), followCo(priya, rahul.memberships[0]!.companyId),
   ]);
   console.log("Feed seeded: 12 posts, likes, comments, 2 reposts, follows.");
 }

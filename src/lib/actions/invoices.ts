@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { notify, audit } from "@/lib/notify";
 import type { ActionState } from "@/lib/types";
+import { memberCan } from "@/lib/permissions";
 import { dispatchWebhook } from "@/lib/webhooks";
 
 async function emitInvoice(id: string, event: "invoice.created" | "invoice.paid") {
@@ -23,7 +24,7 @@ export async function raiseInvoice(_p: ActionState, fd: FormData): Promise<Actio
   const user = await requireUser();
   if (!user.trainerProfile) return { error: "Only trainers raise invoices." };
   const workOrderId = String(fd.get("workOrderId"));
-  const wo = await db.workOrder.findUnique({ where: { id: workOrderId }, include: { company: { include: { members: { select: { userId: true } } } }, requirement: { select: { id: true, title: true } }, invoices: { where: { status: { in: ["SENT", "PAID"] } } } } });
+  const wo = await db.workOrder.findUnique({ where: { id: workOrderId }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, requirement: { select: { id: true, title: true } }, invoices: { where: { status: { in: ["SENT", "PAID"] } } } } });
   if (!wo || wo.trainerId !== user.trainerProfile.id) return { error: "Work order not found." };
   if (wo.status !== "ACCEPTED") return { error: "The work order must be accepted before invoicing." };
   if (wo.invoices.length) return { error: "An invoice already exists for this work order." };
@@ -52,8 +53,8 @@ export async function markInvoicePaid(_p: ActionState, fd: FormData): Promise<Ac
   const user = await requireUser();
   const id = String(fd.get("id"));
   const reference = String(fd.get("reference") ?? "").trim();
-  const inv = await db.invoice.findUnique({ where: { id }, include: { trainer: { select: { userId: true } }, company: { include: { members: { select: { userId: true } } } } } });
-  if (!inv || !inv.company.members.some((m) => m.userId === user.id)) return { error: "Only the billed company can mark an invoice paid." };
+  const inv = await db.invoice.findUnique({ where: { id }, include: { trainer: { select: { userId: true } }, company: { include: { members: { select: { userId: true, role: true } } } } } });
+  if (!inv || !memberCan(inv.company.members, user.id, "pay_invoice")) return { error: "Only the billed company can mark an invoice paid." };
   if (inv.status !== "SENT") return { error: "This invoice is not awaiting payment." };
   await db.invoice.update({ where: { id }, data: { status: "PAID", paidAt: new Date(), paidReference: reference || null } });
   await notify(inv.trainer.userId, "invoice", `Invoice ${inv.invoiceNumber} marked paid`, `${inv.company.name} recorded payment${reference ? ` · ref ${reference}` : ""}.`, `/invoices/${id}`);
@@ -66,7 +67,7 @@ export async function markInvoicePaid(_p: ActionState, fd: FormData): Promise<Ac
 export async function cancelInvoice(fd: FormData) {
   const user = await requireUser();
   const id = String(fd.get("id"));
-  const inv = await db.invoice.findUnique({ where: { id }, include: { company: { include: { members: { select: { userId: true } } } } } });
+  const inv = await db.invoice.findUnique({ where: { id }, include: { company: { include: { members: { select: { userId: true, role: true } } } } } });
   if (!inv || inv.status !== "SENT" || inv.issuedById !== user.id) return;
   await db.invoice.update({ where: { id }, data: { status: "CANCELLED" } });
   await notify(inv.company.members.map((m) => m.userId), "invoice", `Invoice ${inv.invoiceNumber} cancelled`, "The trainer withdrew this invoice.", `/invoices/${id}`);

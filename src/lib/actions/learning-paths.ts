@@ -5,10 +5,11 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import type { ActionState } from "@/lib/types";
+import { companyCan } from "@/lib/permissions";
 
 async function companyOf() {
   const user = await requireUser();
-  if (user.role !== "COMPANY" || !user.membership) return null;
+  if (!user.membership || !companyCan(user.membership.role, "company_settings")) return null;
   return { user, companyId: user.membership.company.id };
 }
 function refresh(id?: string) {

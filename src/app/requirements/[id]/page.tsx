@@ -18,6 +18,7 @@ import { InterviewResponse } from "@/components/interview";
 import { appUrl } from "@/lib/oauth";
 import { JsonLd } from "@/components/json-ld";
 import { jobPostingLd, pageMeta } from "@/lib/seo";
+import { memberCan } from "@/lib/permissions";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
@@ -38,7 +39,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
   const r = await db.requirement.findUnique({
     where: { id },
     include: {
-      company: { include: { members: { select: { userId: true } } } },
+      company: { include: { members: { select: { userId: true, role: true } } } },
       postedBy: { select: { id: true, name: true, avatarUrl: true } },
       category: true, skills: { orderBy: { name: "asc" } },
       invitedTrainers: { include: { user: { select: { name: true } } } },
@@ -52,6 +53,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
   if (!r) notFound();
 
   const isMember = !!user && r.company.members.some((m) => m.userId === user.id);
+  const canHire = !!user && memberCan(r.company.members, user.id, "hire");
   const staff = isStaff(user);
   const myApp = user?.trainerProfile ? r.applications.find((a) => a.trainerId === user.trainerProfile!.id) : null;
   const invited = user?.trainerProfile ? r.invitedTrainers.some((t) => t.id === user.trainerProfile!.id) : false;
@@ -155,10 +157,10 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
             <p className="mt-1 font-display text-2xl font-bold">{r.applications.filter((a) => a.status !== "WITHDRAWN").length} <span className="text-base font-medium text-muted">applications</span></p>
             <ButtonLink href={`/dashboard/requirements/${r.id}/applicants`} variant="violet" className="mt-3 w-full">Review applicants</ButtonLink>
             <div className="mt-3 grid grid-cols-2 gap-2">
-              {r.status === "OPEN" ? <StatusBtn id={r.id} to="SHORTLISTING" label="Start shortlisting" /> : null}
-              {r.status === "AWARDED" ? <StatusBtn id={r.id} to="COMPLETED" label="Mark completed" /> : null}
-              {["OPEN", "SHORTLISTING"].includes(r.status) ? <StatusBtn id={r.id} to="CANCELLED" label="Cancel" danger /> : null}
-              {r.status === "CANCELLED" ? <StatusBtn id={r.id} to="OPEN" label="Reopen" /> : null}
+              {canHire && r.status === "OPEN" ? <StatusBtn id={r.id} to="SHORTLISTING" label="Start shortlisting" /> : null}
+              {canHire && r.status === "AWARDED" ? <StatusBtn id={r.id} to="COMPLETED" label="Mark completed" /> : null}
+              {canHire && ["OPEN", "SHORTLISTING"].includes(r.status) ? <StatusBtn id={r.id} to="CANCELLED" label="Cancel" danger /> : null}
+              {canHire && r.status === "CANCELLED" ? <StatusBtn id={r.id} to="OPEN" label="Reopen" /> : null}
             </div>
             {r.invitedTrainers.length ? <p className="mt-3 text-xs text-muted">Invited: {r.invitedTrainers.map((t) => t.user.name).join(", ")}</p> : null}
           </Card>

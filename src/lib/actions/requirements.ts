@@ -11,6 +11,7 @@ import { entitlementsFor } from "@/lib/billing";
 import { alertRequirementSearches } from "@/lib/saved-searches";
 import { qualifyReferral } from "@/lib/actions/referrals";
 import type { ActionState } from "@/lib/types";
+import { companyCan, memberCan } from "@/lib/permissions";
 import { dispatchWebhook } from "@/lib/webhooks";
 import { applicationSelect, requirementSelect, shapeApplication, shapeRequirement } from "@/lib/api-shapes";
 
@@ -41,7 +42,7 @@ const reqSchema = z.object({
 
 async function companyContext() {
   const user = await requireUser();
-  if (user.role !== "COMPANY" || !user.membership) return null;
+  if (!user.membership || !companyCan(user.membership.role, "hire")) return null;
   return { user, companyId: user.membership.company.id, companyName: user.membership.company.name };
 }
 
@@ -135,10 +136,10 @@ export async function addComment(_p: ActionState, fd: FormData): Promise<ActionS
   const parentId = String(fd.get("parentId") || "") || null;
   const body = String(fd.get("body") ?? "").trim();
   if (body.length < 2) return { error: "Write something first." };
-  const req = await db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: { select: { userId: true } } } } } });
+  const req = await db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: { select: { userId: true, role: true } } } } } });
   if (!req) return { error: "Requirement not found." };
   await db.comment.create({ data: { requirementId, authorId: user.id, parentId, body } });
-  const isMember = req.company.members.some((m) => m.userId === user.id);
+  const isMember = memberCan(req.company.members, user.id, "view");
   if (!isMember) {
     await notify(req.company.members.map((m) => m.userId), "comment", "New question on your requirement", `${user.name} on ${req.title}: ${body.slice(0, 90)}`, `/requirements/${requirementId}#comments`);
   } else if (parentId) {
@@ -156,7 +157,7 @@ export async function apply(_p: ActionState, fd: FormData): Promise<ActionState>
   const coverNote = String(fd.get("coverNote") ?? "").trim();
   const proposedRate = Number(fd.get("proposedRate") || 0) || null;
   if (coverNote.length < 30) return { error: "Tell them why you fit in at least a couple of sentences." };
-  const req = await db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: { select: { userId: true } } } }, invitedTrainers: { select: { id: true } } } });
+  const req = await db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, invitedTrainers: { select: { id: true } } } });
   if (!req || !["OPEN", "SHORTLISTING"].includes(req.status)) return { error: "This requirement is no longer accepting applications." };
   if (req.visibility === "INVITE_ONLY" && !req.invitedTrainers.some((t) => t.id === user.trainerProfile!.id)) return { error: "This requirement is invite-only." };
   if (await db.application.findUnique({ where: { requirementId_trainerId: { requirementId, trainerId: user.trainerProfile.id } } })) return { error: "You already applied." };
@@ -233,7 +234,7 @@ export async function rateCounterparty(_p: ActionState, fd: FormData): Promise<A
   const req = await db.requirement.findUnique({ where: { id: requirementId }, include: { company: { include: { members: true } }, applications: { where: { status: "AWARDED" }, include: { trainer: true } } } });
   if (!req || req.status !== "COMPLETED") return { error: "Ratings open once the requirement is marked completed." };
   const awarded = req.applications[0];
-  const isMember = req.company.members.some((m) => m.userId === user.id);
+  const isMember = memberCan(req.company.members, user.id, "view");
   const isAwardedTrainer = awarded?.trainer.userId === user.id;
   if (!isMember && !isAwardedTrainer) return { error: "Only the company and the awarded trainer can rate." };
   await db.rating.upsert({ where: { requirementId_fromUserId_toUserId: { requirementId, fromUserId: user.id, toUserId } }, create: { requirementId, fromUserId: user.id, toUserId, score, review }, update: { score, review } });

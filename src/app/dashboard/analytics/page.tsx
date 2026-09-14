@@ -31,7 +31,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
       learnerScore(tid),
       db.application.findMany({ where: { trainerId: tid, createdAt: { gte: since } }, select: { status: true, createdAt: true, requirement: { select: { title: true, company: { select: { name: true } } } } } }),
       db.workOrder.findMany({ where: { trainerId: tid, status: "ACCEPTED" }, select: { total: true, currency: true, acceptedAt: true, startDate: true, title: true, invoices: { select: { status: true, total: true } } } }),
-      db.rating.findMany({ where: { toUserId: user.id }, select: { score: true, createdAt: true, fromUser: { select: { name: true, membership: { select: { company: { select: { name: true } } } } } } }, orderBy: { createdAt: "desc" }, take: 10 }),
+      db.rating.findMany({ where: { toUserId: user.id }, select: { score: true, createdAt: true, fromUser: { select: { name: true, memberships: { select: { company: { select: { name: true } } } } } } }, orderBy: { createdAt: "desc" }, take: 10 }),
     ]);
     const shortlisted = apps.filter((a) => ["SHORTLISTED", "AWARDED"].includes(a.status)).length;
     const awarded = apps.filter((a) => a.status === "AWARDED").length;
@@ -58,7 +58,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
             <ul className="mt-3 space-y-2 text-sm">{[["Applied", apps.length], ["Shortlisted", shortlisted], ["Awarded", awarded]].map(([l, v]) => <li key={String(l)} className="flex items-center gap-3"><span className="w-24 text-muted">{l}</span><span className="h-2 flex-1 overflow-hidden rounded-full bg-surface-2"><span className="block h-full bg-violet" style={{ width: pct(Number(v), apps.length) === "—" ? 0 : pct(Number(v), apps.length) }} /></span><span className="w-8 text-right font-semibold tabular-nums">{v}</span></li>)}</ul>
             {apps.length ? <ul className="mt-4 divide-y divide-line text-xs text-muted">{apps.slice(0, 6).map((a, i) => <li key={i} className="flex justify-between py-1.5"><span className="truncate pr-2">{a.requirement.title}</span><span className="shrink-0">{a.status.toLowerCase()}</span></li>)}</ul> : <p className="mt-3 text-sm text-muted">No applications in this range.</p>}</Card>
           <Card className="p-5"><p className="font-semibold">Client ratings</p>
-            {ratings.length ? <ul className="mt-3 space-y-2 text-sm">{ratings.map((r, i) => <li key={i} className="flex items-center gap-3"><span className="text-amber">{"★".repeat(r.score)}<span className="text-dim">{"★".repeat(5 - r.score)}</span></span><span className="truncate text-muted">{r.fromUser.membership?.company.name ?? r.fromUser.name}</span><span className="ml-auto text-xs text-dim">{fmtDate(r.createdAt)}</span></li>)}</ul> : <p className="mt-2 text-sm text-muted">No client ratings yet. Ratings open when a company marks an engagement completed.</p>}
+            {ratings.length ? <ul className="mt-3 space-y-2 text-sm">{ratings.map((r, i) => <li key={i} className="flex items-center gap-3"><span className="text-amber">{"★".repeat(r.score)}<span className="text-dim">{"★".repeat(5 - r.score)}</span></span><span className="truncate text-muted">{r.fromUser.memberships[0]?.company.name ?? r.fromUser.name}</span><span className="ml-auto text-xs text-dim">{fmtDate(r.createdAt)}</span></li>)}</ul> : <p className="mt-2 text-sm text-muted">No client ratings yet. Ratings open when a company marks an engagement completed.</p>}
             {learners.count ? <p className="mt-4 border-t border-line pt-3 text-sm text-muted">Learner score <span className="font-semibold text-lime">{learners.avg!.toFixed(1)}</span> from {learners.count} participants · {learners.recommendPct}% recommend</p> : null}</Card>
         </div>
       </div>
@@ -70,7 +70,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
     const [reqs, wos, ratingsGiven] = await Promise.all([
       db.requirement.findMany({ where: { companyId: cid, createdAt: { gte: since } }, include: { applications: { select: { status: true, createdAt: true, statusChangedAt: true, trainer: { include: { user: { select: { name: true } } } } } }, skills: { select: { name: true } } }, orderBy: { createdAt: "desc" } }),
       db.workOrder.findMany({ where: { companyId: cid, status: "ACCEPTED" }, select: { total: true, startDate: true, invoices: { select: { status: true, total: true } } } }),
-      db.rating.count({ where: { fromUser: { membership: { companyId: cid } } } }),
+      db.rating.count({ where: { fromUser: { memberships: { some: { companyId: cid } } } } }),
     ]);
     const apps = reqs.flatMap((r) => r.applications);
     const awardedReqs = reqs.filter((r) => r.applications.some((a) => a.status === "AWARDED"));

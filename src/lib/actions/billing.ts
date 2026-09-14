@@ -1,5 +1,7 @@
 "use server";
 
+import { companyCan } from "@/lib/permissions";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { BillingInterval, PlanCode } from "@prisma/client";
@@ -29,7 +31,7 @@ async function subject(plan: PlanCode) {
     return { user, where: { userId: user.id }, label: user.name };
   }
   if (!user.membership) throw new Error("Company plans need a company account.");
-  if (user.membership.role !== "OWNER") throw new Error("Only the company owner can manage billing.");
+  if (!companyCan(user.membership.role, "billing")) throw new Error("Only the company owner can manage billing.");
   return { user, where: { companyId: user.membership.company.id }, label: user.membership.company.name };
 }
 
@@ -93,7 +95,7 @@ export async function cancelSubscription(_p: ActionState, fd: FormData): Promise
   const id = String(fd.get("id"));
   const sub = await db.subscription.findFirst({ where: { id, ...subscriptionWhere(user) } });
   if (!sub) return { error: "Subscription not found." };
-  if (sub.companyId && user.membership?.role !== "OWNER") return { error: "Only the company owner can cancel the plan." };
+  if (sub.companyId && !companyCan(user.membership?.role, "billing")) return { error: "Only the company owner can cancel the plan." };
   if (!ACTIVE_STATUSES!.includes(sub.status)) return { error: "This subscription is not active." };
   try {
     if (sub.provider === "stripe" && sub.stripeSubscriptionId && !sub.simulated) {

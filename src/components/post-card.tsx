@@ -10,15 +10,15 @@ import { cn, timeAgo } from "@/lib/utils";
 type Author = PostRow["author"];
 
 function authorHref(a: Author) {
-  return a.trainerProfile ? `/trainers/${a.trainerProfile.slug}` : a.membership ? `/companies/${a.membership.company.slug}` : "#";
+  return a.trainerProfile ? `/trainers/${a.trainerProfile.slug}` : a.memberships[0] ? `/companies/${a.memberships[0].company.slug}` : "#";
 }
 function authorSub(a: Author) {
-  return a.trainerProfile ? a.trainerProfile.headline : a.membership ? a.membership.company.name : a.role === "SUPER_ADMIN" || a.role === "ADMIN" ? "CorpGurus team" : "";
+  return a.trainerProfile ? a.trainerProfile.headline : a.memberships[0] ? a.memberships[0].company.name : a.role === "SUPER_ADMIN" || a.role === "ADMIN" ? "CorpGurus team" : "";
 }
 const tone = (a: Author) => (a.role === "COMPANY" ? "violet" : a.role === "TRAINER" ? "cyan" : "amber") as "violet" | "cyan" | "amber";
 
 export function AuthorLine({ a, when, size = 40 }: { a: Author; when: Date; size?: number }) {
-  const verified = a.trainerProfile?.verifiedAt || a.membership?.company.domainVerifiedAt;
+  const verified = a.trainerProfile?.verifiedAt || a.memberships[0]?.company.domainVerifiedAt;
   return (
     <div className="flex items-start gap-3">
       <Link href={authorHref(a)}><Avatar name={a.name} src={a.avatarUrl} size={size} tone={tone(a)} /></Link>
@@ -26,7 +26,7 @@ export function AuthorLine({ a, when, size = 40 }: { a: Author; when: Date; size
         <p className="flex flex-wrap items-center gap-x-1.5 text-[15px] leading-tight">
           <Link href={authorHref(a)} className="font-display font-semibold hover:text-cyan">{a.name}</Link>
           {verified ? <BadgeCheck size={14} className={a.role === "COMPANY" ? "text-violet" : "text-cyan"} /> : null}
-          {a.membership ? <Badge tone="violet">company</Badge> : null}
+          {a.memberships[0] ? <Badge tone="violet">company</Badge> : null}
           <span className="text-xs text-dim">· {timeAgo(when)}</span>
         </p>
         <p className="truncate text-[13px] text-muted">{authorSub(a)}</p>

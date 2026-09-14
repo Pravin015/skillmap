@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { requireStaff } from "@/lib/auth";
 import { reviewCertification, verifyCompanyDomain, verifyGst, verifyIdentity } from "@/lib/actions/admin";
 import { Avatar, Button, Card, Empty, Input, PageHeader, Stat } from "@/components/ui";
 import { fmtDate, timeAgo } from "@/lib/utils";
@@ -7,6 +8,7 @@ import { fmtDate, timeAgo } from "@/lib/utils";
 export const metadata = { title: "Admin queue" };
 
 export default async function AdminQueue() {
+  await requireStaff("verify", "/admin");
   const [identities, gsts] = await Promise.all([
     db.user.findMany({ where: { identityDocUrl: { not: null }, identityVerifiedAt: null }, select: { id: true, name: true, avatarUrl: true, identityDocUrl: true, identityNote: true, createdAt: true, trainerProfile: { select: { slug: true } } } }),
     db.company.findMany({ where: { gstin: { not: null }, gstVerifiedAt: null }, select: { id: true, name: true, slug: true, gstin: true } }),

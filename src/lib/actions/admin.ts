@@ -4,16 +4,15 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { requireRole } from "@/lib/auth";
+import { requireRole, requireStaff } from "@/lib/auth";
 import { audit, notify } from "@/lib/notify";
 import { slugify } from "@/lib/utils";
 import { qualifyReferral } from "@/lib/actions/referrals";
 import type { ActionState } from "@/lib/types";
 
-const STAFF = ["ADMIN", "SUPER_ADMIN"] as const;
 
 export async function reviewCertification(fd: FormData) {
-  const admin = await requireRole([...STAFF]);
+  const admin = await requireStaff("verify");
   const id = String(fd.get("id"));
   const decision = String(fd.get("decision")) as "VERIFIED" | "REJECTED";
   const note = String(fd.get("note") ?? "").trim() || null;
@@ -30,7 +29,7 @@ export async function reviewCertification(fd: FormData) {
 }
 
 export async function verifyCompanyDomain(fd: FormData) {
-  const admin = await requireRole([...STAFF]);
+  const admin = await requireStaff("verify");
   const id = String(fd.get("id"));
   const verify = String(fd.get("verify")) === "1";
   const c = await db.company.update({ where: { id }, data: { domainVerifiedAt: verify ? new Date() : null }, include: { members: { select: { userId: true } } } });
@@ -40,7 +39,7 @@ export async function verifyCompanyDomain(fd: FormData) {
 }
 
 export async function verifyIdentity(fd: FormData) {
-  const admin = await requireRole([...STAFF]);
+  const admin = await requireStaff("verify");
   const id = String(fd.get("id"));
   const verify = String(fd.get("verify")) === "1";
   const note = String(fd.get("note") ?? "").trim() || null;
@@ -52,7 +51,7 @@ export async function verifyIdentity(fd: FormData) {
 }
 
 export async function verifyGst(fd: FormData) {
-  const admin = await requireRole([...STAFF]);
+  const admin = await requireStaff("verify");
   const id = String(fd.get("id"));
   const verify = String(fd.get("verify")) === "1";
   const c = await db.company.update({ where: { id }, data: { gstVerifiedAt: verify ? new Date() : null }, include: { members: { select: { userId: true } } } });
@@ -62,7 +61,7 @@ export async function verifyGst(fd: FormData) {
 }
 
 export async function setUserStatus(fd: FormData) {
-  const admin = await requireRole([...STAFF]);
+  const admin = await requireStaff("users");
   const id = String(fd.get("id"));
   const status = String(fd.get("status")) === "SUSPENDED" ? "SUSPENDED" : "ACTIVE";
   const target = await db.user.findUnique({ where: { id } });
@@ -74,7 +73,7 @@ export async function setUserStatus(fd: FormData) {
 }
 
 export async function moderateComment(fd: FormData) {
-  const admin = await requireRole([...STAFF]);
+  const admin = await requireStaff("moderate");
   const id = String(fd.get("id"));
   const c = await db.comment.update({ where: { id }, data: { deletedAt: new Date() } });
   await audit(admin.id, "comment.remove", id, { requirementId: c.requirementId });
@@ -82,7 +81,7 @@ export async function moderateComment(fd: FormData) {
 }
 
 export async function moderateRequirement(fd: FormData) {
-  const admin = await requireRole([...STAFF]);
+  const admin = await requireStaff("moderate");
   const id = String(fd.get("id"));
   const r = await db.requirement.update({ where: { id }, data: { status: "CANCELLED" }, include: { company: { include: { members: { select: { userId: true } } } } } });
   await notify(r.company.members.map((m) => m.userId), "moderation", "Requirement removed by CorpGurus", `${r.title} was taken down. Reply to support@corpgurus.com if you think this is a mistake.`, `/requirements/${id}`);
@@ -117,17 +116,18 @@ export async function createAdmin(_p: ActionState, fd: FormData): Promise<Action
   if (!parsed.success) return { error: "Name, valid email and an 8+ character password are required." };
   const { name, email, password } = parsed.data;
   if (await db.user.findUnique({ where: { email } })) return { error: "That email is already registered." };
-  const u = await db.user.create({ data: { name, email, role: "ADMIN", passwordHash: await bcrypt.hash(password, 10) } });
-  await audit(su.id, "admin.create", u.id, { email });
+  const role = (["ADMIN", "MODERATOR", "FINANCE", "SUPPORT"].includes(String(fd.get("role"))) ? String(fd.get("role")) : "ADMIN") as "ADMIN" | "MODERATOR" | "FINANCE" | "SUPPORT";
+  const u = await db.user.create({ data: { name, email, role, passwordHash: await bcrypt.hash(password, 10), onboardingCompletedAt: new Date() } });
+  await audit(su.id, "admin.create", u.id, { email, role });
   revalidatePath("/admin/platform");
-  return { ok: `${name} can now sign in as an administrator.` };
+  return { ok: `${name} can now sign in as ${role.toLowerCase().replace("_", " ")}.` };
 }
 
 export async function removeAdmin(fd: FormData) {
   const su = await requireRole(["SUPER_ADMIN"]);
   const id = String(fd.get("id"));
   const target = await db.user.findUnique({ where: { id } });
-  if (!target || target.role !== "ADMIN") return;
+  if (!target || !["ADMIN", "MODERATOR", "FINANCE", "SUPPORT"].includes(target.role)) return;
   await db.user.update({ where: { id }, data: { status: "SUSPENDED" } });
   await audit(su.id, "admin.remove", id, { email: target.email });
   revalidatePath("/admin/platform");
@@ -154,4 +154,16 @@ export async function updateSetting(_p: ActionState, fd: FormData): Promise<Acti
   await audit(su.id, "setting.update", key, { value });
   revalidatePath("/admin/platform");
   return { ok: `Saved ${key}.` };
+}
+
+/** Super admin changes a staff member's role (never their own, never another super admin's). */
+export async function setStaffRole(fd: FormData) {
+  const su = await requireRole(["SUPER_ADMIN"]);
+  const id = String(fd.get("id")), role = String(fd.get("role"));
+  if (id === su.id || !["ADMIN", "MODERATOR", "FINANCE", "SUPPORT", "SUPER_ADMIN"].includes(role)) return;
+  const target = await db.user.findUnique({ where: { id } });
+  if (!target || target.role === "SUPER_ADMIN" || !["ADMIN", "MODERATOR", "FINANCE", "SUPPORT"].includes(target.role)) return;
+  await db.user.update({ where: { id }, data: { role: role as "ADMIN" } });
+  await audit(su.id, "admin.role", id, { from: target.role, to: role });
+  revalidatePath("/admin/platform");
 }

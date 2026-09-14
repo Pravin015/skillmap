@@ -25,7 +25,7 @@ export default async function FeedPage({ searchParams }: { searchParams: Promise
   const suggestions = user
     ? await db.user.findMany({
         where: { id: { not: user.id }, status: "ACTIVE", role: { in: ["TRAINER", "COMPANY"] }, followers: { none: { followerId: user.id } }, posts: { some: { deletedAt: null } } },
-        select: { id: true, name: true, avatarUrl: true, role: true, trainerProfile: { select: { slug: true, headline: true } }, membership: { select: { company: { select: { name: true, slug: true } } } }, _count: { select: { followers: true } } },
+        select: { id: true, name: true, avatarUrl: true, role: true, trainerProfile: { select: { slug: true, headline: true } }, memberships: { select: { company: { select: { name: true, slug: true } } } }, _count: { select: { followers: true } } },
         orderBy: { followers: { _count: "desc" } }, take: 5,
       })
     : [];
@@ -59,8 +59,8 @@ export default async function FeedPage({ searchParams }: { searchParams: Promise
                 <li key={s.id} className="flex items-center gap-2.5">
                   <Avatar name={s.name} src={s.avatarUrl} size={34} tone={s.role === "COMPANY" ? "violet" : "cyan"} />
                   <div className="min-w-0 flex-1">
-                    <Link href={s.trainerProfile ? `/trainers/${s.trainerProfile.slug}` : s.membership ? `/companies/${s.membership.company.slug}` : "#"} className="block truncate text-sm font-medium hover:text-cyan">{s.name}</Link>
-                    <p className="truncate text-xs text-muted">{s.trainerProfile?.headline ?? s.membership?.company.name}</p>
+                    <Link href={s.trainerProfile ? `/trainers/${s.trainerProfile.slug}` : s.memberships[0] ? `/companies/${s.memberships[0].company.slug}` : "#"} className="block truncate text-sm font-medium hover:text-cyan">{s.name}</Link>
+                    <p className="truncate text-xs text-muted">{s.trainerProfile?.headline ?? s.memberships[0]?.company.name}</p>
                   </div>
                   <FollowButton userId={s.id} following={false} size="sm" />
                 </li>

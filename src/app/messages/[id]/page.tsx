@@ -15,13 +15,13 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
   const user = await requireUser();
   const convo = await db.conversation.findFirst({
     where: { id, participants: { some: { userId: user.id } } },
-    include: { participants: { include: { user: { select: { id: true, name: true, avatarUrl: true, role: true, trainerProfile: { select: { slug: true } }, membership: { select: { company: { select: { name: true, slug: true } } } } } } } }, messages: { include: { sender: { select: { name: true } } }, orderBy: { createdAt: "asc" } }, requirement: { select: { id: true, title: true } } },
+    include: { participants: { include: { user: { select: { id: true, name: true, avatarUrl: true, role: true, trainerProfile: { select: { slug: true } }, memberships: { select: { company: { select: { name: true, slug: true } } } } } } } }, messages: { include: { sender: { select: { name: true } } }, orderBy: { createdAt: "asc" } }, requirement: { select: { id: true, title: true } } },
   });
   if (!convo) notFound();
   await db.conversationParticipant.update({ where: { conversationId_userId: { conversationId: id, userId: user.id } }, data: { lastReadAt: new Date() } });
   const other = convo.participants.find((p) => p.userId !== user.id)!.user;
   const convos = await loadConversations(user.id);
-  const otherHref = other.trainerProfile ? `/trainers/${other.trainerProfile.slug}` : other.membership ? `/companies/${other.membership.company.slug}` : "#";
+  const otherHref = other.trainerProfile ? `/trainers/${other.trainerProfile.slug}` : other.memberships[0] ? `/companies/${other.memberships[0].company.slug}` : "#";
 
   const rows = convo.messages.map((m, i) => ({ m, showDay: i === 0 || fmtDate(m.createdAt) !== fmtDate(convo.messages[i - 1].createdAt) }));
   return (
@@ -33,7 +33,7 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
           <Avatar name={other.name} src={other.avatarUrl} size={36} tone={other.role === "COMPANY" ? "violet" : "cyan"} />
           <div className="min-w-0">
             <Link href={otherHref} className="font-semibold hover:text-cyan">{other.name}</Link>
-            <p className="truncate text-xs text-muted">{other.membership ? other.membership.company.name : "Trainer"}{convo.requirement ? <> · <Link href={`/requirements/${convo.requirement.id}`} className="text-violet hover:underline">{convo.requirement.title}</Link></> : null}</p>
+            <p className="truncate text-xs text-muted">{other.memberships[0] ? other.memberships[0].company.name : "Trainer"}{convo.requirement ? <> · <Link href={`/requirements/${convo.requirement.id}`} className="text-violet hover:underline">{convo.requirement.title}</Link></> : null}</p>
           </div>
           <Link href="/messages" className="ml-auto text-xs text-muted hover:text-ink lg:hidden">All conversations</Link>
         </header>

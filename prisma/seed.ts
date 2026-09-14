@@ -65,10 +65,10 @@ async function main() {
   const co: Record<string, { id: string; ownerId: string; recruiterId?: string }> = {};
   for (const c of companies) {
     const company = await db.company.create({ data: { name: c.name, slug: slug(c.name), industry: c.industry, size: c.size, type: c.type, cities: c.cities, domain: c.domain, domainVerifiedAt: c.type === "TRAINING_PARTNER" || c.name === "TechSphere Solutions" ? day(-20) : null, description: c.desc, website: `https://${c.domain}` } });
-    const owner = await db.user.create({ data: { name: c.owner.name, email: c.owner.email, passwordHash: hash, role: "COMPANY", membership: { create: { companyId: company.id, role: "OWNER" } } } });
+    const owner = await db.user.create({ data: { name: c.owner.name, email: c.owner.email, passwordHash: hash, role: "COMPANY", memberships: { create: { companyId: company.id, role: "OWNER" } } } });
     let recruiterId: string | undefined;
     if (c.recruiter) {
-      const r = await db.user.create({ data: { name: c.recruiter.name, email: c.recruiter.email, passwordHash: hash, role: "COMPANY", membership: { create: { companyId: company.id, role: "RECRUITER" } } } });
+      const r = await db.user.create({ data: { name: c.recruiter.name, email: c.recruiter.email, passwordHash: hash, role: "COMPANY", memberships: { create: { companyId: company.id, role: "HIRING_MANAGER" } } } });
       recruiterId = r.id;
     }
     co[c.name] = { id: company.id, ownerId: owner.id, recruiterId };

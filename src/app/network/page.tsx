@@ -10,7 +10,7 @@ export const metadata = { title: "Network" };
 export default async function NetworkPage({ searchParams }: { searchParams: Promise<{ blocked?: string }> }) {
   const { blocked } = await searchParams;
   const user = await requireUser("/network");
-  const sel = { id: true, name: true, avatarUrl: true, role: true, trainerProfile: { select: { slug: true, headline: true } }, membership: { select: { role: true, company: { select: { name: true, slug: true } } } } } as const;
+  const sel = { id: true, name: true, avatarUrl: true, role: true, trainerProfile: { select: { slug: true, headline: true } }, memberships: { select: { role: true, company: { select: { name: true, slug: true } } } } } as const;
   const [incoming, outgoing, accepted, suggestions] = await Promise.all([
     db.connection.findMany({ where: { addresseeId: user.id, status: "PENDING" }, include: { requester: { select: sel } }, orderBy: { createdAt: "desc" } }),
     db.connection.findMany({ where: { requesterId: user.id, status: "PENDING" }, include: { addressee: { select: sel } }, orderBy: { createdAt: "desc" } }),
@@ -79,14 +79,14 @@ export default async function NetworkPage({ searchParams }: { searchParams: Prom
   );
 }
 
-function Person({ u, sub }: { u: { id: string; name: string; avatarUrl: string | null; role: string; trainerProfile: { slug: string; headline: string } | null; membership: { role: string; company: { name: string; slug: string } } | null }; sub?: string }) {
-  const href = u.trainerProfile ? `/trainers/${u.trainerProfile.slug}` : u.membership ? `/companies/${u.membership.company.slug}` : "#";
+function Person({ u, sub }: { u: { id: string; name: string; avatarUrl: string | null; role: string; trainerProfile: { slug: string; headline: string } | null; memberships: { role: string; company: { name: string; slug: string } }[] }; sub?: string }) {
+  const href = u.trainerProfile ? `/trainers/${u.trainerProfile.slug}` : u.memberships[0] ? `/companies/${u.memberships[0].company.slug}` : "#";
   return (
     <div className="flex min-w-0 flex-1 items-center gap-3">
       <Avatar name={u.name} src={u.avatarUrl} size={40} tone={u.role === "COMPANY" ? "violet" : "cyan"} />
       <div className="min-w-0">
         <Link href={href} className="block truncate font-medium hover:text-cyan">{u.name}</Link>
-        <p className="truncate text-xs text-muted">{sub ?? (u.trainerProfile ? u.trainerProfile.headline : u.membership ? `${u.membership.role.toLowerCase()} · ${u.membership.company.name}` : "")}</p>
+        <p className="truncate text-xs text-muted">{sub ?? (u.trainerProfile ? u.trainerProfile.headline : u.memberships[0] ? `${u.memberships[0].role.toLowerCase()} · ${u.memberships[0].company.name}` : "")}</p>
       </div>
     </div>
   );
