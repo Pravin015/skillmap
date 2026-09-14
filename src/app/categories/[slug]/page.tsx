@@ -6,11 +6,13 @@ import { proTrainerUserIds } from "@/lib/billing";
 import { RequirementCard, TrainerCard } from "@/components/cards";
 import { ButtonLink, Chip, Empty, PageHeader } from "@/components/ui";
 import { modeLabel, money } from "@/lib/utils";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const c = await db.category.findUnique({ where: { slug }, select: { name: true } });
-  return { title: c ? `${c.name} trainers` : "Category", description: c ? `Freelance corporate trainers, courses and open requirements in ${c.name} on CorpGurus.` : undefined };
+  const c = await db.category.findUnique({ where: { slug }, select: { name: true, skills: { select: { name: true }, take: 6 } } });
+  if (!c) return { title: "Category", robots: { index: false } };
+  return pageMeta({ title: `${c.name} corporate trainers in India`, description: `Hire verified freelance ${c.name} trainers on CorpGurus${c.skills.length ? `: ${c.skills.map((s) => s.name).join(", ")} and more` : ""}. Compare day rates, certifications and reviews, or post a requirement and get applications within hours.`, path: `/categories/${slug}`, keywords: [`${c.name} trainer`, `${c.name} corporate training India`, ...c.skills.map((s) => `${s.name} trainer`)] });
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -34,7 +36,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         actions={<><ButtonLink href={`/requirements?category=${c.slug}`} variant="secondary">All requirements</ButtonLink>{user?.membership ? <ButtonLink href="/requirements/new" variant="violet">Post a requirement</ButtonLink> : null}</>} />
       <section>
         <h2 className="mb-3 text-lg font-bold">Skills in this category</h2>
-        <div className="flex flex-wrap gap-2">{c.skills.map((s) => <Link key={s.id} href={`/trainers?skill=${s.slug}`}><Chip className="hover:border-cyan">{s.name}{s.vendor ? <span className="ml-1 text-muted">· {s.vendor}</span> : null}<span className="ml-1.5 text-muted">{s._count.trainers}</span></Chip></Link>)}</div>
+        <div className="flex flex-wrap gap-2">{c.skills.map((s) => <Link key={s.id} href={`/hire/${s.slug}`} title={`Hire ${s.name} trainers`}><Chip className="hover:border-cyan">{s.name}{s.vendor ? <span className="ml-1 text-muted">· {s.vendor}</span> : null}<span className="ml-1.5 text-muted">{s._count.trainers}</span></Chip></Link>)}</div>
         {vendors.length ? <p className="mt-3 text-sm text-muted">Vendors: {vendors.join(", ")}</p> : null}
       </section>
       <section>

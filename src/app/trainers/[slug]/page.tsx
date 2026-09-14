@@ -19,13 +19,22 @@ import { RecommendationsSection } from "@/components/recommendations";
 import { TrainerTeams } from "@/components/trainer-teams";
 import { ReportButton } from "@/components/report-button";
 import { TrainerCard } from "@/components/cards";
+import { JsonLd } from "@/components/json-ld";
+import { pageMeta, personLd } from "@/lib/seo";
 import { Avatar, Badge, Button, Card, Chip, Select } from "@/components/ui";
 import { certStatusLabel, cn, fmtDate, modeLabel, money, rateRange } from "@/lib/utils";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const t = await db.trainerProfile.findUnique({ where: { slug }, select: { headline: true, user: { select: { name: true } } } });
-  return t ? { title: `${t.user.name} · ${t.headline}`, description: `${t.user.name}, freelance corporate trainer on CorpGurus. ${t.headline}` } : { title: "Trainer" };
+  const t = await db.trainerProfile.findUnique({ where: { slug }, select: { headline: true, cities: true, verifiedAt: true, yearsExperience: true, skills: { select: { name: true }, take: 6 }, user: { select: { name: true, avatarUrl: true, status: true } } } });
+  if (!t) return { title: "Trainer", robots: { index: false } };
+  const skills = t.skills.map((s) => s.name);
+  return pageMeta({
+    title: `${t.user.name} · ${t.headline}`,
+    description: `${t.user.name} is a ${t.verifiedAt ? "verified " : ""}freelance corporate trainer${t.cities.length ? ` based in ${t.cities.slice(0, 2).join(" and ")}` : ""} with ${t.yearsExperience} years of experience${skills.length ? ` in ${skills.slice(0, 4).join(", ")}` : ""}. Book through CorpGurus with a signed work order.`,
+    path: `/trainers/${slug}`, type: "profile", image: t.user.avatarUrl ?? undefined, noindex: t.user.status !== "ACTIVE",
+    keywords: [`${t.user.name} corporate trainer`, ...skills.map((s) => `${s} trainer`), ...t.cities.map((c) => `corporate trainer ${c}`)],
+  });
 }
 
 const TABS = ["overview", "courses", "recommendations", "feedback", "posts", "gallery"] as const;
@@ -83,6 +92,7 @@ export default async function TrainerPage({ params, searchParams }: { params: Pr
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <JsonLd data={personLd({ name: t.user.name, slug, headline: t.headline, cities: t.cities, skills: t.skills.map((s) => s.name), avatarUrl: t.user.avatarUrl, verified: !!t.verifiedAt })} />
       <div className="min-w-0">
         <Card className="p-6" glow="cyan">
           <div className="flex flex-wrap items-start gap-5">

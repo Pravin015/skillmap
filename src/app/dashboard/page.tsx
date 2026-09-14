@@ -9,6 +9,7 @@ import { appStatusLabel, fmtDate, reqStatusLabel, timeAgo } from "@/lib/utils";
 import { entitlementsFor } from "@/lib/billing";
 import { learnerScore, trainerStats } from "@/lib/stats";
 import { InterviewSummaryLink } from "@/components/interview";
+import { OnboardingChecklist } from "@/components/onboarding-checklist";
 
 export const metadata = { title: "Dashboard" };
 
@@ -58,11 +59,16 @@ export default async function Dashboard() {
     const [stats, learners, upcoming] = await Promise.all([trainerStats(p.id, 30), learnerScore(p.id), db.availabilityBlock.findMany({ where: { trainerId: p.id, endDate: { gte: new Date() } }, orderBy: { startDate: "asc" }, take: 4, include: { requirement: { select: { title: true } } } })]);
     const maxBar = Math.max(1, ...stats.series.map((d) => d.views + d.searches));
     const active = p.applications.filter((a) => ["APPLIED", "SHORTLISTED"].includes(a.status));
-    const checklist = [
-      ["Headline and bio", !!p.bio], ["At least 3 skills", p.skills.length >= 3], ["Day rate", !!p.dayRateMin || !!p.dayRateMax], ["Delivery modes and cities", p.deliveryModes.length > 0 && p.cities.length > 0],
-      ["A certification submitted", p.certifications.length > 0], ["Verified badge", !!p.verifiedAt],
-    ] as const;
-    const done = checklist.filter(([, ok]) => ok).length;
+    const onboarding = [
+      { key: "bio", label: "Headline and bio", hint: "Companies read this first.", href: "/settings", done: !!p.bio && p.bio.length >= 40 },
+      { key: "photo", label: "Profile photo", hint: "Profiles with a photo get more shortlists.", href: "/settings", done: !!user.avatarUrl },
+      { key: "skills", label: "At least 3 skills", hint: "Skills drive matching and notifications.", href: "/settings", done: p.skills.length >= 3 },
+      { key: "rate", label: "Day rate", hint: "Visible only to signed-in companies.", href: "/settings", done: !!p.dayRateMin || !!p.dayRateMax },
+      { key: "modes", label: "Delivery modes and cities", hint: "Onsite, virtual or hybrid; where you travel.", href: "/settings", done: p.deliveryModes.length > 0 && p.cities.length > 0 },
+      { key: "cert", label: "Submit a certification", hint: "Staff review it for the verified badge.", href: "/settings", done: p.certifications.length > 0 },
+      { key: "availability", label: "Mark your availability", hint: "Blocked dates avoid clashes.", href: "/settings/availability", done: upcoming.length > 0 },
+      { key: "apply", label: "Apply to a requirement", hint: "Your first application with a proposed rate.", href: "/requirements", done: p.applications.length > 0 },
+    ];
 
     return (
       <div>
@@ -73,6 +79,7 @@ export default async function Dashboard() {
           <Stat label="Awarded" value={p.applications.filter((a) => a.status === "AWARDED").length} tone="lime" />
           <Stat label="Connection requests" value={pendingConns} tone="violet" />
         </div>
+        <div className="mt-4"><OnboardingChecklist steps={onboarding} audience="trainer" title="Set up your trainer profile" /></div>
         <div className="mt-4 grid gap-4 md:grid-cols-[1fr_1fr_1.4fr]">
           <Card className="p-5"><p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Profile views · 30 days</p><p className="mt-1 font-display text-3xl font-bold tabular-nums text-cyan">{stats.views}</p><p className="text-xs text-muted">{stats.searches} search appearances</p></Card>
           <Card className="p-5"><p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Learner score</p><p className="mt-1 font-display text-3xl font-bold tabular-nums text-lime">{learners.count ? learners.avg!.toFixed(1) : "—"}</p><p className="text-xs text-muted">{learners.count ? `${learners.count} participants · ${learners.recommendPct}% recommend` : "Collect feedback after your next batch"}</p></Card>
@@ -102,12 +109,6 @@ export default async function Dashboard() {
           </div>
           <aside className="space-y-4">
             <Card className="p-5">
-              <div className="flex items-center justify-between"><p className="font-semibold">Profile strength</p><span className="mono text-xs text-cyan">{done}/{checklist.length}</span></div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-cyan" style={{ width: `${(done / checklist.length) * 100}%` }} /></div>
-              <ul className="mt-3 space-y-1.5 text-sm">{checklist.map(([l, ok]) => <li key={l} className={ok ? "text-muted line-through" : "text-ink"}><span className={`mr-2 ${ok ? "text-lime" : "text-dim"}`}>{ok ? "✓" : "○"}</span>{l}</li>)}</ul>
-              <ButtonLink href="/settings" variant="secondary" size="sm" className="mt-3 w-full">Edit profile</ButtonLink>
-            </Card>
-            <Card className="p-5">
               <div className="flex items-center justify-between"><p className="font-semibold">Upcoming dates</p><Link href="/settings/availability" className="text-xs text-cyan hover:underline">Calendar</Link></div>
               {upcoming.length ? <ul className="mt-2 space-y-1.5 text-sm">{upcoming.map((b) => <li key={b.id} className="flex gap-2"><span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${b.kind === "BOOKED" ? "bg-navy" : b.kind === "TENTATIVE" ? "bg-amber" : "bg-dim"}`} /><span><span className="font-medium">{fmtDate(b.startDate)}{b.endDate.getTime() !== b.startDate.getTime() ? ` – ${fmtDate(b.endDate)}` : ""}</span><span className="block text-xs text-muted">{b.requirement?.title ?? b.note ?? b.kind.toLowerCase()}</span></span></li>)}</ul> : <p className="mt-1 text-sm text-muted">Nothing blocked. Add booked dates so companies see real availability.</p>}
               <ButtonLink href="/settings/courses" variant="ghost" size="sm" className="mt-3 w-full">Manage course catalogue</ButtonLink>
@@ -128,6 +129,7 @@ export default async function Dashboard() {
       include: {
         requirements: { include: { _count: { select: { applications: { where: { status: { in: ["APPLIED", "SHORTLISTED", "AWARDED"] } } }, comments: true } } }, orderBy: { createdAt: "desc" } },
         saved: { include: { trainer: { include: { user: { select: { name: true, avatarUrl: true } } } } }, orderBy: { createdAt: "desc" }, take: 6 },
+        _count: { select: { members: true } },
       },
     });
     const c = company!;
@@ -142,6 +144,16 @@ export default async function Dashboard() {
           <Stat label="Awarded" value={c.requirements.filter((r) => r.status === "AWARDED" || r.status === "COMPLETED").length} tone="lime" />
           <Stat label="Saved trainers" value={c.saved.length} tone="amber" />
         </div>
+        <div className="mt-4"><OnboardingChecklist audience="company" title="Set up your company page" steps={[
+          { key: "logo", label: "Company logo", hint: "Shown on every requirement you post.", href: "/settings", done: !!c.logoUrl },
+          { key: "about", label: "About the company", hint: "Trainers check who they will be working with.", href: "/settings", done: c.description.length >= 40 },
+          { key: "website", label: "Website", hint: "Needed for the verified company badge.", href: "/settings", done: !!c.website },
+          { key: "domain", label: "Verified email domain", hint: "Ask an administrator after adding your website.", href: "/settings", done: !!c.domainVerifiedAt },
+          { key: "gstin", label: "GSTIN and billing address", hint: "Appears on trainer invoices.", href: "/settings", done: !!c.gstin },
+          { key: "post", label: "Post your first requirement", hint: "Matching trainers are notified instantly.", href: "/requirements/new", done: c.requirements.length > 0 },
+          { key: "team", label: "Invite a teammate", hint: "Recruiters and L&D managers on one page.", href: "/settings", done: c._count.members > 1 },
+          { key: "save", label: "Save a trainer to your bench", hint: "Build a shortlist for repeat batches.", href: "/trainers", done: c.saved.length > 0 },
+        ]} /></div>
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_340px]">
           <section>
             <h2 className="mb-3 text-lg font-bold">Your requirements</h2>

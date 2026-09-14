@@ -6,6 +6,10 @@ import { Avatar, ButtonLink } from "@/components/ui";
 import { RequirementCard, TrainerCard } from "@/components/cards";
 import { getT } from "@/lib/i18n";
 import { timeAgo } from "@/lib/utils";
+import { JsonLd } from "@/components/json-ld";
+import { faqLd, organizationLd, pageMeta, SITE, websiteLd } from "@/lib/seo";
+
+export const metadata = pageMeta({ title: `CorpGurus · ${SITE.tagline}`, description: SITE.description, path: "/" });
 
 const FAQ = [
   ["How does CorpGurus verify trainers?", "Trainers upload certificates; CorpGurus staff review each one against the issuer before the verified badge appears. Company email domains are verified the same way."],
@@ -27,12 +31,14 @@ export default async function Home() {
     db.post.findMany({ where: { deletedAt: null }, include: { author: { select: { name: true, avatarUrl: true, role: true } }, _count: { select: { likes: true, comments: true } } }, orderBy: { createdAt: "desc" }, take: 3 }),
     db.company.findMany({ select: { name: true, slug: true }, orderBy: { createdAt: "asc" }, take: 6 }),
   ]);
+  const popular = await db.skill.findMany({ where: { trainers: { some: {} } }, select: { slug: true, name: true, _count: { select: { trainers: true } } }, orderBy: { trainers: { _count: "desc" } }, take: 18 });
   const [nT, nC, nR, nV, nDone] = counts;
   const showRate = user?.role === "COMPANY" || user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
   const featured = recs[0];
 
   return (
     <div className="-mt-8 md:-mt-10">
+      <JsonLd data={[organizationLd(), websiteLd(), faqLd(FAQ.map(([q, a]) => [q, a] as [string, string]))]} />
       {/* ---------- Hero ---------- */}
       <section className="bleed hero-bg">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-14 md:px-6 lg:grid-cols-[1.1fr_1fr] lg:pb-24 lg:pt-20">
@@ -290,6 +296,17 @@ export default async function Home() {
               </Link>
             ))}
           </div>
+        </section>
+      ) : null}
+
+      {/* ---------- Popular searches (internal links to skill landing pages) ---------- */}
+      {popular.length ? (
+        <section className="pt-24">
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+            <h2 className="text-[30px] font-bold leading-[1.05] md:text-[40px]">Hire by skill. <span className="serif text-cyan">Popular searches</span> this month.</h2>
+            <p className="max-w-sm text-muted lg:justify-self-end">Every skill has a page with the trainers who teach it, the cities they cover and the open requirements right now.</p>
+          </div>
+          <div className="mt-8 flex flex-wrap gap-2">{popular.map((s) => <Link key={s.slug} href={`/hire/${s.slug}`} className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-sm font-medium transition hover:border-cyan hover:text-cyan">Hire {s.name} trainers<span className="rounded-full bg-surface-2 px-1.5 text-xs text-muted">{s._count.trainers}</span></Link>)}</div>
         </section>
       ) : null}
 

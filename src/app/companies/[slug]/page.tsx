@@ -12,11 +12,13 @@ import { FollowButton } from "@/components/post-actions";
 import { isStaff } from "@/lib/auth";
 import { companyBadges } from "@/lib/badges";
 import { BadgeRow } from "@/components/badges";
+import { pageMeta } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const c = await db.company.findUnique({ where: { slug }, select: { name: true, industry: true } });
-  return c ? { title: c.name, description: `${c.name}${c.industry ? ` · ${c.industry}` : ""} hires freelance corporate trainers on CorpGurus.` } : { title: "Company" };
+  const c = await db.company.findUnique({ where: { slug }, select: { name: true, industry: true, logoUrl: true, type: true, _count: { select: { requirements: { where: { visibility: "PUBLIC" } } } } } });
+  if (!c) return { title: "Company", robots: { index: false } };
+  return pageMeta({ title: `${c.name} · ${c.type === "TRAINING_PARTNER" ? "Training partner" : "Company"}`, description: `${c.name}${c.industry ? ` (${c.industry})` : ""} hires freelance corporate trainers on CorpGurus and has posted ${c._count.requirements} training requirement${c._count.requirements === 1 ? "" : "s"}. Follow to be notified of new batches.`, path: `/companies/${slug}`, image: c.logoUrl ?? undefined });
 }
 
 export default async function CompanyPage({ params }: { params: Promise<{ slug: string }> }) {

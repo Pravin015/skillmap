@@ -16,12 +16,20 @@ import { overlapping } from "@/components/availability";
 import { ReportButton } from "@/components/report-button";
 import { InterviewResponse } from "@/components/interview";
 import { appUrl } from "@/lib/oauth";
+import { JsonLd } from "@/components/json-ld";
+import { jobPostingLd, pageMeta } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const r = await db.requirement.findUnique({ where: { id }, select: { title: true, visibility: true, company: { select: { name: true } } } });
-  return r && r.visibility === "PUBLIC" ? { title: r.title, description: `Training requirement from ${r.company.name} on CorpGurus.` } : { title: "Requirement" };
+  const r = await db.requirement.findUnique({ where: { id }, select: { title: true, visibility: true, status: true, mode: true, city: true, days: true, participants: true, startDate: true, company: { select: { name: true } }, skills: { select: { name: true }, take: 5 } } });
+  if (!r || r.visibility !== "PUBLIC") return { title: "Requirement", robots: { index: false } };
+  const open = ["OPEN", "SHORTLISTING"].includes(r.status);
+  return pageMeta({
+    title: `${r.title} · ${r.company.name}`,
+    description: `${open ? "Open training requirement" : "Training requirement"} from ${r.company.name}: ${r.days}-day ${r.mode.toLowerCase()} batch${r.city ? ` in ${r.city}` : ""} for ${r.participants} participants${r.skills.length ? ` · ${r.skills.map((s) => s.name).join(", ")}` : ""}. Freelance corporate trainers apply with a day rate on CorpGurus.`,
+    path: `/requirements/${id}`, noindex: !open, keywords: r.skills.map((s) => `${s.name} trainer${r.city ? ` ${r.city}` : ""}`),
+  });
 }
 
 export default async function RequirementPage({ params }: { params: Promise<{ id: string }> }) {
@@ -60,6 +68,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      {r.visibility === "PUBLIC" && acceptsApps ? <JsonLd data={jobPostingLd({ id: r.id, title: r.title, description: r.description, createdAt: r.createdAt, startDate: r.startDate, endDate: r.endDate, city: r.city, mode: r.mode, budgetMin: r.budgetMin, budgetMax: r.budgetMax, currency: r.currency, skills: r.skills.map((s) => s.name), company: { name: r.company.name, slug: r.company.slug, logoUrl: r.company.logoUrl } })} /> : null}
       <div className="space-y-6">
         <Card className="p-6">
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted">

@@ -118,7 +118,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-6 md:py-10">{children}</main>
       <footer className="bg-navy text-white">
         <div className="mx-auto max-w-7xl px-4 py-14 md:px-6">
-          <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
             <div>
               <Link href="/" className="flex items-center gap-2.5 font-display text-[19px] font-bold tracking-tight"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan font-display text-[13px] font-bold text-white">CG</span>Corp<span className="text-lilac">Gurus</span></Link>
               <p className="mt-4 max-w-xs text-sm text-white/60">{t("footer.tagline")}</p>
@@ -132,9 +132,10 @@ export async function Shell({ children }: { children: React.ReactNode }) {
             <FooterCol title="Explore" links={[["/trainers", t("nav.trainers")], ["/requirements", t("nav.requirements")], ["/companies", t("nav.companies")], ["/categories", t("nav.categories")], ["/feed", t("nav.feed")]]} />
             <FooterCol title="For trainers" links={[["/signup", "Create a profile"], ["/pricing", "Trainer Pro"], ["/settings/teams", "Teams"], ["/settings/courses", "Course catalogue"], ["/dashboard/referrals", "Refer & earn"]]} />
             <FooterCol title="For companies" links={[["/signup?as=company", "Company account"], ["/requirements/new", "Post a requirement"], ["/dashboard/learning-paths", "Learning paths"], ["/settings/developers", "API & webhooks"], ["/pricing", t("nav.pricing")]]} />
+            <FooterCol title="Company" links={[["/contact", "Contact"], ["/legal/terms", "Terms of service"], ["/legal/privacy", "Privacy policy"], ["/legal/refunds", "Refunds & cancellations"]]} />
           </div>
           <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-[13px] text-white/50">
-            <p>© 2026 CorpGurus. All rights reserved.</p>
+            <p>© 2026 CorpGurus. All rights reserved. <Link href="/legal/terms" className="hover:text-white">Terms</Link> · <Link href="/legal/privacy" className="hover:text-white">Privacy</Link> · <Link href="/legal/refunds" className="hover:text-white">Refunds</Link></p>
             <p>Made in India · <a href="mailto:hello@corpgurus.com" className="hover:text-white">hello@corpgurus.com</a></p>
           </div>
         </div>

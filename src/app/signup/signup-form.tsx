@@ -38,7 +38,7 @@ export function SignupForm({ initialRole, oauth, refCode }: { initialRole: "TRAI
         <SubmitButton className="w-full" size="lg" variant={role === "COMPANY" ? "violet" : "primary"} pendingText="Creating account…">
           {role === "TRAINER" ? "Create trainer account" : "Create company account"}
         </SubmitButton>
-        <p className="text-center text-xs text-dim">By joining you agree to keep engagements on-platform and rate honestly.</p>
+        <p className="text-center text-xs text-dim">By joining you agree to the <a href="/legal/terms" className="underline hover:text-ink">terms of service</a> and <a href="/legal/privacy" className="underline hover:text-ink">privacy policy</a>, to keep engagements on-platform and to rate honestly.</p>
       </ActionForm>
     </Card>
   );
