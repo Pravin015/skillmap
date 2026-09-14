@@ -9,6 +9,7 @@ import { createRazorpayPaymentLink, razorpayConfigured } from "@/lib/billing";
 import { appUrl } from "@/lib/oauth";
 import type { ActionState } from "@/lib/types";
 import { featureEnabled } from "@/lib/features";
+import { createPayout, ensureFundAccount, payoutsConfigured } from "@/lib/payouts";
 import { memberCan } from "@/lib/permissions";
 
 function refresh(requirementId: string) {
@@ -66,11 +67,21 @@ export async function releaseEscrow(_p: ActionState, fd: FormData): Promise<Acti
   const note = String(fd.get("note") ?? "").trim().slice(0, 300) || null;
   await db.escrowDeposit.update({ where: { id: esc.id }, data: { status: "RELEASED", releasedAt: new Date(), note } });
   await audit(user.id, "escrow.release", esc.id, { note });
+  // Automatic payout through RazorpayX when configured and the trainer has bank details; otherwise staff pay out manually.
+  let payoutNote = "CorpGurus pays the trainer out within 2 working days.";
+  if (payoutsConfigured() && esc.currency === "INR") {
+    try {
+      const fa = await ensureFundAccount(esc.trainerId);
+      const p = await createPayout({ fundAccountId: fa, amountInr: esc.amount - esc.fee, referenceId: esc.id, narration: "CorpGurus payout" });
+      await db.escrowDeposit.update({ where: { id: esc.id }, data: { payoutId: p.id, payoutRef: p.utr ?? null, ...(p.status === "processed" ? { status: "PAID_OUT", paidOutAt: new Date() } : {}) } });
+      payoutNote = p.status === "processed" ? "Paid out to the trainer's bank account." : `Payout queued with RazorpayX (${p.status}).`;
+    } catch (e) { payoutNote = `Automatic payout not possible (${(e as Error).message}); staff will pay out manually.`; }
+  }
   const staff = await db.user.findMany({ where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } }, select: { id: true } });
   await notify(esc.trainer.userId, "invoice", "Escrow released", `${esc.company.name} released ${esc.currency} ${(esc.amount - esc.fee).toLocaleString("en-IN")} for ${esc.workOrder.title}. CorpGurus will pay it out to your bank details on file.`, `/requirements/${esc.workOrder.requirementId}/work-order`);
   await notify(staff.map((s) => s.id), "moderation", "Escrow payout due", `${esc.company.name} released ${esc.currency} ${esc.amount.toLocaleString("en-IN")} (fee ${esc.fee}) for ${esc.workOrder.title}.`, "/admin/escrow");
   refresh(esc.workOrder.requirementId);
-  return { ok: "Released. CorpGurus pays the trainer out within 2 working days." };
+  return { ok: `Released. ${payoutNote}` };
 }
 
 /** Trainer nudges the company after delivery. */

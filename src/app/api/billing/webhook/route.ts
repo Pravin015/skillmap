@@ -6,7 +6,8 @@ import { notify } from "@/lib/notify";
 type SubEntity = { id: string; status: string; current_end?: number | null; plan_id?: string; customer_id?: string };
 type PayEntity = { id: string; amount: number; currency: string; status: string; method?: string; invoice_id?: string };
 type LinkEntity = { id: string; status: string; reference_id?: string };
-type Event = { event: string; payload?: { subscription?: { entity: SubEntity }; payment?: { entity: PayEntity }; payment_link?: { entity: LinkEntity } } };
+type PayoutEntity = { id: string; status: string; utr?: string | null; reference_id?: string | null; failure_reason?: string | null };
+type Event = { event: string; payload?: { subscription?: { entity: SubEntity }; payment?: { entity: PayEntity }; payment_link?: { entity: LinkEntity }; payout?: { entity: PayoutEntity } } };
 
 /** Razorpay → CorpGurus. Register this URL in the Razorpay dashboard with the subscription.* and payment.captured events. */
 export async function POST(req: Request) {
@@ -21,6 +22,22 @@ export async function POST(req: Request) {
   // Idempotent: Razorpay retries deliveries.
   if (await db.webhookEvent.findUnique({ where: { eventId } })) return NextResponse.json({ ok: true, duplicate: true });
   await db.webhookEvent.create({ data: { eventId, type: event.event, payload: event as object } });
+
+  const payout = event.payload?.payout?.entity;
+  if (event.event.startsWith("payout.") && payout?.id) {
+    const esc = await db.escrowDeposit.findFirst({ where: { OR: [{ payoutId: payout.id }, { id: payout.reference_id ?? "" }] }, include: { trainer: { select: { userId: true } }, workOrder: { select: { title: true, requirementId: true } } } });
+    if (esc) {
+      if (event.event === "payout.processed") {
+        await db.escrowDeposit.update({ where: { id: esc.id }, data: { status: "PAID_OUT", paidOutAt: new Date(), payoutRef: payout.utr ?? esc.payoutRef, payoutId: payout.id } });
+        await notify(esc.trainer.userId, "invoice", "Payout sent", `${esc.currency} ${(esc.amount - esc.fee).toLocaleString("en-IN")} for ${esc.workOrder.title}${payout.utr ? ` · UTR ${payout.utr}` : ""}.`, `/requirements/${esc.workOrder.requirementId}/work-order`);
+      } else if (event.event === "payout.failed" || event.event === "payout.reversed") {
+        await db.escrowDeposit.update({ where: { id: esc.id }, data: { status: "RELEASED", payoutId: null, note: `Payout ${event.event.split(".")[1]}: ${payout.failure_reason ?? "see RazorpayX"}` } });
+        const staff = await db.user.findMany({ where: { role: { in: ["SUPER_ADMIN", "FINANCE", "ADMIN"] } }, select: { id: true } });
+        await notify(staff.map((s) => s.id), "moderation", "Escrow payout failed", `${esc.workOrder.title}: ${payout.failure_reason ?? event.event}. Pay out manually from /admin/escrow.`, "/admin/escrow");
+      }
+    }
+    return NextResponse.json({ ok: true, payout: !!esc });
+  }
 
   const linkEntity = event.payload?.payment_link?.entity;
   if (event.event === "payment_link.paid" && linkEntity?.id) {

@@ -23,7 +23,7 @@ export function InterviewPanel({ applicationId, interview, trainerName, tz }: { 
         <p className="mb-3 text-xs text-dim">Times are entered and shown in your time zone{tz ? ` (${tz})` : ""}; the trainer sees them in theirs.</p>
         {interview?.status === "DECLINED" ? <p className="mb-3 text-sm text-rose">{trainerName} can&apos;t make those times{interview.responseNote ? `: “${interview.responseNote}”` : "."} Propose new ones below.</p> : null}
         {interview?.status === "CONFIRMED" && confirmed ? (
-          <div className="flex flex-wrap items-center gap-3 text-sm"><span>{interview.location || "No link or address added"}</span><a href={`/api/interviews/${interview.id}/ics`} className="inline-flex items-center gap-1 text-cyan hover:underline"><CalendarPlus size={14} /> Add to calendar</a><form action={cancelInterview} className="ml-auto"><input type="hidden" name="id" value={interview.id} /><Button variant="ghost" size="sm" className="text-dim hover:text-rose">Cancel</Button></form></div>
+          <div className="flex flex-wrap items-center gap-3 text-sm">{interview.meetingUrl ? <a href={interview.meetingUrl} target="_blank" rel="noreferrer" className="font-semibold text-cyan hover:underline">Join meeting ↗</a> : null}<span>{interview.location || (interview.meetingUrl ? "" : "No link or address added")}</span><a href={`/api/interviews/${interview.id}/ics`} className="inline-flex items-center gap-1 text-cyan hover:underline"><CalendarPlus size={14} /> Add to calendar</a><form action={cancelInterview} className="ml-auto"><input type="hidden" name="id" value={interview.id} /><Button variant="ghost" size="sm" className="text-dim hover:text-rose">Cancel</Button></form></div>
         ) : (
           <ActionForm action={proposeInterview} className="grid gap-3 md:grid-cols-3">
             <input type="hidden" name="applicationId" value={applicationId} />
@@ -50,7 +50,7 @@ export function InterviewResponse({ interview, companyName, tz }: { interview: I
     return (
       <div className="rounded-xl border border-lime/40 bg-lime/5 p-4 text-sm">
         <p className="flex items-center gap-2 font-semibold"><CalendarClock size={15} className="text-lime" /> Interview confirmed</p>
-        <p className="mt-1">{fmtSlot(confirmed.startsAt, tz)} · {interview.durationMin} min · {modeLabel[interview.mode]}{interview.location ? ` · ${interview.location}` : ""}</p>
+        <p className="mt-1">{fmtSlot(confirmed.startsAt, tz)} · {interview.durationMin} min · {modeLabel[interview.mode]}{interview.location ? ` · ${interview.location}` : ""}</p>{interview.meetingUrl ? <p className="mt-1"><a href={interview.meetingUrl} target="_blank" rel="noreferrer" className="font-semibold text-cyan hover:underline">Join meeting ↗</a></p> : null}
         <div className="mt-2 flex flex-wrap gap-3"><a href={`/api/interviews/${interview.id}/ics`} className="inline-flex items-center gap-1 text-cyan hover:underline"><CalendarPlus size={14} /> Add to calendar</a><form action={cancelInterview}><input type="hidden" name="id" value={interview.id} /><button className="text-xs text-dim hover:text-rose">Cancel</button></form></div>
       </div>
     );

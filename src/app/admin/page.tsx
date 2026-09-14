@@ -11,7 +11,7 @@ export default async function AdminQueue() {
   await requireStaff("verify", "/admin");
   const [identities, gsts] = await Promise.all([
     db.user.findMany({ where: { identityDocUrl: { not: null }, identityVerifiedAt: null }, select: { id: true, name: true, avatarUrl: true, identityDocUrl: true, identityNote: true, createdAt: true, trainerProfile: { select: { slug: true } } } }),
-    db.company.findMany({ where: { gstin: { not: null }, gstVerifiedAt: null }, select: { id: true, name: true, slug: true, gstin: true } }),
+    db.company.findMany({ where: { gstin: { not: null }, gstVerifiedAt: null }, select: { id: true, name: true, slug: true, gstin: true, gstLegalName: true } }),
   ]);
   const [certs, companies, counts, recentAudit] = await Promise.all([
     db.certification.findMany({ where: { status: "PENDING" }, include: { trainer: { include: { user: { select: { name: true, avatarUrl: true } } } } }, orderBy: { createdAt: "asc" } }),
@@ -74,7 +74,9 @@ export default async function AdminQueue() {
               <div className="space-y-3">{gsts.map((c) => (
                 <Card key={c.id} className="flex flex-wrap items-center gap-3 p-4">
                   <div className="min-w-0 flex-1"><p className="font-medium"><Link href={`/companies/${c.slug}`} className="hover:text-violet">{c.name}</Link></p><p className="mono text-sm text-muted">{c.gstin}</p></div>
+                  {c.gstLegalName ? <span className="text-xs text-lime">API: {c.gstLegalName}</span> : null}
                   <a href={`https://services.gst.gov.in/services/searchtp`} target="_blank" className="text-xs text-cyan hover:underline">Check on GST portal ↗</a>
+                  <form action={verifyGst}><input type="hidden" name="id" value={c.id} /><input type="hidden" name="verify" value="1" /><input type="hidden" name="viaApi" value="1" /><Button size="sm" variant="secondary">Verify via API</Button></form>
                   <form action={verifyGst}><input type="hidden" name="id" value={c.id} /><input type="hidden" name="verify" value="1" /><Button size="sm" variant="violet">Verify GST</Button></form>
                 </Card>
               ))}</div>

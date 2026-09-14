@@ -13,6 +13,8 @@ import { createHash } from "node:crypto";
 import { clientIp } from "@/lib/ratelimit";
 import { dispatchWebhook } from "@/lib/webhooks";
 import { shapeWorkOrder, workOrderSelect } from "@/lib/api-shapes";
+import { pushEventToUser } from "@/lib/calendar";
+import { appUrl } from "@/lib/oauth";
 
 type BatchIn = { label: string; startDate: string; endDate: string; participants: string | number; city?: string };
 /** Parse the JSON batch list posted by the form. Returns null when there are no batches, or an error string. */
@@ -124,7 +126,13 @@ export async function respondWorkOrder(_p: ActionState, fd: FormData): Promise<A
   await db.workOrder.update({ where: { id }, data: { status: decision === "ACCEPT" ? "ACCEPTED" : "CHANGES_REQUESTED", acceptedAt: decision === "ACCEPT" ? new Date() : null, trainerSignedName: decision === "ACCEPT" ? signedName : null, trainerSignedAt: decision === "ACCEPT" ? new Date() : null, signatureHash } });
   await db.workOrderEvent.create({ data: { workOrderId: id, actorId: user.id, type: decision === "ACCEPT" ? "accepted" : "changes_requested", note: note || null, version: wo.version } });
   await notify(wo.company.members.map((m) => m.userId), "workorder", decision === "ACCEPT" ? `${user.name} accepted the work order` : `${user.name} requested changes`, decision === "ACCEPT" ? `${wo.title} v${wo.version} is confirmed.` : note, `/requirements/${wo.requirementId}/work-order`);
-  if (decision === "ACCEPT") await emitWorkOrder(id, "work_order.accepted");
+  if (decision === "ACCEPT") {
+    await emitWorkOrder(id, "work_order.accepted");
+    const ev = { title: `Training: ${wo.title}`, description: `${wo.company.name} · ${wo.days} day${wo.days > 1 ? "s" : ""} · work order WO-${String(wo.number).padStart(4, "0")}\n${appUrl()}/requirements/${wo.requirementId}/work-order`, start: new Date(new Date(wo.startDate).setHours(9, 30, 0, 0)), end: new Date(new Date(wo.endDate).setHours(17, 30, 0, 0)) };
+    const events: Record<string, Record<string, string>> = { [user.id]: await pushEventToUser(user.id, ev) };
+    for (const m of wo.company.members) if (m.role === "OWNER" || m.role === "HIRING_MANAGER" || m.role === "ADMIN") events[m.userId] = await pushEventToUser(m.userId, ev);
+    await db.workOrder.update({ where: { id }, data: { calendarEvents: events } });
+  }
   refresh(wo.requirementId);
   return { ok: decision === "ACCEPT" ? "Accepted. Both sides now have a confirmed work order." : "Sent back with your notes." };
 }

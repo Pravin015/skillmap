@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { verifyGstin } from "@/lib/kyc";
 import { requireRole, requireStaff } from "@/lib/auth";
 import { audit, notify } from "@/lib/notify";
 import { slugify } from "@/lib/utils";
@@ -54,6 +55,12 @@ export async function verifyGst(fd: FormData) {
   const admin = await requireStaff("verify");
   const id = String(fd.get("id"));
   const verify = String(fd.get("verify")) === "1";
+  if (String(fd.get("viaApi")) === "1") {
+    const company = await db.company.findUnique({ where: { id }, select: { gstin: true } });
+    const r = company?.gstin ? await verifyGstin(company.gstin) : null;
+    if (!r?.valid) { await audit(admin.id, "company.gst.apicheck", id, { result: r?.message ?? "no gstin" }); revalidatePath("/admin"); return; }
+    await db.company.update({ where: { id }, data: { gstLegalName: r.legalName ?? undefined, gstVerifiedVia: r.provider === "sandbox" ? "api" : "format" } });
+  }
   const c = await db.company.update({ where: { id }, data: { gstVerifiedAt: verify ? new Date() : null }, include: { members: { select: { userId: true } } } });
   if (verify) await notify(c.members.map((m) => m.userId), "verification", "GST verified", `${c.name} now carries the GST verified badge.`, `/companies/${c.slug}`);
   await audit(admin.id, verify ? "company.gst.verify" : "company.gst.unverify", id, { gstin: c.gstin });

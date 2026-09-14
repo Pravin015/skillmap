@@ -8,6 +8,8 @@ import { sendEmail, renderEmail } from "@/lib/email";
 import { buildIcs } from "@/lib/ics";
 import { appUrl } from "@/lib/oauth";
 import type { ActionState } from "@/lib/types";
+import { createMeeting, type MeetingProvider } from "@/lib/meetings";
+import { pushEventToUser, removeEventsForUser } from "@/lib/calendar";
 import { memberCan } from "@/lib/permissions";
 import { fmtInTz, zonedToUtc } from "@/lib/tz";
 
@@ -70,13 +72,24 @@ export async function respondInterview(_p: ActionState, fd: FormData): Promise<A
   const slot = iv.slots.find((s) => s.id === slotId);
   if (!slot) return { error: "Pick one of the proposed slots." };
   await db.interview.update({ where: { id }, data: { status: "CONFIRMED", confirmedSlotId: slot.id, responseNote: note || null } });
+  // Meeting link (Zoom / Meet / Teams per the company's preference) and calendar events on both sides.
+  let meetingUrl: string | null = null;
+  const calendarEvents: Record<string, Record<string, string>> = {};
+  if (iv.mode === "VIDEO") {
+    const m = await createMeeting({ provider: (req.company.meetingProvider ?? "AUTO") as MeetingProvider, hostUserId: iv.proposedBy.id, topic: `Interview: ${req.title}`, startsAt: slot.startsAt, durationMin: iv.durationMin, attendees: [user.email, iv.proposedBy.email], description: `${req.company.name} × ${user.name} · CorpGurus` });
+    if (m) { meetingUrl = m.url; if (m.calendarEventId) calendarEvents[iv.proposedBy.id] = { [m.provider === "MEET" ? "GOOGLE" : "MICROSOFT"]: m.calendarEventId }; }
+  }
+  const evInput = { title: `Interview: ${req.title}`, description: `${req.company.name} × ${user.name}${meetingUrl ? `\nJoin: ${meetingUrl}` : ""}${iv.location ? `\n${iv.location}` : ""}\n${appUrl()}/requirements/${req.id}`, start: slot.startsAt, end: new Date(slot.startsAt.getTime() + iv.durationMin * 60000), location: meetingUrl ?? iv.location ?? undefined };
+  calendarEvents[user.id] = await pushEventToUser(user.id, evInput);
+  if (!calendarEvents[iv.proposedBy.id]) calendarEvents[iv.proposedBy.id] = await pushEventToUser(iv.proposedBy.id, evInput);
+  await db.interview.update({ where: { id }, data: { meetingUrl, meetingProvider: meetingUrl ? "auto" : null, calendarEvents } });
   const [meTz, propTz] = await Promise.all([db.user.findUnique({ where: { id: user.id }, select: { timezone: true } }), db.user.findUnique({ where: { id: iv.proposedBy.id }, select: { timezone: true } })]);
   const when = fmtSlot(slot.startsAt, meTz?.timezone);
   const whenProposer = fmtSlot(slot.startsAt, propTz?.timezone);
   const title = `Interview: ${req.title}`;
   const description = `${req.company.name} × ${user.name}\n${iv.mode === "VIDEO" ? "Video call" : iv.mode === "PHONE" ? "Phone call" : "In person"}${iv.location ? ` · ${iv.location}` : ""}\n${iv.note}\n\nManage: ${appUrl()}/requirements/${req.id}`;
-  const ics = (organizer: { name: string; email: string }, attendee: { name: string; email: string }) => buildIcs({ uid: iv.id, title, description, location: iv.location, start: slot.startsAt, durationMin: iv.durationMin, organizer, attendee, url: `${appUrl()}/requirements/${req.id}` });
-  const body = `${when} · ${iv.durationMin} min · ${iv.mode === "VIDEO" ? "video" : iv.mode === "PHONE" ? "phone" : "in person"}${iv.location ? ` · ${iv.location}` : ""}`;
+  const ics = (organizer: { name: string; email: string }, attendee: { name: string; email: string }) => buildIcs({ uid: iv.id, title, description: meetingUrl ? `Join: ${meetingUrl}\n${description}` : description, location: meetingUrl ?? iv.location, start: slot.startsAt, durationMin: iv.durationMin, organizer, attendee, url: `${appUrl()}/requirements/${req.id}` });
+  const body = `${when} · ${iv.durationMin} min · ${iv.mode === "VIDEO" ? "video" : iv.mode === "PHONE" ? "phone" : "in person"}${meetingUrl ? ` · ${meetingUrl}` : iv.location ? ` · ${iv.location}` : ""}`;
   await notify(members, "application", `${user.name} confirmed the interview`, body.replace(when, whenProposer), `/dashboard/requirements/${req.id}/applicants`);
   await notify(user.id, "application", "Interview confirmed", `${req.company.name} · ${body}`, `/requirements/${req.id}`);
   const { html, text } = renderEmail({ title: `Interview confirmed · ${when}`, body: `${req.title}\n${body}\n\nA calendar invite is attached.`, ctaHref: `/requirements/${req.id}`, ctaLabel: "Open on CorpGurus" });
@@ -99,6 +112,7 @@ export async function cancelInterview(fd: FormData) {
   const isTrainer = iv.application.trainer.userId === user.id;
   if (!isMember && !isTrainer) return;
   await db.interview.update({ where: { id }, data: { status: "CANCELLED" } });
+  { const ce = iv.calendarEvents as Record<string, Record<string, string>> | null; if (ce) for (const [uid, ids] of Object.entries(ce)) await removeEventsForUser(uid, ids); }
   await notify(isMember ? [iv.application.trainer.userId] : req.company.members.map((m) => m.userId), "application", "Interview cancelled", `${req.title} · cancelled by ${user.name}.`, isMember ? `/requirements/${req.id}` : `/dashboard/requirements/${req.id}/applicants`);
   refresh(req.id);
 }

@@ -5,12 +5,14 @@ import { addBlock, deleteBlock } from "@/lib/actions/availability";
 import { AvailabilityStrip, BlockList } from "@/components/availability";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Button, ButtonLink, Card, Field, Input, PageHeader, Select } from "@/components/ui";
+import { CalendarConnections } from "@/components/calendar-connections";
 
 export const metadata = { title: "Availability" };
 
 const weekAgo = () => new Date(Date.now() - 7 * 86400000);
 
-export default async function AvailabilityPage() {
+export default async function AvailabilityPage({ searchParams }: { searchParams: Promise<{ cal?: string }> }) {
+  const { cal } = await searchParams;
   const user = await requireUser("/settings/availability");
   if (!user.trainerProfile) redirect("/settings");
   const blocks = await db.availabilityBlock.findMany({ where: { trainerId: user.trainerProfile.id, endDate: { gte: weekAgo() } }, include: { requirement: { select: { title: true } } }, orderBy: { startDate: "asc" } });
@@ -21,6 +23,7 @@ export default async function AvailabilityPage() {
         <h2 className="mb-3 text-lg font-bold">Next 12 weeks</h2>
         <AvailabilityStrip blocks={blocks} />
       </Card>
+      <CalendarConnections userId={user.id} trainer status={cal} />
       <Card className="p-6">
         <h2 className="text-lg font-bold">Block dates</h2>
         <ActionForm action={addBlock} className="mt-4 grid gap-4 md:grid-cols-[1fr_1fr_160px_1fr_auto] md:items-end" resetOnSuccess>

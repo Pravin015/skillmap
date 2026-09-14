@@ -5,6 +5,12 @@ import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Alert, Avatar, Badge, Button, ButtonLink, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { certStatusLabel, COMPANY_SIZES, CURRENCIES, DELIVERY_MODES, fmtDate, modeLabel } from "@/lib/utils";
 import { COMPANY_ACTION_LABELS, COMPANY_ROLES, companyCan, memberRoleLabel, type CompanyAction } from "@/lib/permissions";
+import { saveBankDetails, setMeetingProvider, verifyCompanyGst, verifyTrainerPan } from "@/lib/actions/integrations";
+import { CalendarConnections } from "@/components/calendar-connections";
+import { MEETING_PROVIDERS, meetingCapabilities } from "@/lib/meetings";
+import { payoutsConfigured } from "@/lib/payouts";
+import { kycConfigured } from "@/lib/kyc";
+import { decrypt, maskAccount } from "@/lib/crypto";
 import { unlinkProvider } from "@/lib/actions/oauth";
 import { PROVIDER_LIST, providerName } from "@/lib/oauth";
 import { OAuthButtons } from "@/components/oauth-buttons";
@@ -173,6 +179,22 @@ async function TrainerSettings({ userId, profileId }: { userId: string; profileI
           <div className="md:col-span-2"><SubmitButton variant="secondary" pendingText="Submitting…">Submit for verification</SubmitButton></div>
         </ActionForm>
       </Card>
+      <Card className="p-6">
+        <h2 className="text-lg font-bold">Payouts and identity</h2>
+        <p className="mt-1 text-sm text-muted">Bank details are used for escrow payouts{payoutsConfigured() ? " through RazorpayX" : ""}; the account number is encrypted at rest and never shown in full. PAN verification adds an identity badge.</p>
+        <div className="mt-4 grid gap-6 md:grid-cols-2">
+          <ActionForm action={saveBankDetails} className="space-y-3">
+            <Field label="Account holder name"><Input name="bankHolder" defaultValue={p.bankHolder ?? ""} required /></Field>
+            <Field label="Account number" hint={p.bankAccountEnc ? `On file: ${maskAccount(decrypt(p.bankAccountEnc))}` : undefined}><Input name="bankAccount" inputMode="numeric" placeholder="9 to 18 digits" required /></Field>
+            <Field label="IFSC"><Input name="bankIfsc" defaultValue={p.bankIfsc ?? ""} placeholder="HDFC0001234" required className="uppercase" /></Field>
+            <SubmitButton size="sm" variant="secondary" pendingText="Saving…">Save bank details</SubmitButton>
+          </ActionForm>
+          <ActionForm action={verifyTrainerPan} className="space-y-3">
+            <Field label="PAN" hint={p.panVerifiedAt ? "Verified against the Income Tax database." : kycConfigured() ? "Checked live against the Income Tax database." : "Format check only until a KYC provider is connected."}><Input name="pan" defaultValue={p.pan ?? ""} placeholder="ABCDE1234F" maxLength={10} className="uppercase" required /></Field>
+            <SubmitButton size="sm" variant="secondary" pendingText="Checking…">{p.panVerifiedAt ? "Re-verify PAN" : "Verify PAN"}</SubmitButton>
+          </ActionForm>
+        </div>
+      </Card>
     </>
   );
 }
@@ -183,6 +205,7 @@ async function CompanySettings({ companyId, isOwner, canManage, me }: { companyI
     db.user.findUnique({ where: { id: me }, select: { name: true } }),
   ]);
   if (!c) return null;
+  const caps = await meetingCapabilities(me);
   return (
     <>
       <Card className="p-6">
@@ -208,7 +231,20 @@ async function CompanySettings({ companyId, isOwner, canManage, me }: { companyI
           <Field label="About" hint="What you train, how often, and what you provide trainers (lab, courseware, venue)."><Textarea name="description" defaultValue={c.description} className="min-h-28" /></Field>
           <SubmitButton variant="violet" pendingText="Saving…">Save company page</SubmitButton>
         </ActionForm>
+        <div className="mt-5 grid gap-4 border-t border-line pt-5 md:grid-cols-2">
+          <div>
+            <p className="font-display text-sm font-semibold">GSTIN verification</p>
+            <p className="mt-1 text-xs text-muted">{c.gstVerifiedAt ? `Verified${c.gstLegalName ? ` · ${c.gstLegalName}` : ""}${c.gstVerifiedVia === "api" ? " (GST network)" : ""}.` : c.gstin ? "Check the number against the GST network and earn the badge instantly when a KYC provider is connected." : "Add your GSTIN above first."}</p>
+            {c.gstin && !c.gstVerifiedAt ? <ActionForm action={verifyCompanyGst} className="mt-2"><SubmitButton size="sm" variant="secondary" pendingText="Checking…">Verify GSTIN now</SubmitButton></ActionForm> : null}
+          </div>
+          <form action={setMeetingProvider}>
+            <p className="font-display text-sm font-semibold">Interview meeting links</p>
+            <p className="mt-1 text-xs text-muted">Created automatically when a trainer confirms a video interview. {caps.zoom ? "Zoom is set up." : "Zoom is not set up on this instance."}{caps.meet ? " Google Meet available via your calendar." : ""}{caps.teams ? " Teams available via your calendar." : ""}</p>
+            <div className="mt-2 flex gap-2"><Select name="meetingProvider" defaultValue={c.meetingProvider} className="text-sm">{MEETING_PROVIDERS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}</Select><Button size="sm" variant="secondary">Save</Button></div>
+          </form>
+        </div>
       </Card>
+      <CalendarConnections userId={me} trainer={false} />
 
       <Card className="p-6">
         <h2 className="text-lg font-bold">Team</h2>
