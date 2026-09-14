@@ -10,12 +10,13 @@ import { WEBHOOK_EVENTS } from "@/lib/webhooks";
 import { appUrl } from "@/lib/oauth";
 import { fmtDate, timeAgo } from "@/lib/utils";
 import { companyCan } from "@/lib/permissions";
+import { featureEnabled } from "@/lib/features";
 
 export const metadata = { title: "Developers · API and webhooks" };
 
 export default async function DevelopersPage() {
   const user = await requireUser("/settings/developers");
-  if (!user.membership || !companyCan(user.membership.role, "api_keys")) redirect("/settings");
+  if (!user.membership || !companyCan(user.membership.role, "api_keys") || !(await featureEnabled("api"))) redirect("/settings");
   const companyId = user.membership.company.id;
   const [keys, endpoints] = await Promise.all([
     db.apiKey.findMany({ where: { companyId }, orderBy: { createdAt: "desc" } }),

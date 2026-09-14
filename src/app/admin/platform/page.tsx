@@ -1,7 +1,8 @@
 import { db } from "@/lib/db";
 import { STAFF_ROLE_META, STAFF_ROLES } from "@/lib/permissions";
+import { FEATURES, featureMap } from "@/lib/features";
 import { requireStaff } from "@/lib/auth";
-import { createAdmin, removeAdmin, runJobsNow, setAnnouncement, updateSetting, upsertTaxonomy, setStaffRole } from "@/lib/actions/admin";
+import { createAdmin, removeAdmin, runJobsNow, setAnnouncement, updateSetting, upsertTaxonomy, setStaffRole, toggleFeature } from "@/lib/actions/admin";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Avatar, Badge, Button, Card, Chip, Field, Input, PageHeader, Select, Stat } from "@/components/ui";
 import { fmtDate, timeAgo } from "@/lib/utils";
@@ -20,6 +21,7 @@ const daysAgo = (n: number) => new Date(Date.now() - n * 86400000);
 
 export default async function PlatformPage() {
   await requireStaff("platform", "/admin/platform");
+  const flags = await featureMap();
   const [admins, settings, categories, skills, audit, growth] = await Promise.all([
     db.user.findMany({ where: { role: { in: STAFF_ROLES } }, orderBy: [{ role: "desc" }, { createdAt: "asc" }] }),
     db.setting.findMany(),
@@ -100,6 +102,18 @@ export default async function PlatformPage() {
           <ActionForm action={upsertTaxonomy} className="mt-4 flex gap-2" resetOnSuccess><input type="hidden" name="kind" value="skill" /><Input name="name" placeholder="New skill, e.g. Snowflake" required /><SubmitButton variant="secondary">Add</SubmitButton></ActionForm>
         </Card>
       </div>
+        <Card className="p-6">
+          <h2 className="text-lg font-bold" id="features">Feature flags</h2>
+          <p className="mt-1 text-sm text-muted">Switch modules off platform-wide without deploying. Off hides the feature and its actions refuse.</p>
+          <ul className="mt-3 divide-y divide-line rounded-xl border border-line">{FEATURES.map((f) => (
+            <li key={f.key} className="flex items-center gap-3 px-4 py-3">
+              <div className="min-w-0 flex-1"><p className="font-medium">{f.label}</p><p className="text-xs text-muted">{f.blurb}</p></div>
+              {flags[f.key] ? <Badge tone="lime">on</Badge> : <Badge tone="neutral">off</Badge>}
+              <form action={toggleFeature}><input type="hidden" name="key" value={f.key} /><input type="hidden" name="on" value={flags[f.key] ? "0" : "1"} /><Button size="sm" variant="secondary">{flags[f.key] ? "Turn off" : "Turn on"}</Button></form>
+            </li>
+          ))}</ul>
+        </Card>
+
 
       <Card className="p-6">
         <h2 className="text-lg font-bold">Announcement banner</h2>

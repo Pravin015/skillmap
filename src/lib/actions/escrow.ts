@@ -8,6 +8,7 @@ import { audit, notify } from "@/lib/notify";
 import { createRazorpayPaymentLink, razorpayConfigured } from "@/lib/billing";
 import { appUrl } from "@/lib/oauth";
 import type { ActionState } from "@/lib/types";
+import { featureEnabled } from "@/lib/features";
 import { memberCan } from "@/lib/permissions";
 
 function refresh(requirementId: string) {
@@ -27,6 +28,7 @@ async function feePercent() {
  * member is redirected to pay; without keys (development) the deposit is marked funded immediately.
  */
 export async function fundEscrow(_p: ActionState, fd: FormData): Promise<ActionState> {
+  if (!(await featureEnabled("escrow"))) return { error: "Escrow is switched off on this platform right now." };
   const user = await requireUser();
   const wo = await db.workOrder.findUnique({ where: { id: String(fd.get("workOrderId")) }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, trainer: { select: { id: true, userId: true, user: { select: { name: true } } } }, escrow: true } });
   if (!wo || !memberCan(wo.company.members, user.id, "fund_escrow")) return { error: "Only the company on this work order can fund it." };

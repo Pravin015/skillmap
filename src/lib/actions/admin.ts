@@ -167,3 +167,14 @@ export async function setStaffRole(fd: FormData) {
   await audit(su.id, "admin.role", id, { from: target.role, to: role });
   revalidatePath("/admin/platform");
 }
+
+/** Super admin switches a platform feature on or off (Setting `feature_<key>`). */
+export async function toggleFeature(fd: FormData) {
+  const su = await requireStaff("platform");
+  const key = String(fd.get("key")).replace(/[^a-z_]/g, "");
+  const on = String(fd.get("on")) === "1";
+  if (!key) return;
+  await db.setting.upsert({ where: { key: `feature_${key}` }, create: { key: `feature_${key}`, value: on ? "1" : "0" }, update: { value: on ? "1" : "0" } });
+  await audit(su.id, on ? "feature.on" : "feature.off", key);
+  revalidatePath("/admin/platform"); revalidatePath("/admin/overview"); revalidatePath("/", "layout");
+}

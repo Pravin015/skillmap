@@ -16,6 +16,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <span className="flex items-center gap-2 font-display font-semibold"><ShieldCheck size={18} className="text-amber" /> Admin console</span>
         <Badge tone="amber">{staffRoleLabel(user.role).toLowerCase()}</Badge>
         <nav className="ml-auto flex gap-1 text-sm">
+          <Link href="/admin/overview" className="rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Overview</Link>
           {staffCan(user.role, "verify") ? <Link href="/admin" className="rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Queue</Link> : null}
           {staffCan(user.role, "users") || staffCan(user.role, "support") ? <Link href="/admin/users" className="rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Users</Link> : null}
           {staffCan(user.role, "moderate") ? <Link href="/admin/requirements" className="rounded-lg px-3 py-1.5 text-muted hover:bg-surface-2 hover:text-ink">Requirements</Link> : null}

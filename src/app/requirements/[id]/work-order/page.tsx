@@ -13,6 +13,7 @@ import { dateRange, fmtDate, modeLabel, money, timeAgo } from "@/lib/utils";
 import { WorkOrderForm } from "./form";
 import { EscrowCard } from "@/components/escrow-card";
 import { razorpayConfigured } from "@/lib/billing";
+import { featureEnabled } from "@/lib/features";
 
 export const metadata = { title: "Work order" };
 
@@ -40,6 +41,7 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
 
   const wo = req.workOrder;
   const feePercent = Number((await db.setting.findUnique({ where: { key: "escrow_fee_percent" } }))?.value ?? 5);
+  const escrowOn = await featureEnabled("escrow");
   const editing = isMember && (!wo || edit === "1" || wo.status === "DRAFT" || wo.status === "CHANGES_REQUESTED") && wo?.status !== "ACCEPTED" && wo?.status !== "CANCELLED";
   const defaults = wo ?? { title: `${req.title}`, startDate: req.startDate, endDate: req.endDate, dayRate: awarded.proposedRate ?? req.budgetMax ?? 0, currency: req.currency, participants: req.participants, mode: req.mode, venue: req.city ? `${req.city}` : "", deliverables: "", provided: "", paymentTerms: "Invoice on completion, payable within 30 days by bank transfer. GST extra.", cancellationTerms: "Free reschedule up to 7 days before the start date. 50% of the total payable if cancelled within 7 days.", notes: "" };
   const lines = (s: string) => s.split("\n").map((l) => l.trim()).filter(Boolean);
@@ -108,7 +110,7 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
             {isMember && wo.status === "CANCELLED" ? <form action={reopenWorkOrder}><input type="hidden" name="id" value={wo.id} /><Button variant="secondary" size="sm">Reopen as draft</Button></form> : null}
           </div>
 
-          {wo.status === "ACCEPTED" || wo.escrow ? <EscrowCard escrow={wo.escrow} workOrderId={wo.id} workOrderStatus={wo.status} total={wo.total} currency={wo.currency} isMember={isMember} isTrainer={isTrainer} feePercent={feePercent} live={razorpayConfigured() && wo.currency === "INR"} /> : null}
+          {escrowOn && (wo.status === "ACCEPTED" || wo.escrow) ? <EscrowCard escrow={wo.escrow} workOrderId={wo.id} workOrderStatus={wo.status} total={wo.total} currency={wo.currency} isMember={isMember} isTrainer={isTrainer} feePercent={feePercent} live={razorpayConfigured() && wo.currency === "INR"} /> : null}
 
           {isTrainer && wo.status === "SENT" ? (
             <Card className="p-6 print:hidden" glow="cyan">

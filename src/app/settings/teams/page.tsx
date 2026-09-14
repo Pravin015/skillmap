@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Users } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { featureEnabled } from "@/lib/features";
 import { createTeam, deleteTeam, inviteTeamMember, removeTeamMember, respondTeamInvite, updateTeam } from "@/lib/actions/teams";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Avatar, Badge, Button, ButtonLink, Card, Field, Input, PageHeader, Textarea } from "@/components/ui";
@@ -13,7 +14,7 @@ export const metadata = { title: "Teams" };
 export default async function TeamsSettings({ searchParams }: { searchParams: Promise<{ team?: string }> }) {
   const { team: focus } = await searchParams;
   const user = await requireUser("/settings/teams");
-  if (!user.trainerProfile) redirect("/settings");
+  if (!user.trainerProfile || !(await featureEnabled("teams"))) redirect("/settings");
   const me = user.trainerProfile.id;
   const include = { lead: { include: { user: { select: { name: true, avatarUrl: true } } } }, members: { include: { trainer: { include: { user: { select: { name: true, avatarUrl: true, email: true } } } } }, orderBy: { createdAt: "asc" as const } }, _count: { select: { applications: true } } };
   const [led, memberships] = await Promise.all([

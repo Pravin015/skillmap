@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Route } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { featureEnabled } from "@/lib/features";
 import { createLearningPath } from "@/lib/actions/learning-paths";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Badge, ButtonLink, Card, Empty, Field, Input, PageHeader, Textarea } from "@/components/ui";
@@ -14,7 +15,7 @@ export const metadata = { title: "Learning paths" };
 /** Company view: multi-training programmes for one audience, each step becoming a requirement when it is time to hire. */
 export default async function LearningPathsPage() {
   const user = await requireUser("/dashboard/learning-paths");
-  if (!user.membership) redirect("/dashboard");
+  if (!user.membership || !(await featureEnabled("learning_paths"))) redirect("/dashboard");
   const paths = await db.learningPath.findMany({ where: { companyId: user.membership.company.id }, include: { steps: { include: { requirement: { select: { status: true } } }, orderBy: { position: "asc" } } }, orderBy: [{ archived: "asc" }, { updatedAt: "desc" }] });
   return (
     <div className="mx-auto max-w-4xl space-y-6">

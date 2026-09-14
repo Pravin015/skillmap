@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowRight, Bell, Plus } from "lucide-react";
 import { db } from "@/lib/db";
-import { requireUser } from "@/lib/auth";
+import { requireUser, isStaff } from "@/lib/auth";
 import { Avatar, Badge, ButtonLink, Card, Empty, PageHeader, Stat } from "@/components/ui";
 import { RequirementCard, reqTone } from "@/components/cards";
 import { appStatusLabel, fmtDate, reqStatusLabel, timeAgo } from "@/lib/utils";
@@ -10,6 +10,8 @@ import { entitlementsFor } from "@/lib/billing";
 import { learnerScore, trainerStats } from "@/lib/stats";
 import { InterviewSummaryLink } from "@/components/interview";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
+import { TrainerInsights } from "@/components/dashboard/trainer-insights";
+import { CompanyInsights } from "@/components/dashboard/company-insights";
 
 export const metadata = { title: "Dashboard" };
 
@@ -26,7 +28,7 @@ function SetupBanner({ href, step, audience }: { href: string; step: number; aud
 export default async function Dashboard({ searchParams }: { searchParams: Promise<{ onboarded?: string }> }) {
   const { onboarded } = await searchParams;
   const user = await requireUser("/dashboard");
-  if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") redirect("/admin");
+  if (isStaff(user)) redirect("/admin/overview");
   const notifications = await db.notification.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 6 });
   const pendingConns = await db.connection.count({ where: { addresseeId: user.id, status: "PENDING" } });
   const ent = await entitlementsFor(user);
@@ -93,6 +95,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         {onboarded ? <div className="mt-4 rounded-2xl border border-lime/30 bg-lime/5 px-5 py-3 text-sm"><span className="font-semibold text-lime">Your profile is live.</span> <span className="text-muted">Companies can find you in the directory and on skill pages. Keep an eye on matches below.</span></div> : null}
         {!user.onboardingCompletedAt ? <div className="mt-4"><SetupBanner href="/onboarding/trainer" step={user.onboardingStep} audience="trainer" /></div> : null}
         <div className="mt-4"><OnboardingChecklist steps={onboarding} audience="trainer" title="Set up your trainer profile" /></div>
+        <TrainerInsights trainerId={p.id} onboardingDone={!!user.onboardingCompletedAt} />
         <div className="mt-4 grid gap-4 md:grid-cols-[1fr_1fr_1.4fr]">
           <Card className="p-5"><p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Profile views · 30 days</p><p className="mt-1 font-display text-3xl font-bold tabular-nums text-cyan">{stats.views}</p><p className="text-xs text-muted">{stats.searches} search appearances</p></Card>
           <Card className="p-5"><p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Learner score</p><p className="mt-1 font-display text-3xl font-bold tabular-nums text-lime">{learners.count ? learners.avg!.toFixed(1) : "—"}</p><p className="text-xs text-muted">{learners.count ? `${learners.count} participants · ${learners.recommendPct}% recommend` : "Collect feedback after your next batch"}</p></Card>
@@ -169,6 +172,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
           { key: "team", label: "Invite a teammate", hint: "Recruiters and L&D managers on one page.", href: "/settings", done: c._count.members > 1 },
           { key: "save", label: "Save a trainer to your bench", hint: "Build a shortlist for repeat batches.", href: "/trainers", done: c.saved.length > 0 },
         ]} /></div>
+        <CompanyInsights companyId={c.id} role={user.membership.role} />
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_340px]">
           <section>
             <h2 className="mb-3 text-lg font-bold">Your requirements</h2>
