@@ -78,10 +78,10 @@ export async function Shell({ children }: { children: React.ReactNode }) {
                       <p className="text-xs text-muted">{user.membership ? `${memberRoleLabel(user.membership.role)} · ${user.membership.company.name}` : roleLabel[user.role]}</p>
                     </div>
                     <div className="hairline my-1" />
-                    {user.memberships.length > 1 || (user.trainerProfile && user.memberships.length) ? (
+                    {user.memberships.length > 1 || (user.hasTrainerProfile && user.memberships.length) ? (
                       <div className="mb-1 rounded-lg bg-surface-2 p-1.5">
                         <p className="mono px-1.5 pb-1 text-[10px] uppercase tracking-wider text-muted">Switch to</p>
-                        {user.trainerProfile ? <form action={switchContext}><button className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm ${!user.membership ? "bg-white font-semibold" : "hover:bg-white"}`}><Briefcase size={14} /> Trainer view</button></form> : null}
+                        {user.hasTrainerProfile ? <form action={switchContext}><button className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm ${!user.membership ? "bg-white font-semibold" : "hover:bg-white"}`}><Briefcase size={14} /> Trainer view</button></form> : null}
                         {user.memberships.map((m) => <form key={m.id} action={switchContext}><input type="hidden" name="companyId" value={m.companyId} /><button className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm ${user.membership?.companyId === m.companyId ? "bg-white font-semibold" : "hover:bg-white"}`}><Building2 size={14} /> <span className="min-w-0 flex-1 truncate">{m.company.name}</span><span className="text-[10px] text-muted">{memberRoleLabel(m.role)}</span></button></form>)}
                       </div>
                     ) : null}
