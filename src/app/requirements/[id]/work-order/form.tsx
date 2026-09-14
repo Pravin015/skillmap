@@ -45,7 +45,8 @@ export function WorkOrderForm({ requirementId, defaults, revising }: { requireme
           <Field label="Cancellation terms"><Textarea name="cancellationTerms" defaultValue={defaults.cancellationTerms} className="min-h-20" placeholder="Free reschedule up to 7 days before start. 50% payable if cancelled within 7 days." /></Field>
         </div>
         <Field label="Notes"><Textarea name="notes" defaultValue={defaults.notes} className="min-h-16" /></Field>
-        <div className="flex flex-wrap justify-end gap-2 border-t border-line pt-4">
+        <div className="flex flex-wrap items-end justify-end gap-3 border-t border-line pt-4">
+          <Field label="Sign as (type your full name to send)" className="min-w-64 flex-1"><Input name="signedName" placeholder="Your full name" /></Field>
           <SubmitButton variant="secondary" pendingText="Saving…">Save draft</SubmitButton>
           <button type="submit" name="send" value="1" className="inline-flex h-10 items-center rounded-lg bg-violet px-4 font-display text-sm font-semibold text-white hover:bg-[#3d3384]">{revising ? "Send revised version" : "Send to trainer"}</button>
         </div>

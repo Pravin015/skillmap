@@ -1,6 +1,7 @@
 import "server-only";
 import { db } from "./db";
 import { notify } from "./notify";
+import { fmtInTz } from "./tz";
 
 const day = (n: number) => new Date(Date.now() + n * 86400000);
 
@@ -43,8 +44,10 @@ export async function runDailyJobs() {
   for (const iv of soon) {
     const slot = iv.slots.find((s) => s.id === iv.confirmedSlotId);
     if (!slot || slot.startsAt < day(1) || slot.startsAt >= day(2)) continue;
-    const when = new Intl.DateTimeFormat("en-IN", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }).format(slot.startsAt) + " IST";
-    await notify([iv.application.trainer.userId, iv.proposedBy.id], "application", "Interview tomorrow", `${iv.application.requirement.title} · ${when}${iv.location ? ` · ${iv.location}` : ""}`, `/requirements/${iv.application.requirement.id}`);
+    for (const uid of [iv.application.trainer.userId, iv.proposedBy.id]) {
+      const tz = (await db.user.findUnique({ where: { id: uid }, select: { timezone: true } }))?.timezone ?? "Asia/Kolkata";
+      await notify(uid, "application", "Interview tomorrow", `${iv.application.requirement.title} · ${fmtInTz(slot.startsAt, tz)}${iv.location ? ` · ${iv.location}` : ""}`, `/requirements/${iv.application.requirement.id}`);
+    }
     reminded++;
   }
   out.push(`${reminded} interview reminder${reminded === 1 ? "" : "s"}`);

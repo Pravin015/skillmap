@@ -64,7 +64,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
                     {a.declineReason ? <p className="mt-1 text-xs text-muted">Reason sent: “{a.declineReason}”</p> : null}
                   </div>
                 </div>
-                {!dim && ["APPLIED", "SHORTLISTED"].includes(a.status) && ["OPEN", "SHORTLISTING"].includes(r.status) ? <div className="mt-4"><InterviewPanel applicationId={a.id} interview={a.interview} trainerName={t.user.name} /></div> : null}
+                {!dim && ["APPLIED", "SHORTLISTED"].includes(a.status) && ["OPEN", "SHORTLISTING"].includes(r.status) ? <div className="mt-4"><InterviewPanel applicationId={a.id} interview={a.interview} trainerName={t.user.name} tz={user.timezone} /></div> : null}
                 {!dim && r.status !== "COMPLETED" && r.status !== "CANCELLED" ? (
                   <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-4">
                     <form action={startConversation}><input type="hidden" name="userId" value={t.user.id} /><input type="hidden" name="requirementId" value={r.id} /><Button variant="secondary" size="sm">Message</Button></form>

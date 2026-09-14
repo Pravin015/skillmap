@@ -8,6 +8,8 @@ import { requireUser } from "@/lib/auth";
 import { notify, audit } from "@/lib/notify";
 import { daysBetween } from "@/lib/utils";
 import type { ActionState } from "@/lib/types";
+import { createHash } from "node:crypto";
+import { clientIp } from "@/lib/ratelimit";
 
 const schema = z.object({
   requirementId: z.string().min(1),
@@ -25,6 +27,7 @@ const schema = z.object({
   cancellationTerms: z.string().trim().optional(),
   notes: z.string().trim().optional(),
   send: z.string().optional(),
+  signedName: z.string().trim().optional(),
 });
 
 function refresh(requirementId: string) {
@@ -53,14 +56,15 @@ export async function saveWorkOrder(_p: ActionState, fd: FormData): Promise<Acti
   if (end < start) return { error: "End date must be on or after the start date." };
   const days = daysBetween(start, end);
   const sending = d.send === "1";
+  if (sending && (!d.signedName || d.signedName.length < 3)) return { error: "Type your full name to sign the work order before sending." };
   const wasSent = !!req.workOrder && req.workOrder.status !== "DRAFT";
   const data = {
     title: d.title, startDate: start, endDate: end, days, dayRate: d.dayRate, currency: d.currency, total: days * d.dayRate, participants: d.participants, mode: d.mode,
     venue: d.venue ?? "", deliverables: d.deliverables ?? "", provided: d.provided ?? "", paymentTerms: d.paymentTerms ?? "", cancellationTerms: d.cancellationTerms ?? "", notes: d.notes ?? "",
   };
   const wo = req.workOrder
-    ? await db.workOrder.update({ where: { id: req.workOrder.id }, data: { ...data, status: sending ? "SENT" : req.workOrder.status === "CHANGES_REQUESTED" ? "CHANGES_REQUESTED" : "DRAFT", version: sending && wasSent ? { increment: 1 } : undefined, sentAt: sending ? new Date() : req.workOrder.sentAt } })
-    : await db.workOrder.create({ data: { ...data, requirementId: req.id, trainerId: awarded.trainer.id, companyId: req.companyId, createdById: user.id, status: sending ? "SENT" : "DRAFT", sentAt: sending ? new Date() : null } });
+    ? await db.workOrder.update({ where: { id: req.workOrder.id }, data: { ...data, status: sending ? "SENT" : req.workOrder.status === "CHANGES_REQUESTED" ? "CHANGES_REQUESTED" : "DRAFT", version: sending && wasSent ? { increment: 1 } : undefined, sentAt: sending ? new Date() : req.workOrder.sentAt, companySignedName: sending ? d.signedName : req.workOrder.companySignedName, companySignedAt: sending ? new Date() : req.workOrder.companySignedAt, trainerSignedName: sending ? null : req.workOrder.trainerSignedName, trainerSignedAt: sending ? null : req.workOrder.trainerSignedAt, signatureHash: sending ? null : req.workOrder.signatureHash } })
+    : await db.workOrder.create({ data: { ...data, requirementId: req.id, trainerId: awarded.trainer.id, companyId: req.companyId, createdById: user.id, status: sending ? "SENT" : "DRAFT", sentAt: sending ? new Date() : null, companySignedName: sending ? d.signedName : null, companySignedAt: sending ? new Date() : null } });
   await db.workOrderEvent.create({ data: { workOrderId: wo.id, actorId: user.id, type: sending ? (wasSent ? "revised" : "sent") : req.workOrder ? "edited" : "created", version: wo.version } });
   if (sending) await notify(awarded.trainer.userId, "workorder", wasSent ? `Work order revised (v${wo.version})` : "Work order received", `${req.company.name}: ${d.title} · ${days} day${days > 1 ? "s" : ""} · review and accept`, `/requirements/${req.id}/work-order`);
   refresh(req.id);
@@ -73,11 +77,15 @@ export async function respondWorkOrder(_p: ActionState, fd: FormData): Promise<A
   const id = String(fd.get("id"));
   const decision = String(fd.get("decision")) as "ACCEPT" | "CHANGES";
   const note = String(fd.get("note") ?? "").trim();
+  const signedName = String(fd.get("signedName") ?? "").trim();
   const wo = await db.workOrder.findUnique({ where: { id }, include: { trainer: { select: { userId: true } }, company: { include: { members: { select: { userId: true } } } }, requirement: { select: { id: true, title: true } } } });
   if (!wo || wo.trainer.userId !== user.id) return { error: "Only the awarded trainer can respond." };
   if (wo.status !== "SENT") return { error: "This work order is not awaiting your response." };
   if (decision === "CHANGES" && note.length < 5) return { error: "Tell the company what to change." };
-  await db.workOrder.update({ where: { id }, data: { status: decision === "ACCEPT" ? "ACCEPTED" : "CHANGES_REQUESTED", acceptedAt: decision === "ACCEPT" ? new Date() : null } });
+  if (decision === "ACCEPT" && signedName.length < 3) return { error: "Type your full name to sign and accept." };
+  const ip = await clientIp();
+  const signatureHash = decision === "ACCEPT" ? createHash("sha256").update(`${wo.id}|v${wo.version}|${wo.companySignedName ?? ""}|${signedName}|${new Date().toISOString()}|${ip}`).digest("hex").slice(0, 32) : null;
+  await db.workOrder.update({ where: { id }, data: { status: decision === "ACCEPT" ? "ACCEPTED" : "CHANGES_REQUESTED", acceptedAt: decision === "ACCEPT" ? new Date() : null, trainerSignedName: decision === "ACCEPT" ? signedName : null, trainerSignedAt: decision === "ACCEPT" ? new Date() : null, signatureHash } });
   await db.workOrderEvent.create({ data: { workOrderId: id, actorId: user.id, type: decision === "ACCEPT" ? "accepted" : "changes_requested", note: note || null, version: wo.version } });
   await notify(wo.company.members.map((m) => m.userId), "workorder", decision === "ACCEPT" ? `${user.name} accepted the work order` : `${user.name} requested changes`, decision === "ACCEPT" ? `${wo.title} v${wo.version} is confirmed.` : note, `/requirements/${wo.requirementId}/work-order`);
   refresh(wo.requirementId);

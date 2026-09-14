@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { setUserStatus } from "@/lib/actions/admin";
+import { startImpersonation } from "@/lib/actions/impersonate";
 import { Avatar, Badge, Button, Input, PageHeader, Select } from "@/components/ui";
 import { fmtDate, roleLabel } from "@/lib/utils";
 
@@ -37,7 +38,7 @@ export default async function AdminUsers({ searchParams }: { searchParams: Promi
                   <td className="px-4 py-3 text-muted">{u.trainerProfile ? <Link href={`/trainers/${u.trainerProfile.slug}`} className="hover:text-cyan">Profile{u.trainerProfile.verifiedAt ? " · verified" : ""}</Link> : u.membership ? <Link href={`/companies/${u.membership.company.slug}`} className="hover:text-violet">{u.membership.company.name} · {u.membership.role.toLowerCase()}</Link> : "—"}</td>
                   <td className="px-4 py-3 text-muted">{fmtDate(u.createdAt)}</td>
                   <td className="px-4 py-3"><Badge tone={u.status === "ACTIVE" ? "lime" : "rose"}>{u.status}</Badge></td>
-                  <td className="px-4 py-3 text-right">{canAct ? <form action={setUserStatus}><input type="hidden" name="id" value={u.id} /><input type="hidden" name="status" value={u.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE"} /><Button size="sm" variant={u.status === "ACTIVE" ? "danger" : "secondary"}>{u.status === "ACTIVE" ? "Suspend" : "Reinstate"}</Button></form> : null}</td>
+                  <td className="px-4 py-3 text-right"><div className="flex justify-end gap-1">{me.role === "SUPER_ADMIN" && u.role !== "SUPER_ADMIN" && u.status === "ACTIVE" && u.id !== me.id ? <form action={startImpersonation}><input type="hidden" name="userId" value={u.id} /><Button size="sm" variant="ghost">View as</Button></form> : null}{canAct ? <form action={setUserStatus}><input type="hidden" name="id" value={u.id} /><input type="hidden" name="status" value={u.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE"} /><Button size="sm" variant={u.status === "ACTIVE" ? "danger" : "secondary"}>{u.status === "ACTIVE" ? "Suspend" : "Reinstate"}</Button></form> : null}</div></td>
                 </tr>
               );
             })}

@@ -117,6 +117,11 @@ Without keys in development the pricing page runs a **simulator** that activates
 - **LinkedIn import** (`/settings/import`): upload the PDF LinkedIn generates from a profile (or paste text); the parser (`src/lib/linkedin-parse.ts`) extracts headline, about, skills, languages, certifications and work history; the trainer ticks what to apply. Certifications arrive as pending; work history lives in `Experience` and shows on the Overview tab.
 - **Stripe (USD)**: the pricing page has an INR/USD toggle. USD plans use Stripe Checkout (hosted); prices/products are created lazily and cached in Setting. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`; register `https://<domain>/api/billing/stripe/webhook` for `checkout.session.completed`, `invoice.paid`, `invoice.payment_failed`, `customer.subscription.updated`, `customer.subscription.deleted`. Without keys the USD buttons use the simulator.
 
+- **Support view (impersonation)**: super admins open any member's view from Admin → Users; the session carries the real actor, a red banner shows on every page, and start/stop are audit-logged.
+- **Announcement banner**: super admin sets text, style, link and expiry on Platform; members dismiss per browser.
+- **Time zones**: each member picks a time zone in Settings; interview slots are entered in the proposer's zone, stored as instants, and shown to each side in their own zone (reminders too).
+- **Work-order e-signature**: the company types a name to send, the trainer types a name to accept; names, timestamps and a reference hash appear on the document and print view.
+
 ## Phase 2 backlog
 
 Redis-backed rate limiting for multi-instance deployments. Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.

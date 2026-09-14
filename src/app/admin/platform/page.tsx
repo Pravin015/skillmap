@@ -1,8 +1,8 @@
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
-import { createAdmin, removeAdmin, runJobsNow, updateSetting, upsertTaxonomy } from "@/lib/actions/admin";
+import { createAdmin, removeAdmin, runJobsNow, setAnnouncement, updateSetting, upsertTaxonomy } from "@/lib/actions/admin";
 import { ActionForm, SubmitButton } from "@/components/form-bits";
-import { Avatar, Badge, Button, Card, Chip, Field, Input, PageHeader, Stat } from "@/components/ui";
+import { Avatar, Badge, Button, Card, Chip, Field, Input, PageHeader, Select, Stat } from "@/components/ui";
 import { fmtDate, timeAgo } from "@/lib/utils";
 import { ACTIVE_STATUSES, inr, planByCode } from "@/lib/billing";
 
@@ -98,6 +98,19 @@ export default async function PlatformPage() {
           <ActionForm action={upsertTaxonomy} className="mt-4 flex gap-2" resetOnSuccess><input type="hidden" name="kind" value="skill" /><Input name="name" placeholder="New skill, e.g. Snowflake" required /><SubmitButton variant="secondary">Add</SubmitButton></ActionForm>
         </Card>
       </div>
+
+      <Card className="p-6">
+        <h2 className="text-lg font-bold">Announcement banner</h2>
+        <p className="mt-1 text-sm text-muted">Shown at the top of every page until the expiry date or until cleared. Members can dismiss it per browser.</p>
+        <ActionForm action={setAnnouncement} className="mt-4 grid gap-3 md:grid-cols-[1fr_140px_1fr_170px_auto] md:items-end">
+          <Field label="Text"><Input name="text" defaultValue={s.announcement_text ?? ""} placeholder="Maintenance on Sunday 02:00–04:00 IST" /></Field>
+          <Field label="Style"><Select name="tone" defaultValue={s.announcement_tone ?? "info"}><option value="info">Info</option><option value="warning">Warning</option><option value="success">Success</option></Select></Field>
+          <Field label="Link (optional)"><Input name="href" defaultValue={s.announcement_href ?? ""} placeholder="/pricing" /></Field>
+          <Field label="Expires"><Input name="until" type="datetime-local" defaultValue={s.announcement_until ? new Date(s.announcement_until).toISOString().slice(0, 16) : ""} /></Field>
+          <SubmitButton variant="secondary">Save</SubmitButton>
+        </ActionForm>
+        <p className="mt-2 text-xs text-muted">Leave the text empty and save to clear it.</p>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="p-6">

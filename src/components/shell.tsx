@@ -6,6 +6,8 @@ import { logout } from "@/lib/actions/auth";
 import { Avatar, ButtonLink } from "./ui";
 import { LiveRefresh } from "./live-refresh";
 import { PwaControls } from "./pwa-register";
+import { AnnouncementBar } from "./announcement-bar";
+import { stopImpersonation } from "@/lib/actions/impersonate";
 import { roleLabel } from "@/lib/utils";
 
 export function Logo({ className = "" }: { className?: string }) {
@@ -22,10 +24,19 @@ export async function Shell({ children }: { children: React.ReactNode }) {
   const unread = user ? await db.notification.count({ where: { userId: user.id, readAt: null } }) : 0;
   const unreadConvos = user ? (await db.conversationParticipant.findMany({ where: { userId: user.id }, select: { lastReadAt: true, conversation: { select: { messages: { where: { senderId: { not: user.id } }, orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } } } } } })).filter((p) => p.conversation.messages[0] && (!p.lastReadAt || p.lastReadAt < p.conversation.messages[0].createdAt)).length : 0;
   const tone = user?.role === "TRAINER" ? "cyan" : user?.role === "COMPANY" ? "violet" : "amber";
+  const ann = Object.fromEntries((await db.setting.findMany({ where: { key: { in: ["announcement_text", "announcement_tone", "announcement_href", "announcement_until", "announcement_id"] } } })).map((s) => [s.key, s.value]));
+  const announcementLive = !!ann.announcement_text && (!ann.announcement_until || new Date(ann.announcement_until) > new Date());
 
   return (
     <div className="flex min-h-screen flex-col">
       {user ? <LiveRefresh /> : null}
+      {user?.impersonatedBy ? (
+        <div className="border-b border-rose/40 bg-rose/10 text-rose">
+          <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2 text-sm md:px-6"><span className="font-semibold">Support view:</span> you are seeing CorpGurus as {user.name} ({user.email}). Actions you take are recorded under their account.
+            <form action={stopImpersonation} className="ml-auto"><button className="rounded-md border border-rose/40 bg-white px-2.5 py-1 font-display text-xs font-semibold hover:bg-rose/5">Exit support view</button></form></div>
+        </div>
+      ) : null}
+      {announcementLive ? <AnnouncementBar id={ann.announcement_id ?? "1"} text={ann.announcement_text} tone={(ann.announcement_tone as "info" | "warning" | "success") || "info"} href={ann.announcement_href || undefined} /> : null}
       <header className="sticky top-0 z-40 border-b border-line bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-8 px-4 md:px-6">
           <Logo />

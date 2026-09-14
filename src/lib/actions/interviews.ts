@@ -8,6 +8,7 @@ import { sendEmail, renderEmail } from "@/lib/email";
 import { buildIcs } from "@/lib/ics";
 import { appUrl } from "@/lib/oauth";
 import type { ActionState } from "@/lib/types";
+import { fmtInTz, zonedToUtc } from "@/lib/tz";
 
 function refresh(requirementId: string) {
   revalidatePath(`/dashboard/requirements/${requirementId}/applicants`);
@@ -16,7 +17,7 @@ function refresh(requirementId: string) {
   revalidatePath("/dashboard");
 }
 
-const fmtSlot = (d: Date) => new Intl.DateTimeFormat("en-IN", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }).format(d) + " IST";
+const fmtSlot = (d: Date, tz = "Asia/Kolkata") => fmtInTz(d, tz);
 
 /** Company proposes up to three slots for a shortlisted applicant. */
 export async function proposeInterview(_p: ActionState, fd: FormData): Promise<ActionState> {
@@ -27,7 +28,9 @@ export async function proposeInterview(_p: ActionState, fd: FormData): Promise<A
   if (!app) return { error: "Application not found." };
   if (!["SHORTLISTED", "APPLIED"].includes(app.status)) return { error: "Interviews are for applied or shortlisted trainers." };
   if (app.interview && app.interview.status === "CONFIRMED") return { error: "An interview is already confirmed. Cancel it first to propose new slots." };
-  const slots = [1, 2, 3].map((i) => String(fd.get(`slot${i}`) || "")).filter(Boolean).map((s) => new Date(s)).filter((d) => !isNaN(d.getTime()) && d > new Date());
+  const proposer = await db.user.findUnique({ where: { id: user.id }, select: { timezone: true } });
+  const tz = proposer?.timezone ?? "Asia/Kolkata";
+  const slots = [1, 2, 3].map((i) => String(fd.get(`slot${i}`) || "")).filter(Boolean).map((s) => zonedToUtc(s, tz)).filter((d): d is Date => !!d && d > new Date());
   if (!slots.length) return { error: "Propose at least one future date and time." };
   const mode = (["VIDEO", "PHONE", "ONSITE"].includes(String(fd.get("mode"))) ? String(fd.get("mode")) : "VIDEO") as "VIDEO" | "PHONE" | "ONSITE";
   const durationMin = [15, 30, 45, 60].includes(Number(fd.get("durationMin"))) ? Number(fd.get("durationMin")) : 30;
@@ -38,7 +41,8 @@ export async function proposeInterview(_p: ActionState, fd: FormData): Promise<A
     ? await db.interview.update({ where: { id: app.interview.id }, data: { ...data, slots: { deleteMany: {}, create: slots.map((startsAt) => ({ startsAt })) } } })
     : await db.interview.create({ data: { ...data, applicationId, slots: { create: slots.map((startsAt) => ({ startsAt })) } } });
   if (app.status === "APPLIED") await db.application.update({ where: { id: applicationId }, data: { status: "SHORTLISTED", statusChangedAt: new Date() } });
-  await notify(app.trainer.userId, "application", `Interview slots from ${user.membership.company.name}`, `${app.requirement.title}: ${slots.map(fmtSlot).join(" / ")}. Pick one.`, `/requirements/${app.requirement.id}`);
+  const trainerTz = (await db.user.findUnique({ where: { id: app.trainer.userId }, select: { timezone: true } }))?.timezone ?? "Asia/Kolkata";
+  await notify(app.trainer.userId, "application", `Interview slots from ${user.membership.company.name}`, `${app.requirement.title}: ${slots.map((d) => fmtSlot(d, trainerTz)).join(" / ")}. Pick one.`, `/requirements/${app.requirement.id}`);
   refresh(app.requirement.id);
   void interview;
   return { ok: `Sent ${slots.length} slot${slots.length > 1 ? "s" : ""} to the trainer.` };
@@ -65,12 +69,14 @@ export async function respondInterview(_p: ActionState, fd: FormData): Promise<A
   const slot = iv.slots.find((s) => s.id === slotId);
   if (!slot) return { error: "Pick one of the proposed slots." };
   await db.interview.update({ where: { id }, data: { status: "CONFIRMED", confirmedSlotId: slot.id, responseNote: note || null } });
-  const when = fmtSlot(slot.startsAt);
+  const [meTz, propTz] = await Promise.all([db.user.findUnique({ where: { id: user.id }, select: { timezone: true } }), db.user.findUnique({ where: { id: iv.proposedBy.id }, select: { timezone: true } })]);
+  const when = fmtSlot(slot.startsAt, meTz?.timezone);
+  const whenProposer = fmtSlot(slot.startsAt, propTz?.timezone);
   const title = `Interview: ${req.title}`;
   const description = `${req.company.name} × ${user.name}\n${iv.mode === "VIDEO" ? "Video call" : iv.mode === "PHONE" ? "Phone call" : "In person"}${iv.location ? ` · ${iv.location}` : ""}\n${iv.note}\n\nManage: ${appUrl()}/requirements/${req.id}`;
   const ics = (organizer: { name: string; email: string }, attendee: { name: string; email: string }) => buildIcs({ uid: iv.id, title, description, location: iv.location, start: slot.startsAt, durationMin: iv.durationMin, organizer, attendee, url: `${appUrl()}/requirements/${req.id}` });
   const body = `${when} · ${iv.durationMin} min · ${iv.mode === "VIDEO" ? "video" : iv.mode === "PHONE" ? "phone" : "in person"}${iv.location ? ` · ${iv.location}` : ""}`;
-  await notify(members, "application", `${user.name} confirmed the interview`, body, `/dashboard/requirements/${req.id}/applicants`);
+  await notify(members, "application", `${user.name} confirmed the interview`, body.replace(when, whenProposer), `/dashboard/requirements/${req.id}/applicants`);
   await notify(user.id, "application", "Interview confirmed", `${req.company.name} · ${body}`, `/requirements/${req.id}`);
   const { html, text } = renderEmail({ title: `Interview confirmed · ${when}`, body: `${req.title}\n${body}\n\nA calendar invite is attached.`, ctaHref: `/requirements/${req.id}`, ctaLabel: "Open on CorpGurus" });
   const organizer = { name: iv.proposedBy.name, email: iv.proposedBy.email }, attendee = { name: user.name, email: user.email };

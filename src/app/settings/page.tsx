@@ -7,13 +7,14 @@ import { certStatusLabel, COMPANY_SIZES, CURRENCIES, DELIVERY_MODES, fmtDate, mo
 import { unlinkProvider } from "@/lib/actions/oauth";
 import { PROVIDER_LIST, providerName } from "@/lib/oauth";
 import { OAuthButtons } from "@/components/oauth-buttons";
+import { TIMEZONES } from "@/lib/tz";
 
 export const metadata = { title: "Settings" };
 
 export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ welcome?: string }> }) {
   const { welcome } = await searchParams;
   const user = await requireUser("/settings");
-  const account = await db.user.findUnique({ where: { id: user.id }, select: { passwordHash: true, emailNotifications: true, phone: true, whatsappAlerts: true, identityVerifiedAt: true, identityDocUrl: true, identityNote: true, oauthAccounts: { select: { provider: true, email: true, createdAt: true } } } });
+  const account = await db.user.findUnique({ where: { id: user.id }, select: { passwordHash: true, emailNotifications: true, phone: true, whatsappAlerts: true, timezone: true, identityVerifiedAt: true, identityDocUrl: true, identityNote: true, oauthAccounts: { select: { provider: true, email: true, createdAt: true } } } });
   const hasPassword = !!account?.passwordHash;
   const linked = new Map((account?.oauthAccounts ?? []).map((a) => [a.provider, a]));
 
@@ -58,6 +59,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
             <Field label="Mobile number" hint="With country code, e.g. +919876543210"><Input name="phone" defaultValue={account?.phone ?? ""} placeholder="+91" /></Field>
             <label className="flex items-center gap-2 pb-6 text-sm"><input type="checkbox" name="whatsappAlerts" value="1" defaultChecked={account?.whatsappAlerts ?? false} className="accent-cyan" /> WhatsApp / SMS me for shortlists, awards, work orders and invoices</label>
           </div>
+          <Field label="Time zone" hint="Interview slots and reminders are shown in this zone." className="max-w-xs"><Select name="timezone" defaultValue={account?.timezone ?? "Asia/Kolkata"}>{TIMEZONES.map((z) => <option key={z} value={z}>{z.replace("_", " ")}</option>)}</Select></Field>
           <Button variant="secondary" size="sm">Save</Button>
         </form>
         <p className="mt-2 text-xs text-muted">Messages, likes and comments stay in-app. Browser push can be enabled from the footer of any page.</p>

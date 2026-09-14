@@ -9,6 +9,7 @@ import { notify } from "@/lib/notify";
 import { parseList } from "@/lib/utils";
 import { savePrivateUpload, saveUpload } from "@/lib/uploads";
 import { entitlementsFor } from "@/lib/billing";
+import { isTimezone } from "@/lib/tz";
 import { alertTrainerSearches } from "@/lib/saved-searches";
 import type { ActionState } from "@/lib/types";
 
@@ -123,7 +124,8 @@ export async function uploadIdentity(_p: ActionState, fd: FormData): Promise<Act
 export async function updateEmailPrefs(fd: FormData) {
   const user = await requireUser();
   const phone = String(fd.get("phone") ?? "").replace(/[^\d+]/g, "");
-  await db.user.update({ where: { id: user.id }, data: { emailNotifications: String(fd.get("emailNotifications")) === "1", phone: phone || null, whatsappAlerts: String(fd.get("whatsappAlerts")) === "1" && !!phone } });
+  const tz = String(fd.get("timezone") ?? "");
+  await db.user.update({ where: { id: user.id }, data: { emailNotifications: String(fd.get("emailNotifications")) === "1", phone: phone || null, whatsappAlerts: String(fd.get("whatsappAlerts")) === "1" && !!phone, ...(isTimezone(tz) ? { timezone: tz } : {}) } });
   revalidatePath("/settings");
 }
 

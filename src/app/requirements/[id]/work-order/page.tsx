@@ -7,7 +7,7 @@ import { isStaff, requireUser } from "@/lib/auth";
 import { cancelWorkOrder, reopenWorkOrder, respondWorkOrder } from "@/lib/actions/work-orders";
 import { ActionForm } from "@/components/form-bits";
 import { Logo } from "@/components/shell";
-import { Alert, Badge, Button, Card, Field, Textarea } from "@/components/ui";
+import { Alert, Badge, Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { dateRange, fmtDate, modeLabel, money, timeAgo } from "@/lib/utils";
 import { WorkOrderForm } from "./form";
 
@@ -78,8 +78,8 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
             {wo.cancellationTerms ? <Block title="Cancellation terms" text={wo.cancellationTerms} /> : null}
             {wo.notes ? <Block title="Notes" text={wo.notes} /> : null}
             <div className="mt-8 grid gap-6 border-t border-line pt-5 text-sm md:grid-cols-2">
-              <div><p className="mono text-[11px] uppercase tracking-wider text-muted">For {req.company.name}</p><p className="mt-1">{wo.createdBy.name} · sent {wo.sentAt ? fmtDate(wo.sentAt) : "—"}</p></div>
-              <div><p className="mono text-[11px] uppercase tracking-wider text-muted">For the trainer</p><p className="mt-1">{wo.status === "ACCEPTED" ? `${awarded.trainer.user.name} · accepted ${fmtDate(wo.acceptedAt!)}` : "Not yet accepted"}</p></div>
+              <div><p className="mono text-[11px] uppercase tracking-wider text-muted">Signed for {req.company.name}</p>{wo.companySignedName ? <><p className="mt-1 font-display text-xl italic">{wo.companySignedName}</p><p className="text-xs text-muted">{wo.createdBy.name} · {fmtDate(wo.companySignedAt ?? wo.sentAt ?? wo.createdAt)} · v{wo.version}</p></> : <p className="mt-1 text-muted">Not signed</p>}</div>
+              <div><p className="mono text-[11px] uppercase tracking-wider text-muted">Signed by the trainer</p>{wo.trainerSignedName ? <><p className="mt-1 font-display text-xl italic">{wo.trainerSignedName}</p><p className="text-xs text-muted">{awarded.trainer.user.name} · {fmtDate(wo.trainerSignedAt!)}{wo.signatureHash ? <span className="mono"> · ref {wo.signatureHash.slice(0, 12)}</span> : null}</p></> : <p className="mt-1 text-muted">Not yet accepted</p>}</div>
             </div>
           </Card>
 
@@ -99,6 +99,7 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
               <ActionForm action={respondWorkOrder} className="mt-4 space-y-3">
                 <input type="hidden" name="id" value={wo.id} />
                 <Field label="Notes (required when requesting changes)"><Textarea name="note" className="min-h-20" placeholder="e.g. Day rate should be ₹38,000 as agreed in messages; please add travel reimbursement." /></Field>
+                <Field label="Sign as (type your full name to accept)" hint="Your typed name, the time and a reference hash are recorded on the document."><Input name="signedName" placeholder={awarded.trainer.user.name} /></Field>
                 <div className="flex flex-wrap gap-2">
                   <button type="submit" name="decision" value="ACCEPT" className="inline-flex h-10 items-center rounded-lg bg-cyan px-4 font-display text-sm font-semibold text-white hover:bg-navy">Accept work order</button>
                   <button type="submit" name="decision" value="CHANGES" className="inline-flex h-10 items-center rounded-lg border border-line-2 bg-white px-4 font-display text-sm font-semibold hover:bg-surface-2">Request changes</button>

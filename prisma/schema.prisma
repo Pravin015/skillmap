@@ -80,6 +80,7 @@ model User {
   emailNotifications Boolean @default(true)
   phone              String?
   whatsappAlerts     Boolean @default(false)
+  timezone           String  @default("Asia/Kolkata")
   referralCode       String?  @unique
   referredById       String?
   referredBy         User?    @relation("Referrals", fields: [referredById], references: [id])
@@ -181,11 +182,17 @@ model WorkOrder {
   notes             String          @default("")
   sentAt            DateTime?
   acceptedAt        DateTime?
+  companySignedName String?
+  companySignedAt   DateTime?
+  trainerSignedName String?
+  trainerSignedAt   DateTime?
+  signatureHash     String?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
   events   WorkOrderEvent[]
   invoices Invoice[]
+  batches  WorkOrderBatch[]
 }
 
 model WorkOrderEvent {
@@ -491,6 +498,7 @@ model TrainerProfile {
   photos         GalleryPhoto[]
   invoices       Invoice[]
   experiences    Experience[]
+  certificatesIssued IssuedCertificate[]
 }
 
 model Certification {
@@ -539,6 +547,8 @@ model Company {
   workOrders   WorkOrder[]
   photos       GalleryPhoto[]
   invoices     Invoice[]
+  apiKeys      ApiKey[]
+  webhooks     WebhookEndpoint[]
 }
 
 model CompanyMember {
@@ -608,6 +618,7 @@ model Requirement {
   feedbackLinks   FeedbackLink[]
   recommendations Recommendation[]
   workOrder       WorkOrder?
+  certificates    IssuedCertificate[]
 }
 
 model Application {
@@ -907,4 +918,67 @@ model Experience {
   current      Boolean        @default(false)
   description  String         @default("")
   createdAt    DateTime       @default(now())
+}
+
+model WorkOrderBatch {
+  id           String    @id @default(cuid())
+  workOrderId  String
+  workOrder    WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  label        String
+  startDate    DateTime
+  endDate      DateTime
+  days         Int
+  participants Int
+  city         String?
+  position     Int       @default(0)
+}
+
+model IssuedCertificate {
+  id               String         @id @default(cuid())
+  code             String         @unique
+  requirementId    String
+  requirement      Requirement    @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  trainerId        String
+  trainer          TrainerProfile @relation(fields: [trainerId], references: [id])
+  participantName  String
+  participantEmail String?
+  issuedAt         DateTime       @default(now())
+  revokedAt        DateTime?
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  companyId  String
+  company    Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name       String
+  prefix     String
+  keyHash    String    @unique
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+  revokedAt  DateTime?
+}
+
+model WebhookEndpoint {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  url       String
+  secret    String
+  events    String[] @default([])
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  deliveries WebhookDelivery[]
+}
+
+model WebhookDelivery {
+  id           String          @id @default(cuid())
+  endpointId   String
+  endpoint     WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  event        String
+  payload      Json
+  status       String
+  responseCode Int?
+  error        String?
+  createdAt    DateTime        @default(now())
 }

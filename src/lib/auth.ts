@@ -9,8 +9,8 @@ import { db } from "./db";
 const COOKIE = "cg_session";
 const secret = new TextEncoder().encode(process.env.AUTH_SECRET ?? "dev-secret");
 
-export async function createSession(userId: string) {
-  const token = await new SignJWT({ uid: userId })
+export async function createSession(userId: string, actorId?: string) {
+  const token = await new SignJWT(actorId ? { uid: userId, act: actorId } : { uid: userId })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("30d")
@@ -37,6 +37,12 @@ export const getCurrentUser = cache(async () => {
   try {
     const { payload } = await jwtVerify(token, secret);
     const uid = payload.uid as string;
+    const act = payload.act as string | undefined;
+    if (act) {
+      // Impersonation stays valid only while the actor is still an active super admin.
+      const actor = await db.user.findUnique({ where: { id: act }, select: { role: true, status: true } });
+      if (!actor || actor.role !== "SUPER_ADMIN" || actor.status !== "ACTIVE") return null;
+    }
     const user = await db.user.findUnique({
       where: { id: uid },
       include: {
@@ -45,11 +51,22 @@ export const getCurrentUser = cache(async () => {
       },
     });
     if (!user || user.status === "SUSPENDED") return null;
-    return user;
+    return { ...user, impersonatedBy: act ?? null };
   } catch {
     return null;
   }
 });
+
+/** Who is really behind the session when impersonating. */
+export async function getActor() {
+  const jar = await cookies();
+  const token = jar.get(COOKIE)?.value;
+  if (!token) return null;
+  try {
+    const { payload } = await jwtVerify(token, secret);
+    return payload.act ? { actorId: payload.act as string, userId: payload.uid as string } : null;
+  } catch { return null; }
+}
 
 export type CurrentUser = NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>;
 

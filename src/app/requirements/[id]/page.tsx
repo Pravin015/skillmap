@@ -158,7 +158,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
                 <div className="mt-2"><Badge tone={myApp.status === "AWARDED" ? "lime" : myApp.status === "SHORTLISTED" ? "amber" : myApp.status === "DECLINED" ? "rose" : myApp.status === "WITHDRAWN" ? "neutral" : "cyan"}>{appStatusLabel[myApp.status]}</Badge></div>
                 <p className="mt-2 text-sm text-muted">Proposed {rateRange(myApp.proposedRate, null, r.currency)} · sent {fmtDate(myApp.createdAt)}</p>
                 {myApp.declineReason ? <p className="mt-2 rounded-lg bg-surface-2 px-3 py-2 text-sm text-muted">“{myApp.declineReason}”</p> : null}
-                {myApp.interview ? <div className="mt-3"><InterviewResponse interview={myApp.interview} companyName={r.company.name} /></div> : null}
+                {myApp.interview ? <div className="mt-3"><InterviewResponse interview={myApp.interview} companyName={r.company.name} tz={user?.timezone} /></div> : null}
                 <form action={startConversation} className="mt-3"><input type="hidden" name="userId" value={r.postedBy.id} /><input type="hidden" name="requirementId" value={r.id} /><Button variant="secondary" className="w-full"><MessageSquare size={15} /> Message {r.postedBy.name.split(" ")[0]}</Button></form>
                 {["APPLIED", "SHORTLISTED"].includes(myApp.status) ? <form action={withdrawApplication} className="mt-2"><input type="hidden" name="id" value={myApp.id} /><Button variant="ghost" size="sm" className="w-full text-rose">Withdraw application</Button></form> : null}
               </>

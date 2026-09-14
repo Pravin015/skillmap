@@ -90,6 +90,19 @@ export async function moderateRequirement(fd: FormData) {
   revalidatePath(`/requirements/${id}`); revalidatePath("/admin");
 }
 
+export async function setAnnouncement(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const su = await requireRole(["SUPER_ADMIN"]);
+  const text = String(fd.get("text") ?? "").trim();
+  const tone = ["info", "warning", "success"].includes(String(fd.get("tone"))) ? String(fd.get("tone")) : "info";
+  const href = String(fd.get("href") ?? "").trim();
+  const until = String(fd.get("until") ?? "").trim();
+  const rows: [string, string][] = [["announcement_text", text], ["announcement_tone", tone], ["announcement_href", href], ["announcement_until", until ? new Date(until).toISOString() : ""], ["announcement_id", String(Date.now())]];
+  for (const [key, value] of rows) await db.setting.upsert({ where: { key }, create: { key, value }, update: { value } });
+  await audit(su.id, text ? "announcement.set" : "announcement.clear", "announcement", { text, tone, until });
+  revalidatePath("/", "layout");
+  return { ok: text ? "Announcement is live." : "Announcement cleared." };
+}
+
 export async function runJobsNow(): Promise<void> {
   const su = await requireRole(["SUPER_ADMIN"]);
   const { runDailyJobs } = await import("@/lib/jobs");

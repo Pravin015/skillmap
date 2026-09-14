@@ -31,7 +31,7 @@ export default async function Dashboard() {
   const interviewCard = upcomingInterviews.length ? (
     <Card className="p-5">
       <p className="font-semibold">Interviews</p>
-      <ul className="mt-2 space-y-2 text-sm">{upcomingInterviews.map((iv) => { const slot = iv.slots.find((s) => s.id === iv.confirmedSlotId) ?? iv.slots[0]; const req = iv.application.requirement; return <li key={iv.id}><InterviewSummaryLink href={user.trainerProfile ? `/requirements/${req.id}` : `/dashboard/requirements/${req.id}/applicants`} title={req.title} when={slot?.startsAt ?? iv.createdAt} who={`${user.trainerProfile ? req.company.name : iv.application.trainer.user.name} · ${iv.status === "CONFIRMED" ? "confirmed" : user.trainerProfile ? "pick a slot" : "awaiting trainer"}`} /></li>; })}</ul>
+      <ul className="mt-2 space-y-2 text-sm">{upcomingInterviews.map((iv) => { const slot = iv.slots.find((s) => s.id === iv.confirmedSlotId) ?? iv.slots[0]; const req = iv.application.requirement; return <li key={iv.id}><InterviewSummaryLink href={user.trainerProfile ? `/requirements/${req.id}` : `/dashboard/requirements/${req.id}/applicants`} title={req.title} when={slot?.startsAt ?? iv.createdAt} who={`${user.trainerProfile ? req.company.name : iv.application.trainer.user.name} · ${iv.status === "CONFIRMED" ? "confirmed" : user.trainerProfile ? "pick a slot" : "awaiting trainer"}`} tz={user.timezone} /></li>; })}</ul>
     </Card>
   ) : null;
   const woCard = pendingWO.length ? (
