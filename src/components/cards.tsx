@@ -13,9 +13,10 @@ export function TrainerCard({ t, showRate }: {
   showRate: boolean;
 }) {
   return (
-    <Link href={`/trainers/${t.slug}`} className="group block rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-cyan/40 hover:shadow-md">
-      <div className="flex items-start gap-3">
-        <Avatar name={t.user.name} src={t.user.avatarUrl} size={48} />
+    <Link href={`/trainers/${t.slug}`} className="group block overflow-hidden rounded-[28px] border border-line bg-white p-5 transition hover:-translate-y-1 hover:border-cyan/40 hover:shadow-[0_20px_50px_rgba(76,29,149,0.10)]">
+      <div className="-mx-5 -mt-5 mb-4 h-14 bg-gradient-to-r from-lilac/50 via-surface-2 to-cyan/10" />
+      <div className="-mt-11 flex items-end gap-3">
+        <Avatar name={t.user.name} src={t.user.avatarUrl} size={56} className="ring-4 ring-white" />
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-1.5 font-display font-semibold">
             <span className="truncate">{t.user.name}</span>
@@ -44,7 +45,7 @@ export function RequirementCard({ r }: {
   r: Requirement & { company: Pick<Company, "name" | "slug" | "type" | "logoUrl" | "domainVerifiedAt">; skills: Skill[]; _count: { applications: number; comments: number } };
 }) {
   return (
-    <Link href={`/requirements/${r.id}`} className="group block rounded-2xl border border-line bg-white p-5 transition hover:-translate-y-0.5 hover:border-violet/50 hover:shadow-md">
+    <Link href={`/requirements/${r.id}`} className="group block rounded-[28px] border border-line bg-white p-5 transition hover:-translate-y-1 hover:border-violet/50 hover:shadow-[0_20px_50px_rgba(76,29,149,0.10)]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 text-xs text-muted">

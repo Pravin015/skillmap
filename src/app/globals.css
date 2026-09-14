@@ -1,29 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  /* Corporate light palette. Token names are kept from the first build so
-     component code did not need renaming: cyan = primary blue (trainer side),
-     violet = company side, amber = staff/warning, lime = success, rose = danger. */
-  --color-bg: #f4f6f9;
+  /* Marketplace theme (Sep 2026): purple accent, near-black dark bands, italic serif accents.
+     Token names are kept from the first build so component code did not need renaming:
+     cyan = primary purple (trainer side), violet = deep purple (company side), amber = staff/warning,
+     lime = success, rose = danger, navy = near-black used for dark buttons and bands. */
+  --color-bg: #f7f6fb;
   --color-bg-2: #ffffff;
   --color-surface: #ffffff;
-  --color-surface-2: #f0f3f7;
-  --color-line: #e1e6ee;
-  --color-line-2: #c7d0dc;
-  --color-ink: #14213a;
-  --color-muted: #56637a;
-  --color-dim: #8b96a8;
-  --color-cyan: #0f4c9a;
-  --color-violet: #4b3f9e;
+  --color-surface-2: #f1eef8;
+  --color-line: #e7e3f0;
+  --color-line-2: #cfc8df;
+  --color-ink: #15111f;
+  --color-muted: #5d5872;
+  --color-dim: #9590a6;
+  --color-cyan: #6d28d9;
+  --color-violet: #4c1d95;
   --color-amber: #a2650a;
   --color-lime: #1b7f45;
   --color-rose: #b3261e;
-  --color-navy: #0b2a5b;
+  --color-navy: #16121f;
+  --color-plum: #2e1065;
+  --color-lilac: #c4b5fd;
   --font-display: var(--font-jakarta), "Segoe UI", system-ui, sans-serif;
   --font-body: var(--font-source), "Segoe UI", system-ui, sans-serif;
+  --font-serif: var(--font-instrument), "Georgia", "Times New Roman", serif;
   --font-mono: var(--font-plexmono), Consolas, monospace;
-  --radius-xl: 10px;
-  --radius-2xl: 12px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 22px;
+  --radius-3xl: 30px;
 }
 
 html {
@@ -41,15 +47,47 @@ body {
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
-/* Small caps-style labels. Historically mono; corporate theme uses the display face. */
+/* Italic serif accent used inside headings, e.g. "Find trainers <em class="serif">for every kind of training</em>". */
+.serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Small caps-style labels. Historically mono; the theme uses the display face. */
 .mono {
   font-family: var(--font-display);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+}
+
+/* Full-width band inside the centred main column. */
+.bleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+.band-dark {
+  background: radial-gradient(900px 500px at 85% 0%, rgba(109, 40, 217, 0.28), transparent 60%), #0f0c16;
+  color: #fff;
+}
+.band-plum {
+  background: radial-gradient(800px 500px at 15% 100%, rgba(168, 85, 247, 0.45), transparent 60%), linear-gradient(135deg, #1a0b33 0%, #2e1065 55%, #0f0c16 100%);
+  color: #fff;
+}
+.band-purple {
+  background: linear-gradient(120deg, #4c1d95 0%, #6d28d9 45%, #a855f7 100%);
+  color: #fff;
+}
+.hero-bg {
+  background:
+    radial-gradient(700px 420px at 12% 10%, rgba(196, 181, 253, 0.55), transparent 60%),
+    radial-gradient(600px 380px at 88% 20%, rgba(233, 213, 255, 0.7), transparent 60%),
+    linear-gradient(180deg, #fbfaff 0%, #f7f6fb 100%);
 }
 
 .grid-bg { display: none; }
@@ -60,19 +98,25 @@ h1, h2, h3, h4 {
   border: 1px solid var(--color-line);
 }
 
-.ring-glow-cyan { box-shadow: 0 0 0 1px var(--color-cyan), 0 6px 20px rgba(15, 76, 154, 0.08); }
-.ring-glow-violet { box-shadow: 0 0 0 1px var(--color-violet), 0 6px 20px rgba(75, 63, 158, 0.08); }
+.ring-glow-cyan { box-shadow: 0 0 0 1px var(--color-cyan), 0 10px 30px rgba(109, 40, 217, 0.12); }
+.ring-glow-violet { box-shadow: 0 0 0 1px var(--color-violet), 0 10px 30px rgba(76, 29, 149, 0.12); }
 
-.gradient-text { color: var(--color-cyan); }
+.gradient-text {
+  background: linear-gradient(90deg, #6d28d9, #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
 .hairline { background: var(--color-line); height: 1px; }
 
-::selection { background: rgba(15, 76, 154, 0.18); }
+::selection { background: rgba(109, 40, 217, 0.18); }
 
-*:focus-visible { outline: 2px solid rgba(15, 76, 154, 0.6); outline-offset: 2px; }
+*:focus-visible { outline: 2px solid rgba(109, 40, 217, 0.6); outline-offset: 2px; }
 
 details > summary { list-style: none; }
 details > summary::-webkit-details-marker { display: none; }
+details[open] .faq-icon { transform: rotate(45deg); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

@@ -50,9 +50,9 @@ export function PwaControls({ signedIn }: { signedIn: boolean }) {
   if (!installEvt && (push === "unsupported" || push === "disabled")) return null;
   return (
     <div className="flex flex-wrap gap-2">
-      {installEvt ? <button type="button" onClick={() => installEvt.prompt()} className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line-2 bg-white px-3 font-display text-[13px] font-semibold hover:bg-surface-2"><Download size={14} /> Install app</button> : null}
-      {push === "off" ? <button type="button" onClick={enablePush} className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line-2 bg-white px-3 font-display text-[13px] font-semibold hover:bg-surface-2"><BellRing size={14} /> Enable push notifications</button> : null}
-      {push === "on" ? <button type="button" onClick={disablePush} className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-cyan/40 bg-cyan/5 px-3 font-display text-[13px] font-semibold text-cyan"><BellRing size={14} /> Push on · turn off</button> : null}
+      {installEvt ? <button type="button" onClick={() => installEvt.prompt()} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-line-2 bg-white px-3 font-display text-[13px] font-semibold text-navy hover:bg-surface-2"><Download size={14} /> Install app</button> : null}
+      {push === "off" ? <button type="button" onClick={enablePush} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-line-2 bg-white px-3 font-display text-[13px] font-semibold text-navy hover:bg-surface-2"><BellRing size={14} /> Enable push notifications</button> : null}
+      {push === "on" ? <button type="button" onClick={disablePush} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-lilac/60 bg-white px-3 font-display text-[13px] font-semibold text-cyan"><BellRing size={14} /> Push on · turn off</button> : null}
     </div>
   );
 }

@@ -15,7 +15,7 @@ import { setLang } from "@/lib/actions/lang";
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <Link href="/" className={`flex items-center gap-2.5 font-display text-[19px] font-bold tracking-tight text-navy ${className}`}>
-      <span className="flex h-8 w-8 items-center justify-center rounded-md bg-navy font-display text-[13px] font-bold tracking-tight text-white">CG</span>
+      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan font-display text-[13px] font-bold tracking-tight text-white">CG</span>
       Corp<span className="text-cyan">Gurus</span>
     </Link>
   );
@@ -40,10 +40,10 @@ export async function Shell({ children }: { children: React.ReactNode }) {
         </div>
       ) : null}
       {announcementLive ? <AnnouncementBar id={ann.announcement_id ?? "1"} text={ann.announcement_text} tone={(ann.announcement_tone as "info" | "warning" | "success") || "info"} href={ann.announcement_href || undefined} /> : null}
-      <header className="sticky top-0 z-40 border-b border-line bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-8 px-4 md:px-6">
+      <header className="sticky top-0 z-40 border-b border-line/70 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-7xl items-center gap-5 px-4 md:px-6">
           <Logo />
-          <nav className="hidden items-center gap-1 text-[15px] font-medium text-muted md:flex">
+          <nav className="hidden items-center gap-0.5 text-[14px] font-medium text-muted md:flex">
             <NavLink href="/feed" icon={<Newspaper size={16} />}>{t("nav.feed")}</NavLink>
             <NavLink href="/trainers" icon={<Users size={16} />}>{t("nav.trainers")}</NavLink>
             <NavLink href="/requirements" icon={<Briefcase size={16} />}>{t("nav.requirements")}</NavLink>
@@ -52,7 +52,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
             <NavLink href="/pricing" icon={<Tag size={16} />}>{t("nav.pricing")}</NavLink>
           </nav>
           <form action="/search" className="ml-auto hidden lg:block">
-            <div className="relative"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" /><input name="q" placeholder="Search" className="h-9 w-56 rounded-lg border border-line bg-surface-2 pl-9 pr-3 text-sm placeholder:text-dim focus:border-cyan focus:bg-white focus:outline-none" /></div>
+            <div className="relative"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" /><input name="q" placeholder="Search" className="h-9 w-44 rounded-full border border-line bg-surface-2 pl-9 pr-3 text-sm placeholder:text-dim focus:border-cyan focus:bg-white focus:outline-none" /></div>
           </form>
           <div className="flex items-center gap-1.5 lg:ml-0 ml-auto">
             <Link href="/search" className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-ink lg:hidden" aria-label="Search"><Search size={19} /></Link>
@@ -116,17 +116,26 @@ export async function Shell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-6 md:py-10">{children}</main>
-      <footer className="border-t border-line bg-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-[13px] text-muted md:px-6">
-          <div className="flex flex-wrap items-center gap-3"><p>© 2026 CorpGurus. {t("footer.tagline")}</p><PwaControls signedIn={!!user} /></div>
-          <div className="flex flex-wrap items-center gap-5 font-medium">
-            <Link href="/trainers" className="hover:text-ink">{t("nav.trainers")}</Link>
-            <Link href="/requirements" className="hover:text-ink">{t("nav.requirements")}</Link>
-            <Link href="/companies" className="hover:text-ink">{t("nav.companies")}</Link>
-            <Link href="/pricing" className="hover:text-ink">{t("nav.pricing")}</Link>
-            <form action={setLang} className="flex items-center gap-1 rounded-lg border border-line p-0.5" aria-label={t("footer.language")}>
-              {(Object.keys(LANGS) as (keyof typeof LANGS)[]).map((l) => <button key={l} name="lang" value={l} className={`rounded-md px-2 py-0.5 text-xs ${lang === l ? "bg-navy text-white" : "text-muted hover:text-ink"}`} aria-pressed={lang === l}>{LANGS[l]}</button>)}
-            </form>
+      <footer className="bg-navy text-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 md:px-6">
+          <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+            <div>
+              <Link href="/" className="flex items-center gap-2.5 font-display text-[19px] font-bold tracking-tight"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan font-display text-[13px] font-bold text-white">CG</span>Corp<span className="text-lilac">Gurus</span></Link>
+              <p className="mt-4 max-w-xs text-sm text-white/60">{t("footer.tagline")}</p>
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <form action={setLang} className="flex items-center gap-1 rounded-full border border-white/15 p-0.5" aria-label={t("footer.language")}>
+                  {(Object.keys(LANGS) as (keyof typeof LANGS)[]).map((l) => <button key={l} name="lang" value={l} className={`rounded-full px-2.5 py-0.5 text-xs ${lang === l ? "bg-white text-navy" : "text-white/70 hover:text-white"}`} aria-pressed={lang === l}>{LANGS[l]}</button>)}
+                </form>
+                <PwaControls signedIn={!!user} />
+              </div>
+            </div>
+            <FooterCol title="Explore" links={[["/trainers", t("nav.trainers")], ["/requirements", t("nav.requirements")], ["/companies", t("nav.companies")], ["/categories", t("nav.categories")], ["/feed", t("nav.feed")]]} />
+            <FooterCol title="For trainers" links={[["/signup", "Create a profile"], ["/pricing", "Trainer Pro"], ["/settings/teams", "Teams"], ["/settings/courses", "Course catalogue"], ["/dashboard/referrals", "Refer & earn"]]} />
+            <FooterCol title="For companies" links={[["/signup?as=company", "Company account"], ["/requirements/new", "Post a requirement"], ["/dashboard/learning-paths", "Learning paths"], ["/settings/developers", "API & webhooks"], ["/pricing", t("nav.pricing")]]} />
+          </div>
+          <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-[13px] text-white/50">
+            <p>© 2026 CorpGurus. All rights reserved.</p>
+            <p>Made in India · <a href="mailto:hello@corpgurus.com" className="hover:text-white">hello@corpgurus.com</a></p>
           </div>
         </div>
       </footer>
@@ -134,9 +143,17 @@ export async function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function FooterCol({ title, links }: { title: string; links: [string, string][] }) {
+  return (
+    <div>
+      <p className="font-display text-sm font-semibold text-white">{title}</p>
+      <ul className="mt-4 space-y-2.5 text-sm text-white/60">{links.map(([href, label]) => <li key={href + label}><Link href={href} className="hover:text-white">{label}</Link></li>)}</ul>
+    </div>
+  );
+}
 function NavLink({ href, icon, children }: { href: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <Link href={href} className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition hover:bg-surface-2 hover:text-ink">
+    <Link href={href} className="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 transition hover:bg-surface-2 hover:text-ink">
       {icon}{children}
     </Link>
   );

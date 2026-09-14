@@ -2,20 +2,21 @@ import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import { cn, initials } from "@/lib/utils";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger" | "violet" | "outline";
+type Variant = "primary" | "secondary" | "ghost" | "danger" | "violet" | "outline" | "dark";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold whitespace-nowrap transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none select-none font-display";
+  "inline-flex items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none select-none font-display";
 const variants: Record<Variant, string> = {
-  primary: "bg-cyan text-white hover:bg-navy shadow-sm",
-  violet: "bg-violet text-white hover:bg-[#3d3384] shadow-sm",
+  primary: "bg-cyan text-white hover:bg-violet shadow-[0_6px_20px_rgba(109,40,217,0.25)]",
+  violet: "bg-violet text-white hover:bg-plum shadow-sm",
+  dark: "bg-navy text-white hover:bg-cyan shadow-sm",
   secondary: "bg-white border border-line-2 text-ink hover:bg-surface-2 hover:border-dim shadow-sm",
   outline: "border border-cyan text-cyan hover:bg-cyan/5 bg-transparent",
   ghost: "text-muted hover:text-ink hover:bg-surface-2",
   danger: "bg-white text-rose border border-rose/40 hover:bg-rose/5",
 };
-const sizes: Record<Size, string> = { sm: "h-8 px-3 text-[13px]", md: "h-10 px-4 text-sm", lg: "h-12 px-6 text-[15px]" };
+const sizes: Record<Size, string> = { sm: "h-8 px-3.5 text-[13px]", md: "h-10 px-5 text-sm", lg: "h-12 px-7 text-[15px]" };
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", extra?: string) {
   return cn(base, variants[variant], sizes[size], extra);
@@ -30,7 +31,7 @@ export function ButtonLink({ variant = "primary", size = "md", className, ...pro
 }
 
 const fieldBase =
-  "w-full rounded-lg bg-white border border-line-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-dim transition focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/15 disabled:bg-surface-2 disabled:text-dim";
+  "w-full rounded-xl bg-white border border-line-2 px-3.5 py-2.5 text-sm text-ink placeholder:text-dim transition focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/15 disabled:bg-surface-2 disabled:text-dim";
 
 export function Input({ className, ...props }: ComponentProps<"input">) {
   return <input className={cn(fieldBase, className)} {...props} />;
@@ -69,19 +70,19 @@ const tones: Record<Tone, string> = {
 };
 export function Badge({ tone = "neutral", className, children, mono = true }: { tone?: Tone; className?: string; children: ReactNode; mono?: boolean }) {
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-semibold", mono && "font-display uppercase tracking-[0.04em]", tones[tone], className)}>
+    <span className={cn("inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold", mono && "font-display uppercase tracking-[0.04em]", tones[tone], className)}>
       {children}
     </span>
   );
 }
 
 export function Chip({ children, className }: { children: ReactNode; className?: string }) {
-  return <span className={cn("inline-flex items-center rounded-md border border-line-2 bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-ink/90", className)}>{children}</span>;
+  return <span className={cn("inline-flex items-center rounded-full border border-line-2 bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-ink/90", className)}>{children}</span>;
 }
 
 export function Card({ className, children, glow }: { className?: string; children: ReactNode; glow?: "cyan" | "violet" }) {
   return (
-    <div className={cn("rounded-2xl border border-line bg-white shadow-[0_1px_2px_rgba(20,33,58,0.04)]", glow === "cyan" && "border-t-4 border-t-cyan", glow === "violet" && "border-t-4 border-t-violet", className)}>
+    <div className={cn("rounded-2xl border border-line bg-white shadow-[0_2px_12px_rgba(46,16,101,0.05)]", glow === "cyan" && "border-t-4 border-t-cyan", glow === "violet" && "border-t-4 border-t-violet", className)}>
       {children}
     </div>
   );
@@ -125,7 +126,7 @@ export function PageHeader({ eyebrow, title, body, actions }: { eyebrow?: ReactN
 export function Stat({ label, value, tone = "cyan" }: { label: string; value: string | number; tone?: "cyan" | "violet" | "amber" | "lime" }) {
   const c = { cyan: "text-cyan", violet: "text-violet", amber: "text-amber", lime: "text-lime" }[tone];
   return (
-    <div className="rounded-xl border border-line bg-white px-4 py-3 shadow-[0_1px_2px_rgba(20,33,58,0.04)]">
+    <div className="rounded-2xl border border-line bg-white px-4 py-3 shadow-[0_2px_12px_rgba(46,16,101,0.05)]">
       <p className="mono text-[11px] uppercase tracking-[0.08em] text-muted">{label}</p>
       <p className={cn("mt-1 font-display text-2xl font-bold tabular-nums", c)}>{value}</p>
     </div>
@@ -133,5 +134,5 @@ export function Stat({ label, value, tone = "cyan" }: { label: string; value: st
 }
 
 export function Alert({ tone = "rose", children }: { tone?: Tone; children: ReactNode }) {
-  return <div className={cn("rounded-lg border px-3.5 py-2.5 text-sm", tones[tone])}>{children}</div>;
+  return <div className={cn("rounded-xl border px-3.5 py-2.5 text-sm", tones[tone])}>{children}</div>;
 }
