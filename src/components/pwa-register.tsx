@@ -16,7 +16,7 @@ export function PwaControls({ signedIn }: { signedIn: boolean }) {
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    if (process.env.NODE_ENV === "production") navigator.serviceWorker.register("/sw.js").catch(() => {});
     const onPrompt = (e: Event) => { e.preventDefault(); setInstallEvt(e as Event & { prompt: () => Promise<void> }); };
     window.addEventListener("beforeinstallprompt", onPrompt);
     (async () => {

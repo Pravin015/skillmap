@@ -59,7 +59,7 @@ export async function signup(_prev: ActionState, formData: FormData): Promise<Ac
   });
 
   await createSession(user.id);
-  redirect("/settings?welcome=1");
+  redirect(d.role === "TRAINER" ? "/onboarding/trainer" : "/onboarding/company");
 }
 
 export async function login(_prev: ActionState, formData: FormData): Promise<ActionState> {

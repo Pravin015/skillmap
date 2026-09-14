@@ -64,7 +64,7 @@ export async function completeOAuthSignup(_p: ActionState, fd: FormData): Promis
 
   jar.delete(PENDING_COOKIE);
   await createSession(user.id);
-  redirect(pending.next && pending.next.startsWith("/") ? pending.next : "/settings?welcome=1");
+  redirect(pending.next && pending.next.startsWith("/") ? pending.next : d.role === "TRAINER" ? "/onboarding/trainer" : "/onboarding/company");
 }
 
 export async function unlinkProvider(fd: FormData) {

@@ -13,7 +13,18 @@ import { OnboardingChecklist } from "@/components/onboarding-checklist";
 
 export const metadata = { title: "Dashboard" };
 
-export default async function Dashboard() {
+function SetupBanner({ href, step, audience }: { href: string; step: number; audience: "trainer" | "company" }) {
+  return (
+    <div className="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-cyan/30 bg-cyan/5 px-5 py-3 text-sm">
+      <span className="font-semibold text-cyan">Finish setting up your {audience === "trainer" ? "profile" : "company"}.</span>
+      <span className="text-muted">You stopped at step {step} of 5. It takes about three minutes.</span>
+      <Link href={`${href}?step=${step}`} className="ml-auto inline-flex h-8 items-center rounded-full bg-cyan px-4 font-display text-xs font-semibold text-white hover:bg-violet">Resume setup →</Link>
+    </div>
+  );
+}
+
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ onboarded?: string }> }) {
+  const { onboarded } = await searchParams;
   const user = await requireUser("/dashboard");
   if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") redirect("/admin");
   const notifications = await db.notification.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 6 });
@@ -79,6 +90,8 @@ export default async function Dashboard() {
           <Stat label="Awarded" value={p.applications.filter((a) => a.status === "AWARDED").length} tone="lime" />
           <Stat label="Connection requests" value={pendingConns} tone="violet" />
         </div>
+        {onboarded ? <div className="mt-4 rounded-2xl border border-lime/30 bg-lime/5 px-5 py-3 text-sm"><span className="font-semibold text-lime">Your profile is live.</span> <span className="text-muted">Companies can find you in the directory and on skill pages. Keep an eye on matches below.</span></div> : null}
+        {!user.onboardingCompletedAt ? <div className="mt-4"><SetupBanner href="/onboarding/trainer" step={user.onboardingStep} audience="trainer" /></div> : null}
         <div className="mt-4"><OnboardingChecklist steps={onboarding} audience="trainer" title="Set up your trainer profile" /></div>
         <div className="mt-4 grid gap-4 md:grid-cols-[1fr_1fr_1.4fr]">
           <Card className="p-5"><p className="mono text-[11px] uppercase tracking-[0.12em] text-muted">Profile views · 30 days</p><p className="mt-1 font-display text-3xl font-bold tabular-nums text-cyan">{stats.views}</p><p className="text-xs text-muted">{stats.searches} search appearances</p></Card>
@@ -144,6 +157,8 @@ export default async function Dashboard() {
           <Stat label="Awarded" value={c.requirements.filter((r) => r.status === "AWARDED" || r.status === "COMPLETED").length} tone="lime" />
           <Stat label="Saved trainers" value={c.saved.length} tone="amber" />
         </div>
+        {onboarded ? <div className="mt-4 rounded-2xl border border-lime/30 bg-lime/5 px-5 py-3 text-sm"><span className="font-semibold text-lime">Company page is set up.</span> <span className="text-muted">Post a requirement whenever a batch comes up; matching trainers are notified instantly.</span></div> : null}
+        {!user.onboardingCompletedAt ? <div className="mt-4"><SetupBanner href="/onboarding/company" step={user.onboardingStep} audience="company" /></div> : null}
         <div className="mt-4"><OnboardingChecklist audience="company" title="Set up your company page" steps={[
           { key: "logo", label: "Company logo", hint: "Shown on every requirement you post.", href: "/settings", done: !!c.logoUrl },
           { key: "about", label: "About the company", hint: "Trainers check who they will be working with.", href: "/settings", done: c.description.length >= 40 },
