@@ -100,3 +100,22 @@ export async function verifyTrainerPan(_p: ActionState, fd: FormData): Promise<A
   if (r.provider === "sandbox" && r.nameMatch === false) return { error: "PAN is valid but the name does not match your account name. Update your name in Settings to match your PAN and try again." };
   return { ok: r.provider === "sandbox" ? `PAN verified (${r.category ?? "Individual"}). Identity badge granted.` : `PAN saved. ${r.message}` };
 }
+
+/* ---------- Workspace notifications + SSO auto-join ---------- */
+
+export async function saveCompanyIntegrations(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const user = await requireUser();
+  if (!user.membership || !companyCan(user.membership.role, "company_settings")) return { error: "Only owners and admins change integrations." };
+  const slack = String(fd.get("slackWebhookUrl") ?? "").trim(), teams = String(fd.get("teamsWebhookUrl") ?? "").trim();
+  const devLocal = process.env.NODE_ENV !== "production" && /^http:\/\/(localhost|127\.0\.0\.1)/.test(slack);
+  if (slack && !devLocal && !/^https:\/\/hooks\.slack\.com\/services\//.test(slack)) return { error: "Slack webhook URLs start with https://hooks.slack.com/services/…" };
+  if (teams && !/^https:\/\/[^\s]+(webhook|logic\.azure|office\.com)[^\s]*$/i.test(teams)) return { error: "That does not look like a Teams incoming-webhook URL." };
+  const company = await db.company.findUnique({ where: { id: user.membership.company.id }, select: { domainVerifiedAt: true } });
+  const autoJoin = String(fd.get("autoJoinDomain")) === "1";
+  if (autoJoin && !company?.domainVerifiedAt) return { error: "Domain auto-join needs a verified company domain first." };
+  await db.company.update({ where: { id: user.membership.company.id }, data: { slackWebhookUrl: slack || null, teamsWebhookUrl: teams || null, autoJoinDomain: autoJoin } });
+  await audit(user.id, "company.integrations", user.membership.company.id, { slack: !!slack, teams: !!teams, autoJoin });
+  if (String(fd.get("test")) === "1" && (slack || teams)) await notify(user.id, "team", "Test notification from CorpGurus", `${user.name} connected this channel to ${user.membership.company.name}.`, "/dashboard");
+  revalidatePath("/settings");
+  return { ok: `Saved.${String(fd.get("test")) === "1" && (slack || teams) ? " A test message was posted to the channel." : ""}` };
+}

@@ -94,6 +94,8 @@ export default async function DevelopersPage() {
               <tr><td className="mono text-xs">PATCH</td><td className="mono text-xs">/requirements/:id</td><td>Change status: OPEN, CANCELLED or COMPLETED.</td></tr>
               <tr><td className="mono text-xs">GET</td><td className="mono text-xs">/applications?requirement_id=&amp;status=</td><td>Applications across your requirements with trainer summaries.</td></tr>
               <tr><td className="mono text-xs">GET</td><td className="mono text-xs">/work-orders?status=ACCEPTED</td><td>Work orders with batches, signatures and invoices.</td></tr>
+              <tr><td className="mono text-xs">GET · POST</td><td className="mono text-xs">/webhooks</td><td>List or subscribe webhook endpoints (REST hooks for Zapier/Make).</td></tr>
+              <tr><td className="mono text-xs">GET · DELETE</td><td className="mono text-xs">/webhooks/:id</td><td>Inspect deliveries or unsubscribe.</td></tr>
             </tbody>
           </table>
         </div>
@@ -102,6 +104,8 @@ export default async function DevelopersPage() {
   -H "Authorization: Bearer cg_live_XXXX" \\
   -H "Content-Type: application/json" \\
   -d '{"title":"Kubernetes for platform engineers","description":"3-day hands-on workshop for 20 SREs covering cluster operations, networking and observability. Lab environment provided.","category":"cloud-devops","skills":["kubernetes"],"mode":"VIRTUAL","start_date":"2026-11-10","end_date":"2026-11-12","participants":20,"budget_max":45000}'`}</pre>
+        <h3 className="mt-6 font-display font-semibold">Zapier, Make and REST hooks</h3>
+        <p className="mt-1 text-sm text-muted">Any automation tool that speaks REST works with the API key. Use <code className="mono text-xs">POST /webhooks</code> to subscribe a Zap or Make scenario (body: <code className="mono text-xs">{`{ "url": "…", "events": ["application.created"] }`}</code>, returns the signing secret once), <code className="mono text-xs">DELETE /webhooks/:id</code> to unsubscribe, and the list endpoints above as polling triggers or &ldquo;perform list&rdquo; samples. Zapier&apos;s &ldquo;Catch Hook&rdquo; URL can be subscribed directly.</p>
         <h3 className="mt-6 font-display font-semibold">Verifying webhook signatures</h3>
         <p className="mt-1 text-sm text-muted">Each delivery carries <code className="mono text-xs">X-CorpGurus-Event</code>, <code className="mono text-xs">X-CorpGurus-Timestamp</code> (ms since epoch) and <code className="mono text-xs">X-CorpGurus-Signature</code>. Compute HMAC-SHA256 over <code className="mono text-xs">{"{timestamp}.{raw body}"}</code> with the endpoint secret and compare to the header value after <code className="mono text-xs">sha256=</code>. Reject timestamps older than five minutes.</p>
         <pre className="mono mt-2 overflow-x-auto rounded-xl border border-line bg-surface-2 p-4 text-xs">{`// Node.js

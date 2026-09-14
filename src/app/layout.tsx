@@ -3,6 +3,9 @@ import { Plus_Jakarta_Sans, Source_Sans_3, IBM_Plex_Mono, Instrument_Serif } fro
 import "./globals.css";
 import { Shell } from "@/components/shell";
 import { SITE } from "@/lib/seo";
+import { Analytics } from "@/components/analytics";
+import { getCurrentUser } from "@/lib/auth";
+import { distinctId } from "@/lib/analytics";
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta", weight: ["500", "600", "700", "800"] });
 const source = Source_Sans_3({ subsets: ["latin"], variable: "--font-source", weight: ["400", "500", "600", "700"] });
@@ -21,11 +24,13 @@ export const metadata: Metadata = {
   alternates: { canonical: SITE.url },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const user = process.env.NEXT_PUBLIC_POSTHOG_KEY ? await getCurrentUser() : null;
   return (
     <html lang="en" className={`${jakarta.variable} ${source.variable} ${plexMono.variable} ${instrument.variable}`}>
       <body>
         <Shell>{children}</Shell>
+        <Analytics distinct={user ? distinctId(user.id) : null} role={user?.role ?? null} />
       </body>
     </html>
   );

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { track } from "@/lib/analytics";
 import { isStaff, requireUser } from "@/lib/auth";
 import { audit, notify } from "@/lib/notify";
 import { createRazorpayPaymentLink, razorpayConfigured } from "@/lib/billing";
@@ -53,6 +54,7 @@ export async function fundEscrow(_p: ActionState, fd: FormData): Promise<ActionS
     ? await db.escrowDeposit.update({ where: { id: wo.escrow.id }, data: { ...base, status: "FUNDED", provider: "simulated", providerRef: `sim_${Date.now().toString(36)}`, fundedAt: new Date(), refundedAt: null } })
     : await db.escrowDeposit.create({ data: { ...base, status: "FUNDED", provider: "simulated", providerRef: `sim_${Date.now().toString(36)}`, fundedAt: new Date() } });
   await audit(user.id, "escrow.fund", esc.id, { amount: wo.total, currency: wo.currency, simulated: true });
+  void track("escrow_funded", user.id, { amount: wo.total, currency: wo.currency, simulated: true });
   await notify(wo.trainer.userId, "workorder", "Payment secured in escrow", `${wo.company.name} deposited ${wo.currency} ${wo.total.toLocaleString("en-IN")} for ${wo.title}. It is released to you after delivery.`, `/requirements/${wo.requirementId}/work-order`);
   refresh(wo.requirementId);
   return { ok: "Deposit funded (simulated; connect Razorpay keys for live payments). The trainer has been notified." };

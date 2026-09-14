@@ -19,7 +19,14 @@ function LinkedInMark() {
     </svg>
   );
 }
-const marks: Record<Provider, () => React.JSX.Element> = { google: GoogleMark, linkedin: LinkedInMark };
+function MicrosoftMark() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="1" y="1" width="10" height="10" fill="#F25022" /><rect x="13" y="1" width="10" height="10" fill="#7FBA00" /><rect x="1" y="13" width="10" height="10" fill="#00A4EF" /><rect x="13" y="13" width="10" height="10" fill="#FFB900" />
+    </svg>
+  );
+}
+const marks: Record<Provider, () => React.JSX.Element> = { google: GoogleMark, linkedin: LinkedInMark, microsoft: MicrosoftMark };
 
 /** "Continue with Google / LinkedIn" buttons. Providers without keys in .env render disabled with a hint. */
 export function OAuthButtons({ as, next, label = "Continue with", divider = true }: { as?: "trainer" | "company"; next?: string; label?: string; divider?: boolean }) {
@@ -30,19 +37,19 @@ export function OAuthButtons({ as, next, label = "Continue with", divider = true
   const qs = q.toString() ? `?${q}` : "";
   return (
     <div className="space-y-2">
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="grid gap-2 sm:grid-cols-3">
         {PROVIDER_LIST.map((p) => {
           const Mark = marks[p];
           const cls = cn("inline-flex h-11 items-center justify-center gap-2.5 rounded-lg border bg-white font-display text-sm font-semibold transition", live.has(p) ? "border-line-2 text-ink hover:bg-surface-2 hover:border-dim shadow-sm" : "cursor-not-allowed border-line text-dim");
           return live.has(p) ? (
             <a key={p} href={`/api/auth/${p}/start${qs}`} className={cls}><Mark /> {label} {providerName(p)}</a>
           ) : (
-            <span key={p} className={cls} title={`Add ${p.toUpperCase()}_CLIENT_ID and ${p.toUpperCase()}_CLIENT_SECRET to .env to enable`} aria-disabled="true"><span className="opacity-50"><Mark /></span> {label} {providerName(p)}</span>
+            <span key={p} className={cls} title={`Add ${p === "microsoft" ? "MS" : p.toUpperCase()}_CLIENT_ID and ${p === "microsoft" ? "MS" : p.toUpperCase()}_CLIENT_SECRET to .env to enable`} aria-disabled="true"><span className="opacity-50"><Mark /></span> {label} {providerName(p)}</span>
           );
         })}
       </div>
       {live.size < PROVIDER_LIST.length ? (
-        <p className="text-center text-xs text-dim">{live.size === 0 ? "Google and LinkedIn sign-in activate once their app keys are added to .env." : "The greyed provider activates once its app keys are added to .env."}</p>
+        <p className="text-center text-xs text-dim">{live.size === 0 ? "Google, LinkedIn and Microsoft sign-in activate once their app keys are added to .env." : "Greyed providers activate once their app keys are added to .env."}</p>
       ) : null}
       {divider ? <div className="flex items-center gap-3 py-1 text-xs text-dim"><span className="hairline flex-1" />or with email<span className="hairline flex-1" /></div> : null}
     </div>

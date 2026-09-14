@@ -5,7 +5,7 @@ import { ActionForm, SubmitButton } from "@/components/form-bits";
 import { Alert, Avatar, Badge, Button, ButtonLink, Card, Field, Input, PageHeader, Select, Textarea } from "@/components/ui";
 import { certStatusLabel, COMPANY_SIZES, CURRENCIES, DELIVERY_MODES, fmtDate, modeLabel } from "@/lib/utils";
 import { COMPANY_ACTION_LABELS, COMPANY_ROLES, companyCan, memberRoleLabel, type CompanyAction } from "@/lib/permissions";
-import { saveBankDetails, setMeetingProvider, verifyCompanyGst, verifyTrainerPan } from "@/lib/actions/integrations";
+import { saveBankDetails, saveCompanyIntegrations, setMeetingProvider, verifyCompanyGst, verifyTrainerPan } from "@/lib/actions/integrations";
 import { CalendarConnections } from "@/components/calendar-connections";
 import { MEETING_PROVIDERS, meetingCapabilities } from "@/lib/meetings";
 import { payoutsConfigured } from "@/lib/payouts";
@@ -245,6 +245,18 @@ async function CompanySettings({ companyId, isOwner, canManage, me }: { companyI
         </div>
       </Card>
       <CalendarConnections userId={me} trainer={false} />
+      <Card className="p-6">
+        <h2 className="text-lg font-bold">Workspace notifications and SSO</h2>
+        <p className="mt-1 text-sm text-muted">Post applications, work orders, invoices and team changes into a Slack or Teams channel with an incoming webhook. With a verified domain you can also let colleagues who sign in with Google or Microsoft join automatically as viewers.</p>
+        <ActionForm action={saveCompanyIntegrations} className="mt-4 space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field label="Slack incoming webhook" hint="Slack → Apps → Incoming Webhooks → Add to channel"><Input name="slackWebhookUrl" defaultValue={c.slackWebhookUrl ?? ""} placeholder="https://hooks.slack.com/services/…" /></Field>
+            <Field label="Microsoft Teams incoming webhook" hint="Channel → Connectors → Incoming Webhook (or Workflows)"><Input name="teamsWebhookUrl" defaultValue={c.teamsWebhookUrl ?? ""} placeholder="https://….webhook.office.com/…" /></Field>
+          </div>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="autoJoinDomain" value="1" defaultChecked={c.autoJoinDomain} disabled={!c.domainVerifiedAt} className="accent-violet" /> Colleagues at <span className="mono">{c.domain ?? "your domain"}</span> who sign up with Google or Microsoft join this company automatically as viewers{c.domainVerifiedAt ? "" : " (verify the domain first)"}</label>
+          <div className="flex flex-wrap gap-2"><SubmitButton size="sm" variant="violet" pendingText="Saving…">Save</SubmitButton><button type="submit" name="test" value="1" className="inline-flex h-8 items-center rounded-full border border-line-2 bg-white px-3.5 font-display text-[13px] font-semibold hover:bg-surface-2">Save and send a test</button></div>
+        </ActionForm>
+      </Card>
 
       <Card className="p-6">
         <h2 className="text-lg font-bold">Team</h2>

@@ -31,7 +31,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
 
   return (
     <div>
-      <PageHeader eyebrow={isTrainer ? "Trainer" : user.membership!.company.name} title="Invoices" body={isTrainer ? "Raise invoices against accepted work orders and track payment." : "Invoices from trainers for accepted work orders. Record payments once made."} />
+      <PageHeader eyebrow={isTrainer ? "Trainer" : user.membership!.company.name} title="Invoices" body={isTrainer ? "Raise invoices against accepted work orders and track payment." : "Invoices from trainers for accepted work orders. Record payments once made."} actions={<div className="flex flex-wrap gap-2"><Link href="/api/export/invoices/zoho" className="inline-flex h-8 items-center rounded-full border border-line-2 bg-white px-3.5 font-display text-[13px] font-semibold hover:bg-surface-2">Export for Zoho Books</Link><Link href="/api/export/invoices/tally" className="inline-flex h-8 items-center rounded-full border border-line-2 bg-white px-3.5 font-display text-[13px] font-semibold hover:bg-surface-2">Export for Tally</Link></div>} />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="Outstanding" value={money(sum(open))} tone="amber" /><Stat label="Overdue" value={overdue.length} tone={overdue.length ? "amber" : "lime"} /><Stat label={isTrainer ? "Received" : "Paid"} value={money(sum(paid))} tone="lime" /><Stat label="Invoices" value={invoices.length} />
       </div>

@@ -1,7 +1,7 @@
 import "server-only";
 import { SignJWT, jwtVerify } from "jose";
 
-export type Provider = "google" | "linkedin";
+export type Provider = "google" | "linkedin" | "microsoft";
 
 type Config = { name: string; authUrl: string; tokenUrl: string; userinfoUrl: string; scope: string; idEnv: string; secretEnv: string };
 
@@ -24,9 +24,18 @@ const PROVIDERS: Record<Provider, Config> = {
     idEnv: "LINKEDIN_CLIENT_ID",
     secretEnv: "LINKEDIN_CLIENT_SECRET",
   },
+  microsoft: {
+    name: "Microsoft",
+    authUrl: `https://login.microsoftonline.com/${process.env.MS_TENANT || "common"}/oauth2/v2.0/authorize`,
+    tokenUrl: `https://login.microsoftonline.com/${process.env.MS_TENANT || "common"}/oauth2/v2.0/token`,
+    userinfoUrl: "https://graph.microsoft.com/oidc/userinfo",
+    scope: "openid email profile",
+    idEnv: "MS_CLIENT_ID",
+    secretEnv: "MS_CLIENT_SECRET",
+  },
 };
 
-export const PROVIDER_LIST: Provider[] = ["google", "linkedin"];
+export const PROVIDER_LIST: Provider[] = ["google", "linkedin", "microsoft"];
 export const providerName = (p: Provider) => PROVIDERS[p].name;
 export const isProvider = (p: string): p is Provider => p in PROVIDERS;
 

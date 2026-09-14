@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { notify } from "@/lib/notify";
 import { createSession, requireUser } from "@/lib/auth";
 import { PENDING_COOKIE, readPending } from "@/lib/oauth";
 import { slugify } from "@/lib/utils";
@@ -52,6 +53,16 @@ export async function completeOAuthSignup(_p: ActionState, fd: FormData): Promis
   } else {
     const slug = await uniqueSlug(d.companyName!, async (s) => !!(await db.company.findUnique({ where: { slug: s } })));
     const domain = pending.email.split("@")[1];
+    // SSO auto-join: a verified company that opted in absorbs colleagues from the same email domain as viewers.
+    const home = pending.emailVerified ? await db.company.findFirst({ where: { domain, domainVerifiedAt: { not: null }, autoJoinDomain: true }, include: { members: { where: { role: "OWNER" }, select: { userId: true } } } }) : null;
+    if (home) {
+      await db.companyMember.create({ data: { companyId: home.id, userId: user.id, role: "VIEWER" } });
+      await db.user.update({ where: { id: user.id }, data: { onboardingCompletedAt: new Date() } });
+      await notify(home.members.map((m) => m.userId), "team", `${d.name} joined ${home.name} via ${pending.provider} sign-in`, `Matched your verified domain ${domain}. They start as a viewer; change the role in Settings → Team.`, "/settings");
+      jar.delete(PENDING_COOKIE);
+      await createSession(user.id);
+      redirect("/dashboard");
+    }
     const company = await db.company.create({
       data: { name: d.companyName!, slug, type: d.companyType ?? "DIRECT", domain: ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"].includes(domain) ? null : domain },
     });

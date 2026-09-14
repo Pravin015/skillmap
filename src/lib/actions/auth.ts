@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { track } from "@/lib/analytics";
 import { createSession, destroySession } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
 import { rateLimit } from "@/lib/ratelimit";
@@ -59,6 +60,7 @@ export async function signup(_prev: ActionState, formData: FormData): Promise<Ac
   });
 
   await createSession(user.id);
+  void track("signup", user.id, { role: d.role, method: "password" });
   redirect(d.role === "TRAINER" ? "/onboarding/trainer" : "/onboarding/company");
 }
 

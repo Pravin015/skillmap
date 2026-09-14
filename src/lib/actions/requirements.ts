@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { track } from "@/lib/analytics";
 import { requireUser } from "@/lib/auth";
 import { notify } from "@/lib/notify";
 import { daysBetween } from "@/lib/utils";
@@ -93,6 +94,7 @@ export async function createRequirement(_p: ActionState, fd: FormData): Promise<
   }
   if (d.visibility === "PUBLIC") await alertRequirementSearches(req.id);
   await qualifyReferral(ctx.user.id);
+  void track("requirement_posted", ctx.user.id, { mode: d.mode, days: req.days, participants: d.participants, skills: skillSlugs.length });
   redirect(`/requirements/${req.id}`);
 }
 
@@ -174,6 +176,7 @@ export async function apply(_p: ActionState, fd: FormData): Promise<ActionState>
   const team = teamId ? await db.trainerTeam.findFirst({ where: { id: teamId, leadId: user.trainerProfile.id }, select: { id: true, name: true } }) : null;
   if (teamId && !team) return { error: "You can only apply on behalf of a team you lead." };
   const created = await db.application.create({ data: { requirementId, trainerId: user.trainerProfile.id, coverNote, proposedRate, teamId: team?.id ?? null } });
+  void track("application_sent", user.id, { requirementId, team: !!team });
   await emitApplication(created.id, "application.created");
   await notify(req.company.members.map((m) => m.userId), "application", "New application", `${user.name}${team ? ` (team ${team.name})` : ""} applied to ${req.title}`, `/dashboard/requirements/${requirementId}/applicants`);
   revalidatePath(`/requirements/${requirementId}`);
@@ -211,6 +214,7 @@ export async function decideApplication(fd: FormData) {
   if (decision === "AWARDED") {
     await db.requirement.update({ where: { id: reqId }, data: { status: "AWARDED" } });
     await emitRequirement(reqId);
+    void track("requirement_awarded", ctx.user.id, { requirementId: reqId });
     await db.availabilityBlock.create({ data: { trainerId: app.trainerId, startDate: app.requirement.startDate, endDate: app.requirement.endDate, kind: "BOOKED", requirementId: reqId, note: app.requirement.title } });
     const others = await db.application.findMany({ where: { requirementId: reqId, id: { not: id }, status: { in: ["APPLIED", "SHORTLISTED"] } }, include: { trainer: { select: { userId: true } } } });
     await db.application.updateMany({ where: { requirementId: reqId, id: { not: id }, status: { in: ["APPLIED", "SHORTLISTED"] } }, data: { status: "DECLINED", declineReason: "The requirement was awarded to another trainer.", statusChangedAt: new Date() } });

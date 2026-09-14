@@ -559,6 +559,9 @@ model Company {
   gstin            String?
   hiringCategories String[] @default([])
   meetingProvider  String   @default("AUTO")
+  slackWebhookUrl  String?
+  teamsWebhookUrl  String?
+  autoJoinDomain   Boolean  @default(false)
   gstLegalName     String?
   gstVerifiedVia   String?
   hiringCities     String[] @default([])
