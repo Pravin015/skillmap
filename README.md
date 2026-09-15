@@ -147,6 +147,12 @@ Without keys in development the pricing page runs a **simulator** that activates
 - **SEO** (see `SEO.md`): site-wide metadata with canonicals and social cards, JSON-LD (Organization, WebSite, FAQ, Person, JobPosting, Breadcrumb), `robots.txt`, dynamic `sitemap.xml`, generated Open Graph image, and programmatic landing pages `/hire/<skill>` and `/hire/<skill>/<city>` cross-linked from the home page, category pages and footer.
 - **Public API v1 + webhooks** (`/settings/developers`): companies create API keys (`cg_live_…`, stored hashed, shown once) and call `GET/POST /api/v1/requirements`, `GET/PATCH /api/v1/requirements/:id`, `GET /api/v1/applications`, `GET /api/v1/work-orders` (cursor pagination, 600 req/min per key). Webhook endpoints receive signed JSON (`X-CorpGurus-Signature: sha256=HMAC(secret, "{timestamp}.{body}")`) for `application.created`, `application.status_changed`, `requirement.status_changed`, `work_order.sent`, `work_order.accepted`, `invoice.created`, `invoice.paid`; deliveries are logged with status and error, and a "Send test" button exists per endpoint.
 
+## App shell
+
+Signed-in members get a sidebar layout on every page except the marketing routes (home, pricing, legal, sign-in, onboarding): grouped sections per role (trainer work and profile, company hiring and finance, staff admin console), a menu filter, badges for notifications, messages, the verification queue and open reports, collapse-to-icons on desktop and a drawer on mobile. Navigation is built in `src/lib/nav.ts`; the frame is `src/components/app-frame.tsx`. Visitors keep the marketing header and footer.
+
+**Admin → Users**: search and filter by role/status, disable/enable, reset password (temporary password shown once), edit name/email/phone, delete (soft: status `DELETED`, personal details blanked, memberships removed; documents that name the account are kept) and bulk disable/enable/delete with a typed confirmation. Every action is audit-logged.
+
 ## Deploy on Railway
 
 1. New project → Deploy from GitHub → this repo (Railway picks up `railway.json` and builds the Dockerfile).
