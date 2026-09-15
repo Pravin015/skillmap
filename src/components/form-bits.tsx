@@ -27,9 +27,9 @@ export function SubmitButton({ children, variant = "primary", size = "md", class
  * Submission is dispatched manually inside a transition so React does not reset the form after a failed action:
  * whatever the person typed stays in place while they fix the one field that was wrong.
  */
-export function ActionForm({ action, children, className, resetOnSuccess }: {
+export function ActionForm({ action, children, className, resetOnSuccess, id }: {
   action: (prev: ActionState, fd: FormData) => Promise<ActionState>;
-  children: React.ReactNode; className?: string; resetOnSuccess?: boolean;
+  children: React.ReactNode; className?: string; resetOnSuccess?: boolean; id?: string;
 }) {
   const [gen, setGen] = useState(0);
   const keepValues = useRef(false);
@@ -56,7 +56,7 @@ export function ActionForm({ action, children, className, resetOnSuccess }: {
   };
   return (
     <PendingContext.Provider value={isPending}>
-      <form ref={patchReset} onSubmit={onSubmit} className={className} key={gen}>
+      <form ref={patchReset} onSubmit={onSubmit} className={className} key={gen} id={id}>
         {state?.error ? <div className="mb-4"><Alert tone="rose">{state.error}</Alert></div> : null}
         {state?.ok ? <div className="mb-4"><Alert tone="lime">{state.ok}</Alert></div> : null}
         {children}

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { verifyGstin } from "@/lib/kyc";
@@ -184,4 +185,95 @@ export async function toggleFeature(fd: FormData) {
   await db.setting.upsert({ where: { key: `feature_${key}` }, create: { key: `feature_${key}`, value: on ? "1" : "0" }, update: { value: on ? "1" : "0" } });
   await audit(su.id, on ? "feature.on" : "feature.off", key);
   revalidatePath("/admin/platform"); revalidatePath("/admin/overview"); revalidatePath("/", "layout");
+}
+
+/* ---------- user management (Users page) ---------- */
+
+const PROTECTED = (me: { id: string; role: string }, target: { id: string; role: string }) => target.id === me.id || target.role === "SUPER_ADMIN" || (target.role === "ADMIN" && me.role !== "SUPER_ADMIN");
+
+function tempPassword() {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  const bytes = randomBytes(10);
+  return `Cg-${Array.from(bytes, (b) => alphabet[b % alphabet.length]).join("")}!`;
+}
+
+/** Sets a one-time temporary password and shows it to the staff member once. The user changes it in Settings. */
+export async function resetUserPassword(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const admin = await requireStaff("users");
+  const id = String(fd.get("id"));
+  const target = await db.user.findUnique({ where: { id }, select: { id: true, role: true, email: true, name: true, status: true } });
+  if (!target || PROTECTED(admin, target)) return { error: "You cannot reset this account's password." };
+  if (target.status === "DELETED") return { error: "This account is deleted." };
+  const pwd = tempPassword();
+  await db.user.update({ where: { id }, data: { passwordHash: await bcrypt.hash(pwd, 10) } });
+  await notify(id, "billing", "Your password was reset by CorpGurus support", "Sign in with the temporary password you were given and change it under Settings → Password.", "/settings");
+  await audit(admin.id, "user.password_reset", id, { email: target.email });
+  revalidatePath("/admin/users");
+  return { ok: `Temporary password for ${target.email}: ${pwd} — share it over a trusted channel; it is not shown again.` };
+}
+
+/** Staff edit the name, email and phone on an account (typos, changed work email). */
+export async function updateUserDetails(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const admin = await requireStaff("users");
+  const id = String(fd.get("id"));
+  const target = await db.user.findUnique({ where: { id }, select: { id: true, role: true, email: true } });
+  if (!target || PROTECTED(admin, target)) return { error: "You cannot edit this account." };
+  const name = String(fd.get("name") ?? "").trim();
+  const email = String(fd.get("email") ?? "").trim().toLowerCase();
+  const phone = String(fd.get("phone") ?? "").trim() || null;
+  if (name.length < 2) return { error: "Name is too short." };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "Email looks wrong." };
+  if (email !== target.email && (await db.user.findUnique({ where: { email }, select: { id: true } }))) return { error: "Another account already uses that email." };
+  await db.user.update({ where: { id }, data: { name, email, phone } });
+  await audit(admin.id, "user.edit", id, { from: target.email, to: email, name });
+  revalidatePath("/admin/users");
+  return { ok: "Account updated." };
+}
+
+/** Soft delete: the account can no longer sign in, its personal details are blanked and it drops out of every list; documents it appears on are kept. */
+async function softDelete(adminId: string, id: string) {
+  const u = await db.user.findUnique({ where: { id }, select: { email: true, trainerProfile: { select: { id: true } } } });
+  if (!u) return;
+  await db.$transaction([
+    db.user.update({ where: { id }, data: { status: "DELETED", email: `deleted+${id}@corpgurus.invalid`, name: "Deleted user", passwordHash: null, avatarUrl: null, phone: null, whatsappAlerts: false, emailNotifications: false, activeCompanyId: null } }),
+    db.oAuthAccount.deleteMany({ where: { userId: id } }),
+    db.companyMember.deleteMany({ where: { userId: id } }),
+    db.pushSubscription.deleteMany({ where: { userId: id } }),
+  ]);
+  await audit(adminId, "user.delete", id, { email: u.email });
+}
+
+export async function deleteUser(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const admin = await requireStaff("users");
+  const id = String(fd.get("id"));
+  if (String(fd.get("confirm") ?? "").trim().toUpperCase() !== "DELETE") return { error: "Type DELETE to confirm." };
+  const target = await db.user.findUnique({ where: { id }, select: { id: true, role: true, status: true } });
+  if (!target || PROTECTED(admin, target)) return { error: "You cannot delete this account." };
+  if (target.status === "DELETED") return { error: "Already deleted." };
+  await softDelete(admin.id, id);
+  revalidatePath("/admin/users");
+  return { ok: "Account deleted. It no longer signs in or appears anywhere; invoices and work orders that name it are kept for the record." };
+}
+
+/** Bulk actions from the Users table: disable, enable or delete the ticked accounts. Protected accounts are skipped and counted. */
+export async function bulkUsers(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const admin = await requireStaff("users");
+  const ids = fd.getAll("ids").map(String).filter(Boolean);
+  const action = String(fd.get("action"));
+  if (!ids.length) return { error: "Tick at least one user." };
+  if (!["disable", "enable", "delete"].includes(action)) return { error: "Choose an action." };
+  if (action === "delete" && String(fd.get("confirm") ?? "").trim().toUpperCase() !== "DELETE") return { error: "Type DELETE in the confirmation box to delete accounts in bulk." };
+  const targets = await db.user.findMany({ where: { id: { in: ids } }, select: { id: true, role: true, status: true, email: true } });
+  let done = 0, skipped = 0;
+  for (const t of targets) {
+    if (PROTECTED(admin, t) || t.status === "DELETED") { skipped++; continue; }
+    if (action === "delete") await softDelete(admin.id, t.id);
+    else {
+      await db.user.update({ where: { id: t.id }, data: { status: action === "disable" ? "SUSPENDED" : "ACTIVE" } });
+      await audit(admin.id, action === "disable" ? "user.suspended" : "user.active", t.id, { email: t.email, bulk: true });
+    }
+    done++;
+  }
+  revalidatePath("/admin/users");
+  return { ok: `${done} account${done === 1 ? "" : "s"} ${action === "delete" ? "deleted" : action === "disable" ? "disabled" : "enabled"}${skipped ? `, ${skipped} skipped (your own account, super admins, or already deleted)` : ""}.` };
 }

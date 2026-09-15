@@ -75,7 +75,8 @@ export async function login(_prev: ActionState, formData: FormData): Promise<Act
     return { error: `This account signs in with ${via || "a linked provider"}. Use that button, or set a password from Settings after signing in.` };
   }
   if (!user || !(await bcrypt.compare(password, user.passwordHash!))) return { error: "Email or password is incorrect." };
-  if (user.status === "SUSPENDED") return { error: "This account is suspended. Contact support@corpgurus.com." };
+  if (user.status === "DELETED") return { error: "This account was deleted." };
+  if (user.status === "SUSPENDED") return { error: "This account is disabled. Contact support@corpgurus.com." };
   await createSession(user.id);
   redirect(next && next.startsWith("/") ? next : "/dashboard");
 }

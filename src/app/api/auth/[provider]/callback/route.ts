@@ -33,7 +33,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ provider
   // 1. Already linked → sign in.
   const linked = await db.oAuthAccount.findUnique({ where: { provider_providerAccountId: { provider, providerAccountId: profile.sub } }, include: { user: true } });
   if (linked) {
-    if (linked.user.status === "SUSPENDED") return fail("suspended");
+    if (linked.user.status !== "ACTIVE") return fail("suspended");
     await createSession(linked.userId);
     const res = NextResponse.redirect(`${appUrl()}${next}`);
     res.cookies.delete(STATE_COOKIE);
@@ -44,7 +44,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ provider
   if (profile.email && profile.emailVerified) {
     const existing = await db.user.findUnique({ where: { email: profile.email } });
     if (existing) {
-      if (existing.status === "SUSPENDED") return fail("suspended");
+      if (existing.status !== "ACTIVE") return fail("suspended");
       await db.oAuthAccount.create({ data: { provider, providerAccountId: profile.sub, userId: existing.id, email: profile.email } });
       if (!existing.avatarUrl && profile.picture) await db.user.update({ where: { id: existing.id }, data: { avatarUrl: profile.picture } });
       await createSession(existing.id);

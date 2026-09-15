@@ -20,6 +20,7 @@ enum Role {
 enum UserStatus {
   ACTIVE
   SUSPENDED
+  DELETED
 }
 
 enum DeliveryMode {

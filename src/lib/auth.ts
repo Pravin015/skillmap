@@ -58,7 +58,7 @@ export const getCurrentUser = cache(async () => {
         memberships: membershipInclude,
       },
     });
-    if (!user || user.status === "SUSPENDED") return null;
+    if (!user || user.status !== "ACTIVE") return null;
     const active = user.memberships.find((m) => m.companyId === user.activeCompanyId) ?? null;
     const membership = active ?? (user.trainerProfile && user.activeCompanyId === null ? null : user.memberships[0] ?? null);
     // Context-scoped identity: while acting for a company, the trainer profile is hidden so trainer-only actions
