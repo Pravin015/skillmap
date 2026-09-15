@@ -92,7 +92,7 @@ export function Avatar({ name, src, size = 40, tone = "cyan", className }: { nam
   const bg = tone === "cyan" ? "bg-cyan" : tone === "violet" ? "bg-violet" : "bg-amber";
   return src ? (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={name} width={size} height={size} className={cn("rounded-full object-cover", className)} style={{ width: size, height: size }} />
+    <img src={src} alt={name} width={size} height={size} loading="lazy" decoding="async" className={cn("rounded-full object-cover", className)} style={{ width: size, height: size }} />
   ) : (
     <span className={cn("inline-flex shrink-0 items-center justify-center rounded-full font-display font-semibold text-white", bg, className)} style={{ width: size, height: size, fontSize: size * 0.36 }}>
       {initials(name)}

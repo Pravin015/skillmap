@@ -284,7 +284,7 @@ async function GalleryTab({ trainerId, isSelf }: { trainerId: string; isSelf: bo
     <div className="grid grid-cols-2 gap-3 md:grid-cols-3">{photos.map((p) => (
       <a key={p.id} href={p.url} target="_blank" rel="noreferrer" className="group overflow-hidden rounded-xl border border-line bg-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={p.url} alt={p.caption} className="aspect-[4/3] w-full object-cover transition group-hover:scale-[1.02]" />
+        <img src={p.url} alt={p.caption} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover transition group-hover:scale-[1.02]" />
         <span className="block p-3 text-xs"><span className="line-clamp-2 block">{p.caption || "Training session"}</span><span className="mt-1 block text-muted">{p.takenOn ? fmtDate(p.takenOn) : ""}{p.company ? ` · ${p.company.name}` : ""}</span></span>
       </a>
     ))}</div>

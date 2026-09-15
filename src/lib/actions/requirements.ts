@@ -3,10 +3,11 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { getTrainerAgreement, hasAcceptedAgreement } from "@/lib/agreements";
 import { db } from "@/lib/db";
 import { track } from "@/lib/analytics";
 import { requireUser } from "@/lib/auth";
-import { notify } from "@/lib/notify";
+import { notify, audit } from "@/lib/notify";
 import { daysBetween } from "@/lib/utils";
 import { entitlementsFor } from "@/lib/billing";
 import { alertRequirementSearches } from "@/lib/saved-searches";
@@ -163,6 +164,13 @@ export async function apply(_p: ActionState, fd: FormData): Promise<ActionState>
   if (!req || !["OPEN", "SHORTLISTING"].includes(req.status)) return { error: "This requirement is no longer accepting applications." };
   if (req.visibility === "INVITE_ONLY" && !req.invitedTrainers.some((t) => t.id === user.trainerProfile!.id)) return { error: "This requirement is invite-only." };
   if (await db.application.findUnique({ where: { requirementId_trainerId: { requirementId, trainerId: user.trainerProfile.id } } })) return { error: "You already applied." };
+  const agreement = await getTrainerAgreement();
+  const me = await db.user.findUnique({ where: { id: user.id }, select: { agreementVersion: true } });
+  if (!hasAcceptedAgreement(me!, agreement.version)) {
+    if (String(fd.get("acceptAgreement")) !== "1") return { error: `Please accept the Trainer Agreement v${agreement.version} (tick the box, or read it at /agreements/trainer) before applying.` };
+    await db.user.update({ where: { id: user.id }, data: { agreementVersion: agreement.version, agreementAcceptedAt: new Date() } });
+    await audit(user.id, "agreement.accept", `trainer-v${agreement.version}`, { via: "apply" });
+  }
 
   const ent = await entitlementsFor(user);
   if (!ent.unlimitedApplications) {

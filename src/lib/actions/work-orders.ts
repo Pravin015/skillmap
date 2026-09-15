@@ -121,9 +121,11 @@ export async function respondWorkOrder(_p: ActionState, fd: FormData): Promise<A
   if (wo.status !== "SENT") return { error: "This work order is not awaiting your response." };
   if (decision === "CHANGES" && note.length < 5) return { error: "Tell the company what to change." };
   if (decision === "ACCEPT" && signedName.length < 3) return { error: "Type your full name to sign and accept." };
+  const companyNda = (await db.company.findUnique({ where: { id: wo.companyId }, select: { ndaText: true } }))?.ndaText ?? "";
+  if (decision === "ACCEPT" && companyNda && String(fd.get("nda")) !== "1") return { error: `${wo.company.name} requires you to accept their NDA before accepting the work order.` };
   const ip = await clientIp();
   const signatureHash = decision === "ACCEPT" ? createHash("sha256").update(`${wo.id}|v${wo.version}|${wo.companySignedName ?? ""}|${signedName}|${new Date().toISOString()}|${ip}`).digest("hex").slice(0, 32) : null;
-  await db.workOrder.update({ where: { id }, data: { status: decision === "ACCEPT" ? "ACCEPTED" : "CHANGES_REQUESTED", acceptedAt: decision === "ACCEPT" ? new Date() : null, trainerSignedName: decision === "ACCEPT" ? signedName : null, trainerSignedAt: decision === "ACCEPT" ? new Date() : null, signatureHash } });
+  await db.workOrder.update({ where: { id }, data: { status: decision === "ACCEPT" ? "ACCEPTED" : "CHANGES_REQUESTED", acceptedAt: decision === "ACCEPT" ? new Date() : null, trainerSignedName: decision === "ACCEPT" ? signedName : null, trainerSignedAt: decision === "ACCEPT" ? new Date() : null, signatureHash, ndaAcceptedAt: decision === "ACCEPT" && companyNda ? new Date() : null } });
   await db.workOrderEvent.create({ data: { workOrderId: id, actorId: user.id, type: decision === "ACCEPT" ? "accepted" : "changes_requested", note: note || null, version: wo.version } });
   await notify(wo.company.members.map((m) => m.userId), "workorder", decision === "ACCEPT" ? `${user.name} accepted the work order` : `${user.name} requested changes`, decision === "ACCEPT" ? `${wo.title} v${wo.version} is confirmed.` : note, `/requirements/${wo.requirementId}/work-order`);
   if (decision === "ACCEPT") {

@@ -51,7 +51,7 @@ function Attachments({ imageUrl, docUrl, docName }: { imageUrl: string | null; d
     <>
       {imageUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <a href={imageUrl} target="_blank" rel="noreferrer" className="mt-3 block overflow-hidden rounded-xl border border-line bg-surface-2"><img src={imageUrl} alt="" className="max-h-[480px] w-full object-cover" /></a>
+        <a href={imageUrl} target="_blank" rel="noreferrer" className="mt-3 block overflow-hidden rounded-xl border border-line bg-surface-2"><img src={imageUrl} alt="" loading="lazy" decoding="async" className="max-h-[480px] w-full object-cover" /></a>
       ) : null}
       {docUrl ? (
         <a href={docUrl} target="_blank" rel="noreferrer" className="mt-3 flex items-center gap-3 rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm hover:border-cyan">

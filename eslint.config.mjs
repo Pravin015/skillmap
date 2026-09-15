@@ -8,6 +8,8 @@ const eslintConfig = defineConfig([
   // Override default ignores of eslint-config-next.
   globalIgnores([
     "scripts/**",
+    "playwright-report/**",
+    "test-results/**",
     // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",

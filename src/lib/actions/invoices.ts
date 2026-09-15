@@ -108,12 +108,18 @@ export async function markInvoicePaid(_p: ActionState, fd: FormData): Promise<Ac
   const user = await requireUser();
   const id = String(fd.get("id"));
   const reference = String(fd.get("reference") ?? "").trim();
-  const inv = await db.invoice.findUnique({ where: { id }, include: { trainer: { select: { userId: true } }, company: { include: { members: { select: { userId: true, role: true } } } } } });
+  const tdsRate = Number(fd.get("tdsRate") ?? 0);
+  if (![0, 1, 2, 5, 10].includes(tdsRate)) return { error: "Choose a valid TDS rate." };
+  const inv = await db.invoice.findUnique({ where: { id }, include: { trainer: { select: { userId: true } }, company: { include: { members: { select: { userId: true, role: true } } } }, creditNotes: { select: { total: true } } } });
   if (!inv || !memberCan(inv.company.members, user.id, "pay_invoice")) return { error: "Only the billed company can mark an invoice paid." };
   if (inv.status !== "SENT") return { error: "This invoice is not awaiting payment." };
-  await db.invoice.update({ where: { id }, data: { status: "PAID", paidAt: new Date(), paidReference: reference || null } });
-  await notify(inv.trainer.userId, "invoice", `Invoice ${inv.invoiceNumber} marked paid`, `${inv.company.name} recorded payment${reference ? ` · ref ${reference}` : ""}.`, `/invoices/${id}`);
-  await audit(user.id, "invoice.paid", id, { reference });
+  // TDS under section 194J applies to the taxable value, not to GST.
+  const tdsAmount = Math.round((inv.amount * tdsRate) / 100);
+  const credits = inv.creditNotes.reduce((n, c) => n + c.total, 0);
+  const amountReceived = Math.max(0, inv.total - credits - tdsAmount);
+  await db.invoice.update({ where: { id }, data: { status: "PAID", paidAt: new Date(), paidReference: reference || null, tdsRate, tdsAmount, amountReceived } });
+  await notify(inv.trainer.userId, "invoice", `Invoice ${inv.invoiceNumber} marked paid`, `${inv.company.name} recorded ${inv.currency} ${amountReceived.toLocaleString("en-IN")}${tdsAmount ? ` after ${tdsRate}% TDS (${inv.currency} ${tdsAmount.toLocaleString("en-IN")})` : ""}${reference ? ` · ref ${reference}` : ""}.`, `/invoices/${id}`);
+  await audit(user.id, "invoice.paid", id, { reference, tdsRate, tdsAmount, amountReceived });
   await emitInvoice(id, "invoice.paid");
   let closed = false;
   if (inv.purchaseOrderId) {
@@ -125,6 +131,31 @@ export async function markInvoicePaid(_p: ActionState, fd: FormData): Promise<Ac
   }
   refresh(id, inv.purchaseOrderId);
   return { ok: `Marked as paid. The trainer has been notified.${closed ? " The purchase order is fully settled and now closed." : ""}` };
+}
+
+/** Trainer issues a credit note against a sent or paid invoice (short delivery, agreed discount). Reduces what the company owes. */
+export async function issueCreditNote(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const user = await requireUser();
+  if (!user.trainerProfile) return { error: "Only the trainer who raised the invoice can issue a credit note." };
+  const invoiceId = String(fd.get("invoiceId"));
+  const amount = Math.round(Number(fd.get("amount")));
+  const reason = String(fd.get("reason") ?? "").trim().slice(0, 300);
+  const inv = await db.invoice.findUnique({ where: { id: invoiceId }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, creditNotes: { select: { amount: true } } } });
+  if (!inv || inv.trainerId !== user.trainerProfile.id) return { error: "Invoice not found." };
+  if (!["SENT", "PAID"].includes(inv.status)) return { error: "Credit notes apply to sent or paid invoices only." };
+  if (!(amount > 0)) return { error: "Enter the taxable amount to credit." };
+  const already = inv.creditNotes.reduce((n, c) => n + c.amount, 0);
+  if (already + amount > inv.amount) return { error: `Credit notes cannot exceed the invoice value (${inv.currency} ${(inv.amount - already).toLocaleString("en-IN")} left to credit).` };
+  if (reason.length < 5) return { error: "Give a short reason; it prints on the credit note and the ledger." };
+  const gstAmount = Math.round((amount * inv.gstRate) / 100);
+  const seq = (await db.creditNote.count({ where: { trainerId: inv.trainerId } })) + 1;
+  const creditNumber = `CN-${inv.invoiceNumber}-${String(seq).padStart(2, "0")}`;
+  const cn = await db.creditNote.create({ data: { creditNumber, invoiceId, trainerId: inv.trainerId, companyId: inv.companyId, issuedById: user.id, amount, gstAmount, total: amount + gstAmount, reason } });
+  await audit(user.id, "credit_note.issue", cn.id, { invoiceId, amount, total: amount + gstAmount });
+  const recipients = inv.company.members.filter((m) => companyCan(m.role, "pay_invoice") || companyCan(m.role, "sign_work_order")).map((m) => m.userId);
+  await notify(recipients, "invoice", `Credit note ${creditNumber} against ${inv.invoiceNumber}`, `${user.name} credited ${inv.currency} ${(amount + gstAmount).toLocaleString("en-IN")} incl. GST: ${reason}`, `/invoices/${invoiceId}`);
+  refresh(invoiceId, inv.purchaseOrderId);
+  return { ok: `Credit note ${creditNumber} issued for ${inv.currency} ${(amount + gstAmount).toLocaleString("en-IN")} incl. GST.` };
 }
 
 export async function cancelInvoice(fd: FormData) {

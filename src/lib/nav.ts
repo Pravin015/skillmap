@@ -44,6 +44,7 @@ export function buildNav(user: NavUser, counts: { unread: number; unreadConvos: 
       { href: "/dashboard/applications", label: "My applications", icon: "FileCheck2" },
       { href: "/dashboard/purchase-orders", label: "Purchase orders", icon: "FileText" },
       { href: "/dashboard/invoices", label: "Invoices", icon: "Receipt" },
+      { href: "/dashboard/ledger", label: "Ledger", icon: "BookOpenCheck" },
       { href: "/dashboard/saved-searches", label: "Saved searches", icon: "BellRing" },
     ] });
     groups.push({ label: "Profile", items: [
@@ -69,6 +70,7 @@ export function buildNav(user: NavUser, counts: { unread: number; unreadConvos: 
     groups.push({ label: "Finance", items: [
       { href: "/dashboard/purchase-orders", label: "Purchase orders", icon: "FileText" },
       { href: "/dashboard/invoices", label: "Invoices", icon: "Receipt" },
+      { href: "/dashboard/ledger", label: "Ledger", icon: "BookOpenCheck" },
       ...(can("billing") ? [{ href: "/settings/billing", label: "Plan & billing", icon: "CreditCard" }] : []),
     ] });
     groups.push({ label: "Company", items: [
@@ -100,7 +102,7 @@ export function buildNav(user: NavUser, counts: { unread: number; unreadConvos: 
 }
 
 /** Routes that keep the marketing header and footer even when signed in. */
-export const MARKETING_ROUTES = ["/", "/login", "/signup", "/pricing", "/contact", "/legal", "/hire", "/onboarding", "/certificates", "/offline"];
+export const MARKETING_ROUTES = ["/", "/login", "/signup", "/forgot", "/reset", "/verify", "/pricing", "/contact", "/legal", "/hire", "/onboarding", "/certificates", "/offline"];
 export const isMarketingPath = (path: string) => MARKETING_ROUTES.some((p) => (p === "/" ? path === "/" : path === p || path.startsWith(`${p}/`)));
 
 /** Page title for the top bar, from the best-matching nav item. */

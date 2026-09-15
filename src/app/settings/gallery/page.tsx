@@ -33,7 +33,7 @@ export default async function GallerySettings() {
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3">{photos.map((p) => (
           <figure key={p.id} className="overflow-hidden rounded-xl border border-line bg-white">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={p.url} alt={p.caption} className="aspect-[4/3] w-full object-cover" />
+            <img src={p.url} alt={p.caption} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover" />
             <figcaption className="p-3 text-xs">
               <p className="line-clamp-2 text-ink">{p.caption || "Untitled"}</p>
               <p className="mt-1 text-muted">{p.takenOn ? fmtDate(p.takenOn) : ""}{p.company ? ` · ${p.company.name}` : ""}</p>

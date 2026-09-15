@@ -286,7 +286,7 @@ export default async function Home() {
               <Link key={p.id} href={`/feed/${p.id}`} className="group overflow-hidden rounded-[32px] border border-line bg-white transition hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(76,29,149,0.10)]">
                 <div className={`h-40 ${i % 3 === 0 ? "band-purple" : i % 3 === 1 ? "bg-navy" : "bg-plum"} p-6 text-white`}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {p.imageUrl ? <img src={p.imageUrl} alt="" className="-m-6 h-40 w-[calc(100%+3rem)] object-cover" /> : <p className="serif text-3xl leading-tight text-white/90">{p.body.split("\n")[0].slice(0, 70)}{p.body.length > 70 ? "…" : ""}</p>}
+                  {p.imageUrl ? <img src={p.imageUrl} alt="" loading="lazy" decoding="async" className="-m-6 h-40 w-[calc(100%+3rem)] object-cover" /> : <p className="serif text-3xl leading-tight text-white/90">{p.body.split("\n")[0].slice(0, 70)}{p.body.length > 70 ? "…" : ""}</p>}
                 </div>
                 <div className="p-6">
                   <p className="text-xs text-muted">{p.author.name} · {timeAgo(p.createdAt)}</p>

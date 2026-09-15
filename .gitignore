@@ -43,3 +43,7 @@ next-env.d.ts
 # user uploads
 /public/uploads
 /private-uploads
+
+# playwright
+/playwright-report
+/test-results

@@ -17,15 +17,17 @@ import { PROVIDER_LIST, providerName } from "@/lib/oauth";
 import { OAuthButtons } from "@/components/oauth-buttons";
 import { TIMEZONES } from "@/lib/tz";
 import { saveInvoiceIdentity } from "@/lib/actions/invoices";
+import { requestEmailChange, resendVerification } from "@/lib/actions/account-security";
 import { savePoSettings } from "@/lib/actions/purchase-orders";
+import { saveNda } from "@/lib/actions/agreements";
 import { STATE_OPTIONS, suggestPrefix } from "@/lib/gst";
 
 export const metadata = { title: "Settings" };
 
-export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ welcome?: string }> }) {
-  const { welcome } = await searchParams;
+export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ welcome?: string; verify?: string }> }) {
+  const { welcome, verify } = await searchParams;
   const user = await requireUser("/settings");
-  const account = await db.user.findUnique({ where: { id: user.id }, select: { passwordHash: true, emailNotifications: true, phone: true, whatsappAlerts: true, timezone: true, identityVerifiedAt: true, identityDocUrl: true, identityNote: true, oauthAccounts: { select: { provider: true, email: true, createdAt: true } } } });
+  const account = await db.user.findUnique({ where: { id: user.id }, select: { passwordHash: true, emailVerifiedAt: true, emailNotifications: true, phone: true, whatsappAlerts: true, timezone: true, identityVerifiedAt: true, identityDocUrl: true, identityNote: true, oauthAccounts: { select: { provider: true, email: true, createdAt: true } } } });
   const hasPassword = !!account?.passwordHash;
   const linked = new Map((account?.oauthAccounts ?? []).map((a) => [a.provider, a]));
 
@@ -50,6 +52,19 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           ) : null}
         </Card>
       ) : null}
+
+      <Card className="p-6">
+        <div className="flex items-center justify-between"><h2 className="text-lg font-bold">Sign-in email</h2>{account?.emailVerifiedAt ? <Badge tone="lime">Confirmed</Badge> : <Badge tone="amber">Not confirmed</Badge>}</div>
+        {verify === "changed" ? <div className="mt-3"><Alert tone="lime">Your sign-in email is now {user.email}.</Alert></div> : verify === "invalid" ? <div className="mt-3"><Alert tone="rose">That link is invalid or has expired. Request a new one below.</Alert></div> : verify === "taken" ? <div className="mt-3"><Alert tone="rose">That email was registered by someone else in the meantime.</Alert></div> : null}
+        <p className="mt-1 text-sm text-muted">You sign in as <span className="font-medium text-ink">{user.email}</span>. Notifications, invoices and purchase orders go to this address.</p>
+        {!account?.emailVerifiedAt ? <ActionForm action={resendVerification} className="mt-3"><SubmitButton size="sm" variant="secondary" pendingText="Sending…">Resend confirmation link</SubmitButton></ActionForm> : null}
+        <ActionForm action={requestEmailChange} className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_auto] md:items-end">
+          <Field label="New email"><Input name="newEmail" type="email" required placeholder="new@company.com" /></Field>
+          {hasPassword ? <Field label="Current password"><Input name="password" type="password" autoComplete="current-password" required /></Field> : <div className="hidden md:block" />}
+          <SubmitButton size="sm" variant="secondary" pendingText="Sending…">Change email</SubmitButton>
+        </ActionForm>
+        <p className="mt-2 text-xs text-muted">We send a confirmation link to the new address; the change applies only after you open it.</p>
+      </Card>
 
       <Card className="p-6">
         <h2 className="text-lg font-bold">Export your data</h2>
@@ -273,6 +288,16 @@ async function CompanySettings({ companyId, isOwner, canManage, me }: { companyI
             <Field label="Billing / accounts email" hint="Printed as the buyer contact on POs"><Input name="billingEmail" type="email" defaultValue={c.billingEmail ?? ""} placeholder="accounts@company.com" /></Field>
             <Field label="Default terms and conditions" hint="One per line; prefilled on every new PO" className="md:col-span-2"><Textarea name="poTerms" defaultValue={c.poTerms} className="min-h-28" placeholder={"Invoice after successful completion, quoting this PO number.\nPayment within 30 days of a correct invoice.\nGST extra; TDS as per the Income Tax Act."} /></Field>
             <div className="md:col-span-2"><SubmitButton size="sm" variant="violet" pendingText="Saving…">Save purchase order settings</SubmitButton></div>
+          </ActionForm>
+        </Card>
+      ) : null}
+      {canManage ? (
+        <Card className="p-6">
+          <h2 className="text-lg font-bold">Trainer NDA</h2>
+          <p className="mt-1 text-sm text-muted">Paste your non-disclosure terms. Trainers read and accept them when they accept a work order; the acceptance is recorded with their signature. Leave empty to skip.</p>
+          <ActionForm action={saveNda} className="mt-3 space-y-3">
+            <Textarea name="ndaText" defaultValue={c.ndaText} className="min-h-32" placeholder={"The trainer will keep all client materials, participant data and business information confidential…"} />
+            <SubmitButton size="sm" variant="secondary" pendingText="Saving…">Save NDA</SubmitButton>
           </ActionForm>
         </Card>
       ) : null}

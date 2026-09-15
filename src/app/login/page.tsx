@@ -18,9 +18,9 @@ const ERRORS: Record<string, string> = {
 
 export const metadata = { title: "Sign in" };
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string; reset?: string; verify?: string }> }) {
   if (await getCurrentUser()) redirect("/dashboard");
-  const { next, error } = await searchParams;
+  const { next, error, reset, verify } = await searchParams;
   const t = await getT();
   return (
     <div className="mx-auto max-w-md pt-6 md:pt-14">
@@ -28,6 +28,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <h1 className="text-3xl font-bold">{t("login.title")}</h1>
       <p className="mt-2 text-muted">{t("login.body")}</p>
       {error ? <div className="mt-4"><Alert tone="rose">{ERRORS[error] ?? "Sign-in failed. Try again."}</Alert></div> : null}
+      {reset ? <div className="mt-4"><Alert tone="lime">Password updated. Sign in with the new one.</Alert></div> : null}
+      {verify === "done" ? <div className="mt-4"><Alert tone="lime">Email confirmed. Sign in to continue.</Alert></div> : verify === "changed" ? <div className="mt-4"><Alert tone="lime">Your sign-in email has been changed. Use the new address.</Alert></div> : verify === "invalid" ? <div className="mt-4"><Alert tone="rose">That link is invalid or has expired.</Alert></div> : null}
       <Card className="mt-6 p-6">
         <OAuthButtons next={next} />
         <ActionForm action={login} className="space-y-4">
@@ -35,6 +37,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <Field label={t("login.email")}><Input name="email" type="email" autoComplete="email" required placeholder="you@company.com" /></Field>
           <Field label={t("login.password")}><Input name="password" type="password" autoComplete="current-password" required placeholder="••••••••" /></Field>
           <SubmitButton className="w-full" size="lg" pendingText={t("login.pending")}>{t("login.submit")}</SubmitButton>
+          <p className="text-center text-sm"><Link href="/forgot" className="text-muted hover:text-cyan">Forgot your password?</Link></p>
         </ActionForm>
       </Card>
       <p className="mt-4 text-center text-sm text-muted">

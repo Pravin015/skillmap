@@ -147,6 +147,26 @@ Without keys in development the pricing page runs a **simulator** that activates
 - **SEO** (see `SEO.md`): site-wide metadata with canonicals and social cards, JSON-LD (Organization, WebSite, FAQ, Person, JobPosting, Breadcrumb), `robots.txt`, dynamic `sitemap.xml`, generated Open Graph image, and programmatic landing pages `/hire/<skill>` and `/hire/<skill>/<city>` cross-linked from the home page, category pages and footer.
 - **Public API v1 + webhooks** (`/settings/developers`): companies create API keys (`cg_live_…`, stored hashed, shown once) and call `GET/POST /api/v1/requirements`, `GET/PATCH /api/v1/requirements/:id`, `GET /api/v1/applications`, `GET /api/v1/work-orders` (cursor pagination, 600 req/min per key). Webhook endpoints receive signed JSON (`X-CorpGurus-Signature: sha256=HMAC(secret, "{timestamp}.{body}")`) for `application.created`, `application.status_changed`, `requirement.status_changed`, `work_order.sent`, `work_order.accepted`, `invoice.created`, `invoice.paid`; deliveries are logged with status and error, and a "Send test" button exists per endpoint.
 
+## Tests
+
+- `pnpm test` — Vitest unit tests for GST maths (CGST/SGST vs IGST, rounding, amount in words, numbering), company and staff permissions and sidebar navigation (`src/lib/*.test.ts`).
+- `pnpm test:e2e` — Playwright against a production build on :3211 (built and started automatically; needs the local Postgres and Chrome). Covers sign-in and sign-out, the sidebar per role, admin disable/enable, and the whole money path: post → apply → award → work order → PO → invoice → PDF → paid → PO closed. Fixtures (`tests/e2e/global-setup.ts`) create the `E2E Testing Co` company and `e2e.trainer@corpgurus.test` trainer once and clean their requirements every run.
+- `pnpm db:seed:demo` — 50 trainers, 15 companies, 70 requirements over a year with applications, work orders, POs, invoices, ratings and feed posts (deterministic, idempotent; emails end in `@demo.corpgurus.in`, password `Password@123`).
+
+## Accounts and security
+
+- **Forgot password** (`/forgot` → emailed one-hour link → `/reset/<token>`). Tokens are single use and stored hashed (`VerificationToken`).
+- **Email verification**: sign-ups get a confirmation link (`/verify/<token>`); an amber bar shows until the address is confirmed, with a resend button. Google/LinkedIn/Microsoft sign-ups count as verified. Existing users were marked verified on rollout.
+- **Change email** (Settings → Sign-in email): the new address gets a confirmation link and the old one a heads-up; nothing changes until the link is opened.
+
+## Delivery records and money
+
+- **Attendance** (`/requirements/<id>/work-order/attendance`): paste the participant roster (per batch), tick attendance per training day, export `attendance.csv`. Attendance % and learner feedback are summarised on the invoice page.
+- **TDS**: when a company records payment it can withhold TDS (194J) on the taxable value; the invoice shows the settlement (total, credit notes, TDS, net received).
+- **Credit notes**: trainers issue credit notes against sent or paid invoices (`CN-<invoice>-01`), GST credited at the invoice rate, capped at the invoice value.
+- **Ledger** (`/dashboard/ledger`, `ledger.csv`): running balance per counterparty from invoices, payments, TDS and credit notes, for trainers and companies.
+- **Contracts**: the platform **Trainer Agreement** (`/agreements/trainer`, text and version editable under Platform) must be accepted once before applying; a version bump asks again. Companies can set an **NDA** in Settings that trainers accept when accepting a work order (recorded with the signature).
+
 ## App shell
 
 Signed-in members get a sidebar layout on every page except the marketing routes (home, pricing, legal, sign-in, onboarding): grouped sections per role (trainer work and profile, company hiring and finance, staff admin console), a menu filter, badges for notifications, messages, the verification queue and open reports, collapse-to-icons on desktop and a drawer on mobile. Navigation is built in `src/lib/nav.ts`; the frame is `src/components/app-frame.tsx`. Visitors keep the marketing header and footer.

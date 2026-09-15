@@ -16,6 +16,7 @@ import { roleLabel } from "@/lib/utils";
 import { getLang, getT, LANGS } from "@/lib/i18n";
 import { setLang } from "@/lib/actions/lang";
 import { buildNav } from "@/lib/nav";
+import { VerifyEmailBar } from "./verify-email-bar";
 
 type T = Awaited<ReturnType<typeof getT>>;
 
@@ -57,6 +58,7 @@ export async function Shell({ children }: { children: React.ReactNode }) {
             <form action={stopImpersonation} className="ml-auto"><button className="rounded-md border border-rose/40 bg-white px-2.5 py-1 font-display text-xs font-semibold hover:bg-rose/5">Exit support view</button></form></div>
         </div>
       ) : null}
+      {user && !user.emailVerifiedAt && !user.impersonatedBy ? <VerifyEmailBar email={user.email} /> : null}
       {announcementLive ? <AnnouncementBar id={ann.announcement_id ?? "1"} text={ann.announcement_text} tone={(ann.announcement_tone as "info" | "warning" | "success") || "info"} href={ann.announcement_href || undefined} /> : null}
     </>
   );

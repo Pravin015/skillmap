@@ -49,7 +49,7 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
                     <p className="whitespace-pre-line">{m.body}</p>
                     {m.attachmentUrl ? (/\.(png|jpe?g|webp|gif)$/i.test(m.attachmentUrl) ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <a href={m.attachmentUrl} target="_blank" rel="noreferrer"><img src={m.attachmentUrl} alt={m.attachmentName ?? ""} className="mt-2 max-h-64 rounded-lg" /></a>
+                      <a href={m.attachmentUrl} target="_blank" rel="noreferrer"><img src={m.attachmentUrl} alt={m.attachmentName ?? ""} loading="lazy" decoding="async" className="mt-2 max-h-64 rounded-lg" /></a>
                     ) : <a href={m.attachmentUrl} target="_blank" rel="noreferrer" className={`mt-2 flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs ${mine ? "border-white/30 text-white" : "border-line text-cyan"}`}><Paperclip size={12} />{m.attachmentName ?? "Attachment"}</a>) : null}
                     <p className={`mono mt-1 text-[10px] ${mine ? "text-white/70" : "text-dim"}`}>{new Intl.DateTimeFormat("en-IN", { hour: "numeric", minute: "2-digit" }).format(m.createdAt)}</p>
                   </div>

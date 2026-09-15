@@ -2,6 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
+import { sendVerificationEmail } from "@/lib/actions/account-security";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { track } from "@/lib/analytics";
@@ -61,6 +62,7 @@ export async function signup(_prev: ActionState, formData: FormData): Promise<Ac
 
   await createSession(user.id);
   void track("signup", user.id, { role: d.role, method: "password" });
+  await sendVerificationEmail(user.id).catch((e) => console.error("[verify email]", (e as Error).message));
   redirect(d.role === "TRAINER" ? "/onboarding/trainer" : "/onboarding/company");
 }
 

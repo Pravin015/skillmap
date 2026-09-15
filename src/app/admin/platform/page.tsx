@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { STAFF_ROLE_META, STAFF_ROLES } from "@/lib/permissions";
 import { FEATURES, featureMap } from "@/lib/features";
@@ -15,6 +16,7 @@ const SETTINGS: { key: string; label: string; hint: string }[] = [
   { key: "free_open_requirements", label: "Free open requirements per company", hint: "Training partners are exempt." },
   { key: "support_email", label: "Support email", hint: "Shown in suspension and takedown notices." },
   { key: "platform_name", label: "Platform name", hint: "" },
+  { key: "trainer_agreement_version", label: "Trainer Agreement version", hint: "Raise it after editing the text below; trainers accept again before their next application." },
 ];
 
 const daysAgo = (n: number) => new Date(Date.now() - n * 86400000);
@@ -115,6 +117,15 @@ export default async function PlatformPage() {
         </Card>
 
 
+      <Card className="p-6">
+        <h2 className="text-lg font-bold">Trainer Agreement text</h2>
+        <p className="mt-1 text-sm text-muted">Numbered clauses, one per line. Shown at <Link href="/agreements/trainer" className="text-cyan underline">/agreements/trainer</Link>; empty restores the default.</p>
+        <ActionForm action={updateSetting} className="mt-3 space-y-2">
+          <input type="hidden" name="key" value="trainer_agreement_text" />
+          <textarea name="value" defaultValue={settings.find((s) => s.key === "trainer_agreement_text")?.value ?? ""} className="min-h-48 w-full rounded-xl border border-line-2 bg-white px-3.5 py-2.5 text-sm" placeholder="1. Independent contractor. …" />
+          <SubmitButton size="sm" variant="secondary" pendingText="Saving…">Save agreement</SubmitButton>
+        </ActionForm>
+      </Card>
       <Card className="p-6">
         <h2 className="text-lg font-bold">Announcement banner</h2>
         <p className="mt-1 text-sm text-muted">Shown at the top of every page until the expiry date or until cleared. Members can dismiss it per browser.</p>

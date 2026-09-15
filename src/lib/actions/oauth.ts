@@ -42,7 +42,7 @@ export async function completeOAuthSignup(_p: ActionState, fd: FormData): Promis
 
   const user = await db.user.create({
     data: {
-      name: d.name, email: pending.email, role: d.role, avatarUrl: pending.picture,
+      name: d.name, email: pending.email, role: d.role, avatarUrl: pending.picture, emailVerifiedAt: new Date(),
       oauthAccounts: { create: { provider: pending.provider, providerAccountId: pending.sub, email: pending.email } },
     },
   });

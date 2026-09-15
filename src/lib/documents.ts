@@ -18,6 +18,7 @@ export const invoiceInclude = {
   workOrder: { include: { requirement: { select: { id: true, title: true } } } },
   purchaseOrder: { select: { id: true, poNumber: true, number: true, status: true, subtotal: true, total: true } },
   lines: { orderBy: { position: "asc" as const } },
+  creditNotes: { orderBy: { createdAt: "asc" as const } },
 };
 
 export async function loadInvoiceDoc(id: string) {

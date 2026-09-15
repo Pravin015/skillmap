@@ -11,6 +11,7 @@ import { Avatar, Badge, Button, ButtonLink, Card, Chip, Field, Input, Select, Te
 import { reqTone } from "@/components/cards";
 import { appStatusLabel, dateRange, fmtDate, modeLabel, rateRange, reqStatusLabel, timeAgo } from "@/lib/utils";
 import { createFeedbackLink } from "@/lib/actions/feedback";
+import { getTrainerAgreement, hasAcceptedAgreement } from "@/lib/agreements";
 import { issueCertificates, revokeCertificate } from "@/lib/actions/certificates";
 import { overlapping } from "@/components/availability";
 import { ReportButton } from "@/components/report-button";
@@ -63,6 +64,8 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
   const clashes = user?.trainerProfile && acceptsApps && !myApp
     ? overlapping(await db.availabilityBlock.findMany({ where: { trainerId: user.trainerProfile.id, endDate: { gte: r.startDate }, startDate: { lte: r.endDate } } }), r.startDate, r.endDate)
     : [];
+  const agreement = await getTrainerAgreement();
+  const agreementOk = user ? hasAcceptedAgreement(await db.user.findUniqueOrThrow({ where: { id: user.id }, select: { agreementVersion: true } }), agreement.version) : true;
   const myTeams = user?.trainerProfile && acceptsApps && !myApp ? await db.trainerTeam.findMany({ where: { leadId: user.trainerProfile.id, members: { some: { status: "ACCEPTED" } } }, select: { id: true, name: true }, orderBy: { name: "asc" } }) : [];
   const feedbackLink = awarded && (isMember || user?.id === awarded.trainer.user.id) ? await db.feedbackLink.findFirst({ where: { requirementId: r.id }, include: { _count: { select: { responses: true } }, responses: { select: { score: true, wouldRecommend: true } } } }) : null;
   const topLevel = r.comments.filter((c) => !c.parentId);
@@ -185,6 +188,7 @@ export default async function RequirementPage({ params }: { params: Promise<{ id
                   <input type="hidden" name="requirementId" value={r.id} />
                   <Field label="Cover note"><Textarea name="coverNote" required placeholder="Relevant batches you've delivered, what you bring, anything you need from them." /></Field>
                   <Field label={`Proposed day rate (${r.currency})`} hint={`Budget: ${rateRange(r.budgetMin, r.budgetMax, r.currency)}`}><Input name="proposedRate" type="number" min={0} step={500} placeholder={String(r.budgetMax ?? "")} /></Field>
+                  {!agreementOk ? <label className="flex items-start gap-2 rounded-lg border border-line bg-surface-2 px-3 py-2 text-xs"><input type="checkbox" name="acceptAgreement" value="1" className="mt-0.5 accent-cyan" required /> <span>I accept the <Link href="/agreements/trainer" className="text-cyan underline" target="_blank">Trainer Agreement v{agreement.version}</Link> (once, for all applications).</span></label> : null}
                   {myTeams.length ? <Field label="Apply as" hint="Team applications list every member; you sign and invoice as lead."><Select name="teamId" defaultValue=""><option value="">Myself</option>{myTeams.map((tm) => <option key={tm.id} value={tm.id}>Team · {tm.name}</option>)}</Select></Field> : null}
                   <SubmitButton className="w-full" pendingText="Sending…">Send application</SubmitButton>
                 </ActionForm>
