@@ -147,6 +147,14 @@ Without keys in development the pricing page runs a **simulator** that activates
 - **SEO** (see `SEO.md`): site-wide metadata with canonicals and social cards, JSON-LD (Organization, WebSite, FAQ, Person, JobPosting, Breadcrumb), `robots.txt`, dynamic `sitemap.xml`, generated Open Graph image, and programmatic landing pages `/hire/<skill>` and `/hire/<skill>/<city>` cross-linked from the home page, category pages and footer.
 - **Public API v1 + webhooks** (`/settings/developers`): companies create API keys (`cg_live_…`, stored hashed, shown once) and call `GET/POST /api/v1/requirements`, `GET/PATCH /api/v1/requirements/:id`, `GET /api/v1/applications`, `GET /api/v1/work-orders` (cursor pagination, 600 req/min per key). Webhook endpoints receive signed JSON (`X-CorpGurus-Signature: sha256=HMAC(secret, "{timestamp}.{body}")`) for `application.created`, `application.status_changed`, `requirement.status_changed`, `work_order.sent`, `work_order.accepted`, `invoice.created`, `invoice.paid`; deliveries are logged with status and error, and a "Send test" button exists per endpoint.
 
+## Deploy on Railway
+
+1. New project → Deploy from GitHub → this repo (Railway picks up `railway.json` and builds the Dockerfile).
+2. Add a PostgreSQL service; Railway injects `DATABASE_URL` into the app when you reference it: set `DATABASE_URL=${{Postgres.DATABASE_URL}}` on the app service.
+3. Set `AUTH_SECRET` (long random string) and `NEXT_PUBLIC_APP_URL=https://<your-railway-domain>`; add provider keys from `.env.example` as you get them.
+4. The container runs `prisma db push` on every start, so the schema is applied automatically. Seed demo data once from a local shell pointed at the Railway database: `DATABASE_URL=<railway url> pnpm db:seed`.
+5. Generate a public domain under Settings → Networking; the health check is `/api/health`.
+
 ## Phase 2 backlog
 
 Redis-backed rate limiting for multi-instance deployments. Email delivery (Resend), S3-compatible uploads, Meilisearch, Stripe for USD billing.
