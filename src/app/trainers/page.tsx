@@ -47,9 +47,9 @@ export default async function TrainersPage({ searchParams }: { searchParams: Pro
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" />
           <Input name="q" defaultValue={sp.q} placeholder="Search by name, skill or keyword" className="pl-9" />
         </div>
-        <Select name="skill" defaultValue={sp.skill ?? ""}><option value="">Any skill</option>{skills.map((s) => <option key={s.id} value={s.slug}>{s.name}</option>)}</Select>
-        <Select name="city" defaultValue={sp.city ?? ""}><option value="">Any city</option>{cities.map((c) => <option key={c} value={c}>{c}</option>)}</Select>
-        <Select name="mode" defaultValue={sp.mode ?? ""}><option value="">Any mode</option>{DELIVERY_MODES.map((m) => <option key={m} value={m}>{modeLabel[m]}</option>)}</Select>
+        <Select name="skill" aria-label="Skill" defaultValue={sp.skill ?? ""}><option value="">Any skill</option>{skills.map((s) => <option key={s.id} value={s.slug}>{s.name}</option>)}</Select>
+        <Select name="city" aria-label="City" defaultValue={sp.city ?? ""}><option value="">Any city</option>{cities.map((c) => <option key={c} value={c}>{c}</option>)}</Select>
+        <Select name="mode" aria-label="Delivery mode" defaultValue={sp.mode ?? ""}><option value="">Any mode</option>{DELIVERY_MODES.map((m) => <option key={m} value={m}>{modeLabel[m]}</option>)}</Select>
         <label className="flex items-center gap-2 px-1 text-sm text-muted"><input type="checkbox" name="verified" value="1" defaultChecked={!!sp.verified} className="accent-cyan" /> Verified only</label>
         <Button type="submit" variant="secondary">Filter</Button>
       </form>

@@ -63,7 +63,7 @@ type Tone = "cyan" | "violet" | "amber" | "lime" | "rose" | "neutral";
 const tones: Record<Tone, string> = {
   cyan: "bg-cyan/8 text-cyan border-cyan/20",
   violet: "bg-violet/8 text-violet border-violet/20",
-  amber: "bg-amber/10 text-amber border-amber/25",
+  amber: "bg-amber/10 text-[#7a4b06] border-amber/25",
   lime: "bg-lime/10 text-lime border-lime/25",
   rose: "bg-rose/8 text-rose border-rose/25",
   neutral: "bg-surface-2 text-muted border-line-2",

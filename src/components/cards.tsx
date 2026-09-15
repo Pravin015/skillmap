@@ -65,7 +65,7 @@ export function RequirementCard({ r }: {
         <span className="flex items-center gap-1"><Users size={12} />{r.participants} participants</span>
         <span className="mono text-cyan">{rateRange(r.budgetMin, r.budgetMax, r.currency)}</span>
       </div>
-      <div className="mono mt-3 flex gap-4 text-[11px] uppercase tracking-wider text-dim">
+      <div className="mono mt-3 flex gap-4 text-[11px] uppercase tracking-wider text-muted">
         <span>{r._count.applications} applied</span><span>{r._count.comments} comments</span><span className="ml-auto">{timeAgo(r.createdAt)}</span>
       </div>
     </Link>

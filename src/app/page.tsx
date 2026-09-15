@@ -73,7 +73,7 @@ export default async function Home() {
                   <p className="mono text-[11px] uppercase tracking-[0.12em] text-white/60">{t("home.glance")}</p>
                   <div className="mt-4 flex -space-x-3">{trainers.slice(0, 4).map((x) => <Avatar key={x.id} name={x.user.name} src={x.user.avatarUrl} size={44} className="ring-2 ring-navy" />)}</div>
                   <p className="mt-3 font-display text-3xl font-bold">{nT} <span className="serif text-lilac">{t("home.stat.trainers").toLowerCase()}</span></p>
-                  <p className="text-sm text-white/70">{nC} {t("home.stat.companies").toLowerCase()} · {nR} {t("home.stat.open").toLowerCase()}</p>
+                  <p className="text-sm text-white/80">{nC} {t("home.stat.companies").toLowerCase()} · {nR} {t("home.stat.open").toLowerCase()}</p>
                 </div>
                 <div className="mt-6 space-y-2">
                   {trainers.slice(0, 2).map((x) => (
@@ -86,7 +86,7 @@ export default async function Home() {
               <div className="rounded-3xl bg-cyan p-6 text-white shadow-[0_20px_60px_rgba(109,40,217,0.25)]">
                 <p className="font-display text-[40px] font-bold leading-none">{nDone}</p>
                 <p className="mt-2 text-sm font-semibold">batches awarded</p>
-                <p className="text-xs text-white/70">with signed work orders</p>
+                <p className="text-xs text-white/80">with signed work orders</p>
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default async function Home() {
           <div className="rounded-[32px] bg-navy p-8 text-white md:p-10">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-cyan"><Plus size={20} /></span>
             <h3 className="mt-6 text-3xl font-bold leading-tight">Tell us what you need <span className="serif text-lilac">to get delivered</span></h3>
-            <p className="mt-3 max-w-md text-white/70">Dates, delivery mode, participants and budget. Matching trainers are notified the moment you publish and can ask questions in the open.</p>
+            <p className="mt-3 max-w-md text-white/80">Dates, delivery mode, participants and budget. Matching trainers are notified the moment you publish and can ask questions in the open.</p>
             <div className="mt-6 rounded-2xl bg-white/10 p-4 text-sm text-white/80">
               <p className="text-white/50">e.g.</p>
               <p className="mt-1">HPE VM Essentials 9.0 · 3-day instructor-led for a 16-person bank ops team, Mumbai, week of 20 Oct.</p>
@@ -155,7 +155,7 @@ export default async function Home() {
             { n: "03", t: t("home.step.award"), b: "Award, sign a work order, secure payment in escrow and collect participant feedback and certificates.", href: "/pricing", cta: "See plans" },
           ].map((s) => (
             <div key={s.n} className="group rounded-[32px] border border-line bg-white p-7 transition hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(76,29,149,0.10)]">
-              <p className="serif text-5xl text-cyan/50">{s.n}</p>
+              <p className="serif text-5xl text-cyan/80">{s.n}</p>
               <h3 className="mt-4 text-2xl font-bold">{s.t}</h3>
               <p className="mt-2 text-muted">{s.b}</p>
               <Link href={s.href} className="mt-5 inline-flex items-center gap-1 font-display text-sm font-semibold text-cyan">{s.cta} <ArrowRight size={14} className="transition group-hover:translate-x-0.5" /></Link>
@@ -215,7 +215,7 @@ export default async function Home() {
               <blockquote className="mt-4 flex-1 text-[15px] leading-relaxed text-ink/90">“{r.body.length > 220 ? `${r.body.slice(0, 220)}…` : r.body}”</blockquote>
               <figcaption className="mt-5 flex items-center gap-3 border-t border-line pt-4">
                 <Avatar name={r.author.name} src={r.author.avatarUrl} size={40} tone="violet" />
-                <div className="min-w-0"><p className="truncate font-display text-sm font-semibold">{r.author.name}</p><p className="truncate text-xs text-muted">{r.company?.name ?? r.relationship} · about <Link href={`/trainers/${r.trainer.slug}`} className="text-cyan hover:underline">{r.trainer.user.name}</Link></p></div>
+                <div className="min-w-0"><p className="truncate font-display text-sm font-semibold">{r.author.name}</p><p className="truncate text-xs text-muted">{r.company?.name ?? r.relationship} · about <Link href={`/trainers/${r.trainer.slug}`} className="text-cyan underline decoration-cyan/40 underline-offset-2 hover:decoration-cyan">{r.trainer.user.name}</Link></p></div>
               </figcaption>
             </figure>
           ))}
@@ -323,7 +323,7 @@ export default async function Home() {
               </div>
             </div>
             <div className="rounded-[32px] bg-cyan p-8 text-white md:p-10">
-              <p className="mono text-[11px] uppercase tracking-[0.12em] text-white/70">{t("home.companies.eyebrow")}</p>
+              <p className="mono text-[11px] uppercase tracking-[0.12em] text-white/80">{t("home.companies.eyebrow")}</p>
               <h3 className="mt-3 text-3xl font-bold leading-tight">{t("home.companies.t")}</h3>
               <p className="mt-3 text-white/80">{t("home.companies.b")}</p>
               <div className="mt-6 flex flex-wrap gap-3"><ButtonLink href="/signup?as=company" variant="dark">{t("home.companies.cta")}</ButtonLink><ButtonLink href="/signup" variant="secondary">{t("home.trainers.cta")}</ButtonLink></div>

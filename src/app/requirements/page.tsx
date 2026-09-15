@@ -38,13 +38,14 @@ export default async function RequirementsPage({ searchParams }: { searchParams:
         actions={user?.membership ? <><ButtonLink href="/requirements/import" variant="secondary">Import CSV</ButtonLink><ButtonLink href="/requirements/new" variant="violet"><Plus size={16} /> Post a requirement</ButtonLink></> : !user ? <ButtonLink href="/signup?as=company" variant="violet">Post a requirement</ButtonLink> : null} />
       <form className="mb-6 grid gap-3 rounded-2xl border border-line bg-white p-4 md:grid-cols-[1fr_170px_140px_140px_150px_auto]">
         <div className="relative"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" /><Input name="q" defaultValue={sp.q} placeholder="Search title, skill or keyword" className="pl-9" /></div>
-        <Select name="category" defaultValue={sp.category ?? ""}><option value="">Any domain</option>{categories.map((c) => <option key={c.id} value={c.slug}>{c.name}</option>)}</Select>
-        <Select name="mode" defaultValue={sp.mode ?? ""}><option value="">Any mode</option>{DELIVERY_MODES.map((m) => <option key={m} value={m}>{modeLabel[m]}</option>)}</Select>
-        <Select name="source" defaultValue={sp.source ?? ""}><option value="">Any poster</option><option value="direct">Direct employers</option><option value="partner">Training partners</option></Select>
-        <Select name="status" defaultValue={status}><option value="open">Open</option><option value="closed">Closed</option><option value="all">All</option></Select>
+        <Select name="category" aria-label="Domain" defaultValue={sp.category ?? ""}><option value="">Any domain</option>{categories.map((c) => <option key={c.id} value={c.slug}>{c.name}</option>)}</Select>
+        <Select name="mode" aria-label="Delivery mode" defaultValue={sp.mode ?? ""}><option value="">Any mode</option>{DELIVERY_MODES.map((m) => <option key={m} value={m}>{modeLabel[m]}</option>)}</Select>
+        <Select name="source" aria-label="Posted by" defaultValue={sp.source ?? ""}><option value="">Any poster</option><option value="direct">Direct employers</option><option value="partner">Training partners</option></Select>
+        <Select name="status" aria-label="Status" defaultValue={status}><option value="open">Open</option><option value="closed">Closed</option><option value="all">All</option></Select>
         <Button type="submit" variant="secondary">Filter</Button>
       </form>
       <div className="mb-4 flex items-center justify-between"><p className="mono text-[11px] uppercase tracking-wider text-dim">{reqs.length} requirement{reqs.length === 1 ? "" : "s"}</p>{user?.trainerProfile ? <SaveSearchButton kind="REQUIREMENTS" params={{ q: sp.q, category: sp.category, mode: sp.mode, source: sp.source }} suggestedName={describeSearch("REQUIREMENTS", { q: sp.q, category: sp.category, mode: sp.mode, source: sp.source })} /> : null}</div>
+      <h2 className="sr-only">Results</h2>
       {reqs.length ? <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{reqs.map((r) => <RequirementCard key={r.id} r={r} />)}</div> : <Empty title="No requirements match" body="Try clearing a filter, or check back tomorrow — new requirements are posted daily." />}
     </div>
   );
