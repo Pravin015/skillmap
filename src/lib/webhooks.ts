@@ -9,6 +9,8 @@ export const WEBHOOK_EVENTS = [
   "requirement.status_changed",
   "work_order.sent",
   "work_order.accepted",
+  "purchase_order.issued",
+  "purchase_order.accepted",
   "invoice.created",
   "invoice.paid",
   "test",

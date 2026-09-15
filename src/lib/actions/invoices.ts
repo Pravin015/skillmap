@@ -6,46 +6,101 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { notify, audit } from "@/lib/notify";
 import type { ActionState } from "@/lib/types";
-import { memberCan } from "@/lib/permissions";
+import { companyCan, memberCan } from "@/lib/permissions";
 import { dispatchWebhook } from "@/lib/webhooks";
+import { invoiceSelect, shapeInvoice } from "@/lib/api-shapes";
+import { computeTax, docNumber, financialYear, parseLines, SAC_CODES, STATE_CODES, stateCodeFromGstin, suggestPrefix, sumLines } from "@/lib/gst";
+import { decrypt } from "@/lib/crypto";
+import { invoicePdf } from "@/lib/documents";
+import { dateRange } from "@/lib/utils";
 
 async function emitInvoice(id: string, event: "invoice.created" | "invoice.paid") {
-  const i = await db.invoice.findUnique({ where: { id }, select: { id: true, invoiceNumber: true, status: true, amount: true, gstRate: true, gstAmount: true, total: true, currency: true, dueDate: true, paidAt: true, paidReference: true, workOrderId: true, companyId: true, createdAt: true, trainer: { select: { id: true, slug: true, user: { select: { name: true } } } } } });
-  if (i) await dispatchWebhook(i.companyId, event, { invoice: { id: i.id, number: i.invoiceNumber, status: i.status, amount: i.amount, gst_rate: i.gstRate, gst_amount: i.gstAmount, total: i.total, currency: i.currency, due_date: i.dueDate, paid_at: i.paidAt, paid_reference: i.paidReference, work_order_id: i.workOrderId, trainer: { id: i.trainer.id, slug: i.trainer.slug, name: i.trainer.user.name }, created_at: i.createdAt } });
+  const i = await db.invoice.findUnique({ where: { id }, select: { ...invoiceSelect, companyId: true } });
+  if (i) await dispatchWebhook(i.companyId, event, { invoice: shapeInvoice(i) });
 }
 
-function refresh(id?: string) {
-  revalidatePath("/dashboard/invoices"); revalidatePath("/dashboard"); revalidatePath("/dashboard/analytics");
+function refresh(id?: string, poId?: string | null) {
+  revalidatePath("/dashboard/invoices"); revalidatePath("/dashboard"); revalidatePath("/dashboard/analytics"); revalidatePath("/dashboard/purchase-orders");
   if (id) revalidatePath(`/invoices/${id}`);
+  if (poId) revalidatePath(`/purchase-orders/${poId}`);
 }
 
-/** Trainer raises an invoice against an accepted work order. */
+/** Bank details block printed on the invoice, from the encrypted account on file. */
+function bankBlock(p: { bankHolder: string | null; bankAccountEnc: string | null; bankIfsc: string | null; gstin: string | null; pan: string | null }) {
+  const acct = decrypt(p.bankAccountEnc);
+  if (!p.bankHolder || !acct || !p.bankIfsc) return null;
+  return [`Account name: ${p.bankHolder}`, `Account number: ${acct}`, `IFSC code: ${p.bankIfsc}`, `Bank: ${p.bankIfsc.slice(0, 4)}`, p.gstin ? `GSTIN: ${p.gstin}` : null, p.pan ? `PAN: ${p.pan}` : null].filter(Boolean).join("\n");
+}
+
+/** Trainer raises a tax invoice against an accepted work order, optionally under an accepted purchase order. */
 export async function raiseInvoice(_p: ActionState, fd: FormData): Promise<ActionState> {
   const user = await requireUser();
   if (!user.trainerProfile) return { error: "Only trainers raise invoices." };
   const workOrderId = String(fd.get("workOrderId"));
-  const wo = await db.workOrder.findUnique({ where: { id: workOrderId }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, requirement: { select: { id: true, title: true } }, invoices: { where: { status: { in: ["SENT", "PAID"] } } } } });
+  const purchaseOrderId = String(fd.get("purchaseOrderId") ?? "").trim() || null;
+  const wo = await db.workOrder.findUnique({ where: { id: workOrderId }, include: { company: { include: { members: { select: { userId: true, role: true } } } }, requirement: { select: { id: true, title: true } }, invoices: { where: { status: { in: ["SENT", "PAID"] } }, select: { amount: true, purchaseOrderId: true } } } });
   if (!wo || wo.trainerId !== user.trainerProfile.id) return { error: "Work order not found." };
   if (wo.status !== "ACCEPTED") return { error: "The work order must be accepted before invoicing." };
-  if (wo.invoices.length) return { error: "An invoice already exists for this work order." };
-  const amount = Number(fd.get("amount") || wo.total);
-  if (!(amount > 0)) return { error: "Enter the amount." };
+  const po = purchaseOrderId ? await db.purchaseOrder.findUnique({ where: { id: purchaseOrderId } }) : null;
+  if (purchaseOrderId && (!po || po.workOrderId !== wo.id)) return { error: "That purchase order does not belong to this work order." };
+  if (po && po.status !== "ACCEPTED") return { error: po.status === "ISSUED" ? "Accept the purchase order first, then invoice against it." : `The purchase order is ${po.status.toLowerCase().replace("_", " ")}; it cannot be invoiced.` };
+  const lines = parseLines(String(fd.get("lines") ?? ""));
+  if (typeof lines === "string") return { error: lines };
+  const subtotal = sumLines(lines);
+  if (!(subtotal > 0)) return { error: "The invoice total must be more than zero." };
+  if (po) {
+    const billed = wo.invoices.filter((i) => i.purchaseOrderId === po.id).reduce((n, i) => n + i.amount, 0);
+    if (billed + subtotal > po.subtotal) return { error: `This would bill ${wo.currency} ${(billed + subtotal).toLocaleString("en-IN")} against a purchase order of ${wo.currency} ${po.subtotal.toLocaleString("en-IN")} (${wo.currency} ${(po.subtotal - billed).toLocaleString("en-IN")} remaining). Ask the company to revise the PO for extra charges.` };
+  }
   const gstRate = Number(fd.get("gstRate") ?? 18);
   if (![0, 5, 12, 18, 28].includes(gstRate)) return { error: "Choose a valid GST rate." };
-  const invoiceNumber = String(fd.get("invoiceNumber") ?? "").trim();
-  if (!invoiceNumber) return { error: "Enter your invoice number." };
+  const sacCode = String(fd.get("sacCode") ?? "999293");
+  if (!SAC_CODES.some((s) => s.code === sacCode)) return { error: "Choose a SAC code." };
   const dueDate = new Date(String(fd.get("dueDate") || "") || Date.now() + 30 * 86400000);
-  const trainerGstin = String(fd.get("trainerGstin") ?? "").trim() || null;
-  const paymentDetails = String(fd.get("paymentDetails") ?? "").trim();
-  const gstAmount = Math.round((amount * gstRate) / 100);
+  if (isNaN(dueDate.getTime())) return { error: "Check the due date." };
+  const profile = await db.trainerProfile.findUniqueOrThrow({ where: { id: wo.trainerId }, include: { user: { select: { name: true, email: true, phone: true } } } });
+  const trainerGstin = (String(fd.get("trainerGstin") ?? "").trim() || profile.gstin || "").toUpperCase() || null;
+  if (trainerGstin && !stateCodeFromGstin(trainerGstin)) return { error: "Your GSTIN does not look valid (15 characters, e.g. 27ABCDE1234F1Z5)." };
+  if (gstRate > 0 && !trainerGstin) return { error: "Add your GSTIN to charge GST, or set the GST rate to 0%." };
+  const supplierStateCode = profile.stateCode || stateCodeFromGstin(trainerGstin);
+  const customerName = po?.buyerName ?? wo.company.gstLegalName ?? wo.company.name;
+  const customerAddress = po?.buyerAddress ?? wo.company.billingAddress;
+  const companyGstin = po?.buyerGstin ?? wo.company.gstin?.toUpperCase() ?? null;
+  const customerStateCode = po?.buyerStateCode ?? wo.company.stateCode ?? stateCodeFromGstin(companyGstin);
+  const tax = computeTax(subtotal, gstRate, supplierStateCode, customerStateCode);
+
+  // Numbering: use the typed number, else the trainer's running series for the financial year.
+  let invoiceNumber = String(fd.get("invoiceNumber") ?? "").trim().slice(0, 40);
+  if (!invoiceNumber) {
+    const fy = financialYear();
+    const seq = profile.invoiceSeqFy === fy ? profile.invoiceSeq + 1 : 1;
+    await db.trainerProfile.update({ where: { id: profile.id }, data: { invoiceSeq: seq, invoiceSeqFy: fy } });
+    invoiceNumber = docNumber(profile.invoicePrefix || suggestPrefix(profile.legalName || profile.user.name, "initials"), fy, seq);
+  }
+  if (await db.invoice.findFirst({ where: { trainerId: profile.id, invoiceNumber, status: { not: "CANCELLED" } }, select: { id: true } })) return { error: `You already have an invoice numbered ${invoiceNumber}.` };
+
+  const includeBank = String(fd.get("includeBank") ?? "1") === "1";
+  const paymentDetails = (includeBank ? bankBlock(profile) : null) ?? String(fd.get("paymentDetails") ?? "").trim() ?? profile.paymentDetails ?? "";
+  const participantsRaw = String(fd.get("participants") ?? "").trim();
+  const s = (k: string) => String(fd.get(k) ?? "").trim();
   const inv = await db.invoice.create({ data: {
-    invoiceNumber, workOrderId, trainerId: wo.trainerId, companyId: wo.companyId, issuedById: user.id, description: String(fd.get("description") ?? "").trim() || `${wo.title} · ${wo.days} day${wo.days > 1 ? "s" : ""} × ${wo.dayRate}`,
-    amount, gstRate, gstAmount, total: amount + gstAmount, currency: wo.currency, trainerGstin, companyGstin: wo.company.gstin, paymentDetails, notes: String(fd.get("notes") ?? "").trim(), dueDate,
+    invoiceNumber, workOrderId, purchaseOrderId: po?.id ?? null, poNumber: po?.poNumber ?? (s("poNumber").slice(0, 60) || null), poDate: po?.poDate ?? null,
+    trainerId: wo.trainerId, companyId: wo.companyId, issuedById: user.id,
+    description: lines[0].description, amount: subtotal, gstRate, gstAmount: tax.gstAmount, total: tax.total, currency: wo.currency,
+    taxType: tax.taxType, cgstAmount: tax.cgst, sgstAmount: tax.sgst, igstAmount: tax.igst, sacCode,
+    placeOfSupply: s("placeOfSupply").slice(0, 300) || po?.placeOfSupply || "", periodText: s("periodText").slice(0, 200) || po?.periodText || dateRange(wo.startDate, wo.endDate), participants: participantsRaw ? Number(participantsRaw) || null : po?.participants ?? wo.participants, endClientRef: s("endClientRef").slice(0, 200) || po?.endClientRef || null,
+    trainerGstin, companyGstin, supplierName: profile.legalName || profile.user.name, supplierAddress: profile.billingAddress, supplierPan: profile.pan, supplierStateCode, supplierContact: [profile.user.email, profile.user.phone].filter(Boolean).join(" | "),
+    customerName, customerAddress, customerStateCode, trainerName: profile.user.name, signatoryName: s("signatoryName").slice(0, 80) || profile.signatoryName || profile.user.name,
+    paymentDetails, notes: s("notes"), dueDate,
+    lines: { create: lines },
   } });
-  await db.trainerProfile.update({ where: { id: wo.trainerId }, data: { gstin: trainerGstin ?? undefined, paymentDetails: paymentDetails || undefined } });
+  if (String(fd.get("trainerGstin") ?? "").trim() && trainerGstin !== profile.gstin) await db.trainerProfile.update({ where: { id: profile.id }, data: { gstin: trainerGstin } });
+  await audit(user.id, "invoice.create", inv.id, { invoiceNumber, total: tax.total, purchaseOrderId: po?.id });
   await emitInvoice(inv.id, "invoice.created");
-  await notify(wo.company.members.map((m) => m.userId), "invoice", `Invoice ${invoiceNumber} from ${user.name}`, `${wo.title} · total ${wo.currency} ${(amount + gstAmount).toLocaleString("en-IN")} · due ${dueDate.toDateString()}`, `/invoices/${inv.id}`);
-  refresh(inv.id);
+  const pdf = await invoicePdf(inv.id).catch((e) => { console.error("[invoice pdf]", (e as Error).message); return null; });
+  const recipients = wo.company.members.filter((m) => companyCan(m.role, "pay_invoice") || companyCan(m.role, "sign_work_order")).map((m) => m.userId);
+  await notify(recipients, "invoice", `Invoice ${invoiceNumber} from ${profile.user.name}`, `${wo.title}${po ? ` · against ${po.poNumber}` : ""} · total ${wo.currency} ${tax.total.toLocaleString("en-IN")} · due ${dueDate.toDateString()}`, `/invoices/${inv.id}`, pdf ? { attachments: [{ filename: pdf.filename, content: pdf.buffer }] } : undefined);
+  refresh(inv.id, po?.id);
   redirect(`/invoices/${inv.id}?sent=1`);
 }
 
@@ -60,8 +115,16 @@ export async function markInvoicePaid(_p: ActionState, fd: FormData): Promise<Ac
   await notify(inv.trainer.userId, "invoice", `Invoice ${inv.invoiceNumber} marked paid`, `${inv.company.name} recorded payment${reference ? ` · ref ${reference}` : ""}.`, `/invoices/${id}`);
   await audit(user.id, "invoice.paid", id, { reference });
   await emitInvoice(id, "invoice.paid");
-  refresh(id);
-  return { ok: "Marked as paid. The trainer has been notified." };
+  let closed = false;
+  if (inv.purchaseOrderId) {
+    const po = await db.purchaseOrder.findUnique({ where: { id: inv.purchaseOrderId }, select: { status: true, subtotal: true, invoices: { where: { status: "PAID" }, select: { amount: true } } } });
+    if (po?.status === "ACCEPTED" && po.invoices.reduce((n, i) => n + i.amount, 0) >= po.subtotal) {
+      await db.purchaseOrder.update({ where: { id: inv.purchaseOrderId }, data: { status: "CLOSED", closedAt: new Date() } });
+      closed = true;
+    }
+  }
+  refresh(id, inv.purchaseOrderId);
+  return { ok: `Marked as paid. The trainer has been notified.${closed ? " The purchase order is fully settled and now closed." : ""}` };
 }
 
 export async function cancelInvoice(fd: FormData) {
@@ -71,5 +134,21 @@ export async function cancelInvoice(fd: FormData) {
   if (!inv || inv.status !== "SENT" || inv.issuedById !== user.id) return;
   await db.invoice.update({ where: { id }, data: { status: "CANCELLED" } });
   await notify(inv.company.members.map((m) => m.userId), "invoice", `Invoice ${inv.invoiceNumber} cancelled`, "The trainer withdrew this invoice.", `/invoices/${id}`);
-  refresh(id);
+  refresh(id, inv.purchaseOrderId);
+}
+
+/** Trainer settings: the legal identity and numbering series printed on invoices. */
+export async function saveInvoiceIdentity(_p: ActionState, fd: FormData): Promise<ActionState> {
+  const user = await requireUser();
+  if (!user.trainerProfile) return { error: "Trainer accounts only." };
+  const stateCode = String(fd.get("stateCode") ?? "");
+  if (stateCode && !STATE_CODES[stateCode]) return { error: "Choose a state." };
+  const gstin = String(fd.get("gstin") ?? "").trim().toUpperCase();
+  if (gstin && !stateCodeFromGstin(gstin)) return { error: "GSTIN should be 15 characters, e.g. 27ABCDE1234F1Z5." };
+  if (gstin && stateCode && stateCodeFromGstin(gstin) !== stateCode) return { error: `That GSTIN is registered in ${STATE_CODES[stateCodeFromGstin(gstin)!]}; pick the same state.` };
+  const invoicePrefix = String(fd.get("invoicePrefix") ?? "").trim().toUpperCase().replace(/[^A-Z0-9/-]/g, "").slice(0, 24);
+  await db.trainerProfile.update({ where: { id: user.trainerProfile.id }, data: { legalName: String(fd.get("legalName") ?? "").trim().slice(0, 120) || null, billingAddress: String(fd.get("billingAddress") ?? "").trim().slice(0, 400) || null, stateCode: stateCode || null, gstin: gstin || null, invoicePrefix: invoicePrefix || null, signatoryName: String(fd.get("signatoryName") ?? "").trim().slice(0, 80) || null } });
+  await audit(user.id, "trainer.invoice_identity", user.trainerProfile.id);
+  revalidatePath("/settings");
+  return { ok: "Invoice details saved. They print on every invoice you raise from now on." };
 }

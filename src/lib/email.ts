@@ -1,6 +1,7 @@
 import "server-only";
 import { db } from "./db";
 
+export type Attachment = { filename: string; content: string | Buffer };
 const from = () => process.env.EMAIL_FROM ?? "CorpGurus <notifications@corpgurus.com>";
 export const emailConfigured = () => !!process.env.RESEND_API_KEY;
 const appUrl = () => (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3210").replace(/\/$/, "");
@@ -24,7 +25,7 @@ ${url ? `<tr><td style="padding:22px 28px 0"><a href="${url}" style="display:inl
 }
 
 /** Sends through Resend when a key is present; otherwise records the email as "logged" so the flow can be inspected in development. */
-export async function sendEmail({ to, subject, html, text, userId, attachments }: { to: string; subject: string; html: string; text: string; userId?: string | null; attachments?: { filename: string; content: string }[] }) {
+export async function sendEmail({ to, subject, html, text, userId, attachments }: { to: string; subject: string; html: string; text: string; userId?: string | null; attachments?: Attachment[] }) {
   if (!emailConfigured()) {
     await db.emailLog.create({ data: { userId: userId ?? null, to, subject, status: "logged" } });
     if (process.env.NODE_ENV !== "production") console.log(`[email → ${to}] ${subject}`);
@@ -33,7 +34,7 @@ export async function sendEmail({ to, subject, html, text, userId, attachments }
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST", headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: from(), to: [to], subject, html, text, attachments: attachments?.map((a) => ({ filename: a.filename, content: Buffer.from(a.content).toString("base64") })) }),
+      body: JSON.stringify({ from: from(), to: [to], subject, html, text, attachments: attachments?.map((a) => ({ filename: a.filename, content: (Buffer.isBuffer(a.content) ? a.content : Buffer.from(a.content)).toString("base64") })) }),
     });
     const json = (await res.json().catch(() => ({}))) as { id?: string; message?: string };
     if (!res.ok) throw new Error(json.message || `Resend ${res.status}`);
@@ -45,9 +46,9 @@ export async function sendEmail({ to, subject, html, text, userId, attachments }
   }
 }
 
-export async function emailUsers(userIds: string[], payload: { title: string; body: string; ctaLabel?: string; ctaHref?: string }) {
+export async function emailUsers(userIds: string[], payload: { title: string; body: string; ctaLabel?: string; ctaHref?: string }, attachments?: Attachment[]) {
   if (!userIds.length) return;
   const users = await db.user.findMany({ where: { id: { in: userIds }, status: "ACTIVE", emailNotifications: true }, select: { id: true, email: true, name: true } });
   const { html, text } = renderEmail(payload);
-  await Promise.all(users.map((u) => sendEmail({ to: u.email, subject: payload.title, html, text, userId: u.id })));
+  await Promise.all(users.map((u) => sendEmail({ to: u.email, subject: payload.title, html, text, userId: u.id, attachments })));
 }

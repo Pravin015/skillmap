@@ -15,9 +15,10 @@ const DAY = 86400000;
  */
 export async function CompanyInsights({ companyId, role }: { companyId: string; role: MemberRole }) {
   const now = new Date();
-  const [reqs, changes, invoicesDue, escrowRelease, interviewsWaiting, newApps, accepted, saved, members, audit, company] = await Promise.all([
+  const [reqs, changes, poChanges, invoicesDue, escrowRelease, interviewsWaiting, newApps, accepted, saved, members, audit, company] = await Promise.all([
     db.requirement.findMany({ where: { companyId }, select: { id: true, title: true, status: true, createdAt: true, startDate: true, budgetMax: true, _count: { select: { applications: { where: { status: { in: ["APPLIED", "SHORTLISTED", "AWARDED"] } } } } }, applications: { where: { status: "AWARDED" }, select: { statusChangedAt: true } } }, orderBy: { createdAt: "desc" } }),
     db.workOrder.findMany({ where: { companyId, status: "CHANGES_REQUESTED" }, select: { id: true, title: true, requirementId: true, updatedAt: true }, take: 5 }),
+    db.purchaseOrder.findMany({ where: { companyId, status: "CHANGES_REQUESTED" }, select: { id: true, title: true, poNumber: true, updatedAt: true }, take: 5 }),
     db.invoice.findMany({ where: { companyId, status: "SENT" }, select: { id: true, invoiceNumber: true, total: true, currency: true, dueDate: true, trainer: { select: { user: { select: { name: true } } } } }, orderBy: { dueDate: "asc" }, take: 5 }),
     db.escrowDeposit.findMany({ where: { companyId, status: "FUNDED", workOrder: { endDate: { lt: now } } }, select: { id: true, amount: true, currency: true, workOrder: { select: { title: true, requirementId: true } } }, take: 5 }),
     db.interview.findMany({ where: { status: "PROPOSED", application: { requirement: { companyId } } }, select: { id: true, application: { select: { requirementId: true, requirement: { select: { title: true } }, trainer: { select: { user: { select: { name: true } } } } } } }, take: 5 }),
@@ -42,6 +43,7 @@ export async function CompanyInsights({ companyId, role }: { companyId: string; 
     ...(canHire ? newApps.map((a) => ({ key: a.id, t: `${a.trainer.user.name} applied`, b: a.requirement.title, href: `/dashboard/requirements/${a.requirementId}/applicants`, when: a.createdAt, tone: "cyan" as const })) : []),
     ...(canHire ? interviewsWaiting.map((i) => ({ key: i.id, t: `Interview slots proposed`, b: `${i.application.trainer.user.name} · ${i.application.requirement.title}`, href: `/dashboard/requirements/${i.application.requirementId}/applicants`, when: null, tone: "violet" as const })) : []),
     ...(companyCan(role, "sign_work_order") ? changes.map((w) => ({ key: w.id, t: "Work order needs changes", b: w.title, href: `/requirements/${w.requirementId}/work-order`, when: w.updatedAt, tone: "amber" as const })) : []),
+    ...(companyCan(role, "sign_work_order") ? poChanges.map((p) => ({ key: p.id, t: `Purchase order ${p.poNumber} needs changes`, b: p.title, href: `/purchase-orders/${p.id}`, when: p.updatedAt, tone: "amber" as const })) : []),
     ...(canPay ? invoicesDue.map((i) => ({ key: i.id, t: `Invoice ${i.invoiceNumber} · ${money(i.total, i.currency)}`, b: `${i.trainer.user.name} · due ${fmtDate(i.dueDate)}${i.dueDate < now ? " · overdue" : ""}`, href: `/invoices/${i.id}`, when: null, tone: i.dueDate < now ? "rose" as const : "neutral" as const })) : []),
     ...(canPay ? escrowRelease.map((e) => ({ key: e.id, t: `Release escrow · ${money(e.amount, e.currency)}`, b: `${e.workOrder.title} finished`, href: `/requirements/${e.workOrder.requirementId}/work-order`, when: null, tone: "lime" as const })) : []),
   ];

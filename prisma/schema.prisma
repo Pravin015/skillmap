@@ -128,6 +128,7 @@ model User {
   workOrdersCreated WorkOrder[]
   workOrderEvents  WorkOrderEvent[]
   invoicesIssued   Invoice[]
+  purchaseOrdersIssued PurchaseOrder[] @relation("PoIssuer")
   emailLogs        EmailLog[]
   savedSearches    SavedSearch[]
   interviewsProposed Interview[]
@@ -206,6 +207,7 @@ model WorkOrder {
   invoices Invoice[]
   batches  WorkOrderBatch[]
   escrow   EscrowDeposit?
+  purchaseOrders PurchaseOrder[]
 }
 
 model WorkOrderEvent {
@@ -504,6 +506,13 @@ model TrainerProfile {
   rzpFundAccountId String?
   pan              String?
   panVerifiedAt    DateTime?
+  legalName        String?
+  billingAddress   String?
+  stateCode        String?
+  invoicePrefix    String?
+  invoiceSeq       Int            @default(0)
+  invoiceSeqFy     String?
+  signatoryName    String?
   createdAt        DateTime       @default(now())
 
   skills         Skill[]
@@ -524,6 +533,7 @@ model TrainerProfile {
   teamMemberships TrainerTeamMember[]
   escrows        EscrowDeposit[]
   certificatesIssued IssuedCertificate[]
+  purchaseOrders PurchaseOrder[]
 }
 
 model Certification {
@@ -569,6 +579,12 @@ model Company {
   budgetBand       String?
   gstVerifiedAt    DateTime?
   billingAddress   String?
+  stateCode        String?
+  poPrefix         String?
+  poSeq            Int      @default(0)
+  poSeqFy          String?
+  poTerms          String   @default("")
+  billingEmail     String?
   description      String      @default("")
   createdAt        DateTime    @default(now())
 
@@ -586,6 +602,7 @@ model Company {
   webhooks     WebhookEndpoint[]
   learningPaths LearningPath[]
   escrows      EscrowDeposit[]
+  purchaseOrders PurchaseOrder[]
 }
 
 model CompanyMember {
@@ -839,7 +856,120 @@ model Invoice {
   dueDate       DateTime
   paidAt        DateTime?
   paidReference String?
+  purchaseOrderId String?
+  purchaseOrder PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id], onDelete: SetNull)
+  poNumber      String?
+  poDate        DateTime?
+  taxType       String         @default("IGST")
+  cgstAmount    Int            @default(0)
+  sgstAmount    Int            @default(0)
+  igstAmount    Int            @default(0)
+  sacCode       String         @default("999293")
+  placeOfSupply String         @default("")
+  supplierName  String?
+  supplierAddress String?
+  supplierPan   String?
+  supplierStateCode String?
+  supplierContact String?
+  customerName  String?
+  customerAddress String?
+  customerStateCode String?
+  periodText    String         @default("")
+  participants  Int?
+  endClientRef  String?
+  trainerName   String?
+  signatoryName String?
   createdAt     DateTime       @default(now())
+
+  lines InvoiceLine[]
+}
+
+model InvoiceLine {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  position    Int     @default(0)
+  description String
+  qty         Float   @default(1)
+  unit        String  @default("day")
+  rate        Int
+  amount      Int
+}
+
+enum PoStatus {
+  DRAFT
+  ISSUED
+  CHANGES_REQUESTED
+  ACCEPTED
+  CLOSED
+  CANCELLED
+}
+
+/// A purchase order the company issues to the trainer against an accepted work order. The trainer accepts it and invoices against it.
+model PurchaseOrder {
+  id            String         @id @default(cuid())
+  number        Int            @default(autoincrement())
+  poNumber      String         @default("")
+  workOrderId   String
+  workOrder     WorkOrder      @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  companyId     String
+  company       Company        @relation(fields: [companyId], references: [id])
+  trainerId     String
+  trainer       TrainerProfile @relation(fields: [trainerId], references: [id])
+  issuedById    String
+  issuedBy      User           @relation("PoIssuer", fields: [issuedById], references: [id])
+  version       Int            @default(1)
+  status        PoStatus       @default(DRAFT)
+  title         String
+  poDate        DateTime       @default(now())
+  validUntil    DateTime?
+  currency      String         @default("INR")
+  subtotal      Int            @default(0)
+  gstRate       Int            @default(18)
+  gstAmount     Int            @default(0)
+  total         Int            @default(0)
+  taxType       String         @default("IGST")
+  sacCode       String         @default("999293")
+  placeOfSupply String         @default("")
+  supplyMode    String         @default("")
+  periodText    String         @default("")
+  participants  Int?
+  endClientRef  String?
+  buyerName     String?
+  buyerAddress  String?
+  buyerGstin    String?
+  buyerStateCode String?
+  buyerContact  String?
+  vendorName    String?
+  vendorAddress String?
+  vendorGstin   String?
+  vendorPan     String?
+  paymentTerms  String         @default("")
+  deliverables  String         @default("")
+  terms         String         @default("")
+  notes         String         @default("")
+  issuedAt      DateTime?
+  acceptedAt    DateTime?
+  acceptedByName String?
+  changeNote    String?
+  closedAt      DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  lines    PurchaseOrderLine[]
+  invoices Invoice[]
+}
+
+model PurchaseOrderLine {
+  id              String        @id @default(cuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  position        Int           @default(0)
+  description     String
+  qty             Float         @default(1)
+  unit            String        @default("day")
+  rate            Int
+  amount          Int
 }
 
 model EmailLog {

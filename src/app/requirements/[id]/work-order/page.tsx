@@ -14,22 +14,24 @@ import { WorkOrderForm } from "./form";
 import { EscrowCard } from "@/components/escrow-card";
 import { razorpayConfigured } from "@/lib/billing";
 import { featureEnabled } from "@/lib/features";
+import { createPurchaseOrder } from "@/lib/actions/purchase-orders";
+import { poNumberOf } from "@/lib/documents";
 
 export const metadata = { title: "Work order" };
 
 const tone = { DRAFT: "neutral", SENT: "amber", CHANGES_REQUESTED: "rose", ACCEPTED: "lime", CANCELLED: "neutral" } as const;
 const label = { DRAFT: "Draft", SENT: "Awaiting trainer", CHANGES_REQUESTED: "Changes requested", ACCEPTED: "Accepted", CANCELLED: "Cancelled" } as const;
 
-export default async function WorkOrderPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ sent?: string; edit?: string }> }) {
+export default async function WorkOrderPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ sent?: string; edit?: string; err?: string }> }) {
   const { id } = await params;
-  const { sent, edit } = await searchParams;
+  const { sent, edit, err } = await searchParams;
   const user = await requireUser(`/requirements/${id}/work-order`);
   const req = await db.requirement.findUnique({
     where: { id },
     include: {
       company: { include: { members: { select: { userId: true, role: true } } } },
       applications: { where: { status: "AWARDED" }, include: { team: { include: { members: { where: { status: "ACCEPTED" }, include: { trainer: { select: { slug: true, user: { select: { name: true } } } } } } } }, trainer: { include: { user: { select: { id: true, name: true, email: true } } } } } },
-      workOrder: { include: { events: { include: { actor: { select: { name: true } } }, orderBy: { createdAt: "asc" } }, createdBy: { select: { name: true } }, batches: { orderBy: { position: "asc" } }, escrow: true } },
+      workOrder: { include: { events: { include: { actor: { select: { name: true } } }, orderBy: { createdAt: "asc" } }, createdBy: { select: { name: true } }, batches: { orderBy: { position: "asc" } }, escrow: true, purchaseOrders: { where: { status: { not: "CANCELLED" } }, select: { id: true, poNumber: true, number: true, status: true }, take: 1 } } },
     },
   });
   if (!req) notFound();
@@ -55,6 +57,7 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
         {wo ? <Badge tone={tone[wo.status]} className="ml-auto">{label[wo.status]} · v{wo.version}</Badge> : null}
       </div>
       {sent ? <Alert tone="lime">Sent to {awarded.trainer.user.name}. They have been notified and can accept or request changes.</Alert> : null}
+      {err === "po-needs-accepted" ? <Alert tone="amber">A purchase order can be issued once the trainer has accepted the work order.</Alert> : null}
 
       {editing ? (
         <>
@@ -103,7 +106,9 @@ export default async function WorkOrderPage({ params, searchParams }: { params: 
 
           <div className="flex flex-wrap gap-2 print:hidden">
             <PrintButton />
-            {wo.status === "ACCEPTED" && isTrainer ? <Link href={`/dashboard/invoices?raise=${wo.id}`} className="inline-flex h-9 items-center rounded-lg bg-cyan px-3 font-display text-sm font-semibold text-white hover:bg-navy">Raise invoice</Link> : null}
+            {wo.purchaseOrders[0] ? <Link href={`/purchase-orders/${wo.purchaseOrders[0].id}`} className="inline-flex h-9 items-center rounded-lg border border-violet/40 bg-violet/5 px-3 font-display text-sm font-semibold text-violet hover:bg-violet/10">Purchase order {poNumberOf(wo.purchaseOrders[0])}</Link> : null}
+            {!wo.purchaseOrders[0] && wo.status === "ACCEPTED" && memberCan(req.company.members, user.id, "sign_work_order") ? <form action={createPurchaseOrder}><input type="hidden" name="workOrderId" value={wo.id} /><Button variant="violet" size="sm">Issue purchase order</Button></form> : null}
+            {wo.status === "ACCEPTED" && isTrainer ? <Link href={`/dashboard/invoices/new?workOrder=${wo.id}`} className="inline-flex h-9 items-center rounded-lg bg-cyan px-3 font-display text-sm font-semibold text-white hover:bg-navy">Raise invoice</Link> : null}
             {wo.status === "ACCEPTED" ? <Link href="/dashboard/invoices" className="inline-flex h-9 items-center rounded-lg border border-line-2 bg-white px-3 font-display text-sm font-semibold hover:bg-surface-2">Invoices</Link> : null}
             {isMember && wo.status !== "CANCELLED" && wo.status !== "ACCEPTED" ? <Link href={`/requirements/${id}/work-order?edit=1`} className="inline-flex h-9 items-center rounded-lg border border-line-2 bg-white px-3 font-display text-sm font-semibold hover:bg-surface-2">Edit and resend</Link> : null}
             {isMember && wo.status !== "CANCELLED" ? <form action={cancelWorkOrder}><input type="hidden" name="id" value={wo.id} /><Button variant="danger" size="sm">Cancel work order</Button></form> : null}

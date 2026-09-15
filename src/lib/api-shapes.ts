@@ -44,3 +44,33 @@ export const shapeWorkOrder = (w: Wo) => ({
   invoices: w.invoices.map((i) => ({ id: i.id, number: i.invoiceNumber, status: i.status, total: i.total, currency: i.currency, due_date: i.dueDate, paid_at: i.paidAt })),
   sent_at: w.sentAt, accepted_at: w.acceptedAt, created_at: w.createdAt,
 });
+
+export const purchaseOrderSelect = {
+  id: true, number: true, poNumber: true, version: true, status: true, title: true, workOrderId: true, poDate: true, validUntil: true, currency: true, subtotal: true, gstRate: true, gstAmount: true, taxType: true, total: true, sacCode: true, placeOfSupply: true, periodText: true, participants: true, endClientRef: true, paymentTerms: true, issuedAt: true, acceptedAt: true, acceptedByName: true, closedAt: true, createdAt: true,
+  trainer: { select: { id: true, slug: true, user: { select: { name: true } } } },
+  lines: { select: { description: true, qty: true, unit: true, rate: true, amount: true }, orderBy: { position: "asc" } },
+  invoices: { select: { id: true, invoiceNumber: true, status: true, amount: true, total: true, currency: true, dueDate: true, paidAt: true } },
+} satisfies Prisma.PurchaseOrderSelect;
+type Po = Prisma.PurchaseOrderGetPayload<{ select: typeof purchaseOrderSelect }>;
+export const shapePurchaseOrder = (p: Po) => ({
+  id: p.id, number: p.poNumber || null, sequence: p.number, version: p.version, status: p.status, title: p.title, work_order_id: p.workOrderId,
+  trainer: { id: p.trainer.id, slug: p.trainer.slug, name: p.trainer.user.name },
+  po_date: p.poDate.toISOString().slice(0, 10), valid_until: p.validUntil ? p.validUntil.toISOString().slice(0, 10) : null,
+  currency: p.currency, subtotal: p.subtotal, gst_rate: p.gstRate, gst_amount: p.gstAmount, tax_type: p.taxType, total: p.total, sac_code: p.sacCode, place_of_supply: p.placeOfSupply, period: p.periodText, participants: p.participants, end_client_ref: p.endClientRef, payment_terms: p.paymentTerms,
+  lines: p.lines, invoices: p.invoices.map((i) => ({ id: i.id, number: i.invoiceNumber, status: i.status, amount: i.amount, total: i.total, currency: i.currency, due_date: i.dueDate, paid_at: i.paidAt })),
+  issued_at: p.issuedAt, accepted_at: p.acceptedAt, accepted_by: p.acceptedByName, closed_at: p.closedAt, created_at: p.createdAt,
+});
+
+export const invoiceSelect = {
+  id: true, invoiceNumber: true, status: true, amount: true, gstRate: true, gstAmount: true, taxType: true, cgstAmount: true, sgstAmount: true, igstAmount: true, total: true, currency: true, sacCode: true, placeOfSupply: true, poNumber: true, purchaseOrderId: true, workOrderId: true, issuedAt: true, dueDate: true, paidAt: true, paidReference: true, supplierName: true, trainerGstin: true, supplierPan: true, customerName: true, companyGstin: true, createdAt: true,
+  trainer: { select: { id: true, slug: true, user: { select: { name: true } } } },
+  lines: { select: { description: true, qty: true, unit: true, rate: true, amount: true }, orderBy: { position: "asc" } },
+} satisfies Prisma.InvoiceSelect;
+type Inv = Prisma.InvoiceGetPayload<{ select: typeof invoiceSelect }>;
+export const shapeInvoice = (i: Inv) => ({
+  id: i.id, number: i.invoiceNumber, status: i.status, work_order_id: i.workOrderId, purchase_order_id: i.purchaseOrderId, po_number: i.poNumber,
+  supplier: { name: i.supplierName ?? i.trainer.user.name, gstin: i.trainerGstin, pan: i.supplierPan, trainer: { id: i.trainer.id, slug: i.trainer.slug, name: i.trainer.user.name } },
+  customer: { name: i.customerName, gstin: i.companyGstin },
+  currency: i.currency, subtotal: i.amount, gst_rate: i.gstRate, tax_type: i.taxType, cgst: i.cgstAmount, sgst: i.sgstAmount, igst: i.igstAmount, gst_amount: i.gstAmount, total: i.total, sac_code: i.sacCode, place_of_supply: i.placeOfSupply,
+  lines: i.lines, issued_at: i.issuedAt, due_date: i.dueDate, paid_at: i.paidAt, paid_reference: i.paidReference, created_at: i.createdAt,
+});

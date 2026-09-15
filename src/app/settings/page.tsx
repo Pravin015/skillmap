@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { addCertification, deleteCertification, inviteMember, removeMember, updateAccount, updateCompany, updateEmailPrefs, updateTrainerProfile, uploadIdentity, setMemberRole } from "@/lib/actions/profile";
@@ -15,6 +16,9 @@ import { unlinkProvider } from "@/lib/actions/oauth";
 import { PROVIDER_LIST, providerName } from "@/lib/oauth";
 import { OAuthButtons } from "@/components/oauth-buttons";
 import { TIMEZONES } from "@/lib/tz";
+import { saveInvoiceIdentity } from "@/lib/actions/invoices";
+import { savePoSettings } from "@/lib/actions/purchase-orders";
+import { STATE_OPTIONS, suggestPrefix } from "@/lib/gst";
 
 export const metadata = { title: "Settings" };
 
@@ -180,6 +184,19 @@ async function TrainerSettings({ userId, profileId }: { userId: string; profileI
         </ActionForm>
       </Card>
       <Card className="p-6">
+        <h2 className="text-lg font-bold">Invoicing details</h2>
+        <p className="mt-1 text-sm text-muted">Printed on every tax invoice you raise: your legal or trade name, address, state (decides CGST/SGST vs IGST) and your invoice number series. Bank details come from the payouts card below.</p>
+        <ActionForm action={saveInvoiceIdentity} className="mt-4 grid gap-4 md:grid-cols-2">
+          <Field label="Legal / trade name" hint="As registered with GST or your bank"><Input name="legalName" defaultValue={p.legalName ?? ""} placeholder={u.name} /></Field>
+          <Field label="GSTIN" hint="Leave blank if not registered; invoices then carry no GST"><Input name="gstin" defaultValue={p.gstin ?? ""} placeholder="27ABCDE1234F1Z5" className="uppercase" /></Field>
+          <Field label="Billing address" className="md:col-span-2"><Textarea name="billingAddress" defaultValue={p.billingAddress ?? ""} className="min-h-16" placeholder={"Flat, building, street\nCity, State PIN"} /></Field>
+          <Field label="State" hint="Place of business for GST"><Select name="stateCode" defaultValue={p.stateCode ?? ""}><option value="">—</option>{STATE_OPTIONS.map((s) => <option key={s.code} value={s.code}>{s.name} ({s.code})</option>)}</Select></Field>
+          <Field label="Invoice number prefix" hint={`Numbers run as ${p.invoicePrefix || suggestPrefix(p.legalName || u.name, "initials")}/26-27/001 per financial year`}><Input name="invoicePrefix" defaultValue={p.invoicePrefix ?? ""} placeholder={suggestPrefix(p.legalName || u.name, "initials")} className="uppercase" /></Field>
+          <Field label="Signatory name" hint="Printed under “Authorised signatory”"><Input name="signatoryName" defaultValue={p.signatoryName ?? ""} placeholder={u.name} /></Field>
+          <div className="md:col-span-2"><SubmitButton size="sm" variant="secondary" pendingText="Saving…">Save invoicing details</SubmitButton></div>
+        </ActionForm>
+      </Card>
+      <Card className="p-6">
         <h2 className="text-lg font-bold">Payouts and identity</h2>
         <p className="mt-1 text-sm text-muted">Bank details are used for escrow payouts{payoutsConfigured() ? " through RazorpayX" : ""}; the account number is encrypted at rest and never shown in full. PAN verification adds an identity badge.</p>
         <div className="mt-4 grid gap-6 md:grid-cols-2">
@@ -245,6 +262,20 @@ async function CompanySettings({ companyId, isOwner, canManage, me }: { companyI
         </div>
       </Card>
       <CalendarConnections userId={me} trainer={false} />
+      {canManage ? (
+        <Card className="p-6">
+          <h2 className="text-lg font-bold">Purchase orders</h2>
+          <p className="mt-1 text-sm text-muted">Issue numbered, GST-aware purchase orders to trainers from accepted work orders (<Link href="/dashboard/purchase-orders" className="text-violet underline">Purchase orders</Link>). These details print on every PO and set the buyer side of trainer invoices.</p>
+          <ActionForm action={savePoSettings} className="mt-4 grid gap-4 md:grid-cols-2">
+            <Field label="Legal name on documents" hint="Defaults to the GST-registered name"><Input name="legalName" defaultValue={c.gstLegalName ?? ""} placeholder={c.name} /></Field>
+            <Field label="State" hint="Decides CGST/SGST vs IGST on invoices to you"><Select name="stateCode" defaultValue={c.stateCode ?? ""}><option value="">—</option>{STATE_OPTIONS.map((s) => <option key={s.code} value={s.code}>{s.name} ({s.code})</option>)}</Select></Field>
+            <Field label="PO number prefix" hint={`Numbers run as ${c.poPrefix || suggestPrefix(c.name, "word")}/26-27/0001 per financial year`}><Input name="poPrefix" defaultValue={c.poPrefix ?? ""} placeholder={suggestPrefix(c.name, "word")} className="uppercase" /></Field>
+            <Field label="Billing / accounts email" hint="Printed as the buyer contact on POs"><Input name="billingEmail" type="email" defaultValue={c.billingEmail ?? ""} placeholder="accounts@company.com" /></Field>
+            <Field label="Default terms and conditions" hint="One per line; prefilled on every new PO" className="md:col-span-2"><Textarea name="poTerms" defaultValue={c.poTerms} className="min-h-28" placeholder={"Invoice after successful completion, quoting this PO number.\nPayment within 30 days of a correct invoice.\nGST extra; TDS as per the Income Tax Act."} /></Field>
+            <div className="md:col-span-2"><SubmitButton size="sm" variant="violet" pendingText="Saving…">Save purchase order settings</SubmitButton></div>
+          </ActionForm>
+        </Card>
+      ) : null}
       <Card className="p-6">
         <h2 className="text-lg font-bold">Workspace notifications and SSO</h2>
         <p className="mt-1 text-sm text-muted">Post applications, work orders, invoices and team changes into a Slack or Teams channel with an incoming webhook. With a verified domain you can also let colleagues who sign in with Google or Microsoft join automatically as viewers.</p>
